@@ -47,6 +47,24 @@
   }
 }
 
+/* 3D Flip Card Perspective Utilities */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.perspective-1200 {
+  perspective: 1200px;
+}
+
+.perspective-1500 {
+  perspective: 1500px;
+}
+
 /* Subtle Animated Film Grain Overlay */
 .film-grain {
   position: fixed;
