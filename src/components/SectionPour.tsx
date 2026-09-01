@@ -1,0 +1,301 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { Award, Sparkles, ShieldCheck } from 'lucide-react';
+import { gsap } from '../utils/animations';
+
+export const SectionPour: React.FC = () => {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const backgroundTextRef = useRef<HTMLDivElement | null>(null);
+  const imageContainerRef = useRef<HTMLDivElement | null>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const cuppingCardRef = useRef<HTMLDivElement | null>(null);
+
+  const [activeNote, setActiveNote] = useState<number>(0);
+
+  const flavorNotes = [
+    {
+      id: 0,
+      name: '85% Single-Origin Dark Cacao',
+      category: 'Primary Note',
+      intensity: 95,
+      description: 'Deep, rich bittersweet chocolate with an unyielding velvety texture and a luxurious lingering truffle finish.',
+      pairing: 'Single-estate 80% chocolate or pure sparkling spring water',
+    },
+    {
+      id: 1,
+      name: 'Charred Mountain Cedar',
+      category: 'Wood & Resin',
+      intensity: 82,
+      description: 'Aromatic smoky pine and charred cedar resin reminiscent of crisp midnight air in alpine evergreen forests.',
+      pairing: 'Lightly toasted sourdough or aged Gouda',
+    },
+    {
+      id: 2,
+      name: 'Wild Black Cherry & Fig',
+      category: 'Stone Fruit Acidity',
+      intensity: 88,
+      description: 'Dense wine-like acidity balanced by stewed dark cherries, ripe black mission figs, and subtle molasses sweetness.',
+      pairing: 'Caramelized almond tart or dark plum compote',
+    },
+    {
+      id: 3,
+      name: 'Aged Kentucky Bourbon Cask',
+      category: 'Barrel Aged Warmth',
+      intensity: 78,
+      description: 'Toasted American white oak, warmth of charred bourbon barrels, and sweet caramelized brown sugar nuances.',
+      pairing: 'Neat single malt whiskey or crème brûlée',
+    },
+    {
+      id: 4,
+      name: 'Smoked Madagascar Vanilla',
+      category: 'Floral Spice',
+      intensity: 75,
+      description: 'Soft, creamy floral warmth with whispers of smoked bourbon vanilla beans and toasted marshmallow cream.',
+      pairing: 'Flaky butter croissant or fresh biscotti',
+    },
+  ];
+
+  const current = flavorNotes[activeNote];
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const backgroundText = backgroundTextRef.current;
+    const imageContainer = imageContainerRef.current;
+    const image = imageRef.current;
+    const cuppingCard = cuppingCardRef.current;
+
+    if (!section || !backgroundText || !imageContainer || !image || !cuppingCard) return;
+
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
+
+      mm.add('(min-width: 768px)', () => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            end: '+=140%',
+            pin: true,
+            scrub: 0.6,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+
+        tl.fromTo(
+          backgroundText,
+          { y: 60, opacity: 0 },
+          { y: 0, opacity: 0.75, ease: 'power2.out', duration: 1.0 },
+          0
+        )
+          .fromTo(
+            imageContainer,
+            { clipPath: 'inset(100% 0% 0% 0%)', opacity: 0 },
+            { clipPath: 'inset(0% 0% 0% 0%)', opacity: 1, ease: 'power2.out', duration: 1.0 },
+            0.1
+          )
+          .fromTo(
+            image,
+            { scale: 1.0 },
+            { scale: 1.1, ease: 'none', duration: 1.2 },
+            0.2
+          )
+          .fromTo(
+            cuppingCard,
+            { y: 40, opacity: 0 },
+            { y: 0, opacity: 1, ease: 'power2.out', duration: 0.8 },
+            0.4
+          );
+      });
+
+      mm.add('(max-width: 767px)', () => {
+        gsap.fromTo(
+          imageContainer,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            scrollTrigger: {
+              trigger: section,
+              start: 'top 80%',
+            },
+          }
+        );
+      });
+    }, sectionRef);
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
+  return (
+    <section
+      id="section-pour"
+      ref={sectionRef}
+      aria-label="Section 03: The Pour 9-Bar Extraction"
+      className="relative min-h-screen lg:h-screen w-full bg-[#070605] flex items-center justify-center overflow-hidden border-t border-[#221c17] py-12 lg:py-0"
+    >
+      {/* Background Monumental Typography BEHIND Image */}
+      <div
+        ref={backgroundTextRef}
+        className="pointer-events-none absolute inset-0 z-0 flex flex-col items-center justify-center text-center opacity-75 select-none will-change-transform"
+      >
+        <span className="font-serif text-5xl sm:text-8xl md:text-[11rem] font-light tracking-tight text-[#1a140f] uppercase leading-none">
+          THE POUR
+        </span>
+        <span className="font-display text-3xl sm:text-6xl md:text-8xl font-bold tracking-widest text-[#241a12] uppercase leading-none -mt-3 sm:-mt-8 text-stroke-gold">
+          IS THE MOMENT.
+        </span>
+      </div>
+
+      {/* Foreground Pinned Section Content: 100vh framed */}
+      <div className="relative z-10 mx-auto max-w-7xl w-full px-6 md:px-12 flex flex-col justify-between min-h-[70vh] lg:h-[84vh] py-6">
+        {/* Top Header */}
+        <div className="flex items-center justify-between border-b border-[#221c17]/80 pb-3">
+          <div className="flex items-center gap-3 text-xs tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase">
+            <span className="font-mono text-[#c89658]">03</span>
+            <span className="h-[1px] w-8 bg-[#c89658]/60" />
+            <span>THE POUR / 9-BAR EXTRACTION</span>
+          </div>
+
+          <div className="flex items-center gap-2 rounded-full border border-[#c89658]/40 bg-[#120e0b] px-3 py-0.5">
+            <Award className="h-3.5 w-3.5 text-[#c89658]" />
+            <span className="font-mono text-xs font-bold text-[#e5b877]">91.5 / 100 Cupping Score</span>
+          </div>
+        </div>
+
+        {/* Middle Stage: Extraction Stream & Cupping Notes */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto py-4">
+          {/* Left Column: Vertical Reveal Image Container */}
+          <div className="lg:col-span-6 relative flex justify-center">
+            <div
+              ref={imageContainerRef}
+              className="relative aspect-[4/5] max-h-[44vh] sm:max-h-[48vh] w-full max-w-md overflow-hidden rounded-2xl border border-[#c89658]/40 shadow-[0_25px_80px_rgba(0,0,0,0.9)] will-change-transform"
+            >
+              <img
+                ref={imageRef}
+                src="/assets/pour-espresso.jpg"
+                alt="Bottomless portafilter velvet espresso extraction with golden crema tiger stripes"
+                className="h-full w-full object-cover object-center will-change-transform"
+                loading="eager"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#070605]/85 via-transparent to-transparent pointer-events-none" />
+
+              {/* Extraction HUD Metrics Overlay */}
+              <div className="absolute bottom-3 left-3 right-3 grid grid-cols-4 gap-1.5 rounded-xl bg-[#090705]/95 p-2.5 backdrop-blur-md border border-[#c89658]/25">
+                <div className="flex flex-col text-center">
+                  <span className="text-[8px] font-sans tracking-[0.15em] text-[#8c827a] uppercase">Dose</span>
+                  <span className="font-mono text-xs font-bold text-[#f4eee6]">18.5g</span>
+                </div>
+                <div className="flex flex-col text-center border-l border-[#221c17]">
+                  <span className="text-[8px] font-sans tracking-[0.15em] text-[#8c827a] uppercase">Yield</span>
+                  <span className="font-mono text-xs font-bold text-[#e5b877]">37.0g</span>
+                </div>
+                <div className="flex flex-col text-center border-l border-[#221c17]">
+                  <span className="text-[8px] font-sans tracking-[0.15em] text-[#8c827a] uppercase">Time</span>
+                  <span className="font-mono text-xs font-bold text-[#f4eee6]">27.5s</span>
+                </div>
+                <div className="flex flex-col text-center border-l border-[#221c17]">
+                  <span className="text-[8px] font-sans tracking-[0.15em] text-[#8c827a] uppercase">Temp</span>
+                  <span className="font-mono text-xs font-bold text-[#e5b877]">93.5°C</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Sommelier Cupping Wheel & Sensory Dial */}
+          <div ref={cuppingCardRef} className="lg:col-span-6 flex flex-col justify-center">
+            <span className="text-[9px] font-sans tracking-[0.25em] text-[#8c827a] uppercase mb-2 block">
+              Sensory Profile & Flavor Dial (Select Note)
+            </span>
+
+            {/* Flavor Pills Selection */}
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {flavorNotes.map((note) => {
+                const isSelected = activeNote === note.id;
+                return (
+                  <button
+                    key={note.id}
+                    onClick={() => setActiveNote(note.id)}
+                    className={`px-2.5 py-1 rounded-xl text-[10px] sm:text-[11px] font-sans tracking-wide transition-all cursor-pointer border focus-visible:ring-1 focus-visible:ring-[#c89658] ${
+                      isSelected
+                        ? 'bg-[#c89658] border-[#c89658] text-[#070605] font-bold shadow-md'
+                        : 'bg-[#120e0b] border-[#2b231c] text-[#a89d93] hover:border-[#c89658]/50 hover:text-[#f4eee6]'
+                    }`}
+                  >
+                    {note.name}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Active Sensory Note Display Box */}
+            <div className="rounded-2xl bg-[#0f0c09]/95 border border-[#c89658]/35 p-5 backdrop-blur-xl shadow-2xl mb-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-sans tracking-[0.25em] text-[#c89658] uppercase">
+                  {current.category}
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] font-sans tracking-[0.2em] text-[#8c827a] uppercase">Intensity</span>
+                  <span className="font-mono text-xs font-bold text-[#e5b877]">
+                    {current.intensity}%
+                  </span>
+                </div>
+              </div>
+
+              <h3 className="font-serif text-xl sm:text-2xl text-[#f4eee6] mb-1.5">
+                {current.name}
+              </h3>
+
+              <p className="font-sans text-xs leading-relaxed text-[#c7bcb1] font-light mb-3">
+                {current.description}
+              </p>
+
+              {/* Intensity Progress Bar */}
+              <div className="mb-3">
+                <div className="h-1.5 w-full bg-[#1c1612] rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-[#c89658] to-[#e5b877] rounded-full transition-all duration-500"
+                    style={{ width: `${current.intensity}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Sommelier Pairing Recommendation */}
+              <div className="pt-2.5 border-t border-[#221c17] flex items-start gap-2">
+                <Sparkles className="h-3.5 w-3.5 text-[#c89658] mt-0.5 shrink-0" />
+                <div>
+                  <span className="text-[9px] font-sans tracking-[0.18em] text-[#8c827a] uppercase block">
+                    Recommended Pairing
+                  </span>
+                  <span className="font-serif italic text-xs text-[#f4eee6]">
+                    {current.pairing}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Crema Viscosity Guarantee */}
+            <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-[#0a0806] border border-[#221c17]">
+              <ShieldCheck className="h-4 w-4 text-[#c89658] shrink-0" />
+              <span className="font-sans text-[10px] sm:text-[11px] text-[#8c827a]">
+                4mm thick hazelnut crema with suspension holding sugar for 6+ seconds.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Footer */}
+        <div className="flex items-center justify-between border-t border-[#221c17]/80 pt-3 text-xs text-[#8c827a]">
+          <span className="font-mono text-[10px] text-[#8c827a]">
+            Extraction Pressure: 9.0 Bar PID Controlled
+          </span>
+          <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#c89658]">
+            Liquid Gold Viscosity
+          </span>
+        </div>
+      </div>
+    </section>
+  );
+};

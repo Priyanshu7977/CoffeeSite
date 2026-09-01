@@ -1,0 +1,43 @@
+import type { BrewMethod } from '../types';
+
+export const NOIR_BREW_METHODS: BrewMethod[] = [
+  {
+    id: 'espresso',
+    name: 'ESPRESSO',
+    tagline: '9-Bar Viscous Extraction',
+    time: '27.5 Seconds',
+    grind: 'Ultra-Fine 280µm Titanium Burrs',
+    temp: '93.5°C PID Controlled',
+    ratio: '1:2.0 (18.5g in → 37g out)',
+    description: 'The purest concentration of coffee oils and volatile aromatics forced through a pressurized puck. Produces dense crema tiger striping and profound chocolate intensity.',
+    image: '/assets/brew-espresso.jpg',
+    proTip: 'Perform a 4-second gentle pre-infusion at 2 bars before ramping to 9 bars of full pressure.',
+    yieldVolume: 'Double Shot (37ml)',
+  },
+  {
+    id: 'pourover',
+    name: 'POUR OVER',
+    tagline: 'Precision Concentric Clarity',
+    time: '3 Minutes 30 Seconds',
+    grind: 'Medium-Fine 650µm Unimodal',
+    temp: '93.0°C Alpine Mineral Water',
+    ratio: '1:16.0 (20g in → 320g out)',
+    description: 'Gravity-fed percolation that highlights delicate floral esters, sparkling fruit acidity, and transparent terroir distinction without harsh sediment.',
+    image: '/assets/brew-pourover.jpg',
+    proTip: 'Saturate the grounds with a 45-second 50g bloom, then execute 3 continuous concentric spiral pours.',
+    yieldVolume: 'Single Carafe (300ml)',
+  },
+  {
+    id: 'frenchpress',
+    name: 'FRENCH PRESS',
+    tagline: 'Full Immersion Tactile Body',
+    time: '4 Minutes 00 Seconds',
+    grind: 'Coarse 950µm Consistent Particulates',
+    temp: '95.0°C Off-Boil Spring Water',
+    ratio: '1:15.0 (30g in → 450g out)',
+    description: 'Total immersion extraction retaining micro-lipids and body-building colloidal particles for an unyielding velvety mouthfeel and comforting warmth.',
+    image: '/assets/brew-frenchpress.jpg',
+    proTip: 'At 4:00, gently break the crust and skim surface foam with dual cupping spoons before pressing.',
+    yieldVolume: 'Sharing Pot (420ml)',
+  },
+];
