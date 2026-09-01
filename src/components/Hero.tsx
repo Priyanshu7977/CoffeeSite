@@ -10,7 +10,7 @@ interface HeroProps {
 export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const imageRef = useRef<HTMLImageElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const textContainerRef = useRef<HTMLDivElement | null>(null);
   const eyebrowRef = useRef<HTMLDivElement | null>(null);
   const titleLine1Ref = useRef<HTMLHeadingElement | null>(null);
@@ -20,14 +20,20 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
   const ctaRef = useRef<HTMLDivElement | null>(null);
   const badgeRef = useRef<HTMLDivElement | null>(null);
   const circularMaskRef = useRef<HTMLDivElement | null>(null);
+  const transitionVideoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
-    const image = imageRef.current;
+    const video = videoRef.current;
     const textContainer = textContainerRef.current;
     const circularMask = circularMaskRef.current;
 
-    if (!section || !image || !textContainer || !circularMask) return;
+    if (!section || !video || !textContainer || !circularMask) return;
+
+    // Ensure video plays smoothly
+    video.play().catch(() => {
+      // Autoplay with audio muted is guaranteed by browser policy
+    });
 
     const ctx = gsap.context(() => {
       // 1. Initial Page Load Typography Entrance
@@ -35,37 +41,43 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
 
       introTl
         .fromTo(
+          video,
+          { scale: 1.15, opacity: 0 },
+          { scale: 1.0, opacity: 1, duration: 1.6, ease: 'power2.out' }
+        )
+        .fromTo(
           eyebrowRef.current,
           { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.9, delay: 0.1 }
+          { opacity: 1, y: 0, duration: 0.9, delay: 0.1 },
+          '-=1.2'
         )
         .fromTo(
           [titleLine1Ref.current, titleLine2Ref.current, titleLine3Ref.current],
           { opacity: 0, y: 35 },
           { opacity: 1, y: 0, duration: 1.1, stagger: 0.12, ease: 'power4.out' },
-          '-=0.6'
+          '-=0.7'
         )
         .fromTo(
           subtitleRef.current,
           { opacity: 0, y: 15 },
           { opacity: 1, y: 0, duration: 0.8 },
-          '-=0.5'
+          '-=0.6'
         )
         .fromTo(
           [ctaRef.current, badgeRef.current],
           { opacity: 0, y: 15 },
           { opacity: 1, y: 0, duration: 0.8, stagger: 0.1 },
-          '-=0.4'
+          '-=0.5'
         );
 
-      // 2. Full Pinned ScrollTrigger Sequence
+      // 2. Full Pinned Cinematic Video ScrollTrigger Sequence
       const scrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
           start: 'top top',
           end: '+=120%',
           pin: true,
-          scrub: 0.7,
+          scrub: 0.6,
           anticipatePin: 1,
           invalidateOnRefresh: true,
         },
@@ -73,15 +85,15 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
 
       scrollTl
         .fromTo(
-          image,
-          { scale: 1.0, opacity: 1, yPercent: 0 },
-          { scale: 1.15, opacity: 0.25, yPercent: 6, ease: 'none', duration: 1.0 },
+          video,
+          { scale: 1.0, opacity: 1, yPercent: 0, filter: 'blur(0px) brightness(0.9) contrast(115%)' },
+          { scale: 1.22, opacity: 0.3, yPercent: 8, filter: 'blur(3px) brightness(0.7) contrast(120%)', ease: 'none', duration: 1.0 },
           0
         )
         .fromTo(
           textContainer,
           { y: 0, opacity: 1 },
-          { y: -100, opacity: 0, ease: 'power1.in', duration: 0.8 },
+          { y: -120, opacity: 0, ease: 'power1.in', duration: 0.8 },
           0
         )
         .fromTo(
@@ -103,31 +115,37 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
       ref={sectionRef}
       className="relative h-screen w-full overflow-hidden bg-[#070605] flex items-center justify-center"
     >
-      {/* Background Ultra-Sharp Dark Roasted Beans */}
+      {/* Background Full-Screen Real Macro Coffee Brewing Video */}
       <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden bg-[#070605]">
-        <img
-          ref={imageRef}
-          src="/assets/hero-sharp-obsidian.jpg"
-          alt="Razor-sharp 4K macro roasted dark coffee beans with crystalline focus"
-          className="h-full w-full object-cover object-center will-change-transform opacity-100 filter brightness-90 contrast-110"
-          loading="eager"
+        <video
+          ref={videoRef}
+          src="/assets/videos/coffee-hero.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="h-full w-full object-cover object-center will-change-transform opacity-100 filter brightness-90 contrast-115"
         />
-        {/* Cinematic Vignettes */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#070605] via-transparent to-[#070605]/60 pointer-events-none" />
-        <div className="absolute inset-0 bg-radial-vignette opacity-60 pointer-events-none" />
+        {/* Cinematic Overlays: Vignette, Black Gradients, Subtle Amber Tint */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#070605] via-transparent to-[#070605]/65 pointer-events-none" />
+        <div className="absolute inset-0 bg-radial-vignette opacity-70 pointer-events-none" />
+        <div className="absolute inset-0 bg-[#070605]/30 pointer-events-none" />
       </div>
 
-      {/* Circular Organic Aperture Mask Reveal */}
+      {/* Circular Organic Aperture Transition Video / Next Chapter Reveal */}
       <div
         ref={circularMaskRef}
         className="absolute inset-0 z-10 pointer-events-none overflow-hidden will-change-transform opacity-0"
         style={{ clipPath: 'circle(0% at 50% 50%)' }}
       >
-        <img
-          src="/assets/hero-aperture-reveal.jpg"
-          alt="High-altitude green and roasted coffee terroir harvest"
+        <video
+          ref={transitionVideoRef}
+          src="/assets/videos/coffee-bloom-transition.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
           className="h-full w-full object-cover object-center filter brightness-85 contrast-110"
-          loading="eager"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#070605] via-[#070605]/40 to-[#070605]" />
       </div>
@@ -135,7 +153,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
       {/* Floating Heritage Badge - Top Right */}
       <div
         ref={badgeRef}
-        className="absolute top-20 sm:top-24 right-6 sm:right-10 z-20 hidden lg:flex items-center gap-2 rounded-full border border-[#c89658]/30 bg-[#070605]/75 px-3.5 py-1.5 backdrop-blur-md shadow-lg"
+        className="absolute top-20 sm:top-24 right-6 sm:right-10 z-20 hidden lg:flex items-center gap-2 rounded-full border border-[#c89658]/35 bg-[#070605]/80 px-3.5 py-1.5 backdrop-blur-md shadow-lg"
       >
         <Compass className="h-3.5 w-3.5 text-[#c89658] animate-spin-slow" />
         <span className="text-[9px] sm:text-[10px] tracking-[0.22em] text-[#e5b877] font-sans uppercase">
@@ -161,7 +179,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
           <span className="h-[1px] w-6 bg-[#c89658]/70" />
         </div>
 
-        {/* Monumental Editorial Headline (Fluidly scaled to fit all screens) */}
+        {/* Monumental Editorial Headline */}
         <div className="flex flex-col leading-[0.95] tracking-[-0.02em] text-[#f4eee6]">
           <h1
             ref={titleLine1Ref}
