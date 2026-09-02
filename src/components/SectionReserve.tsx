@@ -74,12 +74,12 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
     },
     {
       id: 'batch-02',
-      name: 'Malabar Monsooned AA Cask',
+      name: 'Malabar Monsooned Cask',
       vintage: 'Coastal Wind Series',
       origin: 'India / Malabar Coast',
       region: 'Wayanad & Arabian Sea Shore',
       altitude: '1,400m ASL',
-      varietal: 'Monsooned Arabica AA Super-Bold',
+      varietal: 'Monsooned Arabica Super-Bold',
       process: '16-Week Sea Wind Monsooning',
       notes: ['Dark Chocolate', 'Charred Oak', 'Earthy Molasses', 'Cardamom'],
       allocationLeft: 8,
@@ -91,7 +91,7 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
       description: 'Sun-cured beans naturally conditioned by moisture-laden Arabian Sea winds for 16 weeks, swelling to super-bold size with low acidity and dense chocolate crema.',
       bullets: [
         '16-week natural Arabian Sea monsoon cured',
-        'Super-bold zero-defect AA bean selection',
+        'Super-bold zero-defect bean selection',
         'Molasses, dark chocolate & toasted malt',
         'Hand-numbered 12kg micro-batch tins',
       ],

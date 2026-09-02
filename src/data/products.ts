@@ -24,7 +24,7 @@ export const NOIR_PRODUCTS: Product[] = [
   {
     id: 'prod-02',
     num: '02',
-    name: 'MALABAR MONSOONED AA',
+    name: 'MALABAR MONSOONED',
     origin: 'India / Malabar Coast',
     region: 'Wayanad & Mangalore Shorelines',
     altitude: '1,200m — 1,500m ASL',

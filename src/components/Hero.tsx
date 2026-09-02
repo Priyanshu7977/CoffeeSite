@@ -213,7 +213,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
           <span>•</span>
           <span>Chikmagalur 1,900M</span>
           <span>•</span>
-          <span>Malabar Monsooned AA</span>
+          <span>Malabar Monsooned</span>
         </div>
       </div>
 

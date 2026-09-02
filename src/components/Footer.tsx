@@ -39,7 +39,7 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
       role: 'Head Sommelier & Beverage Director',
       location: 'Colaba, Mumbai',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-      lot: 'MALABAR MONSOONED AA',
+      lot: 'MALABAR MONSOONED',
       rating: 5,
       date: '3 Days Ago',
       quote: 'The golden crema on the Malabar Monsooned 9-bar extraction is like liquid silk. Notes of jaggery molasses and roasted oak without a single trace of bitterness. My private cellar members are captivated.',
@@ -114,7 +114,7 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
 
   const archiveEditions = [
     { label: 'Baba Budan Obsidian Gesha', target: '#section-reserve' },
-    { label: 'Malabar Monsooned AA', target: '#section-reserve' },
+    { label: 'Malabar Monsooned', target: '#section-reserve' },
     { label: 'Araku Valley Tribal Honey', target: '#section-reserve' },
     { label: 'Coorg Rainforest Peaberry', target: '#section-reserve' },
   ];
