@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Sparkles, Shield, ArrowRight, RotateCw, CheckCircle2, Award } from 'lucide-react';
+import { ArrowRight, Star, Shield } from 'lucide-react';
 import { gsap } from '../utils/animations';
 import type { ReserveBatch } from '../types';
 
@@ -9,12 +9,12 @@ interface SectionReserveProps {
 
 export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch }) => {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const cardContainerRef = useRef<HTMLDivElement | null>(null);
+  const cardGridRef = useRef<HTMLDivElement | null>(null);
 
-  // State to track individual card flip (3D rotateY 180deg)
+  // Allow manual toggle click for mobile/touch devices
   const [flippedCards, setFlippedCards] = useState<{ [id: string]: boolean }>({});
 
-  const toggleFlip = (id: string, e?: React.MouseEvent) => {
+  const toggleCard = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     setFlippedCards((prev) => ({
       ...prev,
@@ -22,14 +22,16 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
     }));
   };
 
-  const batches: (ReserveBatch & {
-    certNo: string;
-    scores: { label: string; score: string; percent: number }[];
-    harvestDetails: { label: string; val: string }[];
+  const reserveCards: (ReserveBatch & {
+    bullets: string[];
+    rating: string;
+    ratingCount: string;
+    shortDesc: string;
+    iconSvg: React.ReactNode;
   })[] = [
     {
       id: 'batch-01',
-      name: 'OBSIDIAN GEISHA 2,400M',
+      name: 'Obsidian Geisha 2,400M',
       vintage: '2026 Reserve Allocation',
       origin: 'Ethiopia / Gesha Village',
       region: 'Bench Maji Block 04',
@@ -42,24 +44,51 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
       roastLevel: 'Omniroast Filter & Espresso',
       price: '$48.00',
       badge: 'Strictly Limited / 14 Left',
+      shortDesc: 'Grown on volcanic crests with 96h anaerobic natural fermentation.',
       description: 'Grown on the highest volcanic crests of Bench Maji. Fermented in sealed stainless tanks under controlled temperature before slow raised-bed drying for 32 days.',
-      certNo: 'NOIR-2026-ETH-085',
-      scores: [
-        { label: 'Floral Aroma & Jasmine', score: '9.8', percent: 98 },
-        { label: 'Crystalline Acidity', score: '9.7', percent: 97 },
-        { label: 'Dark Cacao Viscosity', score: '9.6', percent: 96 },
-        { label: 'Sweet Clean Finish', score: '9.9', percent: 99 },
+      bullets: [
+        'Single-estate wild heirloom 1931 Gesha',
+        '2,400m ASL high-altitude volcanic soil',
+        'Bergamot blossom & 85% cacao finish',
+        'Strictly limited to 85 numbered tins',
       ],
-      harvestDetails: [
-        { label: 'Fermentation', val: '96h Sealed Tank' },
-        { label: 'Moisture Content', val: '10.2%' },
-        { label: 'Drying Time', val: '32 Days Beds' },
-        { label: 'Lot Selection', val: 'Top 4% Harvest' },
-      ],
+      rating: '4.9/5',
+      ratingCount: 'rated by 1,400+ connoisseurs',
+      iconSvg: (
+        <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* 3D Isometric Luxury Package with Origami Wing */}
+          <defs>
+            <linearGradient id="boxGrad1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#e5b877" />
+              <stop offset="50%" stopColor="#a37640" />
+              <stop offset="100%" stopColor="#4a3319" />
+            </linearGradient>
+            <linearGradient id="boxGrad2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#8c827a" />
+              <stop offset="100%" stopColor="#2b231c" />
+            </linearGradient>
+            <linearGradient id="silverShine" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="#b3aba2" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#3d352e" stopOpacity="0.8" />
+            </linearGradient>
+          </defs>
+          {/* Box Bottom & Sides */}
+          <path d="M60 100 L25 80 L25 50 L60 70 Z" fill="url(#boxGrad2)" stroke="#5c4a3b" strokeWidth="1.5" />
+          <path d="M60 100 L95 80 L95 50 L60 70 Z" fill="#1c1612" stroke="#5c4a3b" strokeWidth="1.5" />
+          {/* Flaps open */}
+          <path d="M25 50 L10 40 L45 30 L60 40 Z" fill="url(#silverShine)" stroke="#8c827a" strokeWidth="1.5" />
+          <path d="M95 50 L110 40 L75 30 L60 40 Z" fill="url(#silverShine)" stroke="#8c827a" strokeWidth="1.5" />
+          {/* Origami Aeroplane / Golden Wing Taking Flight */}
+          <path d="M35 55 L85 25 L65 70 Z" fill="url(#boxGrad1)" filter="drop-shadow(0 8px 12px rgba(0,0,0,0.6))" />
+          <path d="M65 70 L85 25 L55 45 Z" fill="#ffd28d" opacity="0.9" />
+          <path d="M35 55 L65 70 L55 45 Z" fill="#8c5825" />
+        </svg>
+      ),
     },
     {
       id: 'batch-02',
-      name: 'CASK BOURBON RESERVE',
+      name: 'Cask Bourbon Reserve',
       vintage: 'Atelier Limited Series',
       origin: 'Guatemala / Antigua Valley',
       region: 'Volcán de Fuego Slopes',
@@ -72,24 +101,45 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
       roastLevel: 'Medium-Dark Velvet',
       price: '$54.00',
       badge: 'Master Cask Release',
+      shortDesc: 'Raw green beans rested in charred oak Kentucky bourbon barrels.',
       description: 'Raw green beans rested in freshly dumped 12-year Kentucky Bourbon barrels for 90 days, absorbing deep whiskey esters before precision drum roasting.',
-      certNo: 'NOIR-2026-GTM-060',
-      scores: [
-        { label: 'Bourbon Wood Esters', score: '9.9', percent: 99 },
-        { label: 'Molasses Sweetness', score: '9.7', percent: 97 },
-        { label: 'Full Velvet Body', score: '9.8', percent: 98 },
-        { label: 'Charred Oak Finish', score: '9.6', percent: 96 },
+      bullets: [
+        '90-day charred American white oak aged',
+        'Infused with 12-year bourbon esters',
+        'Molasses, roasted pecan & sweet smoke',
+        'Hand-numbered 12kg micro-cask tins',
       ],
-      harvestDetails: [
-        { label: 'Cask Ageing', val: '90 Days Oak' },
-        { label: 'Barrel Vintage', val: '12-Yr Bourbon' },
-        { label: 'Drum Flame', val: 'Slow Convection' },
-        { label: 'Tin Allocation', val: 'No. 08 of 60' },
-      ],
+      rating: '4.9/5',
+      ratingCount: 'rated by 980+ connoisseurs',
+      iconSvg: (
+        <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="tagGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#cfc8be" />
+              <stop offset="50%" stopColor="#786e64" />
+              <stop offset="100%" stopColor="#2e2721" />
+            </linearGradient>
+            <linearGradient id="goldCoin" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#ffe6a3" />
+              <stop offset="60%" stopColor="#c89658" />
+              <stop offset="100%" stopColor="#69451d" />
+            </linearGradient>
+          </defs>
+          {/* Main 3D Angled Price Tag */}
+          <path d="M40 25 L80 25 L100 65 L60 105 L20 65 Z" fill="url(#tagGrad)" stroke="#8c827a" strokeWidth="2" filter="drop-shadow(0 10px 15px rgba(0,0,0,0.7))" />
+          <circle cx="60" cy="40" r="7" fill="#070605" stroke="#a3988d" strokeWidth="2" />
+          {/* Percentage / Seal Symbol on Tag */}
+          <text x="60" y="80" textAnchor="middle" fill="#f4eee6" fontSize="26" fontWeight="bold" fontFamily="sans-serif">%</text>
+          {/* 3D Floating Golden Coins */}
+          <ellipse cx="25" cy="85" rx="14" ry="10" fill="url(#goldCoin)" stroke="#ffd28d" strokeWidth="1.5" />
+          <ellipse cx="90" cy="35" rx="12" ry="8" fill="url(#goldCoin)" stroke="#ffd28d" strokeWidth="1.5" />
+          <ellipse cx="102" cy="50" rx="9" ry="6" fill="url(#goldCoin)" stroke="#ffd28d" strokeWidth="1.2" />
+        </svg>
+      ),
     },
     {
       id: 'batch-03',
-      name: 'MIDNIGHT VOLCANO',
+      name: 'Custom Product Boxes',
       vintage: 'Single Estate Crop',
       origin: 'Sumatra / Mount Kerinci',
       region: 'Kerinci Highlands',
@@ -102,56 +152,128 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
       roastLevel: 'Heavy Espresso Roast',
       price: '$42.00',
       badge: 'Intense Body Edition',
+      shortDesc: 'Dense volcanic cherries crafted with custom micro-lot pairing.',
       description: 'Dense shade-grown volcanic cherries processed via traditional wet-hulling with triple hand-sorting to eliminate every minor defect.',
-      certNo: 'NOIR-2026-SUM-100',
-      scores: [
-        { label: 'Earth & Cedar Intensity', score: '9.7', percent: 97 },
-        { label: 'Smoked Truffle Body', score: '9.9', percent: 99 },
-        { label: 'Low Wine Acidity', score: '9.4', percent: 94 },
-        { label: 'Lingering Dark Finish', score: '9.8', percent: 98 },
+      bullets: [
+        'Bespoke roast profiling to order',
+        'Wet-hulled Giling Basah heritage method',
+        'Smoked fig, cedar resin & dark truffle',
+        '100% zero-defect sorted beans',
       ],
-      harvestDetails: [
-        { label: 'Hulling Method', val: 'Wet-Hulled Basah' },
-        { label: 'Sorting Standard', val: 'Triple Hand-Pick' },
-        { label: 'Defect Rate', val: '0.0% Grade 1' },
-        { label: 'Roast Drop Temp', val: '221°C Dark' },
+      rating: '5.0/5',
+      ratingCount: 'rated by 2,200+ stores',
+      iconSvg: (
+        <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="storeGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#b3aba2" />
+              <stop offset="100%" stopColor="#2e2721" />
+            </linearGradient>
+            <linearGradient id="awningGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#e5b877" />
+              <stop offset="100%" stopColor="#734f24" />
+            </linearGradient>
+          </defs>
+          {/* Main Atelier / Shop Front Window */}
+          <rect x="25" y="35" width="70" height="65" rx="10" fill="url(#storeGrad)" stroke="#665c52" strokeWidth="2" filter="drop-shadow(0 10px 16px rgba(0,0,0,0.8))" />
+          {/* Awning stripes */}
+          <path d="M20 38 Q60 22 100 38 L95 55 Q60 40 25 55 Z" fill="url(#awningGrad)" stroke="#2b231c" strokeWidth="1.5" />
+          {/* Atelier Display Door / Coffee Machine Window */}
+          <rect x="42" y="60" width="36" height="40" rx="5" fill="#070605" stroke="#8c827a" strokeWidth="1.5" />
+          {/* Slider Equalizer Knobs on side */}
+          <rect x="75" y="48" width="38" height="32" rx="7" fill="#1f1a16" stroke="#c89658" strokeWidth="1.5" />
+          <line x1="82" y1="56" x2="106" y2="56" stroke="#665c52" strokeWidth="2" />
+          <circle cx="89" cy="56" r="3.5" fill="#e5b877" />
+          <line x1="82" y1="70" x2="106" y2="70" stroke="#665c52" strokeWidth="2" />
+          <circle cx="99" cy="70" r="3.5" fill="#e5b877" />
+        </svg>
+      ),
+    },
+    {
+      id: 'batch-04',
+      name: 'Sales Booster Pack',
+      vintage: 'Kyoto Special Edition',
+      origin: 'Japan & Colombia Terroir',
+      region: 'Kyoto Atelier Blend No. 4',
+      altitude: '2,100m ASL',
+      varietal: 'Pink Bourbon & Gesha',
+      process: 'Slow Drum Convection',
+      notes: ['Honey Plum', 'Toasted Hazelnut', 'Golden Honey', 'Champagne'],
+      allocationLeft: 11,
+      totalAllocations: 75,
+      roastLevel: 'Medium Roast Filter',
+      price: '$46.00',
+      badge: 'Kyoto Atelier Special',
+      shortDesc: 'Curated limited batch pack designed for maximum sensory finish.',
+      description: 'Slow-roasted in our Kyoto convection roaster with precise airflow curve profiling for sweet acidity and lingering honey finish.',
+      bullets: [
+        'Dual-origin Gesha & Pink Bourbon fusion',
+        'Optimized for pour-over & cold drip',
+        'Bright champagne acidity & plum honey',
+        'Includes batch calibration booklet',
       ],
+      rating: '4.9/5',
+      ratingCount: 'rated by 3,100+ stores',
+      iconSvg: (
+        <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#e5b877" />
+              <stop offset="50%" stopColor="#9e733d" />
+              <stop offset="100%" stopColor="#3d2b16" />
+            </linearGradient>
+            <linearGradient id="arrowGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="50%" stopColor="#d6cec5" />
+              <stop offset="100%" stopColor="#8c827a" />
+            </linearGradient>
+          </defs>
+          {/* 3D Ascending Growth Bars */}
+          <rect x="22" y="72" width="16" height="32" rx="4" fill="url(#barGrad)" stroke="#c89658" strokeWidth="1.5" />
+          <rect x="44" y="54" width="16" height="50" rx="4" fill="url(#barGrad)" stroke="#c89658" strokeWidth="1.5" />
+          <rect x="66" y="38" width="16" height="66" rx="4" fill="url(#barGrad)" stroke="#c89658" strokeWidth="1.5" />
+          <rect x="88" y="24" width="16" height="80" rx="4" fill="url(#barGrad)" stroke="#c89658" strokeWidth="1.5" />
+          {/* 3D Ascending Growth Arrow */}
+          <path d="M15 65 L45 42 L70 50 L102 14" stroke="url(#arrowGrad)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" filter="drop-shadow(0 6px 12px rgba(0,0,0,0.8))" />
+          <path d="M84 14 L104 14 L104 34" stroke="url(#arrowGrad)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
     },
   ];
 
   useEffect(() => {
     const section = sectionRef.current;
-    const cardContainer = cardContainerRef.current;
+    const cardGrid = cardGridRef.current;
 
-    if (!section || !cardContainer) return;
+    if (!section || !cardGrid) return;
 
-    const cards = cardContainer.querySelectorAll('.flip-card-inner');
+    const cards = cardGrid.querySelectorAll('.flip-card-wrapper');
 
     const ctx = gsap.context(() => {
-      // 3D Perspective Flip on Scroll Sequence
+      // Scroll-Driven 3D Flip Cascade
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: 'top 70%',
-          end: 'bottom 30%',
-          scrub: 0.8,
+          start: 'top 75%',
+          end: 'bottom 20%',
+          scrub: 0.6,
           invalidateOnRefresh: true,
         },
       });
 
-      // 3D Staggered Roll & Flip Entrance
+      // Smooth 3D entrance and settling
       tl.fromTo(
         cards,
         {
-          transform: 'perspective(1200px) rotateY(-75deg) rotateX(15deg) translateZ(-80px)',
+          transform: 'perspective(1400px) rotateY(-80deg) scale(0.9)',
           opacity: 0,
-          scale: 0.88,
+          y: 40,
         },
         {
-          transform: 'perspective(1200px) rotateY(0deg) rotateX(0deg) translateZ(0px)',
+          transform: 'perspective(1400px) rotateY(0deg) scale(1)',
           opacity: 1,
-          scale: 1,
-          stagger: 0.15,
+          y: 0,
+          stagger: 0.12,
           ease: 'power3.out',
         }
       );
@@ -166,232 +288,121 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
     <section
       id="section-reserve"
       ref={sectionRef}
-      className="relative min-h-screen w-full bg-[#070605] py-16 md:py-24 px-6 md:px-12 flex items-center justify-center overflow-hidden border-t border-[#221c17]"
+      aria-label="Section 07: The Reserve Vault Card Showcase"
+      className="relative min-h-screen w-full bg-[#070605] py-20 md:py-32 px-6 md:px-12 flex items-center justify-center overflow-hidden border-t border-[#221c17]"
     >
       <div className="mx-auto max-w-7xl w-full">
         {/* Section Header */}
-        <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#221c17] pb-6">
+        <div className="mb-14 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#221c17] pb-8">
           <div>
-            <div className="flex items-center gap-3 text-xs tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase mb-2">
+            <div className="flex items-center gap-3 text-xs tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase mb-3">
               <span className="font-mono text-[#c89658]">07</span>
               <span className="h-[1px] w-8 bg-[#c89658]/60" />
-              <span>THE VAULT / PRIVATE ALLOCATIONS</span>
+              <span>THE VAULT / PRIVATE EDITIONS</span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-[#f4eee6] font-light tracking-tight max-w-2xl">
+            <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-[#f4eee6] font-light tracking-tight max-w-2xl">
               The Reserve Vault. <br />
-              <span className="italic text-[#e5b877]">Numbered Micro-Batches.</span>
+              <span className="italic text-[#e5b877]">Interactive Allocation Cards.</span>
             </h2>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 font-sans text-xs tracking-[0.2em] text-[#8c827a] uppercase">
-              <Shield className="h-4 w-4 text-[#c89658]" />
-              <span>12kg Numbered Tins</span>
-            </div>
-            <span className="text-[#3a3026]">•</span>
-            <span className="text-[11px] font-sans tracking-[0.2em] uppercase text-[#c89658] flex items-center gap-1.5">
-              <RotateCw className="h-3 w-3 animate-spin-slow" />
-              Scroll / Click to Flip Cards
-            </span>
+          <div className="flex items-center gap-3 font-sans text-xs tracking-[0.2em] text-[#8c827a] uppercase">
+            <Shield className="h-4 w-4 text-[#c89658]" />
+            <span>Hover or Click Any Card to Flip in 3D</span>
           </div>
         </div>
 
-        {/* 3 Interactive 3D Flipping Cards Grid */}
+        {/* 4 3D Flipping Cards in Grid matching reference */}
         <div
-          ref={cardContainerRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 perspective-1500"
+          ref={cardGridRef}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 perspective-1500"
         >
-          {batches.map((batch) => {
-            const isFlipped = !!flippedCards[batch.id];
-            const allocationPercent = Math.round(
-              ((batch.totalAllocations - batch.allocationLeft) / batch.totalAllocations) * 100
-            );
+          {reserveCards.map((card) => {
+            const isFlipped = !!flippedCards[card.id];
 
             return (
               <div
-                key={batch.id}
-                className="relative h-[530px] w-full perspective-1200 select-none group"
-                onClick={() => toggleFlip(batch.id)}
+                key={card.id}
+                className="flip-card-wrapper relative h-[460px] w-full perspective-1200 cursor-pointer group"
+                onClick={() => toggleCard(card.id)}
               >
-                {/* 3D Flipping Inner Wrapper */}
+                {/* 3D Flipping Inner Element */}
                 <div
-                  className="flip-card-inner relative h-full w-full preserve-3d transition-transform duration-700 ease-out cursor-pointer"
-                  style={{
-                    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                  }}
+                  className={`flip-card-inner relative h-full w-full preserve-3d transition-transform duration-700 ease-[cubic-bezier(0.4,0.2,0.2,1)] rounded-3xl ${
+                    isFlipped ? '[transform:rotateY(180deg)]' : 'group-hover:[transform:rotateY(180deg)]'
+                  }`}
                 >
-                  {/* ================= FRONT FACE: Allocation Details ================= */}
-                  <div className="absolute inset-0 backface-hidden rounded-2xl bg-[#0f0c09]/95 border border-[#c89658]/30 p-6 backdrop-blur-xl shadow-2xl flex flex-col justify-between transition-all duration-300 group-hover:border-[#c89658] group-hover:shadow-[0_15px_40px_rgba(200,150,88,0.2)]">
-                    <div>
-                      {/* Top Badge, Price & Flip Button */}
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#c89658]/15 px-3 py-0.5 text-[9px] font-sans tracking-[0.2em] text-[#e5b877] uppercase border border-[#c89658]/30">
-                          <Sparkles className="h-3 w-3 text-[#c89658]" />
-                          {batch.badge}
-                        </span>
-
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-base font-bold text-[#f4eee6]">
-                            {batch.price}
-                          </span>
-                          <button
-                            onClick={(e) => toggleFlip(batch.id, e)}
-                            className="p-1.5 rounded-lg bg-[#1a140f] border border-[#382d24] text-[#c89658] hover:text-[#f4eee6] hover:border-[#c89658] transition-colors"
-                            title="Flip to Certificate"
-                            aria-label="Flip to Certificate"
-                          >
-                            <RotateCw className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Batch Title */}
-                      <h3 className="font-serif text-xl sm:text-2xl text-[#f4eee6] font-normal tracking-wide mb-1.5 group-hover:text-[#e5b877] transition-colors">
-                        {batch.name}
-                      </h3>
-
-                      <span className="text-[10px] font-sans tracking-[0.25em] text-[#c89658] uppercase block mb-3">
-                        {batch.origin} • {batch.altitude}
-                      </span>
-
-                      <p className="font-sans text-xs text-[#b0a59b] font-light leading-relaxed mb-4">
-                        {batch.description}
-                      </p>
-
-                      {/* Flavor Chips */}
-                      <div className="flex flex-wrap gap-1 mb-4">
-                        {batch.notes.map((note) => (
-                          <span
-                            key={note}
-                            className="rounded-lg bg-[#18130f] px-2 py-0.5 text-[10px] font-sans text-[#cfc5ba] border border-[#2b221a]"
-                          >
-                            {note}
-                          </span>
-                        ))}
-                      </div>
+                  {/* ==================== FRONT FACE (Exact match to Reference Image 1) ==================== */}
+                  <div className="absolute inset-0 backface-hidden rounded-3xl bg-[#13110f] border border-[#2e2620] p-8 flex flex-col justify-between items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-all duration-300 group-hover:border-[#c89658]/60 group-hover:shadow-[0_20px_50px_rgba(200,150,88,0.15)]">
+                    {/* Top Ambient Glow Pill */}
+                    <div className="w-full flex justify-end">
+                      <span className="h-2 w-2 rounded-full bg-[#c89658]/40 group-hover:bg-[#c89658] group-hover:shadow-[0_0_8px_#c89658] transition-all" />
                     </div>
 
-                    {/* Bottom Allocation Bar & Action Button */}
-                    <div className="pt-3 border-t border-[#221c17] space-y-3">
-                      {/* Allocation Counter Bar */}
-                      <div>
-                        <div className="flex justify-between text-[10px] font-sans uppercase tracking-[0.15em] text-[#8c827a] mb-1">
-                          <span>Allocation Reserved</span>
-                          <span className="font-mono text-[#e5b877]">{allocationPercent}% Claimed</span>
-                        </div>
-                        <div className="h-1.5 w-full bg-[#1c1612] rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-[#c89658] to-[#e5b877] rounded-full"
-                            style={{ width: `${allocationPercent}%` }}
-                          />
-                        </div>
-                      </div>
+                    {/* Centered 3D Metallic Coffee / Batch Icon */}
+                    <div className="my-auto flex flex-col items-center justify-center transform transition-transform duration-500 group-hover:scale-105">
+                      {card.iconSvg}
+                    </div>
 
-                      {/* Request Allocation CTA + Flip Hint */}
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onSelectBatch(batch);
-                          }}
-                          className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-[#c89658] bg-[#c89658] py-2.5 text-xs font-sans font-bold tracking-[0.2em] text-[#070605] uppercase transition-all duration-300 hover:bg-[#e5b877] hover:shadow-[0_0_20px_rgba(200,150,88,0.4)] cursor-pointer"
-                        >
-                          <span>Request Allocation</span>
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          onClick={(e) => toggleFlip(batch.id, e)}
-                          className="px-3 py-2.5 rounded-xl border border-[#2e241c] bg-[#14100c] text-[10px] font-sans tracking-[0.15em] text-[#8c827a] uppercase hover:text-[#e5b877] hover:border-[#c89658]/40 transition-colors shrink-0"
-                        >
-                          Certificate ↻
-                        </button>
-                      </div>
+                    {/* Clean Bold Title at Bottom */}
+                    <div className="w-full pt-4">
+                      <h3 className="font-sans text-lg sm:text-xl font-bold text-[#f4eee6] tracking-tight leading-snug">
+                        {card.name}
+                      </h3>
                     </div>
                   </div>
 
-                  {/* ================= BACK FACE: Vault Certificate & Sommelier Cupping ================= */}
+                  {/* ==================== BACK FACE (Exact match to Reference Image 2) ==================== */}
                   <div
-                    className="absolute inset-0 backface-hidden rounded-2xl bg-[#0c0907] border border-[#e5b877]/40 p-6 backdrop-blur-2xl shadow-2xl flex flex-col justify-between"
+                    className="absolute inset-0 backface-hidden rounded-3xl bg-[#14110f] border border-[#3d3128] p-7 flex flex-col justify-between text-left shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
                     style={{ transform: 'rotateY(180deg)' }}
                   >
                     <div>
-                      {/* Certificate Header */}
-                      <div className="flex items-center justify-between border-b border-[#261f18] pb-3 mb-3">
-                        <div className="flex items-center gap-2">
-                          <Award className="h-4 w-4 text-[#e5b877]" />
-                          <span className="font-mono text-[10px] tracking-[0.25em] text-[#e5b877] uppercase font-bold">
-                            VAULT CERTIFICATE
-                          </span>
-                        </div>
-                        <span className="font-mono text-[10px] text-[#8c827a]">
-                          {batch.certNo}
-                        </span>
-                      </div>
+                      {/* Title at top */}
+                      <h3 className="font-sans text-lg sm:text-xl font-bold text-[#f4eee6] tracking-tight mb-1.5">
+                        {card.name}
+                      </h3>
 
-                      {/* Micro-Lot Terroir Specs Matrix */}
-                      <div className="grid grid-cols-2 gap-2 mb-3 bg-[#140f0c] p-2.5 rounded-xl border border-[#2b2118]">
-                        {batch.harvestDetails.map((hd) => (
-                          <div key={hd.label}>
-                            <span className="text-[8px] font-sans tracking-[0.18em] text-[#8c827a] uppercase block">
-                              {hd.label}
-                            </span>
-                            <span className="font-mono text-[11px] font-bold text-[#f4eee6]">
-                              {hd.val}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
+                      {/* Brief description */}
+                      <p className="font-sans text-xs text-[#a89d93] leading-relaxed mb-4">
+                        {card.shortDesc}
+                      </p>
 
-                      {/* 4 Sommelier Cupping Radar Bars */}
-                      <div className="space-y-2 mb-3">
-                        <span className="text-[9px] font-sans tracking-[0.2em] text-[#c89658] uppercase block">
-                          Sommelier Cupping Telemetry
-                        </span>
-                        {batch.scores.map((sc) => (
-                          <div key={sc.label}>
-                            <div className="flex justify-between text-[9px] font-sans text-[#a89d93] mb-0.5">
-                              <span>{sc.label}</span>
-                              <span className="font-mono font-bold text-[#e5b877]">{sc.score} / 10</span>
-                            </div>
-                            <div className="h-1 w-full bg-[#1c1510] rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-gradient-to-r from-[#c89658] to-[#e5b877] rounded-full"
-                                style={{ width: `${sc.percent}%` }}
-                              />
-                            </div>
-                          </div>
+                      {/* Bulleted Points with clean dots */}
+                      <ul className="space-y-2.5 mb-4">
+                        {card.bullets.map((bullet, idx) => (
+                          <li key={idx} className="flex items-start gap-2.5 text-xs font-sans text-[#cfc6bc] leading-tight">
+                            <span className="text-[#c89658] text-sm leading-none mt-0.5">•</span>
+                            <span>{bullet}</span>
+                          </li>
                         ))}
-                      </div>
+                      </ul>
                     </div>
 
-                    {/* Master Roaster Signature & Action */}
-                    <div className="pt-3 border-t border-[#261f18] space-y-3">
-                      <div className="flex items-center justify-between text-[9px] font-sans text-[#8c827a]">
-                        <span className="flex items-center gap-1 text-[#e5b877]">
-                          <CheckCircle2 className="h-3 w-3" />
-                          Authenticated Kyoto Atelier
+                    {/* Bottom Row: Rating on Left, Pill Button on Right */}
+                    <div className="pt-4 border-t border-[#261f18] flex items-end justify-between gap-2">
+                      {/* Left: Gold Star Rating */}
+                      <div>
+                        <div className="flex items-center gap-1.5 text-sm font-sans font-bold text-[#f4eee6]">
+                          <Star className="h-4 w-4 fill-[#f59e0b] text-[#f59e0b]" />
+                          <span>{card.rating}</span>
+                        </div>
+                        <span className="text-[10px] font-sans text-[#786e64] block leading-tight mt-0.5">
+                          {card.ratingCount}
                         </span>
-                        <span className="font-mono text-[#a89d93]">Roast Master #04</span>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onSelectBatch(batch);
-                          }}
-                          className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-[#c89658] bg-[#c89658] py-2.5 text-xs font-sans font-bold tracking-[0.2em] text-[#070605] uppercase transition-all duration-300 hover:bg-[#e5b877] hover:shadow-[0_0_20px_rgba(200,150,88,0.4)] cursor-pointer"
-                        >
-                          <span>Claim Allocation</span>
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          onClick={(e) => toggleFlip(batch.id, e)}
-                          className="px-3 py-2.5 rounded-xl border border-[#2e241c] bg-[#14100c] text-[10px] font-sans tracking-[0.15em] text-[#e5b877] uppercase hover:border-[#c89658] transition-colors shrink-0"
-                        >
-                          Overview ↻
-                        </button>
-                      </div>
+                      {/* Right: Rounded Pill Button */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelectBatch(card);
+                        }}
+                        className="flex items-center gap-1.5 rounded-full bg-[#f4eee6] hover:bg-[#e5b877] text-[#070605] px-4 py-2 text-xs font-sans font-bold tracking-tight transition-all duration-300 shadow-md hover:shadow-[0_0_15px_rgba(229,184,119,0.5)] cursor-pointer shrink-0"
+                      >
+                        <span>Buy Plugin</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </button>
                     </div>
                   </div>
                 </div>
