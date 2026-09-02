@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUp, Compass, Sparkles, Shield, Award, CheckCircle2 } from 'lucide-react';
+import { ArrowUp, Compass, Sparkles, Shield, Award, CheckCircle2, Coffee, Flame, Mail, Droplets } from 'lucide-react';
 import { MagneticButton } from './MagneticButton';
 
 interface FooterProps {
@@ -64,14 +64,19 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
     { label: 'French Press Emulsion', target: '#section-brew-ritual' },
   ];
 
-  const navLinks = [
-    { label: 'ORIGINS', target: '#section-bean' },
-    { label: 'ROASTS', target: '#section-roast' },
-    { label: 'POUR', target: '#section-pour' },
-    { label: 'COLLECTION', target: '#section-collection' },
-    { label: 'RITUAL', target: '#section-brew-ritual' },
-    { label: 'VAULT', target: '#section-reserve' },
-    { label: 'MANIFESTO', target: '#section-manifesto' },
+  const sensoryNotes = [
+    { name: 'Jasmine Blossom', note: 'Ethiopia Gesha' },
+    { name: 'Smoked Bergamot', note: 'Acoustic Crack' },
+    { name: 'Obsidian Cacao', note: 'Volcanic Ash' },
+    { name: 'Charred Bourbon Cask', note: 'Oak Aged' },
+    { name: 'Wild Honeycomb', note: 'Anaerobic Slow' },
+  ];
+
+  const atelierCertifications = [
+    { icon: <Flame className="h-3.5 w-3.5 text-[#c89658]" />, title: '100% Cast-Iron Convection', desc: 'Acoustic roasting' },
+    { icon: <Droplets className="h-3.5 w-3.5 text-[#e5b877]" />, title: 'Micro-Terroir Lot 2,400M', desc: 'Single volcanic ridge' },
+    { icon: <Shield className="h-3.5 w-3.5 text-[#c89658]" />, title: '+350% Direct Ethical Premium', desc: 'Fair trade minimums' },
+    { icon: <Coffee className="h-3.5 w-3.5 text-[#e5b877]" />, title: 'Q-Grader Certified 94+ PTS', desc: 'Laboratory cupped' },
   ];
 
   return (
@@ -106,7 +111,7 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
         </div>
 
         {/* ================= 2. Haute Horlogerie Global Timepieces (4 Dials) ================= */}
-        <div className="mb-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="mb-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {atelierClocks.map((clock) => (
             <div
               key={clock.city}
@@ -135,7 +140,31 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
           ))}
         </div>
 
-        {/* ================= 3. Four-Column Luxury Sitemap & VIP Dispatches ================= */}
+        {/* ================= 3. Sensory Cupping & Terroir Telemetry Strip ================= */}
+        <div className="mb-16 rounded-3xl bg-[#0d0a08]/85 border border-[#2b2118] p-5 backdrop-blur-md shadow-2xl">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 shrink-0">
+              <span className="h-2 w-2 rounded-full bg-[#c89658] animate-ping" />
+              <span className="text-[10px] font-mono font-bold text-[#c89658] tracking-widest uppercase">
+                TASTING NOTES MATRIX
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+              {sensoryNotes.map((item) => (
+                <div
+                  key={item.name}
+                  className="rounded-full bg-[#140f0c] border border-[#33251a] px-3.5 py-1 text-xs text-[#cfc5ba] flex items-center gap-2 transition-all hover:border-[#c89658] hover:text-[#e5b877]"
+                >
+                  <span className="font-serif italic">{item.name}</span>
+                  <span className="text-[9px] font-mono text-[#8c827a] uppercase">• {item.note}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ================= 4. Four-Column Luxury Architecture & VIP Dispatches ================= */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 mb-16 pb-16 border-b border-[#221c17]">
           {/* Col 1: Maison Noir Brand & Origin Seal (4 cols) */}
           <div className="lg:col-span-4 space-y-4">
@@ -246,7 +275,7 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
           </div>
         </div>
 
-        {/* ================= 4. Masterpiece Bottom Bar: Navigation & Seal ================= */}
+        {/* ================= 5. Masterpiece Bottom Bar: Atelier Certifications & Seal ================= */}
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8 pt-4">
           {/* Left: Founder Wax Seal Emblem */}
           <div className="flex items-center gap-3.5">
@@ -263,37 +292,39 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
             </div>
           </div>
 
-          {/* Center: Glowing Navigation Headers */}
-          <div className="flex flex-wrap gap-4 sm:gap-6 justify-center">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.target}
-                onClick={
-                  onNavigate
-                    ? (e) => {
-                        e.preventDefault();
-                        onNavigate(link.target);
-                      }
-                    : undefined
-                }
-                className="group relative font-sans text-xs tracking-[0.25em] uppercase font-bold text-[#e5b877] drop-shadow-[0_0_10px_rgba(200,150,88,0.4)] hover:text-[#f4eee6] hover:drop-shadow-[0_0_20px_rgba(200,150,88,0.9)] transition-all duration-300 cursor-pointer py-1"
+          {/* Center: Atelier Craftsmanship & Sourcing Badges (Replacing repetitive nav) */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-2xl">
+            {atelierCertifications.map((cert) => (
+              <div
+                key={cert.title}
+                className="rounded-2xl bg-[#0e0b08] border border-[#261e16] p-2.5 flex flex-col justify-between hover:border-[#c89658]/50 transition-colors"
               >
-                <span className="relative z-10">{link.label}</span>
-                <span className="absolute bottom-0 left-0 h-[1.5px] w-0 bg-gradient-to-r from-[#c89658] to-[#e5b877] transition-all duration-300 group-hover:w-full shadow-[0_0_8px_#c89658]" />
-              </a>
+                <div className="flex items-center gap-1.5 mb-1">
+                  {cert.icon}
+                  <span className="font-mono text-[10px] font-bold text-[#f4eee6] truncate">{cert.title}</span>
+                </div>
+                <span className="text-[8px] font-sans text-[#8c827a] uppercase tracking-wider">{cert.desc}</span>
+              </div>
             ))}
           </div>
 
-          {/* Right: Magnetic Back To Summit Button */}
+          {/* Right: Sommelier Direct & Magnetic Back To Summit Button */}
           <div className="flex items-center gap-4">
+            <a
+              href="mailto:concierge@noirroast.com"
+              className="hidden sm:inline-flex items-center gap-2 rounded-full bg-[#120e0b] border border-[#c89658]/35 px-4 py-2 text-[10px] font-sans tracking-widest uppercase text-[#e5b877] hover:bg-[#1a140f] hover:border-[#c89658] transition-all"
+            >
+              <Mail className="h-3 w-3 text-[#c89658]" />
+              <span>Sommelier Concierge</span>
+            </a>
+
             <MagneticButton strength={0.4}>
               <button
                 onClick={onBackToTop}
                 aria-label="Back to Top of Page"
-                className="group relative flex h-14 w-14 items-center justify-center rounded-full border border-[#c89658]/40 bg-[#0f0c09] transition-all duration-500 hover:border-[#c89658] hover:shadow-[0_0_25px_rgba(200,150,88,0.5)] cursor-pointer"
+                className="group relative flex h-12 w-12 items-center justify-center rounded-full border border-[#c89658]/40 bg-[#0f0c09] transition-all duration-500 hover:border-[#c89658] hover:shadow-[0_0_25px_rgba(200,150,88,0.5)] cursor-pointer"
               >
-                <ArrowUp className="h-5 w-5 text-[#c89658] transition-transform duration-300 group-hover:-translate-y-1" />
+                <ArrowUp className="h-4 w-4 text-[#c89658] transition-transform duration-300 group-hover:-translate-y-1" />
               </button>
             </MagneticButton>
           </div>
