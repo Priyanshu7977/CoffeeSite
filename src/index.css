@@ -144,8 +144,14 @@
 .animate-marquee-right {
   display: flex;
   width: max-content;
-  animation: marqueeRight 36s linear infinite;
+  animation: marqueeRight 35s linear infinite;
   will-change: transform;
+}
+
+/* Smooth Pause on hover so users can comfortably read reviews */
+.hover-pause:hover .animate-marquee-right,
+.hover-pause:hover .animate-marquee-left {
+  animation-play-state: paused;
 }
 
 /* Reduced Motion Accessibility Overrides */
