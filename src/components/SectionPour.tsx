@@ -171,7 +171,7 @@ export const SectionPour: React.FC = () => {
         {/* Subtle Background Atmospheric Photo Overlay */}
         <div className="absolute inset-0 z-0 opacity-15 overflow-hidden mix-blend-screen">
           <img
-            src="/assets/pour-espresso.jpg"
+            src="https://images.unsplash.com/photo-1509785307050-d4066910ec1e?w=1200&auto=format&fit=crop&q=85"
             alt="ambient extraction"
             className="h-full w-full object-cover object-center filter blur-xl"
           />
@@ -206,7 +206,7 @@ export const SectionPour: React.FC = () => {
             >
               <img
                 ref={imageRef}
-                src="/assets/pour-espresso.jpg"
+                src="https://images.unsplash.com/photo-1509785307050-d4066910ec1e?w=1200&auto=format&fit=crop&q=85"
                 alt="Velvet coffee extraction with golden crema and aroma"
                 className="h-full w-full object-cover object-center will-change-transform"
                 loading="eager"

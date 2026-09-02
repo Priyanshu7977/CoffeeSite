@@ -67,7 +67,8 @@ export const SectionBrewRitual: React.FC = () => {
                   src={m.image}
                   alt={m.name}
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/assets/pour-espresso.jpg';
+                    (e.target as HTMLImageElement).src =
+                      'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=1200&auto=format&fit=crop&q=85';
                   }}
                   className={`absolute inset-0 h-full w-full object-cover object-center filter brightness-90 contrast-110 transition-opacity duration-500 ${
                     m.id === activeMethodId ? 'opacity-100 z-10' : 'opacity-0 z-0'
