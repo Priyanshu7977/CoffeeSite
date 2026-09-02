@@ -62,19 +62,33 @@ export const SectionHorizontalGallery: React.FC = () => {
       const mm = gsap.matchMedia();
 
       mm.add('(min-width: 1024px)', () => {
-        gsap.to(track, {
-          xPercent: xPercentage,
-          ease: 'none',
+        // Pinned timeline with dedicated hold / dwell phase on the final 4th spread
+        const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
             start: 'top top',
-            end: () => `+=${totalSlides * 100}%`,
+            end: () => `+=${(totalSlides + 1.6) * 100}%`,
             pin: true,
-            scrub: 1.0,
+            scrub: 0.8,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
         });
+
+        // 1. Smooth horizontal pan across all spreads (0.0 -> 0.75 progress)
+        tl.to(
+          track,
+          {
+            xPercent: xPercentage,
+            ease: 'none',
+            duration: 0.75,
+          },
+          0
+        );
+
+        // 2. Dedicated Hold / Dwell Window for Spread 04 (0.75 -> 1.0 progress)
+        // Spread 04 stays static, fully visible, and displayed while scrolling before unpinning
+        tl.to({}, { duration: 0.25 }, 0.75);
       });
     }, sectionRef);
 
@@ -105,6 +119,8 @@ export const SectionHorizontalGallery: React.FC = () => {
       >
         {slides.map((slide, idx) => {
           const Icon = slide.icon;
+          const isLast = idx === slides.length - 1;
+
           return (
             <div
               key={slide.id}
@@ -173,7 +189,7 @@ export const SectionHorizontalGallery: React.FC = () => {
                         Continuous Film Pan
                       </span>
                       <span className="flex items-center gap-1.5 font-mono text-[#e5b877]">
-                        <span>Scroll Down to Pan</span>
+                        <span>{isLast ? 'Final Spread (Hold)' : 'Scroll Down to Pan'}</span>
                         <ArrowRight className="h-3 w-3 animate-pulse" />
                       </span>
                     </div>
