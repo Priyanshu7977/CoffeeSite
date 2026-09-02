@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Star, Shield, RotateCw } from 'lucide-react';
 import { gsap } from '../utils/animations';
 import type { ReserveBatch } from '../types';
@@ -11,6 +11,7 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
   const sectionRef = useRef<HTMLElement | null>(null);
   const cardGridRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [mobileActiveIndex, setMobileActiveIndex] = useState<number>(0);
 
   const reserveCards: (ReserveBatch & {
     bullets: string[];
@@ -45,7 +46,7 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
       rating: '4.9/5',
       ratingCount: 'rated by 1,400+ sommeliers',
       iconSvg: (
-        <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 120 120" className="w-20 h-20 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="beanGrad1" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stopColor="#d49b5c" />
@@ -98,7 +99,7 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
       rating: '4.9/5',
       ratingCount: 'rated by 980+ connoisseurs',
       iconSvg: (
-        <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 120 120" className="w-20 h-20 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="barrelGrad" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#3d2a1c" />
@@ -149,7 +150,7 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
       rating: '5.0/5',
       ratingCount: 'rated by 2,200+ connoisseurs',
       iconSvg: (
-        <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 120 120" className="w-20 h-20 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="chromeSteel" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stopColor="#ffffff" />
@@ -200,7 +201,7 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
       rating: '4.9/5',
       ratingCount: 'rated by 1,800+ connoisseurs',
       iconSvg: (
-        <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 120 120" className="w-20 h-20 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="roasterDrum" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stopColor="#7a7065" />
@@ -233,7 +234,7 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
     const isBack = Math.abs(currentRot % 360) >= 90 && Math.abs(currentRot % 360) <= 270;
     gsap.to(cardEl, {
       rotationY: isBack ? 0 : 180,
-      duration: 0.7,
+      duration: 0.6,
       ease: 'power3.out',
     });
   };
@@ -251,29 +252,33 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
         rotationY: 0,
       });
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          end: '+=180%',
-          pin: true,
-          scrub: 0.8,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      });
+      const mm = gsap.matchMedia();
 
-      cardElements.forEach((card, index) => {
-        const startTime = index * 0.22;
-        tl.to(
-          card,
-          {
-            rotationY: 180,
-            ease: 'power2.inOut',
-            duration: 0.38,
+      mm.add('(min-width: 1024px)', () => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            end: '+=180%',
+            pin: true,
+            scrub: 0.8,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
           },
-          startTime
-        );
+        });
+
+        cardElements.forEach((card, index) => {
+          const startTime = index * 0.22;
+          tl.to(
+            card,
+            {
+              rotationY: 180,
+              ease: 'power2.inOut',
+              duration: 0.38,
+            },
+            startTime
+          );
+        });
       });
     }, sectionRef);
 
@@ -287,137 +292,163 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
       id="section-reserve"
       ref={sectionRef}
       aria-label="Section 07: The Dakshin Reserve Vault On-Scroll Card Flip"
-      className="relative min-h-screen w-full bg-[#070605] py-16 flex items-center justify-center overflow-hidden border-t border-[#221c17]"
+      className="relative min-h-screen w-full bg-[#070605] py-10 sm:py-16 flex items-center justify-center overflow-hidden border-t border-[#221c17]"
     >
-      <div className="mx-auto max-w-7xl w-full px-6 md:px-12 flex flex-col justify-between min-h-[88vh] py-4">
+      <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 md:px-12 flex flex-col justify-between min-h-[85vh] py-3 sm:py-4">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#221c17] pb-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 border-b border-[#221c17] pb-3 sm:pb-4">
           <div>
-            <div className="flex items-center gap-3 text-xs tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase mb-2">
+            <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase mb-1 sm:mb-2">
               <span className="font-mono text-[#c89658]">07</span>
-              <span className="h-[1px] w-8 bg-[#c89658]/60" />
-              <span>THE DAKSHIN VAULT / PRIVATE ALLOCATIONS</span>
+              <span className="h-[1px] w-6 sm:w-8 bg-[#c89658]/60" />
+              <span>THE DAKSHIN VAULT</span>
             </div>
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-[#f4eee6] font-light tracking-tight max-w-2xl">
-              The Dakshin Vault. <br />
-              <span className="italic text-[#e5b877] font-display font-semibold">On-Scroll Flipping Editions.</span>
+            <h2 className="font-serif text-2xl sm:text-4xl md:text-5xl text-[#f4eee6] font-light tracking-tight max-w-2xl">
+              The Dakshin Vault. <br className="hidden sm:inline" />
+              <span className="italic text-[#e5b877] font-display font-semibold">3D Numbered Editions.</span>
             </h2>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 font-sans text-xs tracking-[0.2em] text-[#8c827a] uppercase">
-              <Shield className="h-4 w-4 text-[#c89658]" />
+            <div className="flex items-center gap-1.5 sm:gap-2 font-sans text-[10px] sm:text-xs tracking-[0.18em] text-[#8c827a] uppercase">
+              <Shield className="h-3.5 sm:h-4 w-3.5 sm:w-4 text-[#c89658]" />
               <span>12kg Numbered Tins</span>
             </div>
             <span className="text-[#3a3026]">•</span>
-            <span className="text-[11px] font-sans tracking-[0.2em] uppercase text-[#c89658] flex items-center gap-1.5">
+            <span className="text-[10px] sm:text-[11px] font-sans tracking-[0.16em] uppercase text-[#c89658] flex items-center gap-1">
               <RotateCw className="h-3 w-3 animate-spin-slow" />
-              Scroll Down to Flip Cards
+              <span>Tap to Flip</span>
             </span>
           </div>
         </div>
 
-        {/* 4 3D Flipping Cards in Grid */}
-        <div
-          ref={cardGridRef}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 perspective-1500 my-auto py-6"
-        >
-          {reserveCards.map((card, index) => (
-            <div
+        {/* Mobile Batch Selector Tabs (Visible on < 1024px) */}
+        <div className="flex lg:hidden items-center justify-between gap-1.5 p-1 rounded-2xl bg-[#14100c] border border-[#2b221a] my-3 overflow-x-auto">
+          {reserveCards.map((card, idx) => (
+            <button
               key={card.id}
-              className="flip-card-wrapper relative h-[460px] sm:h-[480px] w-full perspective-1200 cursor-pointer"
-              onClick={() => handleCardClick(index)}
+              onClick={() => setMobileActiveIndex(idx)}
+              className={`px-2.5 py-1.5 rounded-xl text-[10px] font-mono tracking-wider uppercase transition-all whitespace-nowrap ${
+                mobileActiveIndex === idx
+                  ? 'bg-[#c89658] text-[#070605] font-bold shadow-md'
+                  : 'text-[#8c827a]'
+              }`}
             >
-              {/* 3D Flipping Inner Element */}
-              <div
-                ref={(el) => {
-                  cardsRef.current[index] = el;
-                }}
-                className="flip-card-inner relative h-full w-full preserve-3d will-change-transform rounded-3xl"
-              >
-                {/* Front Face */}
-                <div className="absolute inset-0 backface-hidden rounded-3xl bg-[#13110f] border border-[#2e2620] p-7 flex flex-col justify-between items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)] hover:border-[#c89658]/60 hover:shadow-[0_20px_50px_rgba(200,150,88,0.15)] transition-colors">
-                  <div className="w-full flex justify-end">
-                    <span className="h-2 w-2 rounded-full bg-[#c89658]/50" />
-                  </div>
-
-                  <div className="my-auto flex flex-col items-center justify-center">
-                    {card.iconSvg}
-                  </div>
-
-                  <div className="w-full pt-4">
-                    <h3 className="font-sans text-lg sm:text-xl font-bold text-[#f4eee6] tracking-tight leading-snug">
-                      {card.name}
-                    </h3>
-                    <span className="text-[11px] font-sans text-[#8c827a] block mt-1 tracking-wider uppercase">
-                      {card.origin} • {card.price}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Back Face */}
-                <div
-                  className="absolute inset-0 backface-hidden rounded-3xl bg-[#14110f] border border-[#3d3128] p-7 flex flex-col justify-between text-left shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
-                  style={{
-                    transform: 'rotateY(180deg)',
-                    WebkitBackfaceVisibility: 'hidden',
-                    backfaceVisibility: 'hidden',
-                  }}
-                >
-                  <div>
-                    <h3 className="font-sans text-lg sm:text-xl font-bold text-[#f4eee6] tracking-tight mb-1.5">
-                      {card.name}
-                    </h3>
-
-                    <p className="font-sans text-xs text-[#a89d93] leading-relaxed mb-4">
-                      {card.shortDesc}
-                    </p>
-
-                    <ul className="space-y-2.5 mb-4">
-                      {card.bullets.map((bullet, idx) => (
-                        <li key={idx} className="flex items-start gap-2.5 text-xs font-sans text-[#cfc6bc] leading-tight">
-                          <span className="text-[#c89658] text-sm leading-none mt-0.5">•</span>
-                          <span>{bullet}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="pt-4 border-t border-[#261f18] flex items-end justify-between gap-2">
-                    <div>
-                      <div className="flex items-center gap-1.5 text-sm font-sans font-bold text-[#f4eee6]">
-                        <Star className="h-4 w-4 fill-[#f59e0b] text-[#f59e0b]" />
-                        <span>{card.rating}</span>
-                      </div>
-                      <span className="text-[10px] font-sans text-[#786e64] block leading-tight mt-0.5">
-                        {card.ratingCount}
-                      </span>
-                    </div>
-
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSelectBatch(card);
-                      }}
-                      className="flex items-center gap-1.5 rounded-full bg-[#f4eee6] hover:bg-[#e5b877] text-[#070605] px-4 py-2 text-xs font-sans font-bold tracking-tight transition-all duration-300 shadow-md hover:shadow-[0_0_15px_rgba(229,184,119,0.5)] cursor-pointer shrink-0"
-                    >
-                      <span>Request Batch</span>
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+              0{idx + 1} • {card.name.split(' ')[0]}
+            </button>
           ))}
         </div>
 
+        {/* 4 3D Flipping Cards in Grid (Responsive: 1 card active on mobile, 4-grid on desktop) */}
+        <div
+          ref={cardGridRef}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 perspective-1500 my-auto py-2 sm:py-6"
+        >
+          {reserveCards.map((card, index) => {
+            const isVisibleOnMobile = mobileActiveIndex === index;
+
+            return (
+              <div
+                key={card.id}
+                className={`flip-card-wrapper relative h-[420px] sm:h-[460px] lg:h-[480px] w-full perspective-1200 cursor-pointer ${
+                  isVisibleOnMobile ? 'block' : 'hidden lg:block'
+                }`}
+                onClick={() => handleCardClick(index)}
+              >
+                {/* 3D Flipping Inner Element */}
+                <div
+                  ref={(el) => {
+                    cardsRef.current[index] = el;
+                  }}
+                  className="flip-card-inner relative h-full w-full preserve-3d will-change-transform rounded-3xl"
+                >
+                  {/* Front Face */}
+                  <div className="absolute inset-0 backface-hidden rounded-3xl bg-[#13110f] border border-[#2e2620] p-5 sm:p-7 flex flex-col justify-between items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)] hover:border-[#c89658]/60 hover:shadow-[0_20px_50px_rgba(200,150,88,0.15)] transition-colors">
+                    <div className="w-full flex justify-between items-center text-[10px] font-mono text-[#c89658]">
+                      <span>BATCH 0{index + 1}</span>
+                      <span className="flex items-center gap-1 text-[9px] text-[#8c827a]">
+                        <RotateCw className="h-2.5 w-2.5" /> Tap to Flip
+                      </span>
+                    </div>
+
+                    <div className="my-auto flex flex-col items-center justify-center">
+                      {card.iconSvg}
+                    </div>
+
+                    <div className="w-full pt-2 sm:pt-4">
+                      <h3 className="font-sans text-base sm:text-xl font-bold text-[#f4eee6] tracking-tight leading-snug">
+                        {card.name}
+                      </h3>
+                      <span className="text-[10px] sm:text-[11px] font-sans text-[#8c827a] block mt-1 tracking-wider uppercase">
+                        {card.origin} • {card.price}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Back Face */}
+                  <div
+                    className="absolute inset-0 backface-hidden rounded-3xl bg-[#14110f] border border-[#3d3128] p-5 sm:p-7 flex flex-col justify-between text-left shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
+                    style={{
+                      transform: 'rotateY(180deg)',
+                      WebkitBackfaceVisibility: 'hidden',
+                      backfaceVisibility: 'hidden',
+                    }}
+                  >
+                    <div>
+                      <h3 className="font-sans text-base sm:text-xl font-bold text-[#f4eee6] tracking-tight mb-1">
+                        {card.name}
+                      </h3>
+
+                      <p className="font-sans text-[11px] sm:text-xs text-[#a89d93] leading-relaxed mb-3 line-clamp-2">
+                        {card.shortDesc}
+                      </p>
+
+                      <ul className="space-y-2 mb-3">
+                        {card.bullets.map((bullet, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-[11px] sm:text-xs font-sans text-[#cfc6bc] leading-tight">
+                            <span className="text-[#c89658] text-xs leading-none mt-0.5">•</span>
+                            <span>{bullet}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="pt-3 border-t border-[#261f18] flex items-end justify-between gap-2">
+                      <div>
+                        <div className="flex items-center gap-1 text-xs sm:text-sm font-sans font-bold text-[#f4eee6]">
+                          <Star className="h-3.5 w-3.5 fill-[#f59e0b] text-[#f59e0b]" />
+                          <span>{card.rating}</span>
+                        </div>
+                        <span className="text-[9px] font-sans text-[#786e64] block leading-tight mt-0.5">
+                          {card.ratingCount}
+                        </span>
+                      </div>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelectBatch(card);
+                        }}
+                        className="flex items-center gap-1.5 rounded-full bg-[#f4eee6] hover:bg-[#e5b877] text-[#070605] px-3.5 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-xs font-sans font-bold tracking-tight transition-all duration-300 shadow-md hover:shadow-[0_0_15px_rgba(229,184,119,0.5)] cursor-pointer shrink-0"
+                      >
+                        <span>Request Batch</span>
+                        <ArrowRight className="h-3 sm:h-3.5 w-3 sm:w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
         {/* Bottom Footer */}
-        <div className="flex items-center justify-between border-t border-[#221c17] pt-3 text-xs text-[#8c827a]">
-          <span className="font-serif italic text-[#a89d93]">
+        <div className="flex items-center justify-between border-t border-[#221c17] pt-2 sm:pt-3 text-[10px] sm:text-xs text-[#8c827a]">
+          <span className="font-serif italic text-[#a89d93] truncate max-w-[200px] sm:max-w-none">
             “Roasted slowly to order in 12kg numbered Western Ghats micro-casks.”
           </span>
-          <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#c89658]">
-            Scroll Down to Flip • Scroll Up to Reset
+          <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-[#c89658]">
+            Strictly Private Allocations
           </span>
         </div>
       </div>

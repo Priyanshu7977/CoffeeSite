@@ -8,15 +8,19 @@ export function useLenis() {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    // Determine if mobile touch device
+    const isTouch = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: isTouch ? 1.0 : 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 0.95,
-      touchMultiplier: 1.2,
+      touchMultiplier: 1.4,
       infinite: false,
+      autoResize: true,
     });
 
     lenisRef.current = lenis;
@@ -35,12 +39,20 @@ export function useLenis() {
     gsap.ticker.add(tickerCallback);
     gsap.ticker.lagSmoothing(0);
 
+    // Refresh ScrollTrigger after initial layout settles
     const timeout = setTimeout(() => {
       ScrollTrigger.refresh();
-    }, 250);
+    }, 200);
+
+    // Also handle mobile orientation / resize changes cleanly
+    const handleResize = () => {
+      ScrollTrigger.refresh();
+    };
+    window.addEventListener('resize', handleResize);
 
     return () => {
       gsap.ticker.remove(tickerCallback);
+      window.removeEventListener('resize', handleResize);
       clearTimeout(timeout);
       lenis.destroy();
       lenisRef.current = null;
