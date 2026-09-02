@@ -7,8 +7,18 @@ export const SectionManifesto: React.FC = () => {
   const leftColRef = useRef<HTMLDivElement | null>(null);
   const rightColRef = useRef<HTMLDivElement | null>(null);
   const videoCardRef = useRef<HTMLDivElement | null>(null);
+  const bgVideoRef = useRef<HTMLVideoElement | null>(null);
+  const cardVideoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
+    // Explicitly guarantee video playback
+    if (bgVideoRef.current) {
+      bgVideoRef.current.play().catch(() => {});
+    }
+    if (cardVideoRef.current) {
+      cardVideoRef.current.play().catch(() => {});
+    }
+
     const section = sectionRef.current;
     const leftCol = leftColRef.current;
     const rightCol = rightColRef.current;
@@ -58,19 +68,21 @@ export const SectionManifesto: React.FC = () => {
       aria-label="Section 08: The Noir Manifesto & About Noir"
       className="relative min-h-screen lg:h-screen w-full bg-[#070605] flex items-center justify-center overflow-hidden border-t border-[#221c17] py-14 lg:py-0"
     >
-      {/* Relatable Macro Roasted Coffee Background Video */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      {/* Relatable Macro Roasted Coffee Background Video - Clearly Visible */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-[#070605]">
         <video
+          ref={bgVideoRef}
           src="/assets/videos/coffee-hero.mp4"
           autoPlay
           muted
           loop
           playsInline
-          className="h-full w-full object-cover object-center filter brightness-[0.20] contrast-125 opacity-35"
+          className="h-full w-full object-cover object-center filter brightness-75 contrast-115 opacity-60 will-change-transform"
         />
-        {/* Luxury Vignettes & Amber Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#070605] via-[#070605]/75 to-[#070605]" />
-        <div className="absolute inset-0 bg-radial-vignette opacity-85" />
+        {/* Subtle Ambient Gradients: Video Remains Clearly Visible */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#070605] via-transparent to-[#070605]/70 pointer-events-none" />
+        <div className="absolute inset-0 bg-[#070605]/35 pointer-events-none" />
+        <div className="absolute inset-0 bg-radial-vignette opacity-60 pointer-events-none" />
       </div>
 
       {/* Main Viewport-Optimized Container (Framed within 86vh) */}
@@ -99,7 +111,7 @@ export const SectionManifesto: React.FC = () => {
             </div>
 
             {/* Luxury Glassmorphic Philosophy Card */}
-            <div className="rounded-3xl bg-[#0f0c09]/90 border border-[#c89658]/30 p-5 sm:p-7 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-4">
+            <div className="rounded-3xl bg-[#0f0c09]/90 border border-[#c89658]/35 p-5 sm:p-7 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-4">
               <p className="font-sans text-xs sm:text-sm leading-relaxed text-[#cfc5ba] font-light">
                 In an industry obsessed with speed and automated consistency, NOIR ROAST stands as a sanctuary of deliberate friction. We roast exclusively on cast-iron drum machines—by hand, by acoustic crack, and by aroma.
               </p>
@@ -157,7 +169,7 @@ export const SectionManifesto: React.FC = () => {
             </div>
           </div>
 
-          {/* ================= RIGHT COLUMN: Relatable Macro Espresso Video Card ================= */}
+          {/* ================= RIGHT COLUMN: Relatable Macro Espresso Extraction Feature Card ================= */}
           <div ref={rightColRef} className="lg:col-span-5 flex flex-col items-center justify-center">
             <div
               ref={videoCardRef}
@@ -165,16 +177,17 @@ export const SectionManifesto: React.FC = () => {
             >
               {/* Relatable Pure Macro Portafilter Espresso Video in Card */}
               <video
+                ref={cardVideoRef}
                 src="/assets/videos/coffee-bloom-transition.mp4"
                 autoPlay
                 muted
                 loop
                 playsInline
-                className="h-full w-full object-cover object-center filter brightness-90 contrast-110 transition-transform duration-700 group-hover:scale-105"
+                className="h-full w-full object-cover object-center filter brightness-95 contrast-115 transition-transform duration-700 group-hover:scale-105"
               />
 
               {/* Cinematic Gradient Overlays */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#070605]/95 via-transparent to-[#070605]/40 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#070605]/95 via-transparent to-[#070605]/30 pointer-events-none" />
 
               {/* Floating Top Badge */}
               <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
