@@ -177,7 +177,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               { label: 'ORIGIN STORY', target: '#section-bean' },
               { label: 'THERMAL ROAST', target: '#section-roast' },
               { label: 'EXTRACTION POUR', target: '#section-pour' },
-              { label: 'COFFEE COLLECTION', target: '#section-collection' },
+              {
+                label: 'COFFEE COLLECTION (10 LOTS)',
+                target: '#section-collection',
+                action: onOpenCollectionPage,
+              },
               { label: 'MAGAZINE ARCHIVE', target: '#section-gallery' },
               { label: 'BREWING RITUAL', target: '#section-brew-ritual' },
               { label: 'PRIVATE VAULT', target: '#section-reserve' },
@@ -186,7 +190,11 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 key={item.label}
                 onClick={() => {
-                  onNavigate(item.target);
+                  if (item.action) {
+                    item.action();
+                  } else {
+                    onNavigate(item.target);
+                  }
                   setIsMobileMenuOpen(false);
                 }}
                 className="text-left font-display text-sm tracking-[0.2em] text-[#2D2926] hover:text-[#E05A7E] py-1 cursor-pointer border-b border-[#2D2926]/10 pb-2 font-semibold"
@@ -196,12 +204,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
             <button
               onClick={() => {
-                onNavigate('#section-collection');
+                if (onOpenCollectionPage) {
+                  onOpenCollectionPage();
+                } else {
+                  onNavigate('#section-collection');
+                }
                 setIsMobileMenuOpen(false);
               }}
-              className="w-full mt-2 py-2.5 rounded-full bg-[#2D2926] text-white text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#1A1817]"
+              className="w-full mt-2 py-2.5 rounded-full bg-[#2D2926] text-white text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#1A1817] cursor-pointer shadow-md"
             >
-              Explore Collection
+              Shop All 10 Coffee Lots
             </button>
           </div>
         </div>

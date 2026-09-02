@@ -202,6 +202,23 @@ export const App: React.FC = () => {
 
   const totalCollectionCount = collectionItems.reduce((sum, item) => sum + item.quantity, 0);
 
+  // Ensure scroll lands at the very top whenever viewMode changes (Home <-> Collection)
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [viewMode]);
+
+  const handleOpenCollectionPage = () => {
+    setViewMode('collection');
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+  };
+
+  const handleBackToHome = () => {
+    setViewMode('home');
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+  };
+
   return (
     <div className="relative min-h-screen bg-[#FAF7F5] text-[#2D2926] selection:bg-[#F5DADF] selection:text-[#2D2926] overflow-x-hidden">
       {/* 1. Initial Page Loading Sequence */}
@@ -223,7 +240,7 @@ export const App: React.FC = () => {
             onOpenReserve={() => handleOpenReserve()}
             onOpenCollection={() => setIsCollectionDrawerOpen(true)}
             onOpenLogin={() => setIsLoginModalOpen(true)}
-            onOpenCollectionPage={() => setViewMode('collection')}
+            onOpenCollectionPage={handleOpenCollectionPage}
             userSession={userSession}
             collectionCount={totalCollectionCount}
             onNavigate={handleNavigate}
@@ -241,10 +258,7 @@ export const App: React.FC = () => {
       {/* Main Experience: Either Dedicated Collection Page or Continuous Story Experience */}
       {viewMode === 'collection' ? (
         <CollectionPage
-          onBackToHome={() => {
-            setViewMode('home');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
+          onBackToHome={handleBackToHome}
           onDiscoverProduct={handleDiscoverProduct}
           onAddToCart={handleAddToCollection}
           onOpenCart={() => setIsCollectionDrawerOpen(true)}
@@ -288,7 +302,7 @@ export const App: React.FC = () => {
             <LightLeak position="top-right" intensity="medium" />
             <SectionCollection 
               onDiscoverProduct={handleDiscoverProduct} 
-              onOpenCollectionPage={() => setViewMode('collection')}
+              onOpenCollectionPage={handleOpenCollectionPage}
             />
           </div>
 

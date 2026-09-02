@@ -195,7 +195,7 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
             {onOpenCollectionPage && (
               <button
                 onClick={onOpenCollectionPage}
-                className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#2D2926]/15 text-xs font-sans font-bold text-[#2D2926] hover:bg-[#F5DADF] transition-all cursor-pointer shadow-sm"
+                className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-white border border-[#2D2926]/15 text-[10px] sm:text-xs font-sans font-bold text-[#2D2926] hover:bg-[#F5DADF] transition-all cursor-pointer shadow-sm whitespace-nowrap active:scale-95"
               >
                 <span>View All 10 Lots</span>
                 <ArrowRight className="h-3 w-3 text-[#E05A7E]" />

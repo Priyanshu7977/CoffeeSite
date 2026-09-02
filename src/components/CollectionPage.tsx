@@ -92,36 +92,38 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-24">
       {/* Top Fixed Collection Navigation Bar */}
-      <header className="sticky top-0 z-40 bg-white/92 border-b border-[#2D2926]/10 px-4 sm:px-8 py-3.5 backdrop-blur-xl">
-        <div className="mx-auto max-w-7xl flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+      <header className="sticky top-0 z-40 bg-white/95 border-b border-[#2D2926]/10 px-3 sm:px-8 py-2.5 sm:py-3.5 backdrop-blur-xl">
+        <div className="mx-auto max-w-7xl flex items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <MagneticButton strength={0.3}>
               <button
                 onClick={onBackToHome}
-                className="flex items-center gap-2 text-xs font-sans font-bold uppercase tracking-wider text-[#5E5854] hover:text-[#2D2926] transition-colors cursor-pointer py-1.5 px-3 rounded-full hover:bg-[#FAF7F5] border border-transparent hover:border-[#2D2926]/10"
+                className="flex items-center gap-1.5 text-xs font-sans font-bold uppercase tracking-wider text-[#5E5854] hover:text-[#2D2926] transition-colors cursor-pointer py-1.5 px-2.5 sm:px-3 rounded-full hover:bg-[#FAF7F5] border border-transparent hover:border-[#2D2926]/10 whitespace-nowrap active:scale-95"
               >
-                <ArrowLeft className="h-4 w-4 text-[#E05A7E]" />
-                <span>Back to Story</span>
+                <ArrowLeft className="h-3.5 w-3.5 text-[#E05A7E]" />
+                <span className="hidden sm:inline">Back to Story</span>
+                <span className="sm:hidden">Back</span>
               </button>
             </MagneticButton>
 
             <div className="h-4 w-[1px] bg-[#2D2926]/10 hidden sm:block" />
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <div className="flex items-center justify-center h-6 w-6 rounded-full bg-[#2D2926] text-white">
                 <span className="font-display text-[10px] font-bold">N</span>
               </div>
-              <span className="font-display text-xs sm:text-sm tracking-[0.2em] font-bold text-[#2D2926] uppercase">
-                THE ATELIER COLLECTION
+              <span className="font-display text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] font-bold text-[#2D2926] uppercase truncate max-w-[130px] sm:max-w-none">
+                <span className="hidden sm:inline">THE ATELIER COLLECTION</span>
+                <span className="sm:hidden">ATELIER</span>
               </span>
             </div>
           </div>
 
           {/* Right Action Icons */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
             <button
               onClick={onOpenLogin}
-              className={`flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-sans tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer ${
+              className={`flex items-center gap-1.5 rounded-full border px-2.5 sm:px-3.5 py-1.5 text-[10px] sm:text-[11px] font-sans tracking-[0.1em] sm:tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer ${
                 userSession?.isLoggedIn
                   ? 'border-[#E05A7E] bg-[#F5DADF] text-[#2D2926] font-bold'
                   : 'border-[#2D2926]/15 bg-[#FAF7F5] text-[#2D2926] hover:bg-[#F5DADF]/40'
@@ -130,7 +132,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
               {userSession?.isLoggedIn ? (
                 <>
                   <ShieldCheck className="h-3.5 w-3.5 text-[#2D2926]" />
-                  <span className="max-w-[80px] truncate font-bold">{userSession.name.split(' ')[0]}</span>
+                  <span className="max-w-[60px] sm:max-w-[80px] truncate font-bold">{userSession.name.split(' ')[0]}</span>
                 </>
               ) : (
                 <>
@@ -142,7 +144,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
 
             <button
               onClick={onOpenCart}
-              className={`flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[11px] font-sans tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer ${
+              className={`flex items-center gap-1.5 rounded-full border px-2.5 sm:px-3.5 py-1.5 text-[10px] sm:text-[11px] font-sans tracking-[0.1em] sm:tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer ${
                 cartCount > 0
                   ? 'border-[#2D2926]/15 bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm'
                   : 'border-[#2D2926]/15 bg-[#FAF7F5] text-[#2D2926] hover:bg-[#F5DADF]/40'
@@ -156,53 +158,53 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       </header>
 
       {/* Hero Collection Header */}
-      <section className="relative px-6 sm:px-12 pt-12 pb-8 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
+      <section className="relative px-4 sm:px-8 md:px-12 pt-6 sm:pt-10 pb-6 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
         <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F5DADF] border border-[#2D2926]/10 text-xs font-sans font-bold uppercase tracking-[0.2em] text-[#2D2926] mb-3">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F5DADF] border border-[#2D2926]/10 text-[10px] sm:text-xs font-sans font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#2D2926] mb-2.5">
                 <Sparkles className="h-3.5 w-3.5 text-[#E05A7E]" />
                 <span>10 SINGLE-ESTATE HARVESTS • 250G MICRO-TINS</span>
               </div>
-              <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#2D2926]">
+              <h1 className="font-display text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#2D2926]">
                 Single-Origin <span className="italic text-[#E05A7E]">Curations.</span>
               </h1>
-              <p className="font-sans text-sm sm:text-base text-[#5E5854] max-w-2xl mt-2 leading-relaxed">
+              <p className="font-sans text-xs sm:text-sm text-[#5E5854] max-w-2xl mt-1.5 leading-relaxed font-normal">
                 Shade-grown under native canopies in Chikmagalur, Coorg, Nilgiris, and Araku. Roast-profiled in small batches and nitrogen-sealed at peak aroma.
               </p>
             </div>
 
             {/* Quick Stats Pill */}
-            <div className="flex items-center gap-3 bg-white border border-[#2D2926]/10 rounded-2xl p-3 sm:p-4 shadow-sm self-start md:self-auto">
+            <div className="flex items-center gap-3 bg-white border border-[#2D2926]/10 rounded-2xl p-2.5 sm:p-4 shadow-sm self-start md:self-auto">
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Showing</span>
-                <span className="font-display text-xl font-bold text-[#2D2926]">
+                <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Showing</span>
+                <span className="font-display text-base sm:text-xl font-bold text-[#2D2926]">
                   {filteredProducts.length} of {NOIR_PRODUCTS.length} Lots
                 </span>
               </div>
-              <div className="h-8 w-[1px] bg-[#2D2926]/10" />
+              <div className="h-7 sm:h-8 w-[1px] bg-[#2D2926]/10" />
               <div>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Dispatch</span>
-                <span className="font-display text-sm font-bold text-[#E05A7E]">Free Across India</span>
+                <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Dispatch</span>
+                <span className="font-display text-xs sm:text-sm font-bold text-[#E05A7E]">Free Across India</span>
               </div>
             </div>
           </div>
 
           {/* Filter & Search Bar */}
-          <div className="mt-8 pt-6 border-t border-[#2D2926]/10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="mt-6 pt-5 border-t border-[#2D2926]/10 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
             {/* Roast Level Filter Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-2 lg:pb-0 scrollbar-none">
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 lg:pb-0 scrollbar-none w-full lg:w-auto">
               {[
                 { id: 'all', label: 'All 10 Lots' },
                 { id: 'light', label: 'Light Roast' },
                 { id: 'medium', label: 'Medium Roast' },
                 { id: 'dark', label: 'Dark Roast' },
-                { id: 'reserve', label: 'Reserve Rarities' },
+                { id: 'reserve', label: 'Reserve' },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setSelectedRoastFilter(tab.id)}
-                  className={`px-4 py-2 rounded-full text-xs font-sans tracking-wider font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-sans tracking-wider font-bold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
                     selectedRoastFilter === tab.id
                       ? 'bg-[#2D2926] text-white shadow-sm'
                       : 'bg-white border border-[#2D2926]/10 text-[#5E5854] hover:text-[#2D2926] hover:bg-[#F5DADF]/40'
@@ -214,26 +216,26 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
             </div>
 
             {/* Search & Sort Cluster */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
               {/* Search Box */}
-              <div className="relative flex items-center">
-                <Search className="absolute left-3.5 h-4 w-4 text-[#8C827A]" />
+              <div className="relative flex items-center flex-1 sm:flex-initial">
+                <Search className="absolute left-3.5 h-3.5 w-3.5 text-[#8C827A]" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search lot or tasting note..."
-                  className="w-full sm:w-60 rounded-full bg-white border border-[#2D2926]/15 pl-10 pr-4 py-2 text-xs font-sans text-[#2D2926] placeholder-[#8C827A] focus:border-[#2D2926] focus:outline-none"
+                  className="w-full sm:w-60 rounded-full bg-white border border-[#2D2926]/15 pl-9 pr-4 py-2 text-xs font-sans text-[#2D2926] placeholder-[#8C827A] focus:border-[#2D2926] focus:outline-none"
                 />
               </div>
 
               {/* Sort Select */}
               <div className="flex items-center gap-2 bg-white border border-[#2D2926]/15 rounded-full px-3 py-1.5 shadow-sm">
-                <SlidersHorizontal className="h-3.5 w-3.5 text-[#E05A7E]" />
+                <SlidersHorizontal className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-                  className="bg-transparent text-xs font-sans font-bold text-[#2D2926] focus:outline-none cursor-pointer"
+                  className="bg-transparent text-xs font-sans font-bold text-[#2D2926] focus:outline-none cursor-pointer w-full sm:w-auto"
                 >
                   <option value="featured">Featured Lots</option>
                   <option value="price-asc">Price: Low to High</option>
@@ -247,7 +249,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       </section>
 
       {/* 10-Product Grid */}
-      <main className="mx-auto max-w-7xl px-6 sm:px-12 pt-10">
+      <main className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 pt-8 sm:pt-10">
         {filteredProducts.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-[#2D2926]/10 p-8">
             <Coffee className="h-10 w-10 text-[#E05A7E] mx-auto mb-3" />
