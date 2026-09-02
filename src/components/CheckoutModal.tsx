@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
-import { X, Shield, Lock, Sparkles, CheckCircle2, ArrowRight, CreditCard, Award, AlertCircle, Mail } from 'lucide-react';
+import { X, Shield, Lock, Sparkles, CheckCircle2, ArrowRight, CreditCard, Award, Mail, ShieldAlert } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { sanitizeName, sanitizePhone, isValidEmail, isValidName, isValidPhone } from '../utils/validation';
+import {
+  sanitizeName,
+  sanitizePhone,
+  sanitizeAddress,
+  sanitizeCity,
+  sanitizeCountry,
+  sanitizePostalCode,
+  isValidEmail,
+  isValidName,
+  isValidPhone,
+  hasMaliciousContent,
+} from '../utils/validation';
 import { dispatchOrderConfirmationEmail, type AutomatedEmail } from '../utils/emailService';
 import type { CollectionItem } from '../types';
 
@@ -57,24 +68,75 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    const sanitized = sanitizeName(raw);
-    setFullName(sanitized);
-    if (raw !== sanitized) {
-      setErrorMessage('Name field strictly accepts alphabetic characters only (no numbers).');
+    if (hasMaliciousContent(raw)) {
+      setErrorMessage('Security Alert: Scripts, iframes, and HTML markup are strictly prohibited.');
     } else {
       setErrorMessage('');
+    }
+    const sanitized = sanitizeName(raw);
+    setFullName(sanitized);
+    if (raw !== sanitized && !hasMaliciousContent(raw)) {
+      setErrorMessage('Name field strictly accepts alphabetic characters only (no numbers).');
     }
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    const sanitized = sanitizePhone(raw);
-    setPhone(sanitized);
-    if (raw !== sanitized) {
-      setErrorMessage('Phone field strictly accepts numeric digits only (no alphabetic characters).');
+    if (hasMaliciousContent(raw)) {
+      setErrorMessage('Security Alert: Scripts, iframes, and HTML markup are strictly prohibited.');
     } else {
       setErrorMessage('');
     }
+    const sanitized = sanitizePhone(raw);
+    setPhone(sanitized);
+    if (raw !== sanitized && !hasMaliciousContent(raw)) {
+      setErrorMessage('Phone field strictly accepts numeric digits only (no alphabetic characters).');
+    }
+  };
+
+  const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (hasMaliciousContent(raw)) {
+      setErrorMessage('Security Alert: Scripts, iframes, and HTML markup are strictly blocked.');
+    } else {
+      setErrorMessage('');
+    }
+    setAddress(sanitizeAddress(raw));
+  };
+
+  const handleCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (hasMaliciousContent(raw)) {
+      setErrorMessage('Security Alert: Scripts, iframes, and HTML markup are strictly blocked.');
+    } else {
+      setErrorMessage('');
+    }
+    const sanitized = sanitizeCity(raw);
+    setCity(sanitized);
+    if (raw !== sanitized && !hasMaliciousContent(raw)) {
+      setErrorMessage('City field accepts alphabetic characters only (no numbers).');
+    }
+  };
+
+  const handleCountryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (hasMaliciousContent(raw)) {
+      setErrorMessage('Security Alert: Scripts, iframes, and HTML markup are strictly blocked.');
+    } else {
+      setErrorMessage('');
+    }
+    const sanitized = sanitizeCountry(raw);
+    setCountry(sanitized);
+  };
+
+  const handlePostalCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (hasMaliciousContent(raw)) {
+      setErrorMessage('Security Alert: Scripts, iframes, and HTML markup are strictly blocked.');
+    } else {
+      setErrorMessage('');
+    }
+    setPostalCode(sanitizePostalCode(raw));
   };
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,8 +175,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       setErrorMessage('Please enter a valid phone number (numeric digits only).');
       return;
     }
-    if (!address.trim() || !city.trim() || !postalCode.trim()) {
-      setErrorMessage('Please fill in complete street address and city.');
+    if (!address.trim() || !city.trim() || !postalCode.trim() || !country.trim()) {
+      setErrorMessage('Please fill in complete street address, city, and postal code.');
       return;
     }
 
@@ -176,7 +238,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[260] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div className="fixed inset-0 z-[260] flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div
         onClick={onClose}
@@ -184,9 +246,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       />
 
       {/* Modal Dialog Box */}
-      <div className="relative z-10 w-full max-w-3xl rounded-3xl bg-[#0e0b08] border border-[#c89658]/40 p-6 sm:p-9 shadow-[0_25px_90px_rgba(0,0,0,0.95)] text-[#f4eee6] max-h-[92vh] overflow-y-auto">
+      <div className="relative z-10 w-full max-w-3xl rounded-3xl bg-[#0e0b08] border border-[#c89658]/40 p-5 sm:p-8 shadow-[0_25px_90px_rgba(0,0,0,0.95)] text-[#f4eee6] max-h-[92vh] overflow-y-auto">
         {/* Top Header */}
-        <div className="flex items-center justify-between border-b border-[#241c15] pb-4 mb-6">
+        <div className="flex items-center justify-between border-b border-[#241c15] pb-4 mb-5">
           <div className="flex items-center gap-2.5">
             <span className="h-2.5 w-2.5 rounded-full bg-[#c89658] shadow-[0_0_8px_#c89658]" />
             <h3 className="font-display text-sm tracking-[0.25em] font-bold text-[#f4eee6] uppercase">
@@ -205,9 +267,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
         {/* Step Progression Tabs */}
         {step !== 'confirmed' && (
-          <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="grid grid-cols-2 gap-3 mb-5">
             <div
-              className={`rounded-2xl p-3 border text-xs font-sans font-semibold flex items-center gap-2 ${
+              className={`rounded-2xl p-2.5 border text-xs font-sans font-semibold flex items-center gap-2 ${
                 step === 'details'
                   ? 'bg-[#18120d] border-[#c89658] text-[#e5b877]'
                   : 'bg-[#120e0b] border-[#261f19] text-[#8c827a]'
@@ -218,7 +280,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             </div>
 
             <div
-              className={`rounded-2xl p-3 border text-xs font-sans font-semibold flex items-center gap-2 ${
+              className={`rounded-2xl p-2.5 border text-xs font-sans font-semibold flex items-center gap-2 ${
                 step === 'payment' || step === 'processing'
                   ? 'bg-[#18120d] border-[#c89658] text-[#e5b877]'
                   : 'bg-[#120e0b] border-[#261f19] text-[#8c827a]'
@@ -230,20 +292,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           </div>
         )}
 
-        {/* Error Notification */}
+        {/* Error Notification / Security Warning */}
         {errorMessage && (
           <div className="mb-4 rounded-xl bg-amber-950/40 border border-amber-500/40 p-3 flex items-center gap-2 text-xs text-amber-200">
-            <AlertCircle className="h-4 w-4 shrink-0 text-amber-400" />
+            <ShieldAlert className="h-4 w-4 shrink-0 text-amber-400" />
             <span>{errorMessage}</span>
           </div>
         )}
 
         {/* ================= STEP 1: SHIPPING & CONTACT DETAILS ================= */}
         {step === 'details' && (
-          <form onSubmit={handleProceedToPayment} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Left: Input fields */}
-              <div className="space-y-4">
+          <form onSubmit={handleProceedToPayment} className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Left: Sanitized & Validated Input fields */}
+              <div className="space-y-3.5">
                 <div>
                   <label className="block text-[10px] font-sans tracking-widest text-[#c89658] uppercase mb-1 font-semibold">
                     Full Name (Alphabets Only)
@@ -253,12 +315,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     required
                     value={fullName}
                     onChange={handleNameChange}
-                    placeholder="e.g. Henri de Noir"
-                    className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-4 py-2.5 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:shadow-[0_0_15px_rgba(200,150,88,0.25)] focus:outline-none font-sans"
+                    placeholder="Henri de Noir"
+                    className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3.5 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:shadow-[0_0_15px_rgba(200,150,88,0.25)] focus:outline-none font-sans"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div>
                     <label className="block text-[10px] font-sans tracking-widest text-[#c89658] uppercase mb-1 font-semibold">
                       Email Address
@@ -269,7 +331,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="collector@atelier.com"
-                      className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-4 py-2.5 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
+                      className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3.5 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
                     />
                   </div>
 
@@ -283,37 +345,37 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       value={phone}
                       onChange={handlePhoneChange}
                       placeholder="+1 (555) 019-2834"
-                      className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-4 py-2.5 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
+                      className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3.5 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-[10px] font-sans tracking-widest text-[#c89658] uppercase mb-1 font-semibold">
-                    Atelier Street Address
+                    Atelier Street Address (Sanitized)
                   </label>
                   <input
                     type="text"
                     required
                     value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    onChange={handleAddressChange}
                     placeholder="442 Madison Ave, Suite 12B"
-                    className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-4 py-2.5 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
+                    className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3.5 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
                   />
                 </div>
 
-                <div className="grid grid-cols-3 gap-2.5">
+                <div className="grid grid-cols-3 gap-2">
                   <div className="col-span-1">
                     <label className="block text-[10px] font-sans tracking-widest text-[#c89658] uppercase mb-1 font-semibold">
-                      City
+                      City (Letters)
                     </label>
                     <input
                       type="text"
                       required
                       value={city}
-                      onChange={(e) => setCity(e.target.value)}
+                      onChange={handleCityChange}
                       placeholder="Kyoto"
-                      className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3.5 py-2.5 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
+                      className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
                     />
                   </div>
                   <div className="col-span-1">
@@ -324,39 +386,39 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       type="text"
                       required
                       value={postalCode}
-                      onChange={(e) => setPostalCode(e.target.value)}
+                      onChange={handlePostalCodeChange}
                       placeholder="10022"
-                      className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3.5 py-2.5 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
+                      className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
                     />
                   </div>
                   <div className="col-span-1">
                     <label className="block text-[10px] font-sans tracking-widest text-[#c89658] uppercase mb-1 font-semibold">
-                      Country
+                      Country (Letters)
                     </label>
                     <input
                       type="text"
                       required
                       value={country}
-                      onChange={(e) => setCountry(e.target.value)}
+                      onChange={handleCountryChange}
                       placeholder="USA"
-                      className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3.5 py-2.5 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
+                      className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Right: Order Summary Preview */}
-              <div className="rounded-2xl bg-[#120e0b] border border-[#261f18] p-5 flex flex-col justify-between space-y-4">
+              <div className="rounded-2xl bg-[#120e0b] border border-[#261f18] p-4 flex flex-col justify-between space-y-3">
                 <div>
-                  <span className="text-[10px] font-mono tracking-widest text-[#c89658] uppercase block font-bold mb-3">
+                  <span className="text-[10px] font-mono tracking-widest text-[#c89658] uppercase block font-bold mb-2">
                     ALLOCATION SUMMARY ({totalItemCount} TINS)
                   </span>
 
-                  <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
+                  <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
                     {items.map((it) => (
-                      <div key={it.product.id} className="flex justify-between items-center text-xs pb-2 border-b border-[#211a14] last:border-b-0">
+                      <div key={`${it.product.id}-${it.grind}`} className="flex justify-between items-center text-xs pb-1.5 border-b border-[#211a14] last:border-b-0">
                         <div>
-                          <span className="font-serif font-bold text-[#f4eee6] block">{it.product.name}</span>
+                          <span className="font-serif font-bold text-[#f4eee6] block truncate max-w-[140px]">{it.product.name}</span>
                           <span className="text-[10px] text-[#8c827a]">{it.grind} • Qty: {it.quantity}</span>
                         </div>
                         <span className="font-mono font-bold text-[#e5b877]">{it.product.price}</span>
@@ -365,7 +427,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-[#261f18] space-y-1.5 text-xs">
+                <div className="pt-2 border-t border-[#261f18] space-y-1 text-xs">
                   <div className="flex justify-between text-[#8c827a]">
                     <span>Subtotal:</span>
                     <span className="font-mono text-[#f4eee6]">${subtotalNumeric.toFixed(2)}</span>
@@ -375,19 +437,19 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     <span className="font-mono text-[#e5b877]">{shippingCost === 0 ? 'COMPLIMENTARY' : '$15.00'}</span>
                   </div>
                   <div className="flex justify-between text-sm font-bold text-[#f4eee6] pt-1 border-t border-[#261f18]">
-                    <span>Total Allocation Settlement:</span>
+                    <span>Total Settlement:</span>
                     <span className="font-mono text-base text-[#e5b877]">{formattedTotal}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-end pt-1">
               <button
                 type="submit"
-                className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-[#c89658] to-[#e5b877] text-[#070605] font-sans text-xs font-bold tracking-[0.2em] uppercase hover:shadow-[0_0_25px_rgba(200,150,88,0.45)] transition-all cursor-pointer flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-7 py-3 rounded-full bg-gradient-to-r from-[#c89658] to-[#e5b877] text-[#070605] font-sans text-xs font-bold tracking-[0.2em] uppercase hover:shadow-[0_0_25px_rgba(200,150,88,0.45)] transition-all cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>Continue to Vault Settlement</span>
+                <span>Continue to Settlement</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>
@@ -396,18 +458,18 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
         {/* ================= STEP 2: PAYMENT & SETTLEMENT ================= */}
         {step === 'payment' && (
-          <form onSubmit={handleExecuteSettlement} className="space-y-6">
+          <form onSubmit={handleExecuteSettlement} className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <button
                 type="button"
                 onClick={() => setPaymentMethod('card')}
-                className={`rounded-2xl p-4 border text-left flex flex-col justify-between transition-all cursor-pointer ${
+                className={`rounded-2xl p-3.5 border text-left flex flex-col justify-between transition-all cursor-pointer ${
                   paymentMethod === 'card'
                     ? 'bg-[#18120d] border-[#c89658] shadow-[0_0_15px_rgba(200,150,88,0.2)]'
                     : 'bg-[#120e0b] border-[#261f19] text-[#8c827a]'
                 }`}
               >
-                <CreditCard className="h-5 w-5 text-[#c89658] mb-2" />
+                <CreditCard className="h-5 w-5 text-[#c89658] mb-1.5" />
                 <span className="font-mono text-xs font-bold text-[#f4eee6]">Credit Card</span>
                 <span className="text-[10px] text-[#8c827a]">Encrypted Vault</span>
               </button>
@@ -415,13 +477,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <button
                 type="button"
                 onClick={() => setPaymentMethod('applepay')}
-                className={`rounded-2xl p-4 border text-left flex flex-col justify-between transition-all cursor-pointer ${
+                className={`rounded-2xl p-3.5 border text-left flex flex-col justify-between transition-all cursor-pointer ${
                   paymentMethod === 'applepay'
                     ? 'bg-[#18120d] border-[#c89658] shadow-[0_0_15px_rgba(200,150,88,0.2)]'
                     : 'bg-[#120e0b] border-[#261f19] text-[#8c827a]'
                 }`}
               >
-                <Sparkles className="h-5 w-5 text-[#e5b877] mb-2" />
+                <Sparkles className="h-5 w-5 text-[#e5b877] mb-1.5" />
                 <span className="font-mono text-xs font-bold text-[#f4eee6]">Apple Pay</span>
                 <span className="text-[10px] text-[#8c827a]">Biometric Token</span>
               </button>
@@ -429,20 +491,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <button
                 type="button"
                 onClick={() => setPaymentMethod('vault')}
-                className={`rounded-2xl p-4 border text-left flex flex-col justify-between transition-all cursor-pointer ${
+                className={`rounded-2xl p-3.5 border text-left flex flex-col justify-between transition-all cursor-pointer ${
                   paymentMethod === 'vault'
                     ? 'bg-[#18120d] border-[#c89658] shadow-[0_0_15px_rgba(200,150,88,0.2)]'
                     : 'bg-[#120e0b] border-[#261f19] text-[#8c827a]'
                 }`}
               >
-                <Shield className="h-5 w-5 text-[#c89658] mb-2" />
+                <Shield className="h-5 w-5 text-[#c89658] mb-1.5" />
                 <span className="font-mono text-xs font-bold text-[#f4eee6]">Vault Direct</span>
                 <span className="text-[10px] text-[#8c827a]">Member Allocation</span>
               </button>
             </div>
 
             {paymentMethod === 'card' && (
-              <div className="rounded-2xl bg-[#120e0b] border border-[#2b2118] p-5 space-y-4">
+              <div className="rounded-2xl bg-[#120e0b] border border-[#2b2118] p-4 space-y-3.5">
                 <div>
                   <label className="block text-[10px] font-sans tracking-widest text-[#c89658] uppercase mb-1 font-semibold">
                     Card Number (16-Digits)
@@ -453,7 +515,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     value={cardNumber}
                     onChange={handleCardNumberChange}
                     placeholder="4532 8849 2049 8894"
-                    className="w-full rounded-xl bg-[#18120d] border border-[#33281e] px-4 py-2.5 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-mono tracking-wider"
+                    className="w-full rounded-xl bg-[#18120d] border border-[#33281e] px-3.5 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-mono tracking-wider"
                   />
                 </div>
 
@@ -468,7 +530,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       value={cardExpiry}
                       onChange={handleExpiryChange}
                       placeholder="08/28"
-                      className="w-full rounded-xl bg-[#18120d] border border-[#33281e] px-4 py-2.5 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-mono"
+                      className="w-full rounded-xl bg-[#18120d] border border-[#33281e] px-3.5 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-mono"
                     />
                   </div>
                   <div>
@@ -481,14 +543,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       value={cardCvc}
                       onChange={handleCvcChange}
                       placeholder="894"
-                      className="w-full rounded-xl bg-[#18120d] border border-[#33281e] px-4 py-2.5 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-mono"
+                      className="w-full rounded-xl bg-[#18120d] border border-[#33281e] px-3.5 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-mono"
                     />
                   </div>
                 </div>
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex items-center justify-between pt-1">
               <button
                 type="button"
                 onClick={() => setStep('details')}
@@ -499,7 +561,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
               <button
                 type="submit"
-                className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#c89658] to-[#e5b877] text-[#070605] font-sans text-xs font-bold tracking-[0.2em] uppercase hover:shadow-[0_0_25px_rgba(200,150,88,0.45)] transition-all cursor-pointer flex items-center gap-2"
+                className="px-7 py-3 rounded-full bg-gradient-to-r from-[#c89658] to-[#e5b877] text-[#070605] font-sans text-xs font-bold tracking-[0.2em] uppercase hover:shadow-[0_0_25px_rgba(200,150,88,0.45)] transition-all cursor-pointer flex items-center gap-2"
               >
                 <Lock className="h-4 w-4" />
                 <span>Authorize {formattedTotal}</span>
@@ -510,9 +572,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
         {/* ================= STEP 3: PROCESSING STATE ANIMATION ================= */}
         {step === 'processing' && (
-          <div className="py-16 flex flex-col items-center justify-center text-center space-y-4">
-            <div className="h-20 w-20 rounded-full border border-[#c89658] bg-[#140f0c] flex items-center justify-center shadow-[0_0_30px_rgba(200,150,88,0.3)] animate-pulse">
-              <Award className="h-10 w-10 text-[#c89658] animate-spin-slow" />
+          <div className="py-14 flex flex-col items-center justify-center text-center space-y-3">
+            <div className="h-16 w-16 rounded-full border border-[#c89658] bg-[#140f0c] flex items-center justify-center shadow-[0_0_30px_rgba(200,150,88,0.3)] animate-pulse">
+              <Award className="h-8 w-8 text-[#c89658] animate-spin-slow" />
             </div>
             <h4 className="font-serif text-2xl sm:text-3xl text-[#f4eee6]">
               Allocating Batch Lots...
@@ -525,26 +587,26 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
         {/* ================= STEP 4: ORDER CONFIRMED & EMAIL DISPATCH ================= */}
         {step === 'confirmed' && (
-          <div className="py-8 text-center space-y-6">
-            <div className="h-16 w-16 mx-auto rounded-full bg-[#18120d] border border-[#c89658] flex items-center justify-center text-[#c89658] shadow-[0_0_25px_rgba(200,150,88,0.35)]">
-              <CheckCircle2 className="h-8 w-8 text-[#e5b877]" />
+          <div className="py-6 text-center space-y-5">
+            <div className="h-14 w-14 mx-auto rounded-full bg-[#18120d] border border-[#c89658] flex items-center justify-center text-[#c89658] shadow-[0_0_25px_rgba(200,150,88,0.35)]">
+              <CheckCircle2 className="h-7 w-7 text-[#e5b877]" />
             </div>
 
             <div>
               <span className="text-[10px] font-sans tracking-[0.3em] uppercase text-[#c89658] block mb-1">
                 HAUTE ALLOCATION SECURED
               </span>
-              <h3 className="font-serif text-3xl sm:text-4xl text-[#f4eee6]">
+              <h3 className="font-serif text-2xl sm:text-3xl text-[#f4eee6]">
                 Order Confirmed.
               </h3>
-              <p className="font-sans text-xs text-[#a89d93] mt-2 max-w-md mx-auto leading-relaxed">
+              <p className="font-sans text-xs text-[#a89d93] mt-1 max-w-md mx-auto leading-relaxed">
                 Your private lot has been reserved under invoice <strong>#{confirmedOrderNumber}</strong>. An automated confirmation dispatch has been transmitted to your email.
               </p>
             </div>
 
             {/* Email Dispatch Automation Card */}
             {latestEmail && (
-              <div className="rounded-2xl bg-[#120e0b] border border-[#c89658]/40 p-4 text-left space-y-2">
+              <div className="rounded-2xl bg-[#120e0b] border border-[#c89658]/40 p-3.5 text-left space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Mail className="h-4 w-4 text-[#c89658]" />
@@ -567,7 +629,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
             <button
               onClick={onClose}
-              className="px-8 py-3.5 rounded-full bg-[#c89658] text-[#070605] font-sans text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#e5b877] transition-all cursor-pointer shadow-[0_0_20px_rgba(200,150,88,0.35)]"
+              className="px-7 py-3 rounded-full bg-[#c89658] text-[#070605] font-sans text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#e5b877] transition-all cursor-pointer shadow-[0_0_20px_rgba(200,150,88,0.35)]"
             >
               Close & Return to Atelier
             </button>
