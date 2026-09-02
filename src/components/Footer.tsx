@@ -80,9 +80,11 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
       <div className="pointer-events-none absolute -top-48 left-1/2 -translate-x-1/2 h-[500px] w-[1000px] rounded-full bg-radial-at-c from-[#c89658]/20 via-[#8b5a2b]/8 to-transparent mix-blend-screen opacity-80" />
       <div className="pointer-events-none absolute bottom-10 right-10 h-96 w-96 rounded-full bg-radial-at-c from-[#c89658]/10 to-transparent mix-blend-screen" />
 
-      {/* Massive Background Typography Watermark */}
-      <div className="pointer-events-none absolute bottom-36 left-1/2 -translate-x-1/2 whitespace-nowrap select-none opacity-[0.025] font-display text-[16vw] font-black uppercase tracking-[0.2em] text-[#e5b877]">
-        NOIR ROAST
+      {/* Background Typography Watermark - Perfectly Sized & Centered Without Clipping */}
+      <div className="pointer-events-none absolute bottom-28 left-0 right-0 w-full text-center select-none overflow-hidden opacity-[0.035]">
+        <span className="inline-block font-display text-[7.5vw] font-black uppercase tracking-[0.08em] text-[#e5b877] max-w-full">
+          NOIR ROAST
+        </span>
       </div>
 
       <div className="mx-auto max-w-7xl px-6 md:px-12 relative z-10">
