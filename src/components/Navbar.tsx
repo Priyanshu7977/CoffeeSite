@@ -30,7 +30,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     const updateScrollDirection = () => {
       const currentScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
 
-      // Always show at the top of the page
+      // Always show at top of page
       if (currentScrollY <= 40) {
         setIsVisible(true);
         lastScrollY = currentScrollY;
@@ -38,7 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         return;
       }
 
-      // Always keep visible if mobile menu is opened
+      // Keep visible if mobile menu is open
       if (isMobileMenuOpen) {
         setIsVisible(true);
         lastScrollY = currentScrollY;
@@ -49,10 +49,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       const diff = currentScrollY - lastScrollY;
       if (Math.abs(diff) > 6) {
         if (diff > 0) {
-          // Scrolling Down -> Hide Header
           setIsVisible(false);
         } else {
-          // Scrolling Up -> Show Header
           setIsVisible(true);
         }
         lastScrollY = currentScrollY;
@@ -80,7 +78,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: 'ROASTS', target: '#section-roast' },
     { label: 'POUR', target: '#section-pour' },
     { label: 'COLLECTION', target: '#section-collection' },
-    { label: 'KAAPI RITUAL', target: '#section-brew-ritual' },
+    { label: 'RITUAL', target: '#section-brew-ritual' },
     { label: 'ABOUT', target: '#section-manifesto' },
   ];
 
@@ -92,33 +90,33 @@ export const Navbar: React.FC<NavbarProps> = ({
           : '-translate-y-24 opacity-0'
       }`}
     >
-      {/* Floating Circular Capsule Island */}
-      <div className="pointer-events-auto mx-auto max-w-6xl rounded-full bg-[#090705]/92 border border-[#c89658]/35 px-4 sm:px-7 py-2.5 sm:py-3 backdrop-blur-xl shadow-[0_15px_40px_rgba(0,0,0,0.85)] flex items-center justify-between">
-        {/* Brand Left with Magnetic Physics */}
+      {/* Floating Capsule Island */}
+      <div className="pointer-events-auto mx-auto max-w-7xl rounded-full bg-[#090705]/95 border border-[#c89658]/40 px-4 sm:px-6 py-2.5 backdrop-blur-2xl shadow-[0_15px_40px_rgba(0,0,0,0.85)] flex items-center justify-between gap-3 lg:gap-6">
+        {/* Brand Left */}
         <MagneticButton strength={0.3}>
           <button
             onClick={() => onNavigate('#hero')}
-            className="group flex items-center gap-2.5 sm:gap-3 text-left focus:outline-none cursor-pointer"
+            className="group flex items-center gap-2.5 text-left focus:outline-none cursor-pointer shrink-0"
           >
-            <span className="h-2 w-2 rounded-full bg-[#c89658] shadow-[0_0_12px_#c89658] transition-transform group-hover:scale-125" />
+            <span className="h-2 w-2 rounded-full bg-[#c89658] shadow-[0_0_12px_#c89658] transition-transform group-hover:scale-125 shrink-0" />
             <div className="flex flex-col">
-              <span className="font-display text-xs sm:text-sm tracking-[0.24em] font-bold text-[#f4eee6] transition-colors group-hover:text-[#c89658]">
+              <span className="font-display text-xs sm:text-sm tracking-[0.22em] font-bold text-[#f4eee6] transition-colors group-hover:text-[#c89658] whitespace-nowrap">
                 NOIR DAKSHIN
               </span>
-              <span className="text-[8px] sm:text-[9px] tracking-[0.3em] text-[#8c827a] font-sans uppercase">
-                Atelier 1998 • Bengaluru
+              <span className="text-[8px] sm:text-[9px] tracking-[0.28em] text-[#8c827a] font-mono uppercase whitespace-nowrap">
+                EST. 1998 • BENGALURU
               </span>
             </div>
           </button>
         </MagneticButton>
 
-        {/* Center Navigation Links */}
-        <nav className="hidden items-center gap-5 lg:gap-7 md:flex">
+        {/* Center Navigation Links - Strictly Single Line & Vertically Centered */}
+        <nav className="hidden items-center gap-4 lg:gap-6 xl:gap-7 md:flex shrink-0">
           {navLinks.map((item) => (
             <MagneticButton key={item.label} strength={0.25}>
               <button
                 onClick={() => onNavigate(item.target)}
-                className="group relative font-sans text-[11px] tracking-[0.22em] text-[#a89d93] transition-colors hover:text-[#f4eee6] focus:outline-none cursor-pointer py-1"
+                className="group relative font-sans text-[11px] lg:text-xs tracking-[0.2em] text-[#a89d93] transition-colors hover:text-[#f4eee6] focus:outline-none cursor-pointer py-1 whitespace-nowrap"
               >
                 <span className="relative z-10">{item.label}</span>
                 <span className="absolute bottom-0 left-0 h-[1px] w-0 bg-[#c89658] transition-all duration-300 group-hover:w-full shadow-[0_0_6px_#c89658]" />
@@ -128,12 +126,12 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Right Actions: VIP Auth, Collection Counter & Reserve Vault */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
           {/* VIP Member Login / Status Button */}
           <MagneticButton strength={0.3}>
             <button
               onClick={onOpenLogin}
-              className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[10px] sm:text-[11px] font-sans tracking-[0.16em] uppercase transition-all duration-300 cursor-pointer ${
+              className={`flex items-center gap-1.5 rounded-full border px-2.5 sm:px-3 py-1.5 text-[10px] sm:text-[11px] font-sans tracking-[0.16em] uppercase transition-all duration-300 cursor-pointer whitespace-nowrap ${
                 userSession?.isLoggedIn
                   ? 'border-[#c89658] bg-[#1a140f] text-[#e5b877] shadow-[0_0_15px_rgba(200,150,88,0.25)] font-semibold'
                   : 'border-[#332b24] bg-[#14100c]/80 text-[#a89d93] hover:border-[#c89658]/60 hover:text-[#f4eee6]'
@@ -141,13 +139,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               {userSession?.isLoggedIn ? (
                 <>
-                  <ShieldCheck className="h-3.5 w-3.5 text-[#c89658]" />
-                  <span className="max-w-[80px] sm:max-w-[110px] truncate">{userSession.name.split(' ')[0]} (VIP)</span>
+                  <ShieldCheck className="h-3.5 w-3.5 text-[#c89658] shrink-0" />
+                  <span className="max-w-[75px] sm:max-w-[100px] truncate">{userSession.name.split(' ')[0]} (VIP)</span>
                 </>
               ) : (
                 <>
-                  <User className="h-3.5 w-3.5 text-[#c89658]" />
-                  <span className="hidden sm:inline">VIP Access</span>
+                  <User className="h-3.5 w-3.5 text-[#c89658] shrink-0" />
+                  <span className="hidden sm:inline">VIP ACCESS</span>
                 </>
               )}
             </button>
@@ -157,13 +155,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           <MagneticButton strength={0.35}>
             <button
               onClick={onOpenCollection}
-              className={`flex items-center gap-2 rounded-full border px-3 sm:px-3.5 py-1.5 text-[11px] font-sans tracking-[0.18em] uppercase transition-all duration-300 cursor-pointer ${
+              className={`flex items-center gap-1.5 sm:gap-2 rounded-full border px-2.5 sm:px-3 py-1.5 text-[10px] sm:text-[11px] font-sans tracking-[0.16em] uppercase transition-all duration-300 cursor-pointer whitespace-nowrap ${
                 collectionCount > 0
                   ? 'border-[#c89658] bg-[#c89658]/20 text-[#f4eee6] shadow-[0_0_15px_rgba(200,150,88,0.3)] font-bold'
                   : 'border-[#332b24] bg-[#14100c]/80 text-[#8c827a] hover:border-[#c89658]/50 hover:text-[#f4eee6]'
               }`}
             >
-              <ShoppingBag className="h-3.5 w-3.5 text-[#c89658]" />
+              <ShoppingBag className="h-3.5 w-3.5 text-[#c89658] shrink-0" />
               <span>
                 CART ({collectionCount.toString().padStart(2, '0')})
               </span>
@@ -174,10 +172,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           <MagneticButton strength={0.35}>
             <button
               onClick={onOpenReserve}
-              className="hidden lg:flex relative overflow-hidden rounded-full border border-[#c89658] bg-gradient-to-r from-[#c89658] to-[#e5b877] px-4 py-1.5 text-[11px] font-sans font-bold tracking-[0.2em] text-[#070605] uppercase transition-all duration-300 hover:shadow-[0_0_20px_rgba(200,150,88,0.5)] focus:outline-none cursor-pointer"
+              className="hidden lg:flex relative overflow-hidden rounded-full border border-[#c89658] bg-gradient-to-r from-[#c89658] to-[#e5b877] px-3.5 sm:px-4 py-1.5 text-[10px] sm:text-[11px] font-sans font-bold tracking-[0.2em] text-[#070605] uppercase transition-all duration-300 hover:shadow-[0_0_20px_rgba(200,150,88,0.5)] focus:outline-none cursor-pointer whitespace-nowrap"
             >
               <span className="flex items-center gap-1.5">
-                <Sparkles className="h-3 w-3 text-[#070605]" />
+                <Sparkles className="h-3 w-3 text-[#070605] shrink-0" />
                 <span>The Vault</span>
               </span>
             </button>
@@ -186,7 +184,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-[#332b24] bg-[#14100c] text-[#f4eee6] md:hidden cursor-pointer"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-[#332b24] bg-[#14100c] text-[#f4eee6] md:hidden cursor-pointer shrink-0"
             aria-label="Toggle Navigation Menu"
           >
             {isMobileMenuOpen ? <X className="h-4 w-4 text-[#c89658]" /> : <Menu className="h-4 w-4 text-[#c89658]" />}

@@ -13,6 +13,13 @@ export const SectionBrewRitual: React.FC = () => {
       id="section-brew-ritual"
       className="relative min-h-screen w-full bg-[#070605] py-16 md:py-24 px-6 md:px-12 flex items-center justify-center overflow-hidden border-t border-[#221c17]"
     >
+      {/* Hidden image preloader for 0-latency instant tab switching */}
+      <div className="hidden" aria-hidden="true">
+        {NOIR_BREW_METHODS.map((m) => (
+          <img key={m.id} src={m.image} alt="preloaded" loading="eager" />
+        ))}
+      </div>
+
       <div className="mx-auto max-w-7xl w-full">
         {/* Section Header */}
         <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#221c17] pb-6">
@@ -51,25 +58,32 @@ export const SectionBrewRitual: React.FC = () => {
 
         {/* Dynamic Multi-Panel Presentation */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          {/* Left Column: Photographic Panel */}
+          {/* Left Column: Guaranteed High-Res Visual Panel */}
           <div className="lg:col-span-6 relative flex justify-center">
-            <div className="relative aspect-[4/5] max-h-[46vh] sm:max-h-[50vh] w-full max-w-md overflow-hidden rounded-2xl border border-[#c89658]/35 shadow-[0_25px_80px_rgba(0,0,0,0.9)] group">
-              <img
-                key={currentMethod.id}
-                src={currentMethod.image}
-                alt={currentMethod.name}
-                className="h-full w-full object-cover object-center filter brightness-90 contrast-110 transition-all duration-700 animate-fadeIn"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#070605]/90 via-transparent to-transparent pointer-events-none" />
+            <div className="relative aspect-[4/5] max-h-[46vh] sm:max-h-[50vh] w-full max-w-md overflow-hidden rounded-2xl border border-[#c89658]/40 shadow-[0_25px_80px_rgba(0,0,0,0.9)] bg-[#120e0b] group">
+              {NOIR_BREW_METHODS.map((m) => (
+                <img
+                  key={m.id}
+                  src={m.image}
+                  alt={m.name}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/assets/pour-espresso.jpg';
+                  }}
+                  className={`absolute inset-0 h-full w-full object-cover object-center filter brightness-90 contrast-110 transition-opacity duration-500 ${
+                    m.id === activeMethodId ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                  }`}
+                />
+              ))}
+              <div className="absolute inset-0 z-20 bg-gradient-to-t from-[#070605]/90 via-transparent to-transparent pointer-events-none" />
 
               {/* Tag overlay */}
-              <div className="absolute top-4 left-4 flex items-center gap-2 rounded-full bg-[#070605]/80 px-3.5 py-1 text-[11px] font-sans tracking-[0.2em] text-[#e5b877] uppercase border border-[#c89658]/30 backdrop-blur-md">
+              <div className="absolute top-4 left-4 z-30 flex items-center gap-2 rounded-full bg-[#070605]/85 px-3.5 py-1 text-[11px] font-sans tracking-[0.2em] text-[#e5b877] uppercase border border-[#c89658]/30 backdrop-blur-md">
                 <Coffee className="h-3.5 w-3.5 text-[#c89658]" />
                 <span>{currentMethod.tagline}</span>
               </div>
 
               {/* Bottom Target Specs */}
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-xl bg-[#090705]/95 p-3 backdrop-blur-md border border-[#c89658]/20">
+              <div className="absolute bottom-4 left-4 right-4 z-30 flex items-center justify-between rounded-xl bg-[#090705]/95 p-3 backdrop-blur-md border border-[#c89658]/25">
                 <div className="flex items-center gap-2">
                   <Timer className="h-4 w-4 text-[#c89658]" />
                   <span className="font-mono text-xs text-[#f4eee6] font-bold">

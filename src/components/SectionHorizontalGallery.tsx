@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react';
-import { Mountain, Sun, Flame, Droplet, ArrowRight, Sparkles } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Mountain, Sun, Flame, Droplet, Sparkles } from 'lucide-react';
 import { gsap } from '../utils/animations';
 
 export const SectionHorizontalGallery: React.FC = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
+  const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
 
   const slides = [
     {
@@ -62,32 +63,46 @@ export const SectionHorizontalGallery: React.FC = () => {
       const mm = gsap.matchMedia();
 
       mm.add('(min-width: 1024px)', () => {
-        // Pinned timeline with dedicated hold / dwell phase on the final 4th spread
-        const tl = gsap.timeline({
+        // Pinned timeline with snap and hold so slides never stop halfway
+        gsap.timeline({
           scrollTrigger: {
             trigger: section,
             start: 'top top',
-            end: () => `+=${(totalSlides + 1.6) * 100}%`,
+            end: () => `+=${(totalSlides + 1.2) * 100}%`,
             pin: true,
-            scrub: 0.8,
+            scrub: 0.6,
             anticipatePin: 1,
             invalidateOnRefresh: true,
+            snap: {
+              snapTo: (progress) => {
+                // Map progress (0.0 to 0.8) to discrete slide snaps (0, 0.33, 0.66, 1.0)
+                const effectiveProg = Math.min(1, progress / 0.8);
+                const step = 1 / (totalSlides - 1);
+                const snappedStep = Math.round(effectiveProg / step) * step;
+                return snappedStep * 0.8;
+              },
+              duration: { min: 0.25, max: 0.45 },
+              delay: 0.05,
+              ease: 'power2.inOut',
+            },
+            onUpdate: (self) => {
+              const p = self.progress;
+              const mapped = Math.min(1, Math.max(0, p / 0.8));
+              const idx = Math.min(totalSlides - 1, Math.round(mapped * (totalSlides - 1)));
+              setActiveSlideIndex(idx);
+            },
           },
-        });
-
-        // 1. Smooth horizontal pan across all spreads (0.0 -> 0.75 progress)
-        tl.to(
-          track,
-          {
-            xPercent: xPercentage,
-            ease: 'none',
-            duration: 0.75,
-          },
-          0
-        );
-
-        // 2. Dedicated Hold / Dwell Window for Spread 04 (0.75 -> 1.0 progress)
-        tl.to({}, { duration: 0.25 }, 0.75);
+        })
+          .to(
+            track,
+            {
+              xPercent: xPercentage,
+              ease: 'none',
+              duration: 0.8,
+            },
+            0
+          )
+          .to({}, { duration: 0.2 }, 0.8);
       });
     }, sectionRef);
 
@@ -103,15 +118,31 @@ export const SectionHorizontalGallery: React.FC = () => {
       aria-label="Section 05: Cinematic Magazine Archive Spreads"
       className="relative min-h-screen lg:h-screen w-full bg-[#070605] overflow-hidden border-t border-[#221c17]"
     >
-      {/* Top Floating Gallery Eyebrow */}
-      <div className="absolute top-6 left-6 md:left-12 z-30 flex items-center gap-3">
-        <div className="flex items-center gap-2 text-xs tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase bg-[#070605]/80 px-4 py-1.5 rounded-full border border-[#c89658]/30 backdrop-blur-md">
+      {/* Top Floating Gallery Header with Interactive Spread Selectors */}
+      <div className="absolute top-5 left-4 sm:left-6 md:left-12 right-4 sm:right-6 md:right-12 z-30 flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
+        <div className="flex items-center gap-2 text-[10px] sm:text-xs tracking-[0.25em] text-[#c89658] font-sans font-semibold uppercase bg-[#070605]/85 px-3.5 sm:px-4 py-1.5 rounded-full border border-[#c89658]/35 backdrop-blur-md">
           <Sparkles className="h-3 w-3 text-[#c89658]" />
-          <span>CINEMATIC ARCHIVE / DAKSHIN MAGAZINE SPREADS</span>
+          <span>CINEMATIC ARCHIVE / DAKSHIN MAGAZINE</span>
+        </div>
+
+        {/* Spread Navigation Indicators */}
+        <div className="hidden sm:flex items-center gap-1.5 p-1 rounded-full bg-[#070605]/90 border border-[#c89658]/30 backdrop-blur-md">
+          {slides.map((s, idx) => (
+            <div
+              key={s.id}
+              className={`px-3 py-1 rounded-full text-[10px] font-mono tracking-widest uppercase transition-all duration-300 ${
+                activeSlideIndex === idx
+                  ? 'bg-[#c89658] text-[#070605] font-bold shadow-[0_0_10px_rgba(200,150,88,0.4)]'
+                  : 'text-[#8c827a]'
+              }`}
+            >
+              0{idx + 1} • {s.title.split(' ')[0]}
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Horizontal Moving Track on Desktop, Stacked on Mobile */}
+      {/* Horizontal Moving Track */}
       <div
         ref={trackRef}
         className="flex flex-col lg:flex-row h-auto lg:h-full w-full lg:w-[400vw] will-change-transform"
@@ -123,16 +154,16 @@ export const SectionHorizontalGallery: React.FC = () => {
           return (
             <div
               key={slide.id}
-              className="relative flex min-h-screen lg:h-screen w-full lg:w-screen flex-shrink-0 items-center justify-center p-6 md:p-12 lg:p-20 overflow-hidden select-none border-b lg:border-b-0 border-[#1c1612]"
+              className="relative flex min-h-screen lg:h-screen w-full lg:w-screen flex-shrink-0 items-center justify-center p-6 md:p-12 lg:p-16 xl:p-20 overflow-hidden select-none border-b lg:border-b-0 border-[#1c1612]"
             >
               {/* Background Full Bleed Spread Photography */}
               <div className="absolute inset-0 z-0 overflow-hidden">
                 <img
                   src={slide.image}
                   alt={slide.title}
-                  className="h-full w-full object-cover object-center filter brightness-[0.55] contrast-110"
+                  className="h-full w-full object-cover object-center filter brightness-[0.52] contrast-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#070605]/95 via-[#070605]/60 to-[#070605]/90" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#070605]/95 via-[#070605]/65 to-[#070605]/90" />
                 <div className="absolute inset-0 bg-radial-vignette opacity-80" />
               </div>
 
@@ -144,24 +175,25 @@ export const SectionHorizontalGallery: React.FC = () => {
                     <span className="font-mono text-xs tracking-[0.3em] uppercase text-[#c89658]">
                       Spread 0{idx + 1} of 04
                     </span>
-                    <span className="h-[1px] w-12 bg-[#c89658]/40" />
+                    <span className="h-[1px] w-10 bg-[#c89658]/40" />
                     <span className="text-[10px] font-sans tracking-[0.2em] text-[#8c827a] uppercase">
                       {slide.tag}
                     </span>
                   </div>
 
-                  <h2 className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl font-bold tracking-wider lg:tracking-[0.14em] text-[#f4eee6] uppercase drop-shadow-[0_0_35px_rgba(200,150,88,0.25)] leading-[0.95] my-2 break-words">
+                  {/* Strictly Non-Breaking Title with Fluid Responsive Sizing */}
+                  <h2 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold tracking-wider text-[#f4eee6] uppercase drop-shadow-[0_0_35px_rgba(200,150,88,0.25)] leading-tight my-2 whitespace-nowrap">
                     {slide.title}
                   </h2>
 
-                  <p className="font-serif italic text-base sm:text-xl md:text-2xl text-[#e5b877] max-w-xl mt-4 leading-relaxed">
+                  <p className="font-serif italic text-base sm:text-xl md:text-2xl text-[#e5b877] max-w-xl mt-3 leading-relaxed">
                     “{slide.quote}”
                   </p>
                 </div>
 
                 {/* Right Side: Editorial Metadata Card */}
                 <div className="lg:col-span-5 flex flex-col justify-center">
-                  <div className="rounded-2xl bg-[#0f0c09]/95 border border-[#c89658]/35 p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+                  <div className="rounded-2xl bg-[#0f0c09]/95 border border-[#c89658]/40 p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
                     <div className="flex items-center justify-between border-b border-[#221c17] pb-4">
                       <div className="flex items-center gap-2">
                         <Icon className="h-5 w-5 text-[#c89658]" />
@@ -185,11 +217,10 @@ export const SectionHorizontalGallery: React.FC = () => {
 
                     <div className="pt-4 border-t border-[#221c17] flex items-center justify-between text-xs text-[#8c827a]">
                       <span className="font-sans uppercase tracking-[0.15em]">
-                        Continuous Film Pan
+                        Film Progression
                       </span>
-                      <span className="flex items-center gap-1.5 font-mono text-[#e5b877]">
-                        <span>{isLast ? 'Final Spread (Hold)' : 'Scroll Down to Pan'}</span>
-                        <ArrowRight className="h-3 w-3 animate-pulse" />
+                      <span className="font-mono text-[#e5b877]">
+                        {isLast ? '04 / 04 (Complete)' : `Spread 0${idx + 1} of 04`}
                       </span>
                     </div>
                   </div>
@@ -197,7 +228,7 @@ export const SectionHorizontalGallery: React.FC = () => {
               </div>
 
               {/* Bottom Spread Marker */}
-              <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between border-t border-[#221c17]/60 pt-3 text-[10px] font-mono text-[#8c827a] uppercase tracking-widest">
+              <div className="absolute bottom-5 left-6 right-6 flex items-center justify-between border-t border-[#221c17]/60 pt-3 text-[10px] font-mono text-[#8c827a] uppercase tracking-widest">
                 <span>NOIR DAKSHIN ROAST ARCHIVE 1998–2026</span>
                 <span>{slide.title} • SPREAD 0{idx + 1}</span>
               </div>
