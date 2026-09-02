@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLenis } from './hooks/useLenis';
 import { useScrollProgress } from './hooks/useScrollProgress';
 import { PageLoader } from './components/PageLoader';
@@ -25,7 +25,11 @@ import { Footer } from './components/Footer';
 import { ReserveModal } from './components/ReserveModal';
 import { ProductDetailOverlay } from './components/ProductDetailOverlay';
 import { CollectionDrawer } from './components/CollectionDrawer';
+import { LoginModal, type UserSession } from './components/LoginModal';
+import { CheckoutModal } from './components/CheckoutModal';
+import { EmailNotificationModal } from './components/EmailNotificationModal';
 import type { ReserveBatch, Product, CollectionItem } from './types';
+import type { AutomatedEmail } from './utils/emailService';
 
 export const App: React.FC = () => {
   const { scrollTo } = useLenis();
@@ -39,9 +43,68 @@ export const App: React.FC = () => {
 
   const [activeDetailProduct, setActiveDetailProduct] = useState<Product | null>(null);
   const [isCollectionDrawerOpen, setIsCollectionDrawerOpen] = useState<boolean>(false);
+  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState<boolean>(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
+  const [activeDispatchedEmail, setActiveDispatchedEmail] = useState<AutomatedEmail | null>(null);
+
+  // User Auth & Session State
+  const [userSession, setUserSession] = useState<UserSession | null>(() => {
+    try {
+      const saved = localStorage.getItem('noir_user_session');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
 
   // Collection Cart State
   const [collectionItems, setCollectionItems] = useState<CollectionItem[]>([]);
+
+  // 5-Second Cumulative Scroll Trigger for Login Popup
+  const hasTriggeredScrollPopup = useRef<boolean>(false);
+  const scrollTimerRef = useRef<number>(0);
+
+  useEffect(() => {
+    // If user already logged in or dismissed in this session, don't auto popup
+    if (userSession?.isLoggedIn || sessionStorage.getItem('noir_login_dismissed') === 'true') {
+      return;
+    }
+
+    let isScrolling = false;
+    let scrollTimeout: ReturnType<typeof setTimeout>;
+
+    const handleScroll = () => {
+      if (hasTriggeredScrollPopup.current) return;
+
+      if (!isScrolling) {
+        isScrolling = true;
+      }
+
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        isScrolling = false;
+      }, 200);
+    };
+
+    const interval = setInterval(() => {
+      if (isScrolling && !hasTriggeredScrollPopup.current) {
+        scrollTimerRef.current += 1;
+        if (scrollTimerRef.current >= 5) {
+          hasTriggeredScrollPopup.current = true;
+          sessionStorage.setItem('noir_login_dismissed', 'true');
+          setIsLoginModalOpen(true);
+        }
+      }
+    }, 1000);
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(scrollTimeout);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [userSession]);
 
   const handleNavigate = (targetId: string) => {
     scrollTo(targetId, 0);
@@ -89,6 +152,8 @@ export const App: React.FC = () => {
         },
       ];
     });
+    // Open drawer to confirm addition
+    setIsCollectionDrawerOpen(true);
   };
 
   const handleRemoveCollectionItem = (productId: string) => {
@@ -113,6 +178,19 @@ export const App: React.FC = () => {
     setCollectionItems([]);
   };
 
+  const handleLoginSuccess = (session: UserSession) => {
+    setUserSession(session);
+    try {
+      localStorage.setItem('noir_user_session', JSON.stringify(session));
+    } catch {
+      // Local fallback
+    }
+  };
+
+  const handleEmailDispatched = (email: AutomatedEmail) => {
+    setActiveDispatchedEmail(email);
+  };
+
   const totalCollectionCount = collectionItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -133,6 +211,8 @@ export const App: React.FC = () => {
       <Navbar
         onOpenReserve={() => handleOpenReserve()}
         onOpenCollection={() => setIsCollectionDrawerOpen(true)}
+        onOpenLogin={() => setIsLoginModalOpen(true)}
+        userSession={userSession}
         collectionCount={totalCollectionCount}
         onNavigate={handleNavigate}
       />
@@ -225,7 +305,7 @@ export const App: React.FC = () => {
         )}
       />
 
-      {/* Personal Collection Drawer */}
+      {/* Personal Collection Cart Drawer */}
       <CollectionDrawer
         isOpen={isCollectionDrawerOpen}
         onClose={() => setIsCollectionDrawerOpen(false)}
@@ -233,6 +313,33 @@ export const App: React.FC = () => {
         onRemoveItem={handleRemoveCollectionItem}
         onUpdateQuantity={handleUpdateCollectionQuantity}
         onClearCollection={handleClearCollection}
+        onProceedToCheckout={() => {
+          setIsCollectionDrawerOpen(false);
+          setIsCheckoutModalOpen(true);
+        }}
+      />
+
+      {/* Full Haute Atelier Checkout Flow Modal */}
+      <CheckoutModal
+        isOpen={isCheckoutModalOpen}
+        onClose={() => setIsCheckoutModalOpen(false)}
+        items={collectionItems}
+        onOrderCompleted={handleClearCollection}
+        onEmailDispatched={handleEmailDispatched}
+      />
+
+      {/* 5-Second Scroll Triggered VIP Login & Access Modal */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
+        onEmailDispatched={handleEmailDispatched}
+      />
+
+      {/* Automated Email Preview Simulator Modal */}
+      <EmailNotificationModal
+        email={activeDispatchedEmail}
+        onClose={() => setActiveDispatchedEmail(null)}
       />
     </div>
   );

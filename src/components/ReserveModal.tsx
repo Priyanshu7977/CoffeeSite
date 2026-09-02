@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, Sparkles, Package } from 'lucide-react';
+import { X, Sparkles, Package, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { sanitizeName, isValidEmail, isValidName } from '../utils/validation';
 import type { ReserveBatch } from '../types';
 
 interface ReserveModalProps {
@@ -18,6 +19,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
   const [quantity, setQuantity] = useState<number>(1);
   const [fullName, setFullName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [certificateId, setCertificateId] = useState<string>('');
 
@@ -41,9 +43,29 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
     description: 'Ultra-rare micro-lot from the high volcanic soils of Gesha Village.',
   };
 
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    const sanitized = sanitizeName(raw);
+    setFullName(sanitized);
+    if (raw !== sanitized) {
+      setErrorMessage('Name field accepts alphabetic letters only (no numbers).');
+    } else {
+      setErrorMessage('');
+    }
+  };
+
   const handleOrder = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !fullName) return;
+    setErrorMessage('');
+
+    if (!isValidName(fullName)) {
+      setErrorMessage('Please enter a valid name (alphabets only).');
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setErrorMessage('Please enter a valid email address.');
+      return;
+    }
 
     const cert = `NR-${Math.floor(1000 + Math.random() * 9000)}-${defaultBatch.id.toUpperCase()}`;
     setCertificateId(cert);
@@ -151,6 +173,13 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
               </span>
             </div>
 
+            {errorMessage && (
+              <div className="mb-4 rounded-xl bg-amber-950/40 border border-amber-500/40 p-3 flex items-center gap-2 text-xs text-amber-200">
+                <AlertCircle className="h-4 w-4 shrink-0 text-amber-400" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
             <form onSubmit={handleOrder} className="space-y-6">
               {/* Grind Selector */}
               <div>
@@ -215,14 +244,14 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-[11px] font-sans tracking-[0.2em] uppercase text-[#8c827a] block mb-1.5">
-                    Your Name
+                    Your Name (Alphabets Only)
                   </label>
                   <input
                     type="text"
                     required
                     value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Lord / Lady / Collector"
+                    onChange={handleNameChange}
+                    placeholder="Henri de Noir"
                     className="w-full rounded-xl bg-[#14100c] border border-[#261f19] px-4 py-2.5 text-xs text-[#f4eee6] placeholder-[#4f463e] focus:border-[#c89658] focus:outline-none font-sans"
                   />
                 </div>
