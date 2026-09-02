@@ -27,7 +27,7 @@ export const LightLeak: React.FC<LightLeakProps> = ({
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute rounded-full bg-radial-at-c from-[#c89658]/30 via-[#8b5a2b]/10 to-transparent mix-blend-screen will-change-transform ${positionClasses[position]} ${intensityClasses[intensity]} ${className}`}
+      className={`pointer-events-none absolute rounded-full bg-radial-at-c from-[#F5DADF]/50 via-[#E05A7E]/10 to-transparent mix-blend-multiply will-change-transform ${positionClasses[position]} ${intensityClasses[intensity]} ${className}`}
     />
   );
 };

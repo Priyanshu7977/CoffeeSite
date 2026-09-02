@@ -73,9 +73,9 @@ export const CustomCursor: React.FC = () => {
           scaleX: 1.85,
           scaleY: 1.85,
           rotation: 0,
-          backgroundColor: 'rgba(200, 150, 88, 0.18)',
-          borderColor: '#e5b877',
-          boxShadow: '0 0 25px rgba(200, 150, 88, 0.45)',
+          backgroundColor: 'rgba(245, 218, 223, 0.45)',
+          borderColor: '#E05A7E',
+          boxShadow: '0 0 20px rgba(224, 90, 126, 0.3)',
           duration: 0.3,
           ease: 'back.out(2)',
         });
@@ -89,9 +89,9 @@ export const CustomCursor: React.FC = () => {
           scale: 1.0,
           scaleX: 1.0,
           scaleY: 1.0,
-          backgroundColor: 'rgba(200, 150, 88, 0.05)',
-          borderColor: 'rgba(200, 150, 88, 0.5)',
-          boxShadow: '0 0 10px rgba(200, 150, 88, 0.1)',
+          backgroundColor: 'rgba(245, 218, 223, 0.15)',
+          borderColor: 'rgba(224, 90, 126, 0.35)',
+          boxShadow: '0 0 8px rgba(245, 218, 223, 0.2)',
           duration: 0.3,
           ease: 'power2.out',
         });
@@ -144,13 +144,13 @@ export const CustomCursor: React.FC = () => {
       {/* Outer Spring/Inertial Halo with Liquid Velocity Stretch */}
       <div
         ref={haloRef}
-        className="fixed top-0 left-0 -ml-4 -mt-4 h-8 w-8 rounded-full border border-[#c89658]/50 bg-[#c89658]/05 will-change-transform"
+        className="fixed top-0 left-0 -ml-4 -mt-4 h-8 w-8 rounded-full border border-[#E05A7E]/40 bg-[#F5DADF]/15 will-change-transform"
       />
 
-      {/* Center Laser-Sharp Amber Core Dot */}
+      {/* Center Laser-Sharp Espresso Core Dot */}
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 -ml-1 -mt-1 h-2 w-2 rounded-full bg-[#e5b877] shadow-[0_0_10px_#c89658] will-change-transform"
+        className="fixed top-0 left-0 -ml-1 -mt-1 h-2 w-2 rounded-full bg-[#2D2926] shadow-[0_0_6px_#E05A7E] will-change-transform"
       />
     </div>
   );

@@ -22,6 +22,7 @@ import {
   InterludeOriginArt,
 } from './components/TypographicInterludes';
 import { Footer } from './components/Footer';
+import { CollectionPage } from './components/CollectionPage';
 import { ReserveModal } from './components/ReserveModal';
 import { ProductDetailOverlay } from './components/ProductDetailOverlay';
 import { CollectionDrawer } from './components/CollectionDrawer';
@@ -36,6 +37,7 @@ export const App: React.FC = () => {
   const { activeSection, progress } = useScrollProgress();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [viewMode, setViewMode] = useState<'home' | 'collection'>('home');
 
   // Modals & Overlay States
   const [isReserveModalOpen, setIsReserveModalOpen] = useState<boolean>(false);
@@ -107,7 +109,14 @@ export const App: React.FC = () => {
   }, [userSession]);
 
   const handleNavigate = (targetId: string) => {
-    scrollTo(targetId, 0);
+    if (viewMode === 'collection') {
+      setViewMode('home');
+      setTimeout(() => {
+        scrollTo(targetId, 0);
+      }, 60);
+    } else {
+      scrollTo(targetId, 0);
+    }
   };
 
   const handleOpenReserve = (batch?: ReserveBatch) => {
@@ -194,7 +203,7 @@ export const App: React.FC = () => {
   const totalCollectionCount = collectionItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="relative min-h-screen bg-[#070605] text-[#f4eee6] selection:bg-[#c89658] selection:text-[#070605] overflow-x-hidden">
+    <div className="relative min-h-screen bg-[#FAF7F5] text-[#2D2926] selection:bg-[#F5DADF] selection:text-[#2D2926] overflow-x-hidden">
       {/* 1. Initial Page Loading Sequence */}
       {isLoading && <PageLoader onLoadingComplete={() => setIsLoading(false)} />}
 
@@ -207,85 +216,120 @@ export const App: React.FC = () => {
       {/* 4. Luxury Custom Magnetic Cursor with Context Labels */}
       <CustomCursor />
 
-      {/* 5. Minimal Fixed Navigation with Scroll Transformation */}
-      <Navbar
-        onOpenReserve={() => handleOpenReserve()}
-        onOpenCollection={() => setIsCollectionDrawerOpen(true)}
-        onOpenLogin={() => setIsLoginModalOpen(true)}
-        userSession={userSession}
-        collectionCount={totalCollectionCount}
-        onNavigate={handleNavigate}
-      />
+      {/* 5. Minimal Fixed Navigation with Scroll Transformation (Only in Home Mode) */}
+      {viewMode === 'home' && (
+        <>
+          <Navbar
+            onOpenReserve={() => handleOpenReserve()}
+            onOpenCollection={() => setIsCollectionDrawerOpen(true)}
+            onOpenLogin={() => setIsLoginModalOpen(true)}
+            onOpenCollectionPage={() => setViewMode('collection')}
+            userSession={userSession}
+            collectionCount={totalCollectionCount}
+            onNavigate={handleNavigate}
+          />
 
-      {/* 6. Vertical Interaction Indicator Rail with Dynamic Progress Line */}
-      <SectionIndicator
-        activeCode={activeSection}
-        progress={progress}
-        onNavigate={handleNavigate}
-      />
+          {/* 6. Vertical Interaction Indicator Rail with Dynamic Progress Line */}
+          <SectionIndicator
+            activeCode={activeSection}
+            progress={progress}
+            onNavigate={handleNavigate}
+          />
+        </>
+      )}
 
-      {/* Main Continuous Film Experience */}
-      <main className="relative w-full">
-        {/* 00. Hero Viewport */}
-        <div data-cursor="explore">
-          <Hero onExplore={() => handleNavigate('#section-bean')} />
-        </div>
+      {/* Main Experience: Either Dedicated Collection Page or Continuous Story Experience */}
+      {viewMode === 'collection' ? (
+        <CollectionPage
+          onBackToHome={() => {
+            setViewMode('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onDiscoverProduct={handleDiscoverProduct}
+          onAddToCart={handleAddToCollection}
+          onOpenCart={() => setIsCollectionDrawerOpen(true)}
+          cartCount={totalCollectionCount}
+          onOpenLogin={() => setIsLoginModalOpen(true)}
+          userSession={userSession}
+        />
+      ) : (
+        <main className="relative w-full">
+          {/* 00. Hero Viewport */}
+          <div data-cursor="explore">
+            <Hero onExplore={() => handleNavigate('#section-bean')} />
+          </div>
 
-        {/* 01. Pinned Bean Story with Word-by-Word Reveal */}
-        <div data-cursor="view" className="relative">
-          <LightLeak position="top-right" intensity="subtle" />
-          <SectionBean />
-        </div>
+          {/* 01. Pinned Bean Story with Word-by-Word Reveal */}
+          <div data-cursor="view" className="relative">
+            <LightLeak position="top-right" intensity="subtle" />
+            <SectionBean />
+          </div>
 
-        {/* Monumental Typographic Interlude 1 */}
-        <InterludeFarmToCup />
+          {/* Monumental Typographic Interlude 1 */}
+          <InterludeFarmToCup />
 
-        {/* 02. Blackout Transition & Thermal Roast Emergence */}
-        <div data-cursor="explore" className="relative">
-          <LightLeak position="bottom-left" intensity="medium" />
-          <SectionRoast />
-        </div>
+          {/* 02. Blackout Transition & Thermal Roast Emergence */}
+          <div data-cursor="explore" className="relative">
+            <LightLeak position="bottom-left" intensity="medium" />
+            <SectionRoast />
+          </div>
 
-        {/* Monumental Typographic Interlude 2 */}
-        <InterludeTakesTime />
+          {/* Monumental Typographic Interlude 2 */}
+          <InterludeTakesTime />
 
-        {/* 03. Layered 3D Typography & Espresso Extraction */}
-        <div data-cursor="view" className="relative">
-          <LightLeak position="top-left" intensity="subtle" />
-          <SectionPour />
-        </div>
+          {/* 03. Layered 3D Typography & Espresso Extraction */}
+          <div data-cursor="view" className="relative">
+            <LightLeak position="top-left" intensity="subtle" />
+            <SectionPour />
+          </div>
 
-        {/* 04. "THE COLLECTION" — 5 Fictional Coffees Pinned Film Sequence */}
-        <div data-cursor="discover" className="relative">
-          <LightLeak position="top-right" intensity="medium" />
-          <SectionCollection onDiscoverProduct={handleDiscoverProduct} />
-        </div>
+          {/* 04. "THE COLLECTION" — 10 Fictional Coffees Pinned Film Sequence */}
+          <div data-cursor="discover" className="relative">
+            <LightLeak position="top-right" intensity="medium" />
+            <SectionCollection 
+              onDiscoverProduct={handleDiscoverProduct} 
+              onOpenCollectionPage={() => setViewMode('collection')}
+            />
+          </div>
 
-        {/* Monumental Typographic Interlude 3 */}
-        <InterludeOriginArt />
+          {/* Monumental Typographic Interlude 3 */}
+          <InterludeOriginArt />
 
-        {/* 05. Pinned Horizontal Magazine Spread Camera Moment */}
-        <div data-cursor="explore">
-          <SectionHorizontalGallery />
-        </div>
+          {/* 05. Pinned Horizontal Magazine Spread Camera Moment */}
+          <div data-cursor="explore">
+            <SectionHorizontalGallery />
+          </div>
 
-        {/* 06. "YOUR RITUAL" — 3-Method Interactive Brewing Atelier */}
-        <div data-cursor="view" className="relative">
-          <LightLeak position="bottom-left" intensity="subtle" />
-          <SectionBrewRitual />
-        </div>
+          {/* 06. "YOUR RITUAL" — 3-Method Interactive Brewing Atelier */}
+          <div data-cursor="view" className="relative">
+            <LightLeak position="bottom-left" intensity="subtle" />
+            <SectionBrewRitual />
+          </div>
 
-        {/* 07. Private Numbered Allocations & Reserve Vault */}
-        <div data-cursor="reserve">
-          <SectionReserve onSelectBatch={(batch) => handleOpenReserve(batch)} />
-        </div>
+          {/* 07. Private Numbered Allocations & Reserve Vault */}
+          <div data-cursor="reserve">
+            <SectionReserve onSelectBatch={(batch) => handleOpenReserve(batch)} />
+          </div>
 
-        {/* 08. The Noir Manifesto */}
-        <SectionManifesto />
-      </main>
+          {/* 08. The Noir Manifesto */}
+          <SectionManifesto />
+        </main>
+      )}
 
       {/* Editorial Luxury Footer */}
-      <Footer onBackToTop={() => handleNavigate('#hero')} onNavigate={handleNavigate} />
+      {viewMode === 'home' && (
+        <Footer 
+          onBackToTop={() => handleNavigate('#hero')} 
+          onNavigate={(target) => {
+            if (target === '#section-collection') {
+              setViewMode('collection');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+              handleNavigate(target);
+            }
+          }} 
+        />
+      )}
 
       {/* Reserve Allocation Modal / Drawer */}
       <ReserveModal

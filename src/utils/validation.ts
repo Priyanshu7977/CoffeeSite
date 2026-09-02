@@ -4,11 +4,11 @@
  */
 
 /**
- * Checks whether an input contains potentially malicious script or iframe tags
+ * Checks whether an input contains potentially malicious script, iframe, or HTML tags
  */
 export const hasMaliciousContent = (value: string): boolean => {
   if (!value) return false;
-  const maliciousPattern = /<[^>]*>?|javascript:|data:|vbscript:|on\w+\s*=/i;
+  const maliciousPattern = /<[^>]*>?|javascript:|data:|vbscript:|on\w+\s*=|script|iframe|embed|object/i;
   return maliciousPattern.test(value);
 };
 
@@ -20,28 +20,32 @@ export const stripDangerousMarkup = (value: string): string => {
   return value
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+    .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '')
+    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
     .replace(/<[^>]*>?/gm, '')
     .replace(/javascript:/gi, '')
     .replace(/data:/gi, '')
+    .replace(/vbscript:/gi, '')
     .replace(/on\w+\s*=/gi, '');
 };
 
 /**
- * Sanitizes and restricts Name fields to alphabetic characters, spaces, hyphens, and apostrophes only.
+ * Sanitizes and restricts Name fields to alphabetic letters (A-Z, a-z) and spaces only.
  * Completely strips all numbers, symbols, scripts, and iframe injections.
  */
 export const sanitizeName = (value: string): string => {
   const clean = stripDangerousMarkup(value);
-  // Retain only alphabetic letters (A-Z, a-z), spaces, apostrophes, and hyphens
-  return clean.replace(/[^A-Za-z\s'-]/g, '');
+  // Retain ONLY alphabetic letters (A-Z, a-z) and single spaces (NO numbers, NO symbols)
+  return clean.replace(/[^A-Za-z\s]/g, '').replace(/\s+/g, ' ');
 };
 
 /**
- * Validates if a name contains only alphabetic letters and valid spacing.
+ * Validates if a name contains strictly alphabetic letters and valid spacing (no digits, no symbols).
  */
 export const isValidName = (value: string): boolean => {
   if (!value || value.trim().length < 2) return false;
-  return /^[A-Za-z\s'-]+$/.test(value.trim());
+  if (hasMaliciousContent(value)) return false;
+  return /^[A-Za-z\s]{2,60}$/.test(value.trim());
 };
 
 /**

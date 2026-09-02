@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Sparkles, Package, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { sanitizeName, isValidEmail, isValidName } from '../utils/validation';
+import { sanitizeName, isValidEmail, isValidName, hasMaliciousContent, stripDangerousMarkup } from '../utils/validation';
 import type { ReserveBatch } from '../types';
 
 interface ReserveModalProps {
@@ -23,35 +23,62 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [certificateId, setCertificateId] = useState<string>('');
 
+  // Reset inputs whenever modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setFullName('');
+      setEmail('');
+      setErrorMessage('');
+      setIsSubmitted(false);
+      setQuantity(1);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const defaultBatch: ReserveBatch = selectedBatch || {
     id: 'batch-01',
-    name: 'BABA BUDAN OBSIDIAN 1,900M',
+    name: 'BABA BUDAN OBSIDIAN',
     vintage: '2026 Monsoon Harvest',
-    origin: 'India / Chikmagalur',
-    region: 'Mullayanagiri & Chandragiri Hills',
+    origin: 'Chikmagalur, Karnataka',
+    region: 'Mullayanagiri Hills',
     altitude: '1,900m ASL',
-    varietal: 'Wild 1931 Arabica',
+    varietal: 'Wild Arabica',
     process: '96h Anaerobic Natural',
-    notes: ['Smoked Cardamom', '85% Mysore Cacao', 'Jasmine', 'Black Fig'],
+    notes: ['Cardamom', 'Dark Cacao', 'Jasmine'],
     allocationLeft: 14,
     totalAllocations: 85,
     roastLevel: 'Omniroast',
     price: '₹2,800',
-    badge: 'Strictly Limited',
-    description: 'Sacred high-elevation micro-lot from the hills of Chikmagalur, Karnataka.',
+    badge: '14 Tins Remaining',
+    description: 'Single-estate sacred Baba Budan micro-lot with 96h anaerobic natural fermentation.',
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    const sanitized = sanitizeName(raw);
-    setFullName(sanitized);
-    if (raw !== sanitized) {
-      setErrorMessage('Name field accepts alphabetic letters only (no numbers).');
+    if (hasMaliciousContent(raw)) {
+      setErrorMessage('Security Alert: Script tags and iframes are strictly prohibited.');
+      return;
+    }
+    if (/[0-9]/.test(raw)) {
+      setErrorMessage('Full Name accepts alphabetic letters only (no numbers allowed).');
+    } else if (/[^A-Za-z\s]/.test(raw)) {
+      setErrorMessage('Full Name accepts alphabetic letters only (no symbols allowed).');
     } else {
       setErrorMessage('');
     }
+    const sanitized = sanitizeName(raw);
+    setFullName(sanitized);
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (hasMaliciousContent(raw)) {
+      setErrorMessage('Security Alert: HTML or script tags are not allowed.');
+      return;
+    }
+    setErrorMessage('');
+    setEmail(stripDangerousMarkup(raw).trim());
   };
 
   const handleOrder = (e: React.FormEvent) => {
@@ -71,16 +98,15 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
     setCertificateId(cert);
     setIsSubmitted(true);
 
-    // Trigger celebratory gold confetti
     try {
       confetti({
         particleCount: 80,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#c89658', '#e5b877', '#f4eee6', '#8b5a2b'],
+        colors: ['#F5DADF', '#E05A7E', '#2D2926', '#FFFFFF'],
       });
     } catch {
-      // Confetti fallback
+      // Ignored
     }
   };
 
@@ -94,16 +120,16 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
       {/* Backdrop */}
       <div
         onClick={handleClose}
-        className="fixed inset-0 bg-[#070605]/85 backdrop-blur-xl transition-opacity duration-300"
+        className="fixed inset-0 bg-[#2D2926]/60 backdrop-blur-md transition-opacity duration-300"
       />
 
       {/* Modal Card */}
-      <div className="relative z-10 w-full max-w-xl rounded-3xl bg-[#0f0c09] border border-[#c89658]/40 p-6 sm:p-10 shadow-[0_25px_80px_rgba(0,0,0,0.9)] text-[#f4eee6]">
+      <div className="relative z-10 w-full max-w-lg rounded-3xl bg-white border border-[#2D2926]/10 p-6 sm:p-9 shadow-2xl text-[#2D2926]">
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="absolute top-6 right-6 flex h-9 w-9 items-center justify-center rounded-full border border-[#2b221a] bg-[#14100c] text-[#8c827a] hover:border-[#c89658] hover:text-[#f4eee6] transition-all cursor-pointer"
-          aria-label="Close Allocation Modal"
+          className="absolute top-6 right-6 flex h-8 w-8 items-center justify-center rounded-full border border-[#2D2926]/10 bg-[#FAF7F5] text-[#5E5854] hover:text-[#2D2926] transition-all cursor-pointer shadow-sm"
+          aria-label="Close"
         >
           <X className="h-4 w-4" />
         </button>
@@ -111,47 +137,42 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
         {isSubmitted ? (
           /* Confirmation State */
           <div className="flex flex-col items-center text-center py-6">
-            <div className="h-16 w-16 rounded-full bg-[#c89658]/20 border border-[#c89658] flex items-center justify-center text-[#c89658] mb-6 shadow-[0_0_30px_rgba(200,150,88,0.3)]">
-              <Sparkles className="h-8 w-8 text-[#c89658] animate-spin-slow" />
+            <div className="h-14 w-14 rounded-full bg-[#FAF7F5] border border-[#2D2926]/15 flex items-center justify-center text-[#E05A7E] mb-4 shadow-sm">
+              <Sparkles className="h-7 w-7 text-[#E05A7E]" />
             </div>
 
-            <span className="text-[10px] font-sans tracking-[0.3em] uppercase text-[#c89658] mb-2">
-              Allocation Secured
+            <span className="text-xs font-mono tracking-[0.25em] uppercase text-[#E05A7E] mb-1 font-bold">
+              ALLOCATION CONFIRMED
             </span>
 
-            <h3 className="font-serif text-3xl sm:text-4xl text-[#f4eee6] font-normal mb-3">
+            <h3 className="font-display text-2xl sm:text-3xl text-[#2D2926] font-bold mb-2">
               Certificate Granted.
             </h3>
 
-            <p className="font-sans text-xs sm:text-sm text-[#b0a59b] max-w-md font-light mb-8">
-              Your allocation for <strong>{quantity}x {defaultBatch.name}</strong> has been registered directly to the Master Roaster's queue.
+            <p className="font-sans text-xs sm:text-sm text-[#5E5854] max-w-sm font-normal mb-6">
+              Your reservation for <strong>{quantity}x {defaultBatch.name}</strong> has been registered in our Chikmagalur cast-iron roasting ledger.
             </p>
 
-            {/* Official Certificate Card */}
-            <div className="w-full rounded-2xl bg-[#080605] border border-[#c89658]/30 p-6 text-left mb-8 space-y-3">
-              <div className="flex justify-between items-center border-b border-[#221c17] pb-3">
-                <span className="text-[10px] font-sans tracking-[0.2em] text-[#8c827a] uppercase">
-                  Official Allocation Certificate
-                </span>
-                <span className="font-mono text-xs font-bold text-[#e5b877]">
-                  {certificateId}
-                </span>
+            <div className="w-full rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 p-5 text-left mb-6 space-y-2 text-xs">
+              <div className="flex justify-between items-center border-b border-[#2D2926]/10 pb-2">
+                <span className="text-[#8C827A] uppercase font-bold text-[10px]">Certificate ID</span>
+                <span className="font-mono font-bold text-[#2D2926]">{certificateId}</span>
               </div>
-              <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="grid grid-cols-2 gap-2 pt-1">
                 <div>
-                  <span className="text-[#8c827a] block text-[10px] uppercase">Recipient</span>
-                  <span className="text-[#f4eee6] font-medium">{fullName}</span>
+                  <span className="text-[#8C827A] block text-[10px] uppercase font-bold">Recipient</span>
+                  <span className="text-[#2D2926] font-semibold">{fullName}</span>
                 </div>
                 <div>
-                  <span className="text-[#8c827a] block text-[10px] uppercase">Grind Spec</span>
-                  <span className="text-[#e5b877] capitalize">{grind}</span>
+                  <span className="text-[#8C827A] block text-[10px] uppercase font-bold">Grind</span>
+                  <span className="text-[#E05A7E] capitalize font-bold">{grind}</span>
                 </div>
               </div>
             </div>
 
             <button
               onClick={handleClose}
-              className="px-8 py-3.5 rounded-xl bg-[#c89658] text-[#070605] font-sans text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#e5b877] transition-all cursor-pointer shadow-[0_0_20px_rgba(200,150,88,0.3)]"
+              className="px-7 py-3 rounded-full bg-[#2D2926] text-white font-sans text-xs font-bold tracking-[0.2em] uppercase transition-all shadow-md hover:bg-[#1F1C1A] cursor-pointer"
             >
               Return to Roastery
             </button>
@@ -161,46 +182,46 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
           <div>
             {/* Header */}
             <div className="mb-6">
-              <div className="flex items-center gap-2 text-[10px] font-sans tracking-[0.3em] uppercase text-[#c89658] mb-1">
-                <Package className="h-3.5 w-3.5" />
-                <span>Reserve Allocation Request</span>
+              <div className="flex items-center gap-1.5 text-xs font-sans tracking-[0.25em] uppercase text-[#E05A7E] mb-1 font-bold">
+                <Package className="h-3.5 w-3.5 text-[#E05A7E]" />
+                <span>PRIVATE ALLOCATION REQUEST</span>
               </div>
-              <h3 className="font-serif text-2xl sm:text-3xl text-[#f4eee6]">
+              <h3 className="font-display text-2xl sm:text-3xl text-[#2D2926] font-bold">
                 {defaultBatch.name}
               </h3>
-              <span className="text-xs text-[#8c827a] font-sans">
-                {defaultBatch.origin} • {defaultBatch.altitude} • {defaultBatch.price}
+              <span className="text-xs text-[#5E5854] font-sans">
+                {defaultBatch.origin} • <strong className="text-[#E05A7E] font-bold">{defaultBatch.price}</strong>
               </span>
             </div>
 
             {errorMessage && (
-              <div className="mb-4 rounded-xl bg-amber-950/40 border border-amber-500/40 p-3 flex items-center gap-2 text-xs text-amber-200">
-                <AlertCircle className="h-4 w-4 shrink-0 text-amber-400" />
+              <div className="mb-4 rounded-xl bg-rose-50 border border-rose-200 p-3 flex items-center gap-2 text-xs text-rose-700">
+                <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
                 <span>{errorMessage}</span>
               </div>
             )}
 
-            <form onSubmit={handleOrder} className="space-y-6">
+            <form onSubmit={handleOrder} autoComplete="off" className="space-y-5">
               {/* Grind Selector */}
               <div>
-                <label className="text-[11px] font-sans tracking-[0.2em] uppercase text-[#8c827a] block mb-2">
-                  Grind Specification
+                <label className="text-xs font-sans tracking-wider uppercase text-[#8C827A] block mb-2 font-bold">
+                  Grind Preference
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {[
                     { id: 'whole', label: 'Whole Bean' },
                     { id: 'espresso', label: 'Espresso' },
                     { id: 'filter', label: 'Filter Kaapi' },
-                    { id: 'coarse', label: 'French Press' },
+                    { id: 'coarse', label: 'Pour Over' },
                   ].map((item) => (
                     <button
                       type="button"
                       key={item.id}
                       onClick={() => setGrind(item.id as 'whole' | 'espresso' | 'filter' | 'coarse')}
-                      className={`py-2.5 px-3 rounded-xl text-xs font-sans tracking-wider border transition-all cursor-pointer ${
+                      className={`py-2 px-2.5 rounded-xl border text-xs font-sans font-bold tracking-wider transition-all cursor-pointer ${
                         grind === item.id
-                          ? 'bg-[#c89658] border-[#c89658] text-[#070605] font-bold shadow-md'
-                          : 'bg-[#14100c] border-[#221c17] text-[#a89d93] hover:border-[#c89658]/40'
+                          ? 'border-[#2D2926] bg-[#F5DADF] text-[#2D2926] shadow-sm'
+                          : 'border-[#2D2926]/15 bg-[#FAF7F5] text-[#5E5854] hover:text-[#2D2926]'
                       }`}
                     >
                       {item.label}
@@ -209,72 +230,74 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
                 </div>
               </div>
 
-              {/* Quantity Selector */}
+              {/* Quantity */}
               <div>
-                <label className="text-[11px] font-sans tracking-[0.2em] uppercase text-[#8c827a] block mb-2">
-                  Numbered Tin Quantity (250g each)
+                <label className="text-xs font-sans tracking-wider uppercase text-[#8C827A] block mb-1 font-bold">
+                  Quantity
                 </label>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center rounded-xl border border-[#261f19] bg-[#14100c]">
+                <div className="flex items-center gap-3">
+                  <div className="inline-flex items-center rounded-xl border border-[#2D2926]/15 bg-[#FAF7F5] p-0.5">
                     <button
                       type="button"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="px-4 py-2 text-[#8c827a] hover:text-[#f4eee6] font-mono cursor-pointer"
+                      className="px-3 py-1.5 text-[#5E5854] hover:text-[#2D2926] font-mono font-bold cursor-pointer"
                     >
                       -
                     </button>
-                    <span className="px-4 py-2 font-mono text-sm font-bold text-[#f4eee6]">
+                    <span className="px-3 py-1.5 font-mono text-xs font-bold text-[#2D2926]">
                       {quantity}
                     </span>
                     <button
                       type="button"
                       onClick={() => setQuantity(Math.min(4, quantity + 1))}
-                      className="px-4 py-2 text-[#8c827a] hover:text-[#f4eee6] font-mono cursor-pointer"
+                      className="px-3 py-1.5 text-[#5E5854] hover:text-[#2D2926] font-mono font-bold cursor-pointer"
                     >
                       +
                     </button>
                   </div>
-                  <span className="text-xs text-[#8c827a] font-sans">
-                    Limit: 4 tins per allocation
-                  </span>
+                  <span className="text-xs text-[#5E5854]">Limit: 4 tins per collector</span>
                 </div>
               </div>
 
               {/* Name and Email */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 <div>
-                  <label className="text-[11px] font-sans tracking-[0.2em] uppercase text-[#8c827a] block mb-1.5">
-                    Your Name (Alphabets Only)
+                  <label className="text-xs font-sans tracking-wider uppercase text-[#8C827A] block mb-1 font-bold">
+                    Collector Name
                   </label>
                   <input
                     type="text"
                     required
+                    autoComplete="off"
+                    name="noir_reserve_name"
                     value={fullName}
                     onChange={handleNameChange}
                     placeholder="Devendra Roy"
-                    className="w-full rounded-xl bg-[#14100c] border border-[#261f19] px-4 py-2.5 text-xs text-[#f4eee6] placeholder-[#4f463e] focus:border-[#c89658] focus:outline-none font-sans"
+                    className="w-full rounded-xl bg-[#FAF7F5] border border-[#2D2926]/15 px-3.5 py-2 text-xs text-[#2D2926] placeholder-[#8C827A] focus:border-[#2D2926] focus:outline-none font-sans"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-sans tracking-[0.2em] uppercase text-[#8c827a] block mb-1.5">
-                    Email Address
+                  <label className="text-xs font-sans tracking-wider uppercase text-[#8C827A] block mb-1 font-bold">
+                    Email
                   </label>
                   <input
                     type="email"
                     required
+                    autoComplete="off"
+                    name="noir_reserve_email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="collector@noirdakshin.com"
-                    className="w-full rounded-xl bg-[#14100c] border border-[#261f19] px-4 py-2.5 text-xs text-[#f4eee6] placeholder-[#4f463e] focus:border-[#c89658] focus:outline-none font-sans"
+                    onChange={handleEmailChange}
+                    placeholder="collector@noirroast.com"
+                    className="w-full rounded-xl bg-[#FAF7F5] border border-[#2D2926]/15 px-3.5 py-2 text-xs text-[#2D2926] placeholder-[#8C827A] focus:border-[#2D2926] focus:outline-none font-sans"
                   />
                 </div>
               </div>
 
-              {/* Submit CTA */}
+              {/* Submit */}
               <button
                 type="submit"
-                className="w-full py-4 rounded-xl bg-[#c89658] text-[#070605] font-sans text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300 hover:bg-[#e5b877] hover:shadow-[0_0_25px_rgba(200,150,88,0.4)] cursor-pointer"
+                className="w-full py-3.5 rounded-full bg-[#2D2926] text-white font-sans text-xs font-bold tracking-[0.2em] uppercase transition-all shadow-md hover:bg-[#1F1C1A] hover:scale-105 cursor-pointer"
               >
                 Confirm Allocation Request
               </button>

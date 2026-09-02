@@ -15,27 +15,27 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-[#070605]/85 backdrop-blur-md transition-opacity duration-300"
+        className="fixed inset-0 bg-[#2D2926]/60 backdrop-blur-md transition-opacity duration-300"
       />
 
-      {/* Luxury Email Client Simulation Window */}
-      <div className="relative z-10 w-full max-w-2xl rounded-3xl bg-[#0e0b08] border border-[#c89658]/40 p-5 sm:p-7 shadow-[0_25px_90px_rgba(0,0,0,0.95)] text-[#f4eee6] max-h-[88vh] overflow-y-auto">
+      {/* Email Simulation Window */}
+      <div className="relative z-10 w-full max-w-2xl rounded-3xl bg-white border border-[#2D2926]/10 p-5 sm:p-7 shadow-2xl text-[#2D2926] max-h-[88vh] overflow-y-auto">
         {/* Email Header Bar */}
-        <div className="flex items-start sm:items-center justify-between border-b border-[#2b2118] pb-3.5 mb-4 gap-3">
+        <div className="flex items-start sm:items-center justify-between border-b border-[#2D2926]/10 pb-3.5 mb-4 gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-full bg-[#18120d] border border-[#c89658]/50 flex items-center justify-center text-[#c89658] shadow-[0_0_15px_rgba(200,150,88,0.25)] shrink-0">
+            <div className="h-9 w-9 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 flex items-center justify-center text-[#E05A7E] shrink-0 shadow-sm">
               <Mail className="h-4 w-4" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="text-[9px] font-mono font-bold uppercase tracking-widest text-[#c89658]">
-                  AUTOMATED DISPATCH SIMULATOR
+                <span className="text-[9px] font-sans font-bold uppercase tracking-widest text-[#E05A7E]">
+                  DISPATCH NOTIFICATION
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 px-1.5 py-0.2 text-[8px] font-mono text-emerald-400">
-                  <CheckCircle2 className="h-2.5 w-2.5" /> SENT & DELIVERED
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 text-[8px] font-mono text-emerald-700 font-bold">
+                  <CheckCircle2 className="h-2.5 w-2.5" /> DELIVERED
                 </span>
               </div>
-              <h3 className="font-serif text-base sm:text-lg font-bold text-[#f4eee6] leading-tight">
+              <h3 className="font-display text-base sm:text-lg font-bold text-[#2D2926] leading-tight">
                 {email.subject}
               </h3>
             </div>
@@ -43,124 +43,113 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
 
           <button
             onClick={onClose}
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-[#2b221a] bg-[#14100c] text-[#8c827a] hover:border-[#c89658] hover:text-[#f4eee6] transition-all cursor-pointer shrink-0 mt-1 sm:mt-0"
-            aria-label="Close Email Preview"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-[#2D2926]/10 bg-[#FAF7F5] text-[#5E5854] hover:text-[#2D2926] transition-all cursor-pointer shrink-0 mt-1 sm:mt-0 shadow-sm"
+            aria-label="Close"
           >
             <X className="h-3.5 w-3.5" />
           </button>
         </div>
 
         {/* Email Metadata */}
-        <div className="rounded-2xl bg-[#140f0c] border border-[#241c15] p-3 mb-4 space-y-1 text-[11px]">
+        <div className="rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 p-3 mb-4 space-y-1 text-xs text-[#5E5854]">
           <div className="flex justify-between flex-wrap gap-1">
-            <span className="text-[#8c827a]">From:</span>
-            <span className="font-mono text-[#e5b877]">atelier@noirroast.com (NOIR DAKSHIN Dispatch Robot)</span>
+            <span className="text-[#8C827A]">From:</span>
+            <span className="font-mono text-[#2D2926] font-bold">atelier@noirroast.com (NOIR DAKSHIN)</span>
           </div>
           <div className="flex justify-between flex-wrap gap-1">
-            <span className="text-[#8c827a]">To:</span>
-            <span className="font-mono text-[#f4eee6]">{email.recipientName} &lt;{email.to}&gt;</span>
+            <span className="text-[#8C827A]">To:</span>
+            <span className="font-mono text-[#2D2926] font-semibold">{email.recipientName} &lt;{email.to}&gt;</span>
           </div>
           <div className="flex justify-between flex-wrap gap-1">
-            <span className="text-[#8c827a]">Timestamp:</span>
-            <span className="font-mono text-[#8c827a]">{new Date(email.timestamp).toLocaleString('en-IN')}</span>
+            <span className="text-[#8C827A]">Date:</span>
+            <span className="font-mono text-[#8C827A]">{new Date(email.timestamp).toLocaleString('en-IN')}</span>
           </div>
         </div>
 
-        {/* Realistic HTML Email Content Body */}
-        <div className="rounded-2xl bg-[#090705] border border-[#33261a] p-5 sm:p-6 space-y-4">
-          {/* Email Brand Seal */}
-          <div className="text-center pb-3 border-b border-[#211a14]">
-            <span className="text-[9px] font-sans tracking-[0.35em] text-[#c89658] uppercase block mb-0.5">
-              HAUTE KAAPI MAISON EST. 1998
-            </span>
-            <h2 className="font-display text-xl sm:text-2xl font-bold tracking-[0.2em] text-[#f4eee6] uppercase drop-shadow-[0_0_20px_rgba(200,150,88,0.4)]">
+        {/* HTML Email Body */}
+        <div className="rounded-2xl bg-[#F3ECE7] border border-[#2D2926]/10 p-5 sm:p-6 space-y-4">
+          <div className="text-center pb-3 border-b border-[#2D2926]/10">
+            <h2 className="font-display text-xl font-bold tracking-[0.25em] text-[#2D2926] uppercase">
               NOIR DAKSHIN
             </h2>
-            <span className="text-[8px] font-mono text-[#8c827a] uppercase tracking-widest block mt-0.5">
-              BENGALURU ATELIER • CHIKMAGALUR ROASTERY • MUMBAI VAULT
+            <span className="text-[8px] font-mono text-[#E05A7E] uppercase tracking-widest block mt-0.5 font-bold">
+              CHIKMAGALUR & BENGALURU • EST. 1998
             </span>
           </div>
 
-          {/* Greeting & Body text */}
-          <div className="space-y-2.5 font-sans text-xs text-[#cfc5ba] leading-relaxed">
-            <p className="font-semibold text-[#f4eee6]">Dear {email.recipientName},</p>
+          <div className="space-y-3 font-sans text-xs text-[#5E5854] leading-relaxed">
+            <p className="font-bold text-[#2D2926]">Salutations {email.recipientName},</p>
             {email.type === 'order_confirmation' ? (
               <>
                 <p>
-                  Thank you for securing your allocation with NOIR DAKSHIN. Your order <strong>#{email.details.orderNumber}</strong> has been logged into our Chikmagalur cast-iron roasting ledger.
+                  Your order <strong>#{email.details.orderNumber}</strong> has been logged into our cast-iron roasting ledger.
                 </p>
                 <p>
-                  Each micro-tin is hand-weighed, nitrogen-sealed, and hand-stamped with our master roaster wax seal before dispatch via white-glove courier across India.
+                  Each batch is hand-weighed, nitrogen-sealed, and dispatched from Chikmagalur directly to your address.
                 </p>
 
-                {/* Items Breakdown */}
                 {email.details.items && (
-                  <div className="rounded-xl bg-[#120e0b] border border-[#261f19] p-3.5 space-y-2 mt-3">
-                    <span className="text-[9px] font-mono uppercase text-[#c89658] block tracking-widest font-bold">
-                      ALLOCATION MANIFEST
+                  <div className="rounded-xl bg-white border border-[#2D2926]/10 p-3.5 space-y-2 mt-2">
+                    <span className="text-[9px] font-sans uppercase text-[#E05A7E] block tracking-widest font-bold">
+                      RESERVED MICRO-LOT SELECTION
                     </span>
                     {email.details.items.map((it, idx) => (
-                      <div key={idx} className="flex justify-between items-center text-[11px] pb-1.5 border-b border-[#1c1611] last:border-b-0 last:pb-0">
+                      <div key={idx} className="flex justify-between items-center text-xs pb-1.5 border-b border-[#2D2926]/10 last:border-b-0 last:pb-0">
                         <div>
-                          <span className="font-serif font-bold text-[#f4eee6] block">{it.name}</span>
-                          <span className="text-[9px] text-[#8c827a]">{it.origin} • Grind: {it.grind} • Qty: {it.quantity}</span>
+                          <span className="font-display font-bold text-[#2D2926] block">{it.name}</span>
+                          <span className="text-[10px] text-[#E05A7E]">{it.origin} • {it.grind} • Qty: {it.quantity}</span>
                         </div>
-                        <span className="font-mono font-bold text-[#e5b877]">{it.price}</span>
+                        <span className="font-display text-[#2D2926] font-bold">{it.price}</span>
                       </div>
                     ))}
-                    <div className="pt-2 flex justify-between items-center text-xs font-bold border-t border-[#261f19]">
-                      <span className="text-[#f4eee6]">Total Settled:</span>
-                      <span className="font-mono text-[#e5b877] text-sm">{email.details.totalAmount}</span>
+                    <div className="pt-2 flex justify-between items-center text-xs font-bold border-t border-[#2D2926]/10">
+                      <span className="text-[#2D2926]">Total Settled:</span>
+                      <span className="font-display text-sm text-[#2D2926] font-bold">{email.details.totalAmount}</span>
                     </div>
                   </div>
                 )}
 
-                {/* Shipping info */}
-                <div className="rounded-xl bg-[#120e0b] border border-[#261f19] p-2.5 text-[11px] flex justify-between flex-wrap gap-1">
-                  <span className="text-[#8c827a]">Dispatch Address:</span>
-                  <span className="font-mono text-[#f4eee6]">{email.details.shippingAddress}</span>
+                <div className="rounded-xl bg-white border border-[#2D2926]/10 p-2.5 text-xs flex justify-between flex-wrap gap-1">
+                  <span className="text-[#8C827A]">Delivery Address:</span>
+                  <span className="text-[#2D2926] font-semibold">{email.details.shippingAddress}</span>
                 </div>
               </>
             ) : (
               <>
                 <p>
-                  We are pleased to welcome you to the <strong>Noir Dakshin Vault Allocation Circle</strong>. Your credentials have been authenticated for limited private harvest lots.
+                  Welcome to the <strong>Noir Dakshin Private Cellar</strong>. You hold priority allocation rights to our seasonal harvest releases.
                 </p>
-                <div className="rounded-xl bg-[#120e0b] border border-[#c89658]/40 p-3.5 text-center space-y-1.5">
-                  <span className="text-[9px] font-sans tracking-[0.25em] text-[#c89658] uppercase block font-semibold">
-                    YOUR VIP VAULT PASSCODE
+                <div className="rounded-xl bg-white border border-[#2D2926]/10 p-3.5 text-center space-y-1">
+                  <span className="text-[10px] font-sans tracking-widest text-[#E05A7E] uppercase block font-bold">
+                    YOUR CELLAR PASSPORT NUMBER
                   </span>
-                  <span className="font-mono text-lg sm:text-xl font-bold text-[#e5b877] tracking-widest block">
+                  <span className="font-mono text-lg font-bold text-[#2D2926] tracking-wider block">
                     #{email.details.membershipId}
-                  </span>
-                  <span className="text-[9px] font-sans text-[#8c827a] block">
-                    Priority access to all 12kg single-ridge numbered roasts in Bengaluru & Chikmagalur.
                   </span>
                 </div>
               </>
             )}
 
-            <p className="pt-1 text-[11px] text-[#8c827a] italic">
-              "We do not mass produce. We do not rush. We do not compromise."
+            <p className="pt-1 text-xs text-[#E05A7E] italic font-medium">
+              “Crafted with care. Poured with purpose.”
             </p>
           </div>
 
-          {/* Email Footer */}
-          <div className="pt-3 border-t border-[#211a14] flex flex-col sm:flex-row items-center justify-between gap-1 text-[9px] font-mono text-[#6e6358]">
+          <div className="pt-3 border-t border-[#2D2926]/10 flex items-center justify-between text-[10px] font-mono text-[#8C827A]">
             <div className="flex items-center gap-1">
-              <Shield className="h-3 w-3 text-[#c89658]" />
-              <span>NOIR DAKSHIN ROAST MAISON DE HAUTE TORRÉFACTION</span>
+              <Shield className="h-3 w-3 text-[#E05A7E]" />
+              <span>NOIR DAKSHIN HAUTE MAISON</span>
             </div>
-            <span>SECURE INDIAN COURIER DISPATCH</span>
+            <span>OFFICIAL DISPATCH</span>
           </div>
         </div>
 
         <div className="mt-4 flex justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-full bg-[#c89658] text-[#070605] font-sans text-xs font-bold uppercase tracking-wider hover:bg-[#e5b877] transition-all cursor-pointer shadow-[0_0_15px_rgba(200,150,88,0.3)]"
+            className="px-5 py-2 rounded-full bg-[#2D2926] text-white font-sans text-xs font-bold uppercase transition-all cursor-pointer shadow-sm hover:bg-[#1F1C1A]"
           >
-            Acknowledge & Close
+            Close
           </button>
         </div>
       </div>

@@ -8,18 +8,21 @@ export function useLenis() {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    // Determine if mobile touch device
-    const isTouch = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    // Enable mobile resize resilience for iOS Safari & Chrome address bar transitions
+    ScrollTrigger.config({
+      ignoreMobileResize: true,
+      autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load,resize',
+    });
 
     const lenis = new Lenis({
-      duration: isTouch ? 1.0 : 1.2,
+      duration: 1.1,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 0.95,
-      touchMultiplier: 1.4,
-      infinite: false,
+      syncTouch: false, // Preserves hardware-accelerated 120Hz native touch on iOS/Android
+      touchMultiplier: 1.0,
       autoResize: true,
     });
 
@@ -37,12 +40,12 @@ export function useLenis() {
     };
 
     gsap.ticker.add(tickerCallback);
-    gsap.ticker.lagSmoothing(0);
+    gsap.ticker.lagSmoothing(500, 33); // Smooth lag recovery if frame drops occur
 
     // Refresh ScrollTrigger after initial layout settles
     const timeout = setTimeout(() => {
       ScrollTrigger.refresh();
-    }, 200);
+    }, 150);
 
     // Also handle mobile orientation / resize changes cleanly
     const handleResize = () => {

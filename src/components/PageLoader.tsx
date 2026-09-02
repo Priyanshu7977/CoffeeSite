@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { Sparkles, Flame, Coffee, Compass, Droplets } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface PageLoaderProps {
   onLoadingComplete: () => void;
@@ -8,28 +7,108 @@ interface PageLoaderProps {
 export const PageLoader: React.FC<PageLoaderProps> = ({ onLoadingComplete }) => {
   const [progress, setProgress] = useState<number>(0);
   const [isFading, setIsFading] = useState<boolean>(false);
-  const [currentStageText, setCurrentStageText] = useState<string>('HARVESTING CHIKMAGALUR 1,900M...');
-  const [tempGauge, setTempGauge] = useState<string>('24°C');
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+  // 1. Procedural Highland Mist & Morning Sunbeam Volumetrics on Coffee Farm
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationId: number;
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const handleResize = () => {
+      if (!canvas) return;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+
+    // Drifting mountain mist clouds
+    const mistClouds = Array.from({ length: 18 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height * 0.85,
+      radius: Math.random() * 250 + 150,
+      vx: Math.random() * 0.4 + 0.15,
+      vy: (Math.random() - 0.5) * 0.1,
+      alpha: Math.random() * 0.25 + 0.1,
+    }));
+
+    // Floating golden dew particles
+    const particles = Array.from({ length: 30 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      size: Math.random() * 2.5 + 1,
+      vx: Math.random() * 0.3 - 0.15,
+      vy: -Math.random() * 0.5 - 0.2,
+      alpha: Math.random() * 0.6 + 0.2,
+    }));
+
+    const render = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      // Render Drifting Mountain Mist
+      mistClouds.forEach((cloud) => {
+        cloud.x += cloud.vx;
+        cloud.y += cloud.vy;
+
+        if (cloud.x - cloud.radius > width) {
+          cloud.x = -cloud.radius;
+        }
+
+        const gradient = ctx.createRadialGradient(
+          cloud.x,
+          cloud.y,
+          0,
+          cloud.x,
+          cloud.y,
+          cloud.radius
+        );
+        gradient.addColorStop(0, `rgba(245, 218, 223, ${cloud.alpha * 0.6})`);
+        gradient.addColorStop(0.5, `rgba(255, 255, 255, ${cloud.alpha * 0.3})`);
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(cloud.x, cloud.y, cloud.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Render Floating Golden Particles
+      particles.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.y < 0) {
+          p.y = height;
+          p.x = Math.random() * width;
+        }
+
+        ctx.fillStyle = `rgba(245, 218, 223, ${p.alpha})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      animationId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // 2. Loading Progression Timeline
   useEffect(() => {
     let current = 0;
     const interval = setInterval(() => {
-      // Smooth progression up to 100% in ~2.0s
       current += Math.floor(Math.random() * 4) + 2;
-
-      if (current < 25) {
-        setCurrentStageText('HARVESTING CHIKMAGALUR ARABICA 1,900M ASL...');
-        setTempGauge(`${Math.floor(24 + (current / 25) * 80)}°C`);
-      } else if (current < 55) {
-        setCurrentStageText('CAST-IRON CONVECTION DRUM • 204°C FIRST CRACK...');
-        setTempGauge(`${Math.floor(104 + ((current - 25) / 30) * 100)}°C`);
-      } else if (current < 85) {
-        setCurrentStageText('EXTRACTING SOUTH INDIAN BRASS DECOCTION...');
-        setTempGauge('94.0°C Decoction');
-      } else {
-        setCurrentStageText('AERATING VELVET GOLDEN FOAM • READY');
-        setTempGauge('First Sip Locked');
-      }
 
       if (current >= 100) {
         current = 100;
@@ -39,8 +118,8 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ onLoadingComplete }) => 
           setIsFading(true);
           setTimeout(() => {
             onLoadingComplete();
-          }, 700);
-        }, 400);
+          }, 800);
+        }, 500);
       } else {
         setProgress(current);
       }
@@ -49,98 +128,80 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ onLoadingComplete }) => 
     return () => clearInterval(interval);
   }, [onLoadingComplete]);
 
+  // Circumference for the circular progress ring (r = 46)
+  const radius = 46;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
+
   return (
     <div
-      className={`fixed inset-0 z-[300] flex flex-col items-center justify-between bg-[#040302] p-6 sm:p-12 text-[#f4eee6] select-none transition-all duration-700 ease-in-out ${
+      className={`fixed inset-0 z-[300] flex items-center justify-center select-none overflow-hidden transition-all duration-800 ease-in-out bg-[#0D0B0A] ${
         isFading
-          ? 'opacity-0 scale-105 pointer-events-none filter blur-sm'
+          ? 'opacity-0 scale-105 pointer-events-none filter blur-md'
           : 'opacity-100 scale-100'
       }`}
     >
-      {/* Background Amber Heat & Steam Glows */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
-        <div className="h-[450px] w-[450px] sm:h-[650px] sm:w-[650px] rounded-full bg-radial-at-c from-[#c89658]/22 via-[#8a4b18]/10 to-transparent mix-blend-screen animate-pulse" />
-        <div className="absolute inset-0 bg-radial-vignette opacity-90" />
-      </div>
-
-      {/* Top Header: Atelier Heritage Seal */}
-      <div className="relative z-10 flex items-center justify-between w-full max-w-5xl">
-        <div className="flex items-center gap-2 text-[9px] sm:text-[11px] font-sans tracking-[0.3em] uppercase text-[#c89658] bg-[#0c0906]/80 px-3.5 py-1.5 rounded-full border border-[#c89658]/35 backdrop-blur-md">
-          <Sparkles className="h-3 w-3 text-[#c89658] animate-spin-slow" />
-          <span>DAKSHIN COFFEE ROAST MAISON</span>
-        </div>
-
-        <div className="flex items-center gap-2 font-mono text-[9px] sm:text-[10px] text-[#8c827a] tracking-widest uppercase">
-          <Compass className="h-3 w-3 text-[#c89658]" />
-          <span>13°19'N • BABA BUDAN GIRI</span>
-        </div>
-      </div>
-
-      {/* Centerpiece: Hyper-Cinematic Liquid Coffee Portal & Roasting Core */}
-      <div className="relative z-10 flex flex-col items-center text-center my-auto">
-        {/* Animated Sacred Coffee Droplet & Glowing Convection Crucible */}
-        <div className="relative mb-6 sm:mb-8 flex items-center justify-center">
-          {/* Outer Pulsing Aura Rings */}
-          <div className="absolute h-36 w-36 sm:h-44 sm:w-44 rounded-full border border-[#c89658]/30 animate-ping opacity-25" />
-          <div className="absolute h-28 w-28 sm:h-36 sm:w-36 rounded-full border border-[#e5b877]/40 animate-spin-slow opacity-60" />
-
-          {/* Central Glowing Crucible Orb */}
-          <div className="relative h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-gradient-to-b from-[#1c140d] to-[#0a0705] border-2 border-[#c89658] shadow-[0_0_50px_rgba(200,150,88,0.45)] flex items-center justify-center overflow-hidden group">
-            {/* Liquid Fill Level in sync with Progress */}
-            <div
-              className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#c89658] via-[#e5b877] to-[#ffe5a3] transition-all duration-150 ease-out opacity-85 shadow-[0_0_20px_#e5b877]"
-              style={{ height: `${progress}%` }}
-            />
-
-            {/* Glowing Golden Coffee Icon Center */}
-            <div className="relative z-10 flex flex-col items-center justify-center text-[#070605]">
-              <Coffee className="h-8 w-8 sm:h-10 sm:w-10 text-[#f4eee6] drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] animate-pulse" />
-              <Droplets className="h-3.5 w-3.5 text-[#e5b877] mt-1 animate-bounce" />
-            </div>
-          </div>
-        </div>
-
-        {/* Monumental Brand Typography */}
-        <div className="space-y-1 sm:space-y-2">
-          <h1 className="font-display text-3xl sm:text-5xl md:text-6xl tracking-[0.25em] sm:tracking-[0.3em] font-bold text-[#f4eee6] uppercase drop-shadow-[0_0_35px_rgba(200,150,88,0.4)]">
-            NOIR DAKSHIN
-          </h1>
-          <p className="font-serif italic text-xs sm:text-base text-[#e5b877] tracking-[0.15em]">
-            Haute Indian Kaapi Maison • Est. 1998 Bengaluru
-          </p>
-        </div>
-
-        {/* Live Roasting Telemetry Badge */}
-        <div className="mt-4 sm:mt-5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#120e0b] border border-[#382a1d] text-[10px] sm:text-xs font-mono text-[#c89658]">
-          <Flame className="h-3.5 w-3.5 text-[#e5b877] animate-pulse" />
-          <span className="text-[#f4eee6] font-bold">{tempGauge}</span>
-          <span className="text-[#5e5146]">•</span>
-          <span className="text-[#a89d93]">{currentStageText}</span>
-        </div>
-      </div>
-
-      {/* Bottom Progress Bar & Calibrated Status */}
-      <div className="relative z-10 w-full max-w-md flex flex-col items-center gap-3">
-        <div className="flex justify-between items-center w-full text-xs font-mono text-[#8c827a]">
-          <span className="text-[10px] uppercase tracking-[0.2em] flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#c89658] animate-ping" />
-            <span>Decoction Brewing Film</span>
-          </span>
-          <span className="text-[#e5b877] font-bold text-sm tracking-wider">{progress}%</span>
-        </div>
-
-        {/* Golden Gradient Progress Track */}
-        <div className="h-2 w-full bg-[#120e0b] rounded-full overflow-hidden border border-[#2b2016] p-0.5 shadow-inner">
-          <div
-            className="h-full bg-gradient-to-r from-[#8a4b18] via-[#c89658] to-[#e5b877] rounded-full transition-all duration-100 ease-out shadow-[0_0_15px_#c89658]"
-            style={{ width: `${progress}%` }}
+      {/* 1. Full-Bleed Cinematic Coffee Farm Living Landscape */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {/* Layer 1: High-Altitude Western Ghats Coffee Farm Canopy with Drone Sweep Motion */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          <img
+            src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=2000&auto=format&fit=crop&q=90"
+            alt="Western Ghats Coffee Estate"
+            className="h-full w-full object-cover object-center filter brightness-90 contrast-105 scale-105 animate-[pulse_6s_ease-in-out_infinite] transition-transform duration-[8000ms] ease-out transform scale-110"
+            style={{
+              animation: 'panDrone 10s ease-in-out infinite alternate',
+            }}
           />
         </div>
 
-        <div className="flex items-center justify-between w-full text-[9px] font-mono text-[#665a4f] uppercase tracking-widest">
-          <span>Single-Estate Harvest</span>
-          <span>Slow Cast-Iron Convection</span>
-          <span>Brass Davarah Pour</span>
+        {/* Layer 2: Live Procedural Mountain Mist & Sunbeam Canvas */}
+        <canvas ref={canvasRef} className="absolute inset-0 z-10 pointer-events-none mix-blend-screen" />
+
+        {/* Layer 3: Warm Anamorphic Lens Flare & Luxury Coffee Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0B0A]/90 via-[#0D0B0A]/35 to-[#0D0B0A]/70" />
+        <div className="absolute inset-0 bg-radial-at-c from-transparent via-[#2D2926]/40 to-[#0D0B0A]/90 mix-blend-multiply" />
+      </div>
+
+      {/* 2. Minimalist Centerpiece: Pure Luxury Brand Logo & Circular Reveal (NO TEXT) */}
+      <div className="relative z-20 flex flex-col items-center justify-center">
+        <div className="relative flex items-center justify-center">
+          {/* Ambient Warm Golden Glow */}
+          <div className="absolute h-44 w-44 sm:h-52 sm:w-52 rounded-full bg-[#F5DADF]/25 filter blur-2xl animate-pulse" />
+
+          {/* SVG Circular Progress Ring */}
+          <svg className="h-32 w-32 sm:h-36 sm:w-36 -rotate-90 transform">
+            {/* Background Track */}
+            <circle
+              cx="50%"
+              cy="50%"
+              r={radius}
+              fill="transparent"
+              stroke="rgba(255, 255, 255, 0.18)"
+              strokeWidth="2.5"
+            />
+            {/* Active Filling Stroke */}
+            <circle
+              cx="50%"
+              cy="50%"
+              r={radius}
+              fill="transparent"
+              stroke="#F5DADF"
+              strokeWidth="3.5"
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              strokeLinecap="round"
+              className="transition-all duration-150 ease-out"
+            />
+          </svg>
+
+          {/* Center Luxury Emblem */}
+          <div className="absolute h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-white/95 border border-white/80 shadow-[0_15px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl flex flex-col items-center justify-center text-[#2D2926] transition-transform duration-500 hover:scale-105">
+            <span className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#2D2926]">
+              N
+            </span>
+            <div className="h-[2.5px] w-4 bg-[#E05A7E] rounded-full mt-0.5" />
+          </div>
         </div>
       </div>
     </div>

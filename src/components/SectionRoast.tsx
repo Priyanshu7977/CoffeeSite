@@ -1,58 +1,49 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Flame } from 'lucide-react';
+import { Flame, Sparkles } from 'lucide-react';
 import { gsap } from '../utils/animations';
 
 export const SectionRoast: React.FC = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const blackoutRef = useRef<HTMLDivElement | null>(null);
   const lightLeakRef = useRef<HTMLDivElement | null>(null);
-  const imageContainerRef = useRef<HTMLDivElement | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const headlineRef = useRef<HTMLDivElement | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
 
-  const [activeStage, setActiveStage] = useState<number>(2); // Default to First Crack
+  const [activeStage, setActiveStage] = useState<number>(2); // Default: First Crack
 
   const stages = [
     {
       id: 0,
       name: 'Drying Phase',
-      time: '0:00 - 4:00',
-      temp: '100°C - 160°C',
-      colorName: 'Raw Jade to Pale Amber',
-      desc: 'Free water inside the green Western Ghats bean evaporates steadily under convection heat. The bean structure expands and prepares for enzymatic transformation.',
-      gasPercent: 75,
-      airFlow: 'Low',
+      time: '0:00 – 4:00',
+      temp: '160°C',
+      desc: 'Free water inside the green bean evaporates under steady convective heat, turning dense raw cherries into golden yellow.',
+      telemetry: 'Water Evaporation Rate: 12.4% • 52 RPM Drum Speed',
     },
     {
       id: 1,
       name: 'Maillard Reaction',
-      time: '4:00 - 8:00',
-      temp: '160°C - 195°C',
-      colorName: 'Golden Honey to Light Tan',
-      desc: 'Amino acids and natural jaggery sugars react in thermal synergy, generating over 800 distinct aromatic compounds and complex spice notes.',
-      gasPercent: 60,
-      airFlow: 'Medium',
+      time: '4:00 – 8:00',
+      temp: '195°C',
+      desc: 'Natural jaggery sugars and amino acids caramelize in thermal harmony, generating over 800 complex aromatic compounds.',
+      telemetry: 'Sucrose Caramelization Active • Delta T: 11°C/min',
     },
     {
       id: 2,
       name: 'The First Crack',
-      time: '8:00 - 10:00',
+      time: '8:00 – 10:00',
       temp: '204°C',
-      colorName: 'Rich Mahogany Brown',
-      desc: 'Internal moisture boils into pressurized steam, shattering cellular walls with an audible crack. Cardamom and chocolate oils migrate to the surface.',
-      gasPercent: 40,
-      airFlow: 'High',
+      desc: 'Pressurized steam produces an audible acoustic crack, releasing essential cardamom oils and profound cacao sweetness.',
+      telemetry: 'Acoustic Crack Event Verified • Expansion: 165%',
     },
     {
       id: 3,
-      name: 'Development & Drop',
-      time: '10:00 - 11:30',
+      name: 'Drop & Cooling',
+      time: '10:00 – 11:30',
       temp: '218°C',
-      colorName: 'Obsidian Velvet Gloss',
-      desc: 'Measured development ratio (18.5%). Beans are dumped instantly into the vortex cooling tray to lock in peak volatile aromatics.',
-      gasPercent: 20,
-      airFlow: 'Max Cooling',
+      desc: 'Beans are dumped instantly into the vortex cooling tray to lock in peak volatile aromatics and velvety body.',
+      telemetry: 'Rapid Quench: 218°C → 24°C in 90 Seconds',
     },
   ];
 
@@ -76,43 +67,46 @@ export const SectionRoast: React.FC = () => {
           scrollTrigger: {
             trigger: section,
             start: 'top top',
-            end: '+=150%',
+            end: '+=140%',
             pin: true,
-            scrub: 0.6,
+            scrub: 0.65,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
         });
 
+        // Landing Settle Hold
+        tl.to({}, { duration: 0.25 });
+
         tl.fromTo(
           blackout,
           { opacity: 1 },
           { opacity: 0, ease: 'power2.inOut', duration: 0.5 },
-          0
+          0.25
         )
           .fromTo(
             lightLeak,
-            { scale: 0.4, opacity: 0 },
-            { scale: 1.6, opacity: 0.75, ease: 'power1.out', duration: 0.8 },
-            0.1
+            { scale: 0.6, opacity: 0 },
+            { scale: 1.4, opacity: 0.6, ease: 'power1.out', duration: 0.8 },
+            0.3
           )
           .fromTo(
             image,
-            { scale: 1.25, opacity: 0 },
+            { scale: 1.2, opacity: 0 },
             { scale: 1.0, opacity: 1, ease: 'power2.out', duration: 1.0 },
-            0.2
+            0.35
           )
           .fromTo(
             headline,
-            { x: -80, opacity: 0 },
-            { x: 0, opacity: 1, ease: 'power3.out', duration: 0.8 },
-            0.4
+            { y: 40, opacity: 0 },
+            { y: 0, opacity: 1, ease: 'power3.out', duration: 0.8 },
+            0.45
           )
           .fromTo(
             card,
-            { y: 50, opacity: 0 },
+            { y: 40, opacity: 0 },
             { y: 0, opacity: 1, ease: 'power3.out', duration: 0.8 },
-            0.5
+            0.55
           );
       });
 
@@ -126,9 +120,9 @@ export const SectionRoast: React.FC = () => {
 
         mobileTl
           .fromTo(blackout, { opacity: 0.8 }, { opacity: 0, duration: 0.5 })
-          .fromTo(image, { scale: 1.15, opacity: 0.3 }, { scale: 1.0, opacity: 0.65, duration: 0.8 }, '-=0.3')
-          .fromTo(headline, { y: 25, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, '-=0.5')
-          .fromTo(card, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' }, '-=0.3');
+          .fromTo(image, { scale: 1.1, opacity: 0.5 }, { scale: 1.0, opacity: 0.85, duration: 0.8 }, '-=0.3')
+          .fromTo(headline, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' }, '-=0.5')
+          .fromTo(card, { y: 25, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' }, '-=0.3');
       });
     }, sectionRef);
 
@@ -141,156 +135,120 @@ export const SectionRoast: React.FC = () => {
     <section
       id="section-roast"
       ref={sectionRef}
-      aria-label="Section 02: The Dakshin Roast Thermal Alchemy"
-      className="relative min-h-screen w-full bg-[#070605] flex items-center justify-center overflow-hidden border-t border-[#221c17] py-8 sm:py-12 lg:py-0"
+      aria-label="Section 02: The Cinematic Roast"
+      className="relative min-h-screen w-full bg-[#1F1C1A] text-[#FAF7F5] flex items-center justify-center overflow-hidden py-16 lg:py-0 border-t border-white/10"
     >
       {/* Blackout Transition Curtain */}
       <div
         ref={blackoutRef}
-        className="pointer-events-none absolute inset-0 z-30 bg-[#070605] will-change-transform"
+        className="pointer-events-none absolute inset-0 z-30 bg-[#1F1C1A] will-change-transform"
       />
 
-      {/* Glowing Warm Amber Light Leak */}
+      {/* Warm Ambient Convection Glow */}
       <div
         ref={lightLeakRef}
-        className="pointer-events-none absolute inset-0 z-10 bg-radial-at-c from-[#c89658]/35 via-[#9b5a2b]/10 to-transparent mix-blend-screen will-change-transform"
+        className="pointer-events-none absolute inset-0 z-10 bg-radial-at-c from-[#E05A7E]/20 via-transparent to-transparent mix-blend-screen will-change-transform"
       />
 
       {/* Roaster Drum Background Imagery */}
-      <div ref={imageContainerRef} className="absolute inset-0 z-0 overflow-hidden">
+      <div className="absolute inset-0 z-0 overflow-hidden">
         <img
           ref={imageRef}
           src="/assets/roast-drum.jpg"
-          alt="Glowing cast-iron coffee roasting drum in Chikmagalur roastery"
-          className="h-full w-full object-cover object-center will-change-transform opacity-65 filter brightness-85 contrast-110"
+          alt="Cast-iron coffee roasting drum"
+          className="h-full w-full object-cover object-center will-change-transform opacity-65 filter brightness-95 contrast-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#070605] via-[#070605]/70 to-[#070605]" />
-        <div className="absolute inset-0 bg-radial-vignette opacity-85" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1F1C1A] via-[#1F1C1A]/60 to-[#1F1C1A]" />
       </div>
 
       {/* Section Content */}
-      <div className="relative z-20 mx-auto max-w-7xl w-full px-4 sm:px-6 md:px-12 flex flex-col justify-between min-h-[75vh] lg:h-[84vh] py-4 sm:py-6">
+      <div className="relative z-20 mx-auto max-w-6xl w-full px-6 md:px-12 flex flex-col justify-between min-h-[75vh] lg:h-[82vh] py-6">
         {/* Top Header */}
-        <div className="flex items-center justify-between border-b border-[#221c17]/80 pb-2 sm:pb-3">
-          <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase">
-            <span className="font-mono text-[#c89658]">02</span>
-            <span className="h-[1px] w-6 sm:w-8 bg-[#c89658]/60" />
-            <span>THE ROAST / CAST-IRON</span>
+        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          <div className="text-xs tracking-[0.25em] text-[#F5DADF] font-sans font-bold uppercase flex items-center gap-2">
+            <Sparkles className="h-3.5 w-3.5 text-[#E05A7E]" />
+            <span>02 / THE ROAST • CAST IRON</span>
           </div>
-
-          <div className="flex items-center gap-2 font-sans text-[10px] sm:text-xs tracking-[0.16em] sm:tracking-[0.2em] text-[#8c827a] uppercase">
-            <Flame className="h-3 sm:h-3.5 w-3 sm:w-3.5 text-[#c89658] animate-pulse" />
-            <span>204°C First Crack</span>
+          <div className="flex items-center gap-2 text-xs font-mono text-[#FAF7F5]/80">
+            <Flame className="h-3.5 w-3.5 text-[#E05A7E]" />
+            <span>204°C FIRST CRACK • 52 RPM</span>
           </div>
         </div>
 
-        {/* Middle Stage */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center my-auto py-3 sm:py-4">
-          {/* Left Column: Headline */}
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center my-auto py-6">
+          {/* Left: Headline & Story */}
           <div ref={headlineRef} className="lg:col-span-5 flex flex-col justify-center">
-            <div className="flex flex-col leading-[0.98] tracking-tight mb-2 sm:mb-4">
-              <span className="font-serif text-2xl sm:text-5xl md:text-6xl font-light text-[#f4eee6]">
-                ROASTED
-              </span>
-              <span className="font-display text-2xl sm:text-5xl md:text-6xl font-bold italic text-[#e5b877] uppercase gold-glow my-0.5">
-                WITH
-              </span>
-              <span className="font-serif text-2xl sm:text-5xl md:text-6xl font-light text-[#c89658] italic">
-                PATIENCE.
-              </span>
-            </div>
+            <span className="text-xs tracking-[0.3em] font-sans uppercase text-[#E05A7E] font-bold mb-3">
+              SLOW CONVECTION DRUM
+            </span>
 
-            <p className="font-sans text-[11px] sm:text-sm text-[#b5aaa0] font-light leading-relaxed max-w-md line-clamp-3 sm:line-clamp-none">
-              Cast-iron drum convection transfers steady conductive heat to the core of each dense Western Ghats bean. At 204°C, cell walls rupture in the First Crack.
+            {/* Headline */}
+            <h2 className="font-display text-4xl sm:text-6xl font-bold text-white leading-tight tracking-tight mb-4">
+              Roasted with <span className="italic text-[#F5DADF] font-medium">patience.</span>
+            </h2>
+
+            {/* Description */}
+            <p className="font-sans text-sm sm:text-base text-[#FAF7F5]/80 font-normal leading-relaxed max-w-md">
+              Cast-iron drum convection transfers gentle, penetrating heat to the core of every dense bean—unlocking rich chocolate and cardamom aromatics.
             </p>
           </div>
 
-          {/* Right Column: Interactive Roast HUD */}
+          {/* Right: Stage Selector Card */}
           <div ref={cardRef} className="lg:col-span-7">
-            <div className="rounded-2xl bg-[#0f0c09]/95 border border-[#c89658]/35 p-4 sm:p-6 backdrop-blur-xl shadow-2xl">
-              {/* Stage Buttons */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-                {stages.map((st) => {
-                  const isSelected = activeStage === st.id;
-                  return (
-                    <button
-                      key={st.id}
-                      onClick={() => setActiveStage(st.id)}
-                      className={`p-2 sm:p-2.5 rounded-xl border transition-all text-left cursor-pointer focus-visible:ring-1 focus-visible:ring-[#c89658] ${
-                        isSelected
-                          ? 'bg-[#1a140f] border-[#c89658] shadow-md'
-                          : 'bg-[#120e0b] border-[#221c17] hover:border-[#382d24]'
-                      }`}
-                    >
-                      <span className="font-mono text-[8px] sm:text-[9px] text-[#c89658] block">
-                        0{st.id + 1}
-                      </span>
-                      <span className={`font-sans text-[10px] sm:text-[11px] font-semibold block truncate ${isSelected ? 'text-[#f4eee6]' : 'text-[#8c827a]'}`}>
-                        {st.name}
-                      </span>
-                      <span className="font-mono text-[9px] sm:text-[10px] text-[#e5b877] font-bold">
-                        {st.temp}
-                      </span>
-                    </button>
-                  );
-                })}
+            <div className="rounded-3xl bg-[#2D2926]/95 border border-white/15 p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
+              {/* Stage Pills */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
+                {stages.map((st) => (
+                  <button
+                    key={st.id}
+                    onClick={() => setActiveStage(st.id)}
+                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                      activeStage === st.id
+                        ? 'bg-[#F5DADF] border-[#F5DADF] text-[#2D2926] shadow-md'
+                        : 'bg-[#1F1C1A] border-white/10 text-[#FAF7F5]/70 hover:text-white'
+                    }`}
+                  >
+                    <span className={`text-[10px] font-mono block font-bold ${activeStage === st.id ? 'text-[#2D2926]' : 'text-[#E05A7E]'}`}>
+                      0{st.id + 1}
+                    </span>
+                    <span className="text-xs font-sans font-semibold block truncate">
+                      {st.name}
+                    </span>
+                  </button>
+                ))}
               </div>
 
-              {/* Active Stage Details */}
-              <div className="flex items-center justify-between mb-1 sm:mb-2">
-                <span className="text-[9px] sm:text-[10px] font-sans tracking-[0.2em] sm:tracking-[0.25em] text-[#c89658] uppercase">
-                  Stage 0{current.id + 1} • {current.time}
+              {/* Active Stage Info */}
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-mono text-[#F5DADF] font-bold">
+                  {current.time}
                 </span>
-                <span className="font-mono text-[10px] sm:text-xs font-bold text-[#e5b877] bg-[#c89658]/15 px-2 sm:px-2.5 py-0.5 rounded-full border border-[#c89658]/30">
+                <span className="font-mono text-xs font-bold text-[#2D2926] bg-[#F5DADF] px-2.5 py-0.5 rounded-full shadow-sm">
                   {current.temp}
                 </span>
               </div>
 
-              <h3 className="font-serif text-lg sm:text-2xl text-[#f4eee6] mb-1 sm:mb-1.5">
+              <h3 className="font-display text-xl sm:text-2xl text-white mb-2 font-bold">
                 {current.name}
               </h3>
 
-              <p className="font-sans text-[11px] sm:text-xs text-[#b5aaa0] font-light leading-relaxed mb-2 sm:mb-3 line-clamp-2 sm:line-clamp-none">
+              <p className="font-sans text-xs sm:text-sm text-[#FAF7F5]/80 font-normal leading-relaxed mb-4">
                 {current.desc}
               </p>
 
-              {/* Telemetry Progress Bars */}
-              <div className="grid grid-cols-2 gap-2 sm:gap-3 pt-2 sm:pt-3 border-t border-[#221c17]">
-                <div>
-                  <div className="flex justify-between text-[8px] sm:text-[9px] font-sans uppercase tracking-[0.15em] text-[#8c827a] mb-1">
-                    <span>Gas Load</span>
-                    <span className="font-mono text-[#f4eee6]">{current.gasPercent}%</span>
-                  </div>
-                  <div className="h-1 sm:h-1.5 w-full bg-[#1c1612] rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-[#c89658] to-[#e5b877] rounded-full transition-all duration-500"
-                      style={{ width: `${current.gasPercent}%` }}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-[8px] sm:text-[9px] font-sans uppercase tracking-[0.15em] text-[#8c827a] mb-1">
-                    <span>Air Damper</span>
-                    <span className="font-mono text-[#e5b877]">{current.airFlow}</span>
-                  </div>
-                  <div className="h-1 sm:h-1.5 w-full bg-[#1c1612] rounded-full overflow-hidden">
-                    <div className="h-full bg-[#c89658] rounded-full animate-pulse" style={{ width: '85%' }} />
-                  </div>
-                </div>
+              <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-0 text-xs text-[#FAF7F5]/60">
+                <span className="truncate max-w-full sm:max-w-none">{current.telemetry}</span>
+                <span className="font-mono text-[#F5DADF] font-bold shrink-0">LIVE TELEMETRY</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom Footer */}
-        <div className="flex items-center justify-between border-t border-[#221c17]/80 pt-2 sm:pt-3 text-[10px] sm:text-xs text-[#8c827a]">
-          <span className="font-mono text-[9px] sm:text-[10px] text-[#8c827a]">
-            Cast-Iron Convection: 52 RPM Drum
-          </span>
-          <span className="font-sans text-[8px] sm:text-[10px] tracking-[0.2em] uppercase text-[#c89658]">
-            Dakshin Convection Alchemy
-          </span>
+        {/* Bottom Marker */}
+        <div className="flex items-center justify-between border-t border-white/10 pt-3 text-xs text-[#FAF7F5]/60">
+          <span>Cast-Iron Convection Roastery • Chikmagalur</span>
+          <span className="font-mono text-[#F5DADF] font-bold">STAGE 0{activeStage + 1} OF 04</span>
         </div>
       </div>
     </section>

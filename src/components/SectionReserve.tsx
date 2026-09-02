@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Star, Shield, RotateCw } from 'lucide-react';
+import { ArrowRight, Shield, Sparkles, Award, RefreshCw } from 'lucide-react';
 import { gsap } from '../utils/animations';
 import type { ReserveBatch } from '../types';
 
@@ -7,236 +7,133 @@ interface SectionReserveProps {
   onSelectBatch: (batch: ReserveBatch) => void;
 }
 
+interface TiltState {
+  rotateX: number;
+  rotateY: number;
+  glareX: number;
+  glareY: number;
+  isHovered: boolean;
+}
+
 export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch }) => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const cardGridRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [flippedCards, setFlippedCards] = useState<{ [key: string]: boolean }>({});
   const [mobileActiveIndex, setMobileActiveIndex] = useState<number>(0);
+  const [cardTilts, setCardTilts] = useState<{ [key: string]: TiltState }>({});
 
-  const reserveCards: (ReserveBatch & {
-    bullets: string[];
-    rating: string;
-    ratingCount: string;
-    shortDesc: string;
-    iconSvg: React.ReactNode;
-  })[] = [
+  const reserveBatches: ReserveBatch[] = [
     {
       id: 'batch-01',
-      name: 'Baba Budan Obsidian 1,900M',
+      name: 'BABA BUDAN OBSIDIAN',
       vintage: '2026 Monsoon Harvest',
-      origin: 'India / Chikmagalur',
-      region: 'Mullayanagiri & Chandragiri Hills',
+      origin: 'Chikmagalur, Karnataka',
+      region: 'Mullayanagiri Hills',
       altitude: '1,900m ASL',
-      varietal: 'Wild 1931 Arabica Selection',
+      varietal: 'Wild Arabica Selection',
       process: '96h Anaerobic Natural',
-      notes: ['Smoked Cardamom', '85% Dark Cacao', 'Black Cherry', 'Jasmine'],
+      notes: ['Cardamom', 'Dark Cacao', 'Jasmine'],
       allocationLeft: 14,
       totalAllocations: 85,
-      roastLevel: 'Omniroast Filter & Espresso',
+      roastLevel: 'Omniroast',
       price: '₹2,800',
-      badge: 'Strictly Limited / 14 Left',
-      shortDesc: 'Grown on sacred Chikmagalur peaks with 96h anaerobic natural fermentation.',
-      description: 'Grown on the highest peaks of Baba Budan Giri. Fermented in sealed stainless tanks under controlled temperature before slow raised-bed drying for 32 days.',
-      bullets: [
-        'Single-estate sacred Baba Budan Arabica',
-        '1,900m ASL high-altitude Western Ghats terroir',
-        'Smoked cardamom & 85% Mysore cacao finish',
-        'Strictly limited to 85 numbered tins',
-      ],
-      rating: '4.9/5',
-      ratingCount: 'rated by 1,400+ sommeliers',
-      iconSvg: (
-        <svg viewBox="0 0 120 120" className="w-20 h-20 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="beanGrad1" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#d49b5c" />
-              <stop offset="45%" stopColor="#7a4b22" />
-              <stop offset="100%" stopColor="#24150a" />
-            </linearGradient>
-            <linearGradient id="beanGrad2" x1="1" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#f3c28a" />
-              <stop offset="50%" stopColor="#8c5828" />
-              <stop offset="100%" stopColor="#1a0f07" />
-            </linearGradient>
-            <linearGradient id="goldCrema" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#ffe4a0" />
-              <stop offset="50%" stopColor="#c89658" />
-              <stop offset="100%" stopColor="#66441b" />
-            </linearGradient>
-          </defs>
-          <path d="M56 22 C30 24 18 45 20 72 C22 92 38 102 54 100 C57 78 52 50 56 22 Z" fill="url(#beanGrad1)" stroke="#52361b" strokeWidth="1.5" filter="drop-shadow(0 10px 18px rgba(0,0,0,0.8))" />
-          <path d="M64 22 C90 24 102 45 100 72 C98 92 82 102 66 100 C63 78 68 50 64 22 Z" fill="url(#beanGrad2)" stroke="#52361b" strokeWidth="1.5" />
-          <path d="M58 24 Q65 48 55 68 Q46 88 62 98" stroke="url(#goldCrema)" strokeWidth="3.5" strokeLinecap="round" />
-          <path d="M40 16 Q48 8 44 2" stroke="#e5b877" strokeWidth="2" strokeLinecap="round" opacity="0.75" />
-          <path d="M60 14 Q68 6 64 0" stroke="#e5b877" strokeWidth="2.5" strokeLinecap="round" opacity="0.9" />
-          <path d="M80 16 Q88 8 84 2" stroke="#e5b877" strokeWidth="2" strokeLinecap="round" opacity="0.75" />
-        </svg>
-      ),
+      badge: '14 Tins Remaining',
+      description: 'Single-estate sacred Baba Budan micro-lot with 96h anaerobic natural fermentation.',
     },
     {
       id: 'batch-02',
-      name: 'Malabar Monsooned Cask',
+      name: 'MALABAR MONSOONED CASK',
       vintage: 'Coastal Wind Series',
-      origin: 'India / Malabar Coast',
-      region: 'Wayanad & Arabian Sea Shore',
+      origin: 'Malabar Coast, Kerala',
+      region: 'Arabian Sea Shore',
       altitude: '1,400m ASL',
-      varietal: 'Monsooned Arabica Super-Bold',
-      process: '16-Week Sea Wind Monsooning',
-      notes: ['Dark Chocolate', 'Charred Oak', 'Earthy Molasses', 'Cardamom'],
+      varietal: 'Super-Bold Arabica',
+      process: '16-Week Sea Wind Cured',
+      notes: ['Dark Chocolate', 'Toasted Oak', 'Molasses'],
       allocationLeft: 8,
       totalAllocations: 60,
       roastLevel: 'Medium-Dark Velvet',
       price: '₹2,400',
-      badge: 'Master Cask Release',
-      shortDesc: 'Sun-cured beans exposed to Arabian Sea monsoon winds.',
-      description: 'Sun-cured beans naturally conditioned by moisture-laden Arabian Sea winds for 16 weeks, swelling to super-bold size with low acidity and dense chocolate crema.',
-      bullets: [
-        '16-week natural Arabian Sea monsoon cured',
-        'Super-bold zero-defect bean selection',
-        'Molasses, dark chocolate & toasted malt',
-        'Hand-numbered 12kg micro-batch tins',
-      ],
-      rating: '4.9/5',
-      ratingCount: 'rated by 980+ connoisseurs',
-      iconSvg: (
-        <svg viewBox="0 0 120 120" className="w-20 h-20 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="barrelGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#3d2a1c" />
-              <stop offset="30%" stopColor="#784f2d" />
-              <stop offset="50%" stopColor="#9e6c40" />
-              <stop offset="70%" stopColor="#784f2d" />
-              <stop offset="100%" stopColor="#24180f" />
-            </linearGradient>
-            <linearGradient id="metalHoop" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#8c775d" />
-              <stop offset="50%" stopColor="#ffd994" />
-              <stop offset="100%" stopColor="#5c452b" />
-            </linearGradient>
-          </defs>
-          <path d="M38 24 Q60 20 82 24 Q96 60 82 96 Q60 100 38 96 Q24 60 38 24 Z" fill="url(#barrelGrad)" stroke="#2b1a0e" strokeWidth="2" filter="drop-shadow(0 10px 18px rgba(0,0,0,0.85))" />
-          <path d="M32 38 Q60 33 88 38" stroke="url(#metalHoop)" strokeWidth="4.5" strokeLinecap="round" />
-          <path d="M26 56 Q60 50 94 56" stroke="url(#metalHoop)" strokeWidth="4.5" strokeLinecap="round" />
-          <path d="M26 64 Q60 58 94 64" stroke="url(#metalHoop)" strokeWidth="4.5" strokeLinecap="round" />
-          <path d="M32 82 Q60 77 88 82" stroke="url(#metalHoop)" strokeWidth="4.5" strokeLinecap="round" />
-          <circle cx="60" cy="60" r="4.5" fill="#ffd994" stroke="#c89658" strokeWidth="1.5" />
-          <path d="M60 66 L60 74 Q60 77 63 77" stroke="#e5b877" strokeWidth="2" strokeLinecap="round" />
-        </svg>
-      ),
+      badge: '8 Tins Remaining',
+      description: 'Sun-cured beans exposed to moisture-laden Arabian Sea winds for 16 weeks.',
     },
     {
       id: 'batch-03',
-      name: 'Araku Valley Tribal Honey',
-      vintage: 'Eastern Ghats Micro-Lot',
-      origin: 'India / Andhra Pradesh',
-      region: 'Ananthagiri & Araku Highland Ridge',
+      name: 'ARAKU VALLEY TRIBAL HONEY',
+      vintage: 'Eastern Ghats Lot',
+      origin: 'Araku Valley, Andhra Pradesh',
+      region: 'Ananthagiri Ridge',
       altitude: '1,400m ASL',
       varietal: 'Bio-Dynamic Arabica',
-      process: 'Pulped Golden Honey Process',
-      notes: ['Wild Forest Honey', 'Roasted Cashew', 'Mandarin Nectar', 'Caramel'],
+      process: 'Pulped Golden Honey',
+      notes: ['Wild Honey', 'Roasted Cashew', 'Mandarin'],
       allocationLeft: 22,
       totalAllocations: 100,
-      roastLevel: 'Medium Roast Filter',
+      roastLevel: 'Medium Roast',
       price: '₹2,600',
-      badge: 'Tribal Terroir',
-      shortDesc: 'Bio-dynamically grown by indigenous farmers in the red loam valleys.',
-      description: 'Bio-dynamically cultivated in the pristine Eastern Ghats. Naturally sweet golden honey processing yields bright tropical citrus and silky toasted cashew notes.',
-      bullets: [
-        '100% tribal farmer direct ethical trade',
-        'Bio-dynamic red loam soil cultivation',
-        'Wild honey nectar & toasted cashew sweetness',
-        'Crisp sparkling citrus acidity',
-      ],
-      rating: '5.0/5',
-      ratingCount: 'rated by 2,200+ connoisseurs',
-      iconSvg: (
-        <svg viewBox="0 0 120 120" className="w-20 h-20 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="chromeSteel" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="40%" stopColor="#9c9388" />
-              <stop offset="70%" stopColor="#574f46" />
-              <stop offset="100%" stopColor="#241e19" />
-            </linearGradient>
-            <linearGradient id="amberStream" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ffd28d" />
-              <stop offset="50%" stopColor="#c87f35" />
-              <stop offset="100%" stopColor="#5e3009" />
-            </linearGradient>
-          </defs>
-          <path d="M20 78 L42 62" stroke="#1c1612" strokeWidth="12" strokeLinecap="round" />
-          <path d="M20 78 L38 64" stroke="#c89658" strokeWidth="3" strokeLinecap="round" />
-          <ellipse cx="68" cy="46" rx="34" ry="20" fill="url(#chromeSteel)" stroke="#2b231c" strokeWidth="2" filter="drop-shadow(0 10px 18px rgba(0,0,0,0.85))" />
-          <ellipse cx="68" cy="46" rx="26" ry="14" fill="#361f10" stroke="#c89658" strokeWidth="1.5" />
-          <path d="M50 46 Q68 54 86 46" stroke="#e5b877" strokeWidth="2.5" />
-          <path d="M56 42 Q68 48 80 42" stroke="#d49048" strokeWidth="2" />
-          <path d="M68 56 Q66 75 68 102" stroke="url(#amberStream)" strokeWidth="6" strokeLinecap="round" />
-          <circle cx="68" cy="104" r="5" fill="#ffe09c" />
-        </svg>
-      ),
+      badge: '22 Tins Remaining',
+      description: 'Bio-dynamically cultivated by indigenous tribal farmers in the red loam valleys.',
     },
     {
       id: 'batch-04',
-      name: 'Coorg Rainforest Peaberry',
+      name: 'COORG RAINFOREST PEABERRY',
       vintage: 'Kodagu Special Edition',
-      origin: 'India / Karnataka',
-      region: 'Madikeri & Brahmagiri Range',
+      origin: 'Coorg, Karnataka',
+      region: 'Brahmagiri Range',
       altitude: '1,600m ASL',
-      varietal: 'Single-Bean Peaberry Arabica',
+      varietal: 'Peaberry Arabica',
       process: 'Slow Cast-Iron Convection',
-      notes: ['Black Fig', 'Wild Green Cardamom', 'Raw Jaggery', 'Cacao'],
+      notes: ['Black Fig', 'Green Cardamom', 'Raw Jaggery'],
       allocationLeft: 11,
       totalAllocations: 75,
-      roastLevel: 'Light-Medium Omniroast',
+      roastLevel: 'Light-Medium',
       price: '₹2,200',
-      badge: 'Kodagu Peaberry',
-      shortDesc: 'Slow-roasted in cast iron for intense sweetness and cardamom warmth.',
-      description: 'Rare single-bean Peaberry cherries hand-harvested beneath silver oak and pepper vine shade canopies. Slow-roasted in cast-iron drums for syrupy jaggery body.',
-      bullets: [
-        'Rare single-bean Peaberry cherry selection',
-        'Shade-grown in Kodagu rainforest canopy',
-        'Black fig, raw jaggery & cardamom warmth',
-        'Includes batch tasting calibration booklet',
-      ],
-      rating: '4.9/5',
-      ratingCount: 'rated by 1,800+ connoisseurs',
-      iconSvg: (
-        <svg viewBox="0 0 120 120" className="w-20 h-20 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="roasterDrum" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#7a7065" />
-              <stop offset="40%" stopColor="#3d352c" />
-              <stop offset="100%" stopColor="#140f0c" />
-            </linearGradient>
-            <linearGradient id="flameGrad" x1="0" y1="1" x2="0" y2="0">
-              <stop offset="0%" stopColor="#c84518" />
-              <stop offset="50%" stopColor="#f59e0b" />
-              <stop offset="100%" stopColor="#fffbeb" />
-            </linearGradient>
-          </defs>
-          <ellipse cx="60" cy="38" rx="38" ry="16" fill="url(#roasterDrum)" stroke="#c89658" strokeWidth="1.5" />
-          <path d="M22 38 L22 74 Q60 90 98 74 L98 38 Z" fill="url(#roasterDrum)" stroke="#2e251e" strokeWidth="2" filter="drop-shadow(0 10px 18px rgba(0,0,0,0.85))" />
-          <ellipse cx="60" cy="74" rx="38" ry="16" fill="#140f0c" stroke="#c89658" strokeWidth="1.5" />
-          <circle cx="60" cy="56" r="13" fill="#070605" stroke="#e5b877" strokeWidth="2" />
-          <path d="M60 48 Q67 56 60 64 Q53 56 60 48 Z" fill="url(#flameGrad)" filter="drop-shadow(0 0 8px #f59e0b)" />
-          <circle cx="50" cy="40" r="1.5" fill="#ffe299" />
-          <circle cx="70" cy="36" r="2" fill="#ffe299" />
-          <circle cx="60" cy="28" r="1.8" fill="#ffe299" />
-        </svg>
-      ),
+      badge: '11 Tins Remaining',
+      description: 'Rare single-bean Peaberry cherries hand-harvested beneath silver oak canopies.',
     },
   ];
 
-  const handleCardClick = (index: number) => {
-    const cardEl = cardsRef.current[index];
-    if (!cardEl) return;
-    const currentRot = (gsap.getProperty(cardEl, 'rotationY') as number) || 0;
-    const isBack = Math.abs(currentRot % 360) >= 90 && Math.abs(currentRot % 360) <= 270;
-    gsap.to(cardEl, {
-      rotationY: isBack ? 0 : 180,
-      duration: 0.6,
-      ease: 'power3.out',
-    });
+  const toggleFlip = (id: string) => {
+    setFlippedCards((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, id: string) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Normalize coordinates (-1 to 1)
+    const normX = (x / rect.width) * 2 - 1;
+    const normY = (y / rect.height) * 2 - 1;
+
+    const maxRotation = 12; // Degrees of 3D tilt
+    setCardTilts((prev) => ({
+      ...prev,
+      [id]: {
+        rotateX: -normY * maxRotation,
+        rotateY: normX * maxRotation,
+        glareX: (x / rect.width) * 100,
+        glareY: (y / rect.height) * 100,
+        isHovered: true,
+      },
+    }));
+  };
+
+  const handleMouseLeave = (id: string) => {
+    setCardTilts((prev) => ({
+      ...prev,
+      [id]: {
+        rotateX: 0,
+        rotateY: 0,
+        glareX: 50,
+        glareY: 50,
+        isHovered: false,
+      },
+    }));
   };
 
   useEffect(() => {
@@ -246,39 +143,98 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
     if (!section || cardElements.length === 0) return;
 
     const ctx = gsap.context(() => {
-      gsap.set(cardElements, {
-        transformPerspective: 1200,
-        transformStyle: 'preserve-3d',
-        rotationY: 0,
-      });
-
       const mm = gsap.matchMedia();
 
+      // Desktop: Pinned 3D one-by-one landing scroll sequence with generous holding pause
       mm.add('(min-width: 1024px)', () => {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
             start: 'top top',
-            end: '+=180%',
+            end: '+=220%',
             pin: true,
-            scrub: 0.8,
+            scrub: 0.65,
             anticipatePin: 1,
             invalidateOnRefresh: true,
           },
         });
 
-        cardElements.forEach((card, index) => {
-          const startTime = index * 0.22;
-          tl.to(
-            card,
-            {
-              rotationY: 180,
-              ease: 'power2.inOut',
-              duration: 0.38,
-            },
-            startTime
-          );
+        // Initialize cards off-screen with 3D perspective tilt
+        gsap.set(cardElements, {
+          y: 75,
+          opacity: 0,
+          scale: 0.9,
+          rotateX: 12,
         });
+
+        // Initial slight pause as section pins
+        tl.to({}, { duration: 0.15 });
+
+        // 1. Card 01 lands (Baba Budan)
+        tl.to(cardElements[0], {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          rotateX: 0,
+          duration: 0.45,
+          ease: 'power2.out',
+        });
+        tl.to({}, { duration: 0.18 });
+
+        // 2. Card 02 lands (Malabar)
+        tl.to(cardElements[1], {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          rotateX: 0,
+          duration: 0.45,
+          ease: 'power2.out',
+        });
+        tl.to({}, { duration: 0.18 });
+
+        // 3. Card 03 lands (Araku)
+        tl.to(cardElements[2], {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          rotateX: 0,
+          duration: 0.45,
+          ease: 'power2.out',
+        });
+        tl.to({}, { duration: 0.18 });
+
+        // 4. Card 04 lands (Coorg - Last one)
+        tl.to(cardElements[3], {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          rotateX: 0,
+          duration: 0.45,
+          ease: 'power2.out',
+        });
+
+        // 5. Generous Hold / Stop Window once all 4 cards appear so user can comfortably inspect & flip
+        tl.to({}, { duration: 1.0 });
+      });
+
+      // Mobile / Tablet: Smooth staggered entrance
+      mm.add('(max-width: 1023px)', () => {
+        gsap.fromTo(
+          cardElements,
+          { y: 40, opacity: 0, scale: 0.95 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: section,
+              start: 'top 75%',
+            },
+          }
+        );
       });
     }, sectionRef);
 
@@ -291,150 +247,178 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
     <section
       id="section-reserve"
       ref={sectionRef}
-      aria-label="Section 07: The Dakshin Reserve Vault On-Scroll Card Flip"
-      className="relative min-h-screen w-full bg-[#070605] py-10 sm:py-16 flex items-center justify-center overflow-hidden border-t border-[#221c17]"
+      aria-label="Section 07: Private Allocations"
+      className="relative min-h-screen w-full bg-[#FAF7F5] text-[#2D2926] py-16 flex items-center justify-center overflow-hidden border-t border-[#2D2926]/10"
     >
-      <div className="mx-auto max-w-7xl w-full px-4 sm:px-6 md:px-12 flex flex-col justify-between min-h-[85vh] py-3 sm:py-4">
+      {/* 3D Background Floating Ambient Orbs */}
+      <div className="pointer-events-none absolute -top-24 left-1/4 h-96 w-96 rounded-full bg-gradient-to-br from-[#F5DADF]/40 to-transparent blur-3xl opacity-70 animate-pulse" />
+      <div className="pointer-events-none absolute -bottom-24 right-1/4 h-96 w-96 rounded-full bg-gradient-to-tl from-[#E05A7E]/15 to-transparent blur-3xl opacity-70" />
+
+      <div className="relative z-10 mx-auto max-w-6xl w-full px-6 md:px-12 flex flex-col justify-between min-h-[82vh] py-4">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 border-b border-[#221c17] pb-3 sm:pb-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#2D2926]/10 pb-5">
           <div>
-            <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase mb-1 sm:mb-2">
-              <span className="font-mono text-[#c89658]">07</span>
-              <span className="h-[1px] w-6 sm:w-8 bg-[#c89658]/60" />
-              <span>THE DAKSHIN VAULT</span>
+            <div className="text-xs tracking-[0.25em] text-[#2D2926] font-sans font-bold uppercase mb-2 flex items-center gap-2">
+              <Sparkles className="h-3.5 w-3.5 text-[#E05A7E]" />
+              <span>07 / PRIVATE ALLOCATIONS</span>
             </div>
-            <h2 className="font-serif text-2xl sm:text-4xl md:text-5xl text-[#f4eee6] font-light tracking-tight max-w-2xl">
-              The Dakshin Vault. <br className="hidden sm:inline" />
-              <span className="italic text-[#e5b877] font-display font-semibold">3D Numbered Editions.</span>
+            <h2 className="font-display text-3xl sm:text-5xl text-[#2D2926] font-bold tracking-tight">
+              The Reserve <span className="italic text-[#E05A7E] font-medium">Vault.</span>
             </h2>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 sm:gap-2 font-sans text-[10px] sm:text-xs tracking-[0.18em] text-[#8c827a] uppercase">
-              <Shield className="h-3.5 sm:h-4 w-3.5 sm:w-4 text-[#c89658]" />
-              <span>12kg Numbered Tins</span>
-            </div>
-            <span className="text-[#3a3026]">•</span>
-            <span className="text-[10px] sm:text-[11px] font-sans tracking-[0.16em] uppercase text-[#c89658] flex items-center gap-1">
-              <RotateCw className="h-3 w-3 animate-spin-slow" />
-              <span>Tap to Flip</span>
-            </span>
+          <div className="flex items-center gap-2 text-xs font-mono text-[#5E5854]">
+            <Shield className="h-4 w-4 text-[#E05A7E]" />
+            <span>Numbered 12kg Single-Ridge Micro-Lots</span>
           </div>
         </div>
 
-        {/* Mobile Batch Selector Tabs (Visible on < 1024px) */}
-        <div className="flex lg:hidden items-center justify-between gap-1.5 p-1 rounded-2xl bg-[#14100c] border border-[#2b221a] my-3 overflow-x-auto">
-          {reserveCards.map((card, idx) => (
+        {/* Mobile Batch Tabs */}
+        <div className="flex lg:hidden items-center justify-between gap-1 p-1 rounded-full bg-white/90 border border-[#2D2926]/10 my-4 overflow-x-auto shadow-sm">
+          {reserveBatches.map((card, idx) => (
             <button
               key={card.id}
               onClick={() => setMobileActiveIndex(idx)}
-              className={`px-2.5 py-1.5 rounded-xl text-[10px] font-mono tracking-wider uppercase transition-all whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-full text-xs font-sans transition-all whitespace-nowrap ${
                 mobileActiveIndex === idx
-                  ? 'bg-[#c89658] text-[#070605] font-bold shadow-md'
-                  : 'text-[#8c827a]'
+                  ? 'bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm'
+                  : 'text-[#5E5854]'
               }`}
             >
-              0{idx + 1} • {card.name.split(' ')[0]}
+              0{idx + 1} {card.name.split(' ')[0]}
             </button>
           ))}
         </div>
 
-        {/* 4 3D Flipping Cards in Grid (Responsive: 1 card active on mobile, 4-grid on desktop) */}
+        {/* 4 3D Tilt & Flip Interactive Cards Grid */}
         <div
           ref={cardGridRef}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 perspective-1500 my-auto py-2 sm:py-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 my-auto py-6 perspective-1500"
         >
-          {reserveCards.map((card, index) => {
+          {reserveBatches.map((card, index) => {
+            const isFlipped = !!flippedCards[card.id];
             const isVisibleOnMobile = mobileActiveIndex === index;
+            const tilt = cardTilts[card.id] || { rotateX: 0, rotateY: 0, glareX: 50, glareY: 50, isHovered: false };
 
             return (
               <div
                 key={card.id}
-                className={`flip-card-wrapper relative h-[420px] sm:h-[460px] lg:h-[480px] w-full perspective-1200 cursor-pointer ${
+                ref={(el) => {
+                  cardsRef.current[index] = el;
+                }}
+                className={`relative h-[415px] w-full cursor-pointer preserve-3d ${
                   isVisibleOnMobile ? 'block' : 'hidden lg:block'
                 }`}
-                onClick={() => handleCardClick(index)}
+                onMouseMove={(e) => handleMouseMove(e, card.id)}
+                onMouseLeave={() => handleMouseLeave(card.id)}
+                onClick={() => toggleFlip(card.id)}
+                style={{
+                  transform: tilt.isHovered && !isFlipped
+                    ? `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) translateZ(15px) scale3d(1.025, 1.025, 1.025)`
+                    : 'rotateX(0deg) rotateY(0deg) translateZ(0px) scale3d(1, 1, 1)',
+                  transition: tilt.isHovered
+                    ? 'transform 0.12s ease-out'
+                    : 'transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                }}
               >
-                {/* 3D Flipping Inner Element */}
-                <div
-                  ref={(el) => {
-                    cardsRef.current[index] = el;
-                  }}
-                  className="flip-card-inner relative h-full w-full preserve-3d will-change-transform rounded-3xl"
-                >
-                  {/* Front Face */}
-                  <div className="absolute inset-0 backface-hidden rounded-3xl bg-[#13110f] border border-[#2e2620] p-5 sm:p-7 flex flex-col justify-between items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)] hover:border-[#c89658]/60 hover:shadow-[0_20px_50px_rgba(200,150,88,0.15)] transition-colors">
-                    <div className="w-full flex justify-between items-center text-[10px] font-mono text-[#c89658]">
-                      <span>BATCH 0{index + 1}</span>
-                      <span className="flex items-center gap-1 text-[9px] text-[#8c827a]">
-                        <RotateCw className="h-2.5 w-2.5" /> Tap to Flip
-                      </span>
-                    </div>
+                {/* 3D Flip Inner Container */}
+                <div className={`flip-card-inner ${isFlipped ? 'is-flipped' : ''}`}>
+                  {/* FRONT FACE: Frosted Glass Card with 3D Specular Light Sheen */}
+                  <div className="flip-card-front rounded-3xl bg-white/85 border border-white/90 p-6 shadow-[0_20px_45px_rgba(45,41,38,0.06)] hover:shadow-[0_30px_60px_rgba(224,90,126,0.18)] hover:border-[#E05A7E]/50 flex flex-col justify-between backdrop-blur-2xl transition-shadow duration-300 overflow-hidden">
+                    {/* Dynamic 3D Interactive Specular Glare */}
+                    {tilt.isHovered && (
+                      <div
+                        className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-300"
+                        style={{
+                          background: `radial-gradient(circle at ${tilt.glareX}% ${tilt.glareY}%, rgba(255, 255, 255, 0.6) 0%, rgba(245, 218, 223, 0.2) 35%, transparent 70%)`,
+                        }}
+                      />
+                    )}
 
-                    <div className="my-auto flex flex-col items-center justify-center">
-                      {card.iconSvg}
-                    </div>
+                    {/* Ambient Glass Gradients */}
+                    <div className="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full bg-gradient-to-br from-white/80 to-transparent blur-xl" />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-[#F5DADF]/15" />
 
-                    <div className="w-full pt-2 sm:pt-4">
-                      <h3 className="font-sans text-base sm:text-xl font-bold text-[#f4eee6] tracking-tight leading-snug">
-                        {card.name}
-                      </h3>
-                      <span className="text-[10px] sm:text-[11px] font-sans text-[#8c827a] block mt-1 tracking-wider uppercase">
-                        {card.origin} • {card.price}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Back Face */}
-                  <div
-                    className="absolute inset-0 backface-hidden rounded-3xl bg-[#14110f] border border-[#3d3128] p-5 sm:p-7 flex flex-col justify-between text-left shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
-                    style={{
-                      transform: 'rotateY(180deg)',
-                      WebkitBackfaceVisibility: 'hidden',
-                      backfaceVisibility: 'hidden',
-                    }}
-                  >
-                    <div>
-                      <h3 className="font-sans text-base sm:text-xl font-bold text-[#f4eee6] tracking-tight mb-1">
-                        {card.name}
-                      </h3>
-
-                      <p className="font-sans text-[11px] sm:text-xs text-[#a89d93] leading-relaxed mb-3 line-clamp-2">
-                        {card.shortDesc}
-                      </p>
-
-                      <ul className="space-y-2 mb-3">
-                        {card.bullets.map((bullet, idx) => (
-                          <li key={idx} className="flex items-start gap-2 text-[11px] sm:text-xs font-sans text-[#cfc6bc] leading-tight">
-                            <span className="text-[#c89658] text-xs leading-none mt-0.5">•</span>
-                            <span>{bullet}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div className="pt-3 border-t border-[#261f18] flex items-end justify-between gap-2">
-                      <div>
-                        <div className="flex items-center gap-1 text-xs sm:text-sm font-sans font-bold text-[#f4eee6]">
-                          <Star className="h-3.5 w-3.5 fill-[#f59e0b] text-[#f59e0b]" />
-                          <span>{card.rating}</span>
-                        </div>
-                        <span className="text-[9px] font-sans text-[#786e64] block leading-tight mt-0.5">
-                          {card.ratingCount}
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between text-xs text-[#8C827A] mb-3">
+                        <span className="font-mono font-bold text-[#2D2926]">BATCH 0{index + 1}</span>
+                        <span className="text-[10px] text-[#2D2926] bg-[#F5DADF] border border-[#2D2926]/10 px-2.5 py-0.5 rounded-full font-bold uppercase shadow-sm">
+                          {card.badge}
                         </span>
                       </div>
 
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSelectBatch(card);
-                        }}
-                        className="flex items-center gap-1.5 rounded-full bg-[#f4eee6] hover:bg-[#e5b877] text-[#070605] px-3.5 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-xs font-sans font-bold tracking-tight transition-all duration-300 shadow-md hover:shadow-[0_0_15px_rgba(229,184,119,0.5)] cursor-pointer shrink-0"
-                      >
-                        <span>Request Batch</span>
-                        <ArrowRight className="h-3 sm:h-3.5 w-3 sm:w-3.5" />
-                      </button>
+                      <span className="text-[10px] font-sans tracking-widest text-[#E05A7E] uppercase font-bold block mb-1">
+                        {card.origin}
+                      </span>
+
+                      <h3 className="font-display text-xl sm:text-2xl text-[#2D2926] font-bold mb-2 leading-snug">
+                        {card.name}
+                      </h3>
+
+                      <p className="font-sans text-xs text-[#E05A7E] font-bold mb-3">
+                        {card.notes.join(' · ')}
+                      </p>
+
+                      <p className="font-sans text-xs text-[#5E5854] leading-relaxed mb-4 font-normal">
+                        {card.description}
+                      </p>
                     </div>
+
+                    <div className="relative z-10 pt-4 border-t border-[#2D2926]/10 flex items-center justify-between">
+                      <span className="font-display text-2xl text-[#2D2926] font-bold">
+                        {card.price}
+                      </span>
+
+                      <div className="flex items-center gap-1.5 text-xs text-[#2D2926] font-mono font-bold bg-[#FAF7F5] border border-[#2D2926]/10 px-3 py-1.5 rounded-full shadow-sm">
+                        <span>Specs</span>
+                        <RefreshCw className="h-3 w-3 text-[#E05A7E]" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* BACK FACE: Frosted Espresso Luxury Passport Card */}
+                  <div className="flip-card-back rounded-3xl bg-[#1F1C1A]/94 border border-white/20 p-6 shadow-2xl flex flex-col justify-between backdrop-blur-2xl text-left text-white overflow-hidden">
+                    {/* Subtle Dark Glass Sheen */}
+                    <div className="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full bg-gradient-to-br from-[#E05A7E]/20 to-transparent blur-xl" />
+
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
+                        <span className="text-[10px] font-mono text-[#F5DADF] font-bold uppercase tracking-wider">
+                          ALLOCATION PASSPORT
+                        </span>
+                        <Award className="h-4 w-4 text-[#F5DADF]" />
+                      </div>
+
+                      <div className="space-y-2.5 text-xs text-[#FAF7F5]/85">
+                        <div>
+                          <span className="text-[10px] text-[#FAF7F5]/50 block uppercase font-mono">Varietal</span>
+                          <span className="font-semibold text-white">{card.varietal}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-[#FAF7F5]/50 block uppercase font-mono">Process</span>
+                          <span className="font-semibold text-white">{card.process}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-[#FAF7F5]/50 block uppercase font-mono">Altitude</span>
+                          <span className="font-mono font-bold text-[#F5DADF]">{card.altitude}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-[#FAF7F5]/50 block uppercase font-mono">Vintage</span>
+                          <span className="font-semibold text-white">{card.vintage}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectBatch(card);
+                      }}
+                      className="relative z-10 w-full py-2.5 rounded-full bg-[#F5DADF] text-[#2D2926] font-sans text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md hover:bg-white hover:scale-105 transition-all cursor-pointer"
+                    >
+                      <span>Request Allocation</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -442,14 +426,10 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
           })}
         </div>
 
-        {/* Bottom Footer */}
-        <div className="flex items-center justify-between border-t border-[#221c17] pt-2 sm:pt-3 text-[10px] sm:text-xs text-[#8c827a]">
-          <span className="font-serif italic text-[#a89d93] truncate max-w-[200px] sm:max-w-none">
-            “Roasted slowly to order in 12kg numbered Western Ghats micro-casks.”
-          </span>
-          <span className="font-sans text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-[#c89658]">
-            Strictly Private Allocations
-          </span>
+        {/* Bottom Marker */}
+        <div className="flex items-center justify-between border-t border-[#2D2926]/10 pt-3 text-xs text-[#8C827A]">
+          <span>Single-Ridge Micro-Lots • Nitrogen Sealed In Chikmagalur</span>
+          <span className="font-mono text-[#2D2926] font-bold">STRICTLY NUMBERED RELEASES</span>
         </div>
       </div>
     </section>

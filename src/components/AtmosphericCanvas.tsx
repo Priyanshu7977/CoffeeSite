@@ -66,7 +66,7 @@ export const AtmosphericCanvas: React.FC = () => {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(200, 150, 88, ${p.opacity * 0.7})`;
+        ctx.fillStyle = `rgba(224, 90, 126, ${p.opacity * 0.45})`;
         ctx.fill();
       }
 
@@ -85,7 +85,7 @@ export const AtmosphericCanvas: React.FC = () => {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-20 h-full w-full opacity-65"
+      className="pointer-events-none fixed inset-0 z-20 h-full w-full opacity-50"
     />
   );
 };
