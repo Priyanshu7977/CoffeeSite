@@ -64,7 +64,7 @@ export const SectionManifesto: React.FC = () => {
       aria-label="Section 08: The Dakshin Manifesto & About Noir"
       className="relative min-h-screen w-full bg-[#1F1C1A] text-white flex items-center justify-center overflow-hidden py-20 lg:py-0 border-t border-[#2D2926]"
     >
-      {/* Background Video from Original Section 8 */}
+      {/* Background Video from Original Section 8 - Full Height & Width Coverage */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-[#1F1C1A]">
         <video
           ref={videoRef}
@@ -73,11 +73,11 @@ export const SectionManifesto: React.FC = () => {
           muted
           loop
           playsInline
-          className="h-full w-full object-cover object-center filter brightness-90 contrast-115 opacity-65 will-change-transform"
+          className="absolute inset-0 h-full w-full min-h-full min-w-full object-cover object-center filter brightness-105 contrast-125 opacity-85 will-change-transform"
         />
-        {/* Cinematic Vignette Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1F1C1A] via-[#1F1C1A]/55 to-[#1F1C1A]/80 pointer-events-none" />
-        <div className="absolute inset-0 bg-radial from-transparent via-[#1F1C1A]/40 to-[#1F1C1A]/90 pointer-events-none" />
+        {/* Subtle Luxury Overlays preserving full-height video visibility behind text and image */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1F1C1A]/70 via-black/20 to-[#1F1C1A]/70 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.1)_0%,rgba(31,28,26,0.7)_100%)] pointer-events-none" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-6xl w-full px-6 md:px-12 flex flex-col justify-between my-auto py-8">
