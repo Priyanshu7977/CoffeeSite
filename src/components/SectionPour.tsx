@@ -4,7 +4,7 @@ import { gsap } from '../utils/animations';
 
 export const SectionPour: React.FC = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const backgroundTextRef = useRef<HTMLDivElement | null>(null);
+  const backgroundRingsRef = useRef<HTMLDivElement | null>(null);
   const imageContainerRef = useRef<HTMLDivElement | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const cuppingCardRef = useRef<HTMLDivElement | null>(null);
@@ -58,12 +58,12 @@ export const SectionPour: React.FC = () => {
 
   useEffect(() => {
     const section = sectionRef.current;
-    const backgroundText = backgroundTextRef.current;
+    const backgroundRings = backgroundRingsRef.current;
     const imageContainer = imageContainerRef.current;
     const image = imageRef.current;
     const cuppingCard = cuppingCardRef.current;
 
-    if (!section || !backgroundText || !imageContainer || !image || !cuppingCard) return;
+    if (!section || !backgroundRings || !imageContainer || !image || !cuppingCard) return;
 
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
@@ -82,9 +82,9 @@ export const SectionPour: React.FC = () => {
         });
 
         tl.fromTo(
-          backgroundText,
-          { y: 60, opacity: 0 },
-          { y: 0, opacity: 0.75, ease: 'power2.out', duration: 1.0 },
+          backgroundRings,
+          { scale: 0.85, opacity: 0 },
+          { scale: 1.05, opacity: 0.8, ease: 'power2.out', duration: 1.0 },
           0
         )
           .fromTo(
@@ -136,17 +136,48 @@ export const SectionPour: React.FC = () => {
       aria-label="Section 03: The Pour & Extraction"
       className="relative min-h-screen lg:h-screen w-full bg-[#070605] flex items-center justify-center overflow-hidden border-t border-[#221c17] py-12 lg:py-0"
     >
-      {/* Background Monumental Typography */}
+      {/* Background Atmospheric Visual: Subtle Extraction Glow & Concentric Telemetry Radar */}
       <div
-        ref={backgroundTextRef}
-        className="pointer-events-none absolute inset-0 z-0 flex flex-col items-center justify-center text-center opacity-75 select-none will-change-transform"
+        ref={backgroundRingsRef}
+        className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden select-none will-change-transform"
       >
-        <span className="font-serif text-5xl sm:text-8xl md:text-[11rem] font-light tracking-tight text-[#1a140f] uppercase leading-none">
-          THE POUR
-        </span>
-        <span className="font-display text-3xl sm:text-6xl md:text-8xl font-bold tracking-widest text-[#241a12] uppercase leading-none -mt-3 sm:-mt-8 text-stroke-gold">
-          IS THE MOMENT.
-        </span>
+        {/* Soft Amber Glow */}
+        <div className="absolute h-[600px] w-[600px] sm:h-[800px] sm:w-[800px] rounded-full bg-radial-at-c from-[#c89658]/16 via-[#7a491d]/6 to-transparent mix-blend-screen opacity-70" />
+
+        {/* Sensory Extraction Geometry Rings */}
+        <svg
+          viewBox="0 0 800 800"
+          className="w-[700px] h-[700px] sm:w-[950px] sm:h-[950px] opacity-[0.22] stroke-[#c89658]"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {/* Concentric Calibration Orbits */}
+          <circle cx="400" cy="400" r="140" strokeWidth="1" strokeDasharray="4 8" />
+          <circle cx="400" cy="400" r="240" strokeWidth="1" opacity="0.6" />
+          <circle cx="400" cy="400" r="340" strokeWidth="1" strokeDasharray="6 12" opacity="0.4" />
+          <circle cx="400" cy="400" r="380" strokeWidth="1.5" opacity="0.3" />
+
+          {/* Crosshair Grids */}
+          <line x1="400" y1="20" x2="400" y2="780" strokeWidth="1" strokeDasharray="4 10" opacity="0.3" />
+          <line x1="20" y1="400" x2="780" y2="400" strokeWidth="1" strokeDasharray="4 10" opacity="0.3" />
+
+          {/* Compass Degrees */}
+          <circle cx="400" cy="160" r="3" fill="#e5b877" />
+          <circle cx="400" cy="640" r="3" fill="#e5b877" />
+          <circle cx="160" cy="400" r="3" fill="#e5b877" />
+          <circle cx="640" cy="400" r="3" fill="#e5b877" />
+        </svg>
+
+        {/* Subtle Background Atmospheric Photo Overlay */}
+        <div className="absolute inset-0 z-0 opacity-15 overflow-hidden mix-blend-screen">
+          <img
+            src="/assets/pour-espresso.jpg"
+            alt="ambient extraction"
+            className="h-full w-full object-cover object-center filter blur-xl"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#070605] via-transparent to-[#070605]" />
+          <div className="absolute inset-0 bg-radial-vignette" />
+        </div>
       </div>
 
       {/* Foreground Pinned Section Content */}
