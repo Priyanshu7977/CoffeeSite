@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Shield, Lock, Sparkles, CheckCircle2, ArrowRight, CreditCard, Award, Mail, ShieldAlert } from 'lucide-react';
+import { X, Shield, Lock, CheckCircle2, ArrowRight, CreditCard, Award, Mail, ShieldAlert, Smartphone } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import {
   sanitizeName,
@@ -38,15 +38,16 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [email, setEmail] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   const [address, setAddress] = useState<string>('');
-  const [city, setCity] = useState<string>('');
-  const [postalCode, setPostalCode] = useState<string>('');
-  const [country, setCountry] = useState<string>('United States');
+  const [city, setCity] = useState<string>('Bengaluru');
+  const [postalCode, setPostalCode] = useState<string>('560001');
+  const [country, setCountry] = useState<string>('India');
 
   // Payment state
   const [cardNumber, setCardNumber] = useState<string>('');
   const [cardExpiry, setCardExpiry] = useState<string>('');
   const [cardCvc, setCardCvc] = useState<string>('');
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'vault' | 'applepay'>('card');
+  const [upiId, setUpiId] = useState<string>('');
+  const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card' | 'vault'>('upi');
 
   // Completed order tracking
   const [confirmedOrderNumber, setConfirmedOrderNumber] = useState<string>('');
@@ -55,15 +56,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Calculate pricing
+  // Calculate pricing in INR (₹)
   const subtotalNumeric = items.reduce((sum, item) => {
-    const raw = parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 45;
+    const raw = parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 2400;
     return sum + raw * item.quantity;
   }, 0);
 
-  const shippingCost = subtotalNumeric >= 75 ? 0 : 15;
+  const shippingCost = subtotalNumeric >= 3000 ? 0 : 250;
   const totalNumeric = subtotalNumeric + shippingCost;
-  const formattedTotal = `$${totalNumeric.toFixed(2)}`;
+  const formattedTotal = `₹${totalNumeric.toLocaleString('en-IN')}`;
   const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -168,7 +169,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       return;
     }
     if (!isValidEmail(email)) {
-      setErrorMessage('Please enter a valid email address for dispatch automation.');
+      setErrorMessage('Please enter a valid email address for live dispatch confirmation.');
       return;
     }
     if (!isValidPhone(phone)) {
@@ -199,6 +200,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       }
       if (cardCvc.length < 3) {
         setErrorMessage('Please enter a valid 3 or 4-digit CVC security code.');
+        return;
+      }
+    } else if (paymentMethod === 'upi') {
+      if (!upiId || !upiId.includes('@')) {
+        setErrorMessage('Please enter a valid UPI ID (e.g., yourname@okhdfcbank or yourname@upi).');
         return;
       }
     }
@@ -252,7 +258,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           <div className="flex items-center gap-2.5">
             <span className="h-2.5 w-2.5 rounded-full bg-[#c89658] shadow-[0_0_8px_#c89658]" />
             <h3 className="font-display text-sm tracking-[0.25em] font-bold text-[#f4eee6] uppercase">
-              HAUTE ATELIER CHECKOUT
+              NOIR DAKSHIN ATELIER CHECKOUT
             </h3>
           </div>
 
@@ -276,7 +282,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               }`}
             >
               <span className="h-5 w-5 rounded-full bg-[#c89658]/20 flex items-center justify-center text-[10px] font-mono text-[#c89658]">1</span>
-              <span>Atelier Shipping</span>
+              <span>Courier Dispatch</span>
             </div>
 
             <div
@@ -315,7 +321,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     required
                     value={fullName}
                     onChange={handleNameChange}
-                    placeholder="Henri de Noir"
+                    placeholder="Devendra Roy"
                     className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3.5 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:shadow-[0_0_15px_rgba(200,150,88,0.25)] focus:outline-none font-sans"
                   />
                 </div>
@@ -323,14 +329,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div>
                     <label className="block text-[10px] font-sans tracking-widest text-[#c89658] uppercase mb-1 font-semibold">
-                      Email Address
+                      Email Address (Live Receipt)
                     </label>
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="collector@atelier.com"
+                      placeholder="priyanshu.fld@gmail.com"
                       className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3.5 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
                     />
                   </div>
@@ -344,7 +350,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       required
                       value={phone}
                       onChange={handlePhoneChange}
-                      placeholder="+1 (555) 019-2834"
+                      placeholder="+91 98765 43210"
                       className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3.5 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
                     />
                   </div>
@@ -352,14 +358,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
                 <div>
                   <label className="block text-[10px] font-sans tracking-widest text-[#c89658] uppercase mb-1 font-semibold">
-                    Atelier Street Address (Sanitized)
+                    Delivery Address (Sanitized)
                   </label>
                   <input
                     type="text"
                     required
                     value={address}
                     onChange={handleAddressChange}
-                    placeholder="442 Madison Ave, Suite 12B"
+                    placeholder="42 Lavelle Road, Indiranagar"
                     className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3.5 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
                   />
                 </div>
@@ -374,7 +380,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       required
                       value={city}
                       onChange={handleCityChange}
-                      placeholder="Kyoto"
+                      placeholder="Bengaluru"
                       className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
                     />
                   </div>
@@ -387,7 +393,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       required
                       value={postalCode}
                       onChange={handlePostalCodeChange}
-                      placeholder="10022"
+                      placeholder="560001"
                       className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
                     />
                   </div>
@@ -400,7 +406,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       required
                       value={country}
                       onChange={handleCountryChange}
-                      placeholder="USA"
+                      placeholder="India"
                       className="w-full rounded-xl bg-[#140f0c] border border-[#2b2118] px-3 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-sans"
                     />
                   </div>
@@ -411,7 +417,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="rounded-2xl bg-[#120e0b] border border-[#261f18] p-4 flex flex-col justify-between space-y-3">
                 <div>
                   <span className="text-[10px] font-mono tracking-widest text-[#c89658] uppercase block font-bold mb-2">
-                    ALLOCATION SUMMARY ({totalItemCount} TINS)
+                    DAKSHIN LOT SUMMARY ({totalItemCount} TINS)
                   </span>
 
                   <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
@@ -430,11 +436,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div className="pt-2 border-t border-[#261f18] space-y-1 text-xs">
                   <div className="flex justify-between text-[#8c827a]">
                     <span>Subtotal:</span>
-                    <span className="font-mono text-[#f4eee6]">${subtotalNumeric.toFixed(2)}</span>
+                    <span className="font-mono text-[#f4eee6]">₹{subtotalNumeric.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-[#8c827a]">
                     <span>White-Glove Courier:</span>
-                    <span className="font-mono text-[#e5b877]">{shippingCost === 0 ? 'COMPLIMENTARY' : '$15.00'}</span>
+                    <span className="font-mono text-[#e5b877]">{shippingCost === 0 ? 'COMPLIMENTARY' : '₹250'}</span>
                   </div>
                   <div className="flex justify-between text-sm font-bold text-[#f4eee6] pt-1 border-t border-[#261f18]">
                     <span>Total Settlement:</span>
@@ -462,6 +468,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <button
                 type="button"
+                onClick={() => setPaymentMethod('upi')}
+                className={`rounded-2xl p-3.5 border text-left flex flex-col justify-between transition-all cursor-pointer ${
+                  paymentMethod === 'upi'
+                    ? 'bg-[#18120d] border-[#c89658] shadow-[0_0_15px_rgba(200,150,88,0.2)]'
+                    : 'bg-[#120e0b] border-[#261f19] text-[#8c827a]'
+                }`}
+              >
+                <Smartphone className="h-5 w-5 text-[#e5b877] mb-1.5" />
+                <span className="font-mono text-xs font-bold text-[#f4eee6]">Instant UPI</span>
+                <span className="text-[10px] text-[#8c827a]">GPay / PhonePe / Paytm</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={() => setPaymentMethod('card')}
                 className={`rounded-2xl p-3.5 border text-left flex flex-col justify-between transition-all cursor-pointer ${
                   paymentMethod === 'card'
@@ -470,22 +490,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 }`}
               >
                 <CreditCard className="h-5 w-5 text-[#c89658] mb-1.5" />
-                <span className="font-mono text-xs font-bold text-[#f4eee6]">Credit Card</span>
+                <span className="font-mono text-xs font-bold text-[#f4eee6]">Card / NetBanking</span>
                 <span className="text-[10px] text-[#8c827a]">Encrypted Vault</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setPaymentMethod('applepay')}
-                className={`rounded-2xl p-3.5 border text-left flex flex-col justify-between transition-all cursor-pointer ${
-                  paymentMethod === 'applepay'
-                    ? 'bg-[#18120d] border-[#c89658] shadow-[0_0_15px_rgba(200,150,88,0.2)]'
-                    : 'bg-[#120e0b] border-[#261f19] text-[#8c827a]'
-                }`}
-              >
-                <Sparkles className="h-5 w-5 text-[#e5b877] mb-1.5" />
-                <span className="font-mono text-xs font-bold text-[#f4eee6]">Apple Pay</span>
-                <span className="text-[10px] text-[#8c827a]">Biometric Token</span>
               </button>
 
               <button
@@ -499,9 +505,30 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               >
                 <Shield className="h-5 w-5 text-[#c89658] mb-1.5" />
                 <span className="font-mono text-xs font-bold text-[#f4eee6]">Vault Direct</span>
-                <span className="text-[10px] text-[#8c827a]">Member Allocation</span>
+                <span className="text-[10px] text-[#8c827a]">VIP Allocation Circle</span>
               </button>
             </div>
+
+            {paymentMethod === 'upi' && (
+              <div className="rounded-2xl bg-[#120e0b] border border-[#2b2118] p-4 space-y-3">
+                <div>
+                  <label className="block text-[10px] font-sans tracking-widest text-[#c89658] uppercase mb-1 font-semibold">
+                    UPI Virtual Payment Address (VPA)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={upiId}
+                    onChange={(e) => setUpiId(e.target.value)}
+                    placeholder="yourname@okhdfcbank"
+                    className="w-full rounded-xl bg-[#18120d] border border-[#33281e] px-3.5 py-2 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:outline-none font-mono"
+                  />
+                </div>
+                <span className="text-[10px] font-sans text-[#8c827a] block">
+                  A payment authorization request will be sent to your UPI application.
+                </span>
+              </div>
+            )}
 
             {paymentMethod === 'card' && (
               <div className="rounded-2xl bg-[#120e0b] border border-[#2b2118] p-4 space-y-3.5">
@@ -577,10 +604,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <Award className="h-8 w-8 text-[#c89658] animate-spin-slow" />
             </div>
             <h4 className="font-serif text-2xl sm:text-3xl text-[#f4eee6]">
-              Allocating Batch Lots...
+              Allocating Chikmagalur Lots...
             </h4>
             <p className="font-sans text-xs text-[#a89d93] max-w-sm leading-relaxed">
-              Applying hand-stamped master roaster wax seal and preparing automated dispatch notification.
+              Applying hand-stamped master roaster wax seal and preparing live email dispatch notification.
             </p>
           </div>
         )}
@@ -594,7 +621,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
             <div>
               <span className="text-[10px] font-sans tracking-[0.3em] uppercase text-[#c89658] block mb-1">
-                HAUTE ALLOCATION SECURED
+                DAKSHIN ALLOCATION SECURED
               </span>
               <h3 className="font-serif text-2xl sm:text-3xl text-[#f4eee6]">
                 Order Confirmed.
@@ -611,7 +638,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   <div className="flex items-center gap-2">
                     <Mail className="h-4 w-4 text-[#c89658]" />
                     <span className="font-mono text-xs font-bold text-[#e5b877]">
-                      AUTOMATED EMAIL DISPATCHED
+                      LIVE EMAIL TRANSMITTED
                     </span>
                   </div>
                   <span className="text-[9px] font-mono text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-500/30">

@@ -10,19 +10,19 @@ export const SectionHorizontalGallery: React.FC = () => {
     {
       id: '01',
       tag: 'TERROIR & ELEVATION',
-      title: 'COFFEE FARM',
-      location: 'Bench Maji & Gesha Village • 2,400m ASL',
-      quote: 'High altitude slows cherry ripening, generating dense complex sugars under acacia canopy.',
+      title: 'CHIKMAGALUR',
+      location: 'Baba Budan Giri & Mullayanagiri • 1,900m ASL',
+      quote: 'Shade-grown under native silver oak, wild pepper, and cardamom canopies since 1670.',
       image: '/assets/origin-beans.jpg',
       icon: Mountain,
       accent: '#c89658',
     },
     {
       id: '02',
-      tag: 'NATURAL DRYING',
-      title: 'GREEN BEANS',
-      location: 'African Raised Beds • 32 Days Slow Cure',
-      quote: 'Whole cherries are rotated by hand every 45 minutes on ventilated mesh beds.',
+      tag: 'MONSOON CURING',
+      title: 'MALABAR SHORE',
+      location: 'Arabian Sea Shorelines • 16-Week Wind Curing',
+      quote: 'Raw beans naturally conditioned by ocean winds, developing sweet chocolate richness.',
       image: '/assets/cupping-notes.jpg',
       icon: Sun,
       accent: '#e5b877',
@@ -30,9 +30,9 @@ export const SectionHorizontalGallery: React.FC = () => {
     {
       id: '03',
       tag: 'THERMAL ALCHEMY',
-      title: 'ROASTING',
-      location: '12kg Cast-Iron Drum • 204°C First Crack',
-      quote: 'Convection heat creates the acoustic cell fracture that frees locked aromatic oils.',
+      title: 'CAST IRON ROAST',
+      location: 'Bengaluru & Chikmagalur • 204°C First Crack',
+      quote: 'Acoustic drum convection releases locked cardamom oils and deep jaggery molasses.',
       image: '/assets/roast-drum.jpg',
       icon: Flame,
       accent: '#d97706',
@@ -40,9 +40,9 @@ export const SectionHorizontalGallery: React.FC = () => {
     {
       id: '04',
       tag: 'EXTRACTION CEREMONY',
-      title: 'ESPRESSO',
-      location: '9.0 Bar Pressure • 1:2 Golden Ratio',
-      quote: 'Liquid velvet cascading through bottomless portafilters into heated porcelain.',
+      title: 'FILTER KAAPI',
+      location: 'Brass Davarah & Tumbler • Meter-High Froth Aeration',
+      quote: 'Liquid velvet cascading between brass vessels, aerated naturally without steam.',
       image: '/assets/pour-espresso.jpg',
       icon: Droplet,
       accent: '#c89658',
@@ -87,7 +87,6 @@ export const SectionHorizontalGallery: React.FC = () => {
         );
 
         // 2. Dedicated Hold / Dwell Window for Spread 04 (0.75 -> 1.0 progress)
-        // Spread 04 stays static, fully visible, and displayed while scrolling before unpinning
         tl.to({}, { duration: 0.25 }, 0.75);
       });
     }, sectionRef);
@@ -108,7 +107,7 @@ export const SectionHorizontalGallery: React.FC = () => {
       <div className="absolute top-6 left-6 md:left-12 z-30 flex items-center gap-3">
         <div className="flex items-center gap-2 text-xs tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase bg-[#070605]/80 px-4 py-1.5 rounded-full border border-[#c89658]/30 backdrop-blur-md">
           <Sparkles className="h-3 w-3 text-[#c89658]" />
-          <span>CINEMATIC ARCHIVE / MAGAZINE SPREADS</span>
+          <span>CINEMATIC ARCHIVE / DAKSHIN MAGAZINE SPREADS</span>
         </div>
       </div>
 
@@ -177,7 +176,7 @@ export const SectionHorizontalGallery: React.FC = () => {
 
                     <div>
                       <span className="text-[10px] font-sans tracking-[0.2em] text-[#8c827a] uppercase block mb-1">
-                        Location & Altitude
+                        Location & Terroir
                       </span>
                       <span className="font-serif text-base sm:text-lg text-[#f4eee6]">
                         {slide.location}
@@ -199,7 +198,7 @@ export const SectionHorizontalGallery: React.FC = () => {
 
               {/* Bottom Spread Marker */}
               <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between border-t border-[#221c17]/60 pt-3 text-[10px] font-mono text-[#8c827a] uppercase tracking-widest">
-                <span>NOIR ROAST ARCHIVE 1998–2026</span>
+                <span>NOIR DAKSHIN ROAST ARCHIVE 1998–2026</span>
                 <span>{slide.title} • SPREAD 0{idx + 1}</span>
               </div>
             </div>

@@ -27,20 +27,20 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
 
   const defaultBatch: ReserveBatch = selectedBatch || {
     id: 'batch-01',
-    name: 'OBSIDIAN GEISHA 2,400M',
-    vintage: '2026 Reserve Allocation',
-    origin: 'Ethiopia / Gesha Village',
-    region: 'Bench Maji',
-    altitude: '2,400m ASL',
-    varietal: 'Wild 1931 Gesha',
+    name: 'BABA BUDAN OBSIDIAN 1,900M',
+    vintage: '2026 Monsoon Harvest',
+    origin: 'India / Chikmagalur',
+    region: 'Mullayanagiri & Chandragiri Hills',
+    altitude: '1,900m ASL',
+    varietal: 'Wild 1931 Arabica',
     process: '96h Anaerobic Natural',
-    notes: ['Bergamot', '85% Cacao', 'Jasmine', 'Black Fig'],
+    notes: ['Smoked Cardamom', '85% Mysore Cacao', 'Jasmine', 'Black Fig'],
     allocationLeft: 14,
     totalAllocations: 85,
     roastLevel: 'Omniroast',
-    price: '$48.00',
+    price: '₹2,800',
     badge: 'Strictly Limited',
-    description: 'Ultra-rare micro-lot from the high volcanic soils of Gesha Village.',
+    description: 'Sacred high-elevation micro-lot from the hills of Chikmagalur, Karnataka.',
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -190,7 +190,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
                   {[
                     { id: 'whole', label: 'Whole Bean' },
                     { id: 'espresso', label: 'Espresso' },
-                    { id: 'filter', label: 'Chemex' },
+                    { id: 'filter', label: 'Filter Kaapi' },
                     { id: 'coarse', label: 'French Press' },
                   ].map((item) => (
                     <button
@@ -251,7 +251,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
                     required
                     value={fullName}
                     onChange={handleNameChange}
-                    placeholder="Henri de Noir"
+                    placeholder="Devendra Roy"
                     className="w-full rounded-xl bg-[#14100c] border border-[#261f19] px-4 py-2.5 text-xs text-[#f4eee6] placeholder-[#4f463e] focus:border-[#c89658] focus:outline-none font-sans"
                   />
                 </div>
@@ -265,7 +265,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="collector@noirroast.com"
+                    placeholder="collector@noirdakshin.com"
                     className="w-full rounded-xl bg-[#14100c] border border-[#261f19] px-4 py-2.5 text-xs text-[#f4eee6] placeholder-[#4f463e] focus:border-[#c89658] focus:outline-none font-sans"
                   />
                 </div>

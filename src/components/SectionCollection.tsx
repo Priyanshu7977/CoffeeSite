@@ -58,7 +58,6 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
               if (progress <= 0.12) {
                 setActiveProductIndex(0);
               } else {
-                // Map remaining progress (0.12 to 0.92) across the slides
                 const productProg = Math.min(1, Math.max(0, (progress - 0.12) / 0.80));
                 const idx = Math.min(totalProducts - 1, Math.floor(productProg * totalProducts));
                 setActiveProductIndex(idx);
@@ -92,14 +91,12 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
           );
 
         // 2. Sequential Crisp Product Landings (0.12 -> 0.82)
-        // Each product transitions in crisply with high contrast and full opacity
         slides.forEach((slide, i) => {
-          if (i === 0) return; // First slide is already visible
+          if (i === 0) return;
 
           const prevSlide = slides[i - 1];
           const startTime = 0.12 + (i * 0.16);
 
-          // Fast, punchy crossfade: previous slide exits cleanly
           tl.to(
             prevSlide,
             {
@@ -113,7 +110,6 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
             startTime
           );
 
-          // Current slide lands boldly with 100% opacity and crisp snap
           tl.fromTo(
             slide,
             {
@@ -135,12 +131,10 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
         });
 
         // 3. Generous Dwell / Wait Phase for the Final 5th Image (0.82 -> 1.0)
-        // The last product stays crisp, full-screen, and completely visible while scrolling
         tl.to({}, { duration: 0.18 }, 0.82);
       });
 
       mm.add('(max-width: 1023px)', () => {
-        // Mobile view simple fade for intro
         gsap.to(introBlackout, {
           opacity: 0,
           scrollTrigger: {
@@ -177,7 +171,7 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
     <section
       id="section-collection"
       ref={sectionRef}
-      aria-label="Section 04: The Collection Haute Coffee Editions"
+      aria-label="Section 04: The Collection Indian Coffee Editions"
       className="relative min-h-screen lg:h-screen w-full bg-[#070605] flex items-center justify-center overflow-hidden border-t border-[#221c17] py-12 lg:py-0"
     >
       {/* Intro Blackout Curtain with Centered "FIND YOUR ROAST." */}
@@ -186,8 +180,8 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
         className="pointer-events-none absolute inset-0 z-40 bg-[#070605] flex items-center justify-center will-change-transform hidden lg:flex"
       >
         <div ref={introTextRef} className="text-center px-6">
-          <span className="text-[11px] font-sans tracking-[0.4em] uppercase text-[#c89658] block mb-3">
-            THE NOIR COLLECTION
+          <span className="text-[11px] font-sans tracking-[0.4em] uppercase text-[#c89658] block mb-3 font-semibold">
+            THE NOIR DAKSHIN COLLECTION
           </span>
           <h2 className="font-serif text-4xl sm:text-6xl md:text-7xl text-[#f4eee6] font-light tracking-tight">
             FIND YOUR <span className="italic text-[#e5b877] font-display font-semibold">ROAST.</span>
@@ -205,7 +199,7 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
           <div className="flex items-center gap-3 text-xs tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase">
             <span className="font-mono text-[#c89658]">04</span>
             <span className="h-[1px] w-8 bg-[#c89658]/60" />
-            <span>THE COLLECTION / HAUTE ARCHIVE</span>
+            <span>THE COLLECTION / DAKSHIN ARCHIVE</span>
           </div>
 
           <div className="flex items-center gap-2 font-mono text-xs text-[#8c827a]">
@@ -225,7 +219,7 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
           </div>
         </div>
 
-        {/* Stacked Product Slides - Controlled via GSAP */}
+        {/* Stacked Product Slides */}
         <div className="relative flex-1 flex items-center justify-center my-auto py-4">
           {NOIR_PRODUCTS.map((product, idx) => (
             <div
@@ -316,7 +310,7 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
                   </MagneticButton>
 
                   <span className="text-xs font-mono text-[#8c827a]">
-                    250g Canister
+                    250g Tin
                   </span>
                 </div>
               </div>
@@ -327,7 +321,7 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
         {/* Bottom Footer Telemetry */}
         <div className="flex items-center justify-between border-t border-[#221c17]/80 pt-3 text-xs text-[#8c827a]">
           <span className="font-serif italic text-[#a89d93] text-[11px] sm:text-xs">
-            “Roasted to order in small batches. Delivered within 48 hours of cracking.”
+            “Roasted to order in small Indian batches. Delivered within 48 hours of cracking.”
           </span>
           <span className="font-mono text-[10px] text-[#c89658] uppercase">
             Edition 0{activeProductIndex + 1} of 05

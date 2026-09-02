@@ -80,7 +80,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: 'ROASTS', target: '#section-roast' },
     { label: 'POUR', target: '#section-pour' },
     { label: 'COLLECTION', target: '#section-collection' },
-    { label: 'RITUAL', target: '#section-brew-ritual' },
+    { label: 'KAAPI RITUAL', target: '#section-brew-ritual' },
     { label: 'ABOUT', target: '#section-manifesto' },
   ];
 
@@ -103,10 +103,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="h-2 w-2 rounded-full bg-[#c89658] shadow-[0_0_12px_#c89658] transition-transform group-hover:scale-125" />
             <div className="flex flex-col">
               <span className="font-display text-xs sm:text-sm tracking-[0.24em] font-bold text-[#f4eee6] transition-colors group-hover:text-[#c89658]">
-                NOIR ROAST
+                NOIR DAKSHIN
               </span>
               <span className="text-[8px] sm:text-[9px] tracking-[0.3em] text-[#8c827a] font-sans uppercase">
-                Atelier 1998
+                Atelier 1998 • Bengaluru
               </span>
             </div>
           </button>

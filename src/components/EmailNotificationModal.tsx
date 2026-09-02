@@ -32,7 +32,7 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
                   AUTOMATED DISPATCH SIMULATOR
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 px-1.5 py-0.2 text-[8px] font-mono text-emerald-400">
-                  <CheckCircle2 className="h-2.5 w-2.5" /> SENT
+                  <CheckCircle2 className="h-2.5 w-2.5" /> SENT & DELIVERED
                 </span>
               </div>
               <h3 className="font-serif text-base sm:text-lg font-bold text-[#f4eee6] leading-tight">
@@ -54,7 +54,7 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
         <div className="rounded-2xl bg-[#140f0c] border border-[#241c15] p-3 mb-4 space-y-1 text-[11px]">
           <div className="flex justify-between flex-wrap gap-1">
             <span className="text-[#8c827a]">From:</span>
-            <span className="font-mono text-[#e5b877]">atelier@noirroast.com (Maison Noir Dispatch Robot)</span>
+            <span className="font-mono text-[#e5b877]">atelier@noirroast.com (NOIR DAKSHIN Dispatch Robot)</span>
           </div>
           <div className="flex justify-between flex-wrap gap-1">
             <span className="text-[#8c827a]">To:</span>
@@ -62,7 +62,7 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
           </div>
           <div className="flex justify-between flex-wrap gap-1">
             <span className="text-[#8c827a]">Timestamp:</span>
-            <span className="font-mono text-[#8c827a]">{new Date(email.timestamp).toLocaleString()}</span>
+            <span className="font-mono text-[#8c827a]">{new Date(email.timestamp).toLocaleString('en-IN')}</span>
           </div>
         </div>
 
@@ -71,13 +71,13 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
           {/* Email Brand Seal */}
           <div className="text-center pb-3 border-b border-[#211a14]">
             <span className="text-[9px] font-sans tracking-[0.35em] text-[#c89658] uppercase block mb-0.5">
-              HAUTE ROASTERY MAISON EST. 1998
+              HAUTE KAAPI MAISON EST. 1998
             </span>
             <h2 className="font-display text-xl sm:text-2xl font-bold tracking-[0.2em] text-[#f4eee6] uppercase drop-shadow-[0_0_20px_rgba(200,150,88,0.4)]">
-              NOIR ROAST
+              NOIR DAKSHIN
             </h2>
             <span className="text-[8px] font-mono text-[#8c827a] uppercase tracking-widest block mt-0.5">
-              KYOTO ATELIER • ZURICH CELLARS • NEW YORK VAULT
+              BENGALURU ATELIER • CHIKMAGALUR ROASTERY • MUMBAI VAULT
             </span>
           </div>
 
@@ -87,10 +87,10 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
             {email.type === 'order_confirmation' ? (
               <>
                 <p>
-                  Thank you for securing your allocation with NOIR ROAST. Your order <strong>#{email.details.orderNumber}</strong> has been logged into our cast-iron roasting batch ledger.
+                  Thank you for securing your allocation with NOIR DAKSHIN. Your order <strong>#{email.details.orderNumber}</strong> has been logged into our Chikmagalur cast-iron roasting ledger.
                 </p>
                 <p>
-                  Each micro-tin is being hand-weighed, flushed with inert nitrogen, and stamped with our master roaster wax seal before release to our white-glove courier.
+                  Each micro-tin is hand-weighed, nitrogen-sealed, and hand-stamped with our master roaster wax seal before dispatch via white-glove courier across India.
                 </p>
 
                 {/* Items Breakdown */}
@@ -124,7 +124,7 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
             ) : (
               <>
                 <p>
-                  We are pleased to welcome you to the <strong>Noir Vault Allocation Circle</strong>. Your credentials have been authenticated for limited private harvest lots.
+                  We are pleased to welcome you to the <strong>Noir Dakshin Vault Allocation Circle</strong>. Your credentials have been authenticated for limited private harvest lots.
                 </p>
                 <div className="rounded-xl bg-[#120e0b] border border-[#c89658]/40 p-3.5 text-center space-y-1.5">
                   <span className="text-[9px] font-sans tracking-[0.25em] text-[#c89658] uppercase block font-semibold">
@@ -134,7 +134,7 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
                     #{email.details.membershipId}
                   </span>
                   <span className="text-[9px] font-sans text-[#8c827a] block">
-                    Priority access to all 12kg single-ridge numbered roasts.
+                    Priority access to all 12kg single-ridge numbered roasts in Bengaluru & Chikmagalur.
                   </span>
                 </div>
               </>
@@ -149,9 +149,9 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
           <div className="pt-3 border-t border-[#211a14] flex flex-col sm:flex-row items-center justify-between gap-1 text-[9px] font-mono text-[#6e6358]">
             <div className="flex items-center gap-1">
               <Shield className="h-3 w-3 text-[#c89658]" />
-              <span>NOIR ROAST MAISON DE HAUTE TORRÉFACTION</span>
+              <span>NOIR DAKSHIN ROAST MAISON DE HAUTE TORRÉFACTION</span>
             </div>
-            <span>SECURE DISPATCH CONFIRMATION</span>
+            <span>SECURE INDIAN COURIER DISPATCH</span>
           </div>
         </div>
 

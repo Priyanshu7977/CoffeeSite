@@ -25,11 +25,11 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
   const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const subtotalNumeric = items.reduce((sum, item) => {
-    const raw = parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 45;
+    const raw = parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 2400;
     return sum + raw * item.quantity;
   }, 0);
 
-  const freeShippingThreshold = 75;
+  const freeShippingThreshold = 3000;
   const progressPercent = Math.min(100, (subtotalNumeric / freeShippingThreshold) * 100);
 
   return (
@@ -48,7 +48,7 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-[#c89658] shadow-[0_0_8px_#c89658]" />
               <h3 className="font-display text-sm tracking-[0.25em] font-bold text-[#f4eee6] uppercase">
-                YOUR VAULT CART ({totalCount.toString().padStart(2, '0')})
+                YOUR DAKSHIN CART ({totalCount.toString().padStart(2, '0')})
               </h3>
             </div>
             <button
@@ -68,8 +68,8 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
                   <Truck className="h-3.5 w-3.5" />
                   <span>
                     {subtotalNumeric >= freeShippingThreshold
-                      ? 'Complimentary White-Glove Shipping Unlocked'
-                      : `Add $${(freeShippingThreshold - subtotalNumeric).toFixed(2)} more for Free Courier`}
+                      ? 'Complimentary White-Glove Courier Unlocked'
+                      : `Add ₹${(freeShippingThreshold - subtotalNumeric).toLocaleString('en-IN')} more for Free Courier`}
                   </span>
                 </div>
                 <span className="font-mono text-[10px] text-[#8c827a]">{progressPercent.toFixed(0)}%</span>
@@ -92,7 +92,7 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
                 Your Vault Cart is Empty
               </h4>
               <p className="font-sans text-xs text-[#8c827a] max-w-xs leading-relaxed mb-6">
-                Explore THE COLLECTION and select your preferred origins to request private numbered batch allocations.
+                Explore THE COLLECTION and select your preferred Indian origins to request private numbered batch allocations.
               </p>
               <button
                 onClick={onClose}
@@ -173,10 +173,10 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
             <div className="space-y-1.5 text-xs">
               <div className="flex justify-between text-[#8c827a]">
                 <span>Allocation Subtotal ({totalCount} tins):</span>
-                <span className="font-mono text-[#f4eee6]">${subtotalNumeric.toFixed(2)}</span>
+                <span className="font-mono text-[#f4eee6]">₹{subtotalNumeric.toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between text-[#8c827a]">
-                <span>Sommelier Wax Sealing:</span>
+                <span>Master Roaster Wax Sealing:</span>
                 <span className="font-mono text-[#e5b877]">COMPLIMENTARY</span>
               </div>
             </div>
@@ -194,7 +194,7 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
 
             <div className="flex items-center justify-center gap-2 text-[10px] font-mono text-[#786e64] pt-1">
               <ShieldCheck className="h-3.5 w-3.5 text-[#c89658]" />
-              <span>Authentic Kyoto & Zurich Cellar Allocation</span>
+              <span>Authentic Bengaluru & Chikmagalur Cellar Allocation</span>
             </div>
           </div>
         )}

@@ -184,7 +184,7 @@ export const ProductDetailOverlay: React.FC<ProductDetailOverlayProps> = ({
                   Select Grind Preparation
                 </span>
                 <div className="grid grid-cols-3 gap-2">
-                  {['Whole Bean', 'Espresso (Fine)', 'Filter / Chemex'].map((g) => (
+                  {['Whole Bean', 'Filter Kaapi (Fine)', 'Pour Over / Chemex'].map((g) => (
                     <button
                       key={g}
                       onClick={() => setSelectedGrind(g)}

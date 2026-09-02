@@ -3,7 +3,7 @@ import { Timer, Sparkles, Coffee } from 'lucide-react';
 import { NOIR_BREW_METHODS } from '../data/brewing';
 
 export const SectionBrewRitual: React.FC = () => {
-  const [activeMethodId, setActiveMethodId] = useState<string>('espresso');
+  const [activeMethodId, setActiveMethodId] = useState<string>('filter-kaapi');
 
   const currentMethod =
     NOIR_BREW_METHODS.find((m) => m.id === activeMethodId) || NOIR_BREW_METHODS[0];
@@ -20,10 +20,10 @@ export const SectionBrewRitual: React.FC = () => {
             <div className="flex items-center gap-3 text-xs tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase mb-2">
               <span className="font-mono text-[#c89658]">06</span>
               <span className="h-[1px] w-8 bg-[#c89658]/60" />
-              <span>BREWING ATELIER / YOUR RITUAL</span>
+              <span>DAKSHIN ATELIER / YOUR KAAPI RITUAL</span>
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-[#f4eee6] font-light tracking-tight max-w-2xl">
-              YOUR <span className="italic text-[#e5b877] font-display font-semibold">RITUAL.</span>
+              YOUR <span className="italic text-[#e5b877] font-display font-semibold">KAAPI RITUAL.</span>
             </h2>
           </div>
 
@@ -137,7 +137,7 @@ export const SectionBrewRitual: React.FC = () => {
 
                 <div className="p-3.5 rounded-xl bg-[#0f0c09] border border-[#221c17] space-y-0.5">
                   <span className="text-[9px] font-sans tracking-[0.18em] uppercase text-[#8c827a] block">
-                    Brew Ratio
+                    Decoction Ratio
                   </span>
                   <span className="font-mono text-sm sm:text-base font-bold text-[#f4eee6]">
                     {currentMethod.ratio}

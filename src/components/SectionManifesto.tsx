@@ -60,7 +60,7 @@ export const SectionManifesto: React.FC = () => {
     <section
       id="section-manifesto"
       ref={sectionRef}
-      aria-label="Section 08: The Noir Manifesto & About Noir"
+      aria-label="Section 08: The Dakshin Manifesto & About Noir"
       className="relative min-h-screen lg:h-screen w-full bg-[#070605] flex items-center justify-center overflow-hidden border-t border-[#221c17] py-14 lg:py-0"
     >
       {/* Distinct Thermal Smoke & Roasted Beans Background Video */}
@@ -88,7 +88,7 @@ export const SectionManifesto: React.FC = () => {
             <div className="mb-3 flex items-center gap-3 text-xs tracking-[0.35em] text-[#c89658] font-sans font-semibold uppercase">
               <span className="font-mono text-[#c89658]">08</span>
               <span className="h-[1px] w-8 bg-[#c89658]/70" />
-              <span>THE NOIR MANIFESTO / ABOUT NOIR</span>
+              <span>THE DAKSHIN MANIFESTO / ABOUT NOIR</span>
             </div>
 
             {/* Monumental 3-Line Statement */}
@@ -107,11 +107,11 @@ export const SectionManifesto: React.FC = () => {
             {/* Luxury Glassmorphic Philosophy Card */}
             <div className="rounded-3xl bg-[#0f0c09]/92 border border-[#c89658]/35 p-5 sm:p-7 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.85)] space-y-4">
               <p className="font-sans text-xs sm:text-sm leading-relaxed text-[#cfc5ba] font-light">
-                In an industry obsessed with speed and automated consistency, NOIR ROAST stands as a sanctuary of deliberate friction. We roast exclusively on cast-iron drum machines—by hand, by acoustic crack, and by aroma.
+                In an industry obsessed with automated speed, NOIR DAKSHIN stands as a sanctuary of deliberate friction. In 1670, Sufi mystic Baba Budan brought seven sacred seeds to the misty Chandragiri hills of Chikmagalur. We honor this sacred lineage—roasting exclusively in cast-iron convection drums by hand, by sound, and by aroma.
               </p>
 
               <p className="font-sans text-xs sm:text-sm leading-relaxed text-[#a89d93] font-light">
-                Each lot is traced directly to the individual mountain ridge, paid at 350% above Fair Trade minimums, and released in strictly limited numbers to those who understand that perfection is finite.
+                Every lot is shade-grown beneath silver oaks and cardamom canopies in the Western Ghats, paid at +350% above Fair Trade minimums, and released in numbered tins to those who understand that perfection is finite.
               </p>
 
               {/* 3 Core Pillar Badges */}
@@ -125,7 +125,7 @@ export const SectionManifesto: React.FC = () => {
                 <div className="rounded-2xl bg-[#16110d]/90 border border-[#2b2118] p-3 flex flex-col justify-between">
                   <Shield className="h-3.5 w-3.5 text-[#e5b877] mb-1.5" />
                   <span className="font-mono text-[11px] font-bold text-[#f4eee6]">+350% Direct</span>
-                  <span className="text-[9px] font-sans text-[#8c827a] uppercase tracking-wider">Fair Trade Premium</span>
+                  <span className="text-[9px] font-sans text-[#8c827a] uppercase tracking-wider">Indian Estate Premium</span>
                 </div>
 
                 <div className="rounded-2xl bg-[#16110d]/90 border border-[#2b2118] p-3 flex flex-col justify-between">
@@ -139,24 +139,24 @@ export const SectionManifesto: React.FC = () => {
               <div className="pt-3 border-t border-[#261f18] flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-full border border-[#c89658]/60 bg-[#140f0c] flex items-center justify-center shadow-[0_0_12px_rgba(200,150,88,0.25)]">
-                    <span className="font-serif text-base font-bold text-[#c89658]">NR</span>
+                    <span className="font-serif text-base font-bold text-[#c89658]">ND</span>
                   </div>
                   <div>
                     <span className="font-serif italic text-sm text-[#f4eee6] block leading-tight">
-                      Henri de Noir
+                      Devendra & Anandini Roy
                     </span>
                     <span className="text-[9px] font-sans tracking-[0.22em] uppercase text-[#8c827a]">
-                      Master Roaster & Founder
+                      Master Roasters & Terroir Custodians
                     </span>
                   </div>
                 </div>
 
                 <div className="text-right hidden sm:block">
                   <span className="text-[9px] font-mono tracking-widest text-[#e5b877] uppercase block">
-                    KYOTO & ZURICH
+                    BENGALURU & CHIKMAGALUR
                   </span>
                   <span className="text-[8px] font-sans text-[#786e64] uppercase tracking-wider">
-                    ATELIER NO. 04
+                    ATELIER NO. 04 • EST. 1998
                   </span>
                 </div>
               </div>
@@ -172,7 +172,7 @@ export const SectionManifesto: React.FC = () => {
               {/* Authentic Cast-Iron Drum Roaster Visual */}
               <img
                 src="/assets/roast-drum.jpg"
-                alt="NOIR Cast Iron Roasting Drum"
+                alt="NOIR DAKSHIN Cast Iron Roasting Drum"
                 className="h-full w-full object-cover object-center filter brightness-95 contrast-115 transition-transform duration-700 group-hover:scale-105"
               />
 
@@ -183,7 +183,7 @@ export const SectionManifesto: React.FC = () => {
               <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
                 <div className="flex items-center gap-1.5 rounded-full bg-[#070605]/85 px-3 py-1 text-[9px] font-sans tracking-[0.2em] text-[#e5b877] uppercase border border-[#c89658]/35 backdrop-blur-md">
                   <Sparkles className="h-3 w-3 text-[#c89658]" />
-                  <span>THE ATELIER ROAST</span>
+                  <span>CHIKMAGALUR ATELIER ROAST</span>
                 </div>
 
                 <div className="h-7 w-7 rounded-full bg-[#070605]/85 border border-[#c89658]/35 flex items-center justify-center backdrop-blur-md">
@@ -201,12 +201,12 @@ export const SectionManifesto: React.FC = () => {
                 </div>
 
                 <p className="font-sans text-[11px] text-[#b5aaa0] font-light leading-snug">
-                  204°C First Crack acoustic trigger. 100% cast-iron convection.
+                  204°C First Crack acoustic trigger. 100% shade-grown Western Ghats convection.
                 </p>
 
                 <div className="flex items-center justify-between pt-1.5 border-t border-[#221c17] text-[9px] font-mono text-[#8c827a]">
-                  <span>Batch: #0984-NOIR</span>
-                  <span className="text-[#e5b877]">12kg Drum</span>
+                  <span>Batch: #0984-DAKSHIN</span>
+                  <span className="text-[#e5b877]">12kg Cast-Iron Drum</span>
                 </div>
               </div>
             </div>

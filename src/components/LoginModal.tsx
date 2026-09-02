@@ -109,11 +109,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
       setIsProcessing(true);
       setTimeout(() => {
-        const derivedName = email.split('@')[0].replace(/[^a-zA-Z]/g, ' ') || 'Henri Member';
+        const derivedName = email.split('@')[0].replace(/[^a-zA-Z]/g, ' ') || 'Devendra Member';
         const userSession: UserSession = {
           name: derivedName.toUpperCase(),
           email,
-          phone: '+1 (555) 019-2834',
+          phone: '+91 98765 43210',
           memberId: 'NR-VAULT-7729',
           isLoggedIn: true,
         };
@@ -148,7 +148,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#18120d] border border-[#c89658]/35 mb-3 shadow-[0_0_15px_rgba(200,150,88,0.2)]">
             <Sparkles className="h-3 w-3 text-[#c89658]" />
             <span className="text-[10px] font-sans tracking-[0.3em] uppercase text-[#e5b877] font-semibold">
-              MAISON NOIR PRIVATE VAULT
+              NOIR DAKSHIN PRIVATE VAULT
             </span>
           </div>
 
@@ -157,8 +157,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           </h3>
           <p className="font-sans text-xs text-[#a89d93] mt-1 max-w-xs mx-auto">
             {isRegisterMode
-              ? 'Join our private registry to reserve numbered 12kg single-ridge roasts.'
-              : 'Authenticate your cellar access for Kyoto & Zurich reserve allocations.'}
+              ? 'Join our private registry to reserve numbered 12kg Chikmagalur & Kodagu roasts.'
+              : 'Authenticate your cellar access for Bengaluru & Chikmagalur reserve allocations.'}
           </p>
         </div>
 
@@ -216,7 +216,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   required
                   value={fullName}
                   onChange={handleNameChange}
-                  placeholder="e.g. Henri de Noir"
+                  placeholder="e.g. Devendra Roy"
                   className="w-full rounded-xl bg-[#140f0c] border border-[#2e2319] pl-10 pr-4 py-3 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:shadow-[0_0_15px_rgba(200,150,88,0.25)] focus:outline-none font-sans"
                 />
               </div>
@@ -234,7 +234,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="collector@atelier.com"
+                placeholder="priyanshu.fld@gmail.com"
                 className="w-full rounded-xl bg-[#140f0c] border border-[#2e2319] pl-10 pr-4 py-3 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:shadow-[0_0_15px_rgba(200,150,88,0.25)] focus:outline-none font-sans"
               />
             </div>
@@ -252,7 +252,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   required
                   value={phone}
                   onChange={handlePhoneChange}
-                  placeholder="e.g. +1 555 019 2834"
+                  placeholder="e.g. +91 98765 43210"
                   className="w-full rounded-xl bg-[#140f0c] border border-[#2e2319] pl-10 pr-4 py-3 text-xs text-[#f4eee6] placeholder-[#5c5044] focus:border-[#c89658] focus:shadow-[0_0_15px_rgba(200,150,88,0.25)] focus:outline-none font-sans"
                 />
               </div>
@@ -298,7 +298,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             <Shield className="h-3.5 w-3.5 text-[#c89658]" />
             <span>256-Bit Vault Protocol</span>
           </div>
-          <span>Kyoto Atelier No. 04</span>
+          <span>Bengaluru Atelier No. 04</span>
         </div>
       </div>
     </div>

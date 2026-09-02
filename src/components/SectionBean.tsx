@@ -91,36 +91,36 @@ export const SectionBean: React.FC = () => {
 
   const specs = {
     altitude: {
-      title: '2,400 Metres Above Sea',
-      tag: 'Bench Maji & Gesha Terroir',
-      metric: '2,400m ASL',
-      desc: 'High in the mist-veiled Ethiopian highlands, extreme diurnal temperature swings (14°C drop at night) force the coffee cherry to ripen at a glacial pace, concentrating dense sugars, delicate floral aromatics, and crystalline acidity.',
+      title: '1,900 Metres Above Sea',
+      tag: 'Baba Budan Giri & Western Ghats',
+      metric: '1,900m ASL',
+      desc: 'High in the mist-veiled Western Ghats of Chikmagalur, Karnataka, extreme diurnal cooling forces shade-grown coffee cherries to mature slowly, locking in complex floral aromatics, smoked cardamom nuances, and refined fruit acidity.',
       stats: [
-        { label: 'Diurnal Range', value: '14°C Drop' },
-        { label: 'Ripening Time', value: '240 Days' },
-        { label: 'Density Index', value: '0.82 g/ml' },
+        { label: 'Diurnal Range', value: '13°C Drop' },
+        { label: 'Ripening Cycle', value: '230 Days' },
+        { label: 'Density Index', value: '0.84 g/ml' },
       ],
     },
     soil: {
-      title: 'Iron-Rich Volcanic Basalt',
-      tag: 'Ancient Mineral Bedrock',
-      metric: 'pH 5.8 Basalt',
-      desc: 'Root systems penetrate deep into prehistoric volcanic soils loaded with iron, magnesium, and active potassium. This mineral composition gives NOIR ROAST beans their signature velvety body and dark cocoa undertone.',
+      title: 'Nutrient-Dense Forest Humus',
+      tag: 'Cardamom & Silver Oak Canopy',
+      metric: 'pH 5.9 Loam',
+      desc: 'Deep roots absorb organic nutrients under a multi-tier biodiversity canopy of silver oak, wild cardamom, and black pepper vines. This symbiotic soil profile imbues NOIR DAKSHIN beans with their distinctive velvety mouthfeel.',
       stats: [
-        { label: 'Mineral Matrix', value: 'Iron Basalt' },
-        { label: 'Soil Acidity', value: 'pH 5.6 - 5.8' },
-        { label: 'Shade Canopy', value: '100% Acacia' },
+        { label: 'Soil Bed', value: 'Volcanic Loam' },
+        { label: 'Canopy Cover', value: '100% Native Shade' },
+        { label: 'Biodiversity', value: 'UNESCO Zone' },
       ],
     },
     harvest: {
       title: '100% Selective Hand-Picking',
-      tag: 'Peak Brix Precision',
+      tag: 'Peak Brix Indian Arabica',
       metric: '22° Brix Sugar',
-      desc: 'Only fully crimson cherries reaching an exact 22° Brix refractometer reading are hand-harvested by master pickers. Under-ripe and over-ripe cherries are ruthlessly rejected at the sorting station.',
+      desc: 'Only fully crimson, ripe cherries reaching 22° Brix on refractometers are hand-harvested by generational estate pickers. Each lot is naturally pulped and sun-dried on elevated teakwood African beds.',
       stats: [
         { label: 'Sugar Maturity', value: '22° Brix' },
-        { label: 'Selection Ratio', value: 'Top 8%' },
-        { label: 'Water Source', value: 'Alpine Springs' },
+        { label: 'Lot Selection', value: 'Top 5% Microlot' },
+        { label: 'Water Source', value: 'Ghat Springs' },
       ],
     },
   };
@@ -131,15 +131,15 @@ export const SectionBean: React.FC = () => {
     <section
       id="section-bean"
       ref={sectionRef}
-      aria-label="Section 01: The Bean Origin and Agronomy"
+      aria-label="Section 01: The Indian Coffee Origin & Terroir"
       className="relative min-h-screen lg:h-screen w-full bg-[#070605] flex items-center justify-center overflow-hidden border-t border-[#221c17] py-12 lg:py-0"
     >
-      {/* Background High-Altitude Volcanic Coffee Plantation in Morning Mist */}
+      {/* Background High-Altitude Western Ghats Coffee Plantation in Morning Mist */}
       <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden">
         <img
           ref={imageRef}
           src="/assets/origin-farm-mist.jpg"
-          alt="High-altitude volcanic coffee plantation in Gesha highlands with morning mountain mist"
+          alt="High-altitude shade-grown coffee plantation in Chikmagalur Western Ghats with morning mountain mist"
           className="h-full w-full object-cover object-center will-change-transform opacity-60 filter brightness-90 contrast-110"
         />
         {/* Layered cinematic vignettes */}
@@ -147,21 +147,21 @@ export const SectionBean: React.FC = () => {
         <div className="absolute inset-0 bg-radial-vignette opacity-90" />
       </div>
 
-      {/* Foreground Pinned Content: Fits cleanly in 100vh */}
+      {/* Foreground Pinned Content */}
       <div className="relative z-10 mx-auto max-w-7xl w-full px-6 md:px-12 flex flex-col justify-between min-h-[70vh] lg:h-[84vh] py-6">
         {/* Top Header */}
         <div className="flex items-center justify-between border-b border-[#221c17]/80 pb-3">
           <div className="flex items-center gap-3 text-xs tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase">
             <span className="font-mono text-[#c89658]">01</span>
             <span className="h-[1px] w-8 bg-[#c89658]/60" />
-            <span>THE BEAN / ORIGIN & AGRONOMY</span>
+            <span>THE BEAN / DAKSHIN ORIGIN & TERROIR</span>
           </div>
 
           <div className="hidden sm:flex items-center gap-2 font-mono text-xs text-[#8c827a]">
             <Compass className="h-3.5 w-3.5 text-[#c89658]" />
-            <span>6°40'N 38°28'E</span>
+            <span>13°19'N 75°46'E</span>
             <span>•</span>
-            <span className="text-[#e5b877]">2,400M ASL</span>
+            <span className="text-[#e5b877]">CHIKMAGALUR 1,900M ASL</span>
           </div>
         </div>
 
@@ -191,11 +191,11 @@ export const SectionBean: React.FC = () => {
               </div>
               <div className="pillar-item flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#c89658]" />
-                <span className="text-[#f4eee6]">Soil.</span>
+                <span className="text-[#f4eee6]">Western Ghats Soil.</span>
               </div>
               <div className="pillar-item flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#c89658]" />
-                <span className="text-[#f4eee6]">Rain.</span>
+                <span className="text-[#f4eee6]">Monsoon.</span>
               </div>
               <div className="pillar-item flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#c89658]" />
@@ -237,7 +237,7 @@ export const SectionBean: React.FC = () => {
                   }`}
                 >
                   <Layers className="h-3 w-3" />
-                  <span>Volcanic Soil</span>
+                  <span>Shade Soil</span>
                 </button>
                 <button
                   role="tab"
@@ -292,10 +292,10 @@ export const SectionBean: React.FC = () => {
         {/* Bottom Footer Quote */}
         <div className="flex items-center justify-between border-t border-[#221c17]/80 pt-3 text-xs text-[#8c827a]">
           <span className="font-serif italic text-[#a89d93] text-[11px] sm:text-xs">
-            “At 2,400 metres in Gesha Village, nature refuses to be hurried.”
+            “In the misty heights of Chikmagalur, seven sacred seeds began India's greatest coffee lineage.”
           </span>
           <span className="hidden sm:inline font-sans text-[10px] tracking-[0.2em] uppercase text-[#c89658]">
-            100% Shade Grown
+            100% Shade-Grown Arabica
           </span>
         </div>
       </div>

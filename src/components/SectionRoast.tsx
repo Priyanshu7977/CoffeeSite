@@ -20,7 +20,7 @@ export const SectionRoast: React.FC = () => {
       time: '0:00 - 4:00',
       temp: '100°C - 160°C',
       colorName: 'Raw Jade to Pale Amber',
-      desc: 'Free water inside the green bean core evaporates steadily under convection heat. The bean structure expands and prepares for enzymatic transformation.',
+      desc: 'Free water inside the green Western Ghats bean evaporates steadily under convection heat. The bean structure expands and prepares for enzymatic transformation.',
       gasPercent: 75,
       airFlow: 'Low',
     },
@@ -30,7 +30,7 @@ export const SectionRoast: React.FC = () => {
       time: '4:00 - 8:00',
       temp: '160°C - 195°C',
       colorName: 'Golden Honey to Light Tan',
-      desc: 'Amino acids and reducing sugars react in thermal synergy, generating over 800 distinct aromatic compounds and melanoidin pigments.',
+      desc: 'Amino acids and natural jaggery sugars react in thermal synergy, generating over 800 distinct aromatic compounds and complex spice notes.',
       gasPercent: 60,
       airFlow: 'Medium',
     },
@@ -40,7 +40,7 @@ export const SectionRoast: React.FC = () => {
       time: '8:00 - 10:00',
       temp: '204°C',
       colorName: 'Rich Mahogany Brown',
-      desc: 'Internal moisture boils into pressurized steam, shattering cellular walls with an audible crack. Aromatic oils migrate rapidly to the surface.',
+      desc: 'Internal moisture boils into pressurized steam, shattering cellular walls with an audible crack. Cardamom and chocolate oils migrate to the surface.',
       gasPercent: 40,
       airFlow: 'High',
     },
@@ -141,7 +141,7 @@ export const SectionRoast: React.FC = () => {
     <section
       id="section-roast"
       ref={sectionRef}
-      aria-label="Section 02: The Roast Thermal Alchemy"
+      aria-label="Section 02: The Dakshin Roast Thermal Alchemy"
       className="relative min-h-screen lg:h-screen w-full bg-[#070605] flex items-center justify-center overflow-hidden border-t border-[#221c17] py-12 lg:py-0"
     >
       {/* Blackout Transition Curtain */}
@@ -161,26 +161,26 @@ export const SectionRoast: React.FC = () => {
         <img
           ref={imageRef}
           src="/assets/roast-drum.jpg"
-          alt="Glowing cast-iron coffee roasting drum with golden embers"
+          alt="Glowing cast-iron coffee roasting drum in Chikmagalur roastery"
           className="h-full w-full object-cover object-center will-change-transform opacity-65 filter brightness-85 contrast-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#070605] via-[#070605]/70 to-[#070605]" />
         <div className="absolute inset-0 bg-radial-vignette opacity-85" />
       </div>
 
-      {/* Pinned Section Content: 100vh framed */}
+      {/* Pinned Section Content */}
       <div className="relative z-20 mx-auto max-w-7xl w-full px-6 md:px-12 flex flex-col justify-between min-h-[70vh] lg:h-[84vh] py-6">
         {/* Top Header */}
         <div className="flex items-center justify-between border-b border-[#221c17]/80 pb-3">
           <div className="flex items-center gap-3 text-xs tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase">
             <span className="font-mono text-[#c89658]">02</span>
             <span className="h-[1px] w-8 bg-[#c89658]/60" />
-            <span>THE ROAST / THERMAL ALCHEMY</span>
+            <span>THE ROAST / CAST-IRON CONVECTION</span>
           </div>
 
           <div className="flex items-center gap-2 font-sans text-xs tracking-[0.2em] text-[#8c827a] uppercase">
             <Flame className="h-3.5 w-3.5 text-[#c89658] animate-pulse" />
-            <span>Cast-Iron Drum • 204°C First Crack</span>
+            <span>Chikmagalur Cast-Iron Drum • 204°C First Crack</span>
           </div>
         </div>
 
@@ -201,7 +201,7 @@ export const SectionRoast: React.FC = () => {
             </div>
 
             <p className="font-sans text-xs sm:text-sm text-[#b5aaa0] font-light leading-relaxed max-w-md">
-              Cast-iron drum convection transfers steady conductive heat to the core of each dense bean. At exactly 204°C, cell walls rupture in the acoustic phenomenon of the First Crack.
+              Cast-iron drum convection in our Chikmagalur and Bengaluru ateliers transfers steady conductive heat to the core of each dense Western Ghats bean. At exactly 204°C, cell walls rupture in the acoustic phenomenon of the First Crack.
             </p>
           </div>
 
@@ -286,10 +286,10 @@ export const SectionRoast: React.FC = () => {
         {/* Bottom Footer */}
         <div className="flex items-center justify-between border-t border-[#221c17]/80 pt-3 text-xs text-[#8c827a]">
           <span className="font-mono text-[10px] text-[#8c827a]">
-            Continuous Drum Rotation: 52 RPM
+            Cast-Iron Convection: 52 RPM Drum
           </span>
           <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#c89658]">
-            Slow Convection Alchemy
+            Dakshin Convection Alchemy
           </span>
         </div>
       </div>

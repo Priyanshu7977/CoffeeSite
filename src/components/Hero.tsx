@@ -31,9 +31,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
     if (!section || !video || !textContainer || !circularMask) return;
 
     // Ensure video plays smoothly
-    video.play().catch(() => {
-      // Autoplay with audio muted is guaranteed by browser policy
-    });
+    video.play().catch(() => {});
 
     const ctx = gsap.context(() => {
       // 1. Initial Page Load Typography Entrance
@@ -157,7 +155,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
       >
         <Compass className="h-3.5 w-3.5 text-[#c89658] animate-spin-slow" />
         <span className="text-[9px] sm:text-[10px] tracking-[0.22em] text-[#e5b877] font-sans uppercase">
-          Altitude: 2,400M ASL • Volcanic Gesha
+          Altitude: 1,900M ASL • Baba Budan Giri
         </span>
       </div>
 
@@ -174,7 +172,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
           <span className="h-[1px] w-6 bg-[#c89658]/70" />
           <span className="flex items-center gap-1.5">
             <Sparkles className="h-3 w-3 text-[#c89658]" />
-            NOIR ROAST / EST. 1998
+            NOIR DAKSHIN ROAST / BABA BUDAN ATELIER EST. 1998
           </span>
           <span className="h-[1px] w-6 bg-[#c89658]/70" />
         </div>
@@ -185,7 +183,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
             ref={titleLine1Ref}
             className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-light tracking-tight text-[#f4eee6] drop-shadow-2xl"
           >
-            COFFEE,
+            KAAPI,
           </h1>
           <h1
             ref={titleLine2Ref}
@@ -206,16 +204,16 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
           ref={subtitleRef}
           className="mt-4 sm:mt-6 max-w-md font-sans text-xs sm:text-sm tracking-[0.2em] uppercase text-[#a89d93] font-light"
         >
-          Roasted slowly. Crafted obsessively.
+          Shade-Grown Western Ghats Terroir. Slow Cast-Iron Convection.
         </p>
 
         {/* Ambient Pill */}
         <div className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[10px] sm:text-[11px] font-sans tracking-[0.2em] text-[#8c827a] uppercase">
-          <span>Batch No. 984</span>
+          <span>Batch No. 0984-DAKSHIN</span>
           <span>•</span>
-          <span>Slow Convection Drum</span>
+          <span>Chikmagalur 1,900M</span>
           <span>•</span>
-          <span>Gesha & Sidama</span>
+          <span>Malabar Monsooned AA</span>
         </div>
       </div>
 
@@ -227,7 +225,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
         <MagneticButton onClick={onExplore} strength={0.4}>
           <div className="flex flex-col items-center gap-2 group">
             <span className="text-[9px] tracking-[0.3em] font-sans uppercase text-[#8c827a] transition-colors group-hover:text-[#c89658]">
-              SCROLL TO ENTER
+              SCROLL TO DISCOVER
             </span>
             <div className="flex h-8 w-5 items-start justify-center rounded-full border border-[#c89658]/40 p-1 transition-all group-hover:border-[#c89658] group-hover:shadow-[0_0_15px_rgba(200,150,88,0.3)]">
               <ChevronDown className="h-3.5 w-3.5 text-[#c89658] animate-bounce" />

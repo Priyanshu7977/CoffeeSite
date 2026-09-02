@@ -14,43 +14,43 @@ export const SectionPour: React.FC = () => {
   const flavorNotes = [
     {
       id: 0,
-      name: '85% Single-Origin Dark Cacao',
+      name: '85% Single-Origin Mysore Dark Cacao',
       category: 'Primary Note',
       intensity: 95,
       description: 'Deep, rich bittersweet chocolate with an unyielding velvety texture and a luxurious lingering truffle finish.',
-      pairing: 'Single-estate 80% chocolate or pure sparkling spring water',
+      pairing: 'Mysore Pak confectionery or pure mineral water',
     },
     {
       id: 1,
-      name: 'Charred Mountain Cedar',
-      category: 'Wood & Resin',
-      intensity: 82,
-      description: 'Aromatic smoky pine and charred cedar resin reminiscent of crisp midnight air in alpine evergreen forests.',
-      pairing: 'Lightly toasted sourdough or aged Gouda',
+      name: 'Wild Cardamom & Silver Oak',
+      category: 'Wood & Spice',
+      intensity: 88,
+      description: 'Aromatic green cardamom pod and shade-grown silver oak resin from the high ridges of Chikmagalur.',
+      pairing: 'Toasted pistachio crisp or cardamom shortbread',
     },
     {
       id: 2,
-      name: 'Wild Black Cherry & Fig',
-      category: 'Stone Fruit Acidity',
-      intensity: 88,
-      description: 'Dense wine-like acidity balanced by stewed dark cherries, ripe black mission figs, and subtle molasses sweetness.',
-      pairing: 'Caramelized almond tart or dark plum compote',
+      name: 'Raw Jaggery Caramel & Black Fig',
+      category: 'Natural Sweetness',
+      intensity: 92,
+      description: 'Dense jaggery molasses balanced by stewed dark figs and subtle sweet citrus acidity.',
+      pairing: 'Warm ghee roast cashews or dark plum tart',
     },
     {
       id: 3,
-      name: 'Aged Kentucky Bourbon Cask',
-      category: 'Barrel Aged Warmth',
-      intensity: 78,
-      description: 'Toasted American white oak, warmth of charred bourbon barrels, and sweet caramelized brown sugar nuances.',
-      pairing: 'Neat single malt whiskey or crème brûlée',
+      name: 'Malabar Monsooned Smoked Oak',
+      category: 'Coastal Curing',
+      intensity: 84,
+      description: 'Arabian Sea moisture-cured oak, malt sweetness, and mellow low-acid chocolate richness.',
+      pairing: 'Dark spiced chocolate or aged Gouda',
     },
     {
       id: 4,
-      name: 'Smoked Madagascar Vanilla',
-      category: 'Floral Spice',
-      intensity: 75,
-      description: 'Soft, creamy floral warmth with whispers of smoked bourbon vanilla beans and toasted marshmallow cream.',
-      pairing: 'Flaky butter croissant or fresh biscotti',
+      name: 'Jasmine Blossom & Orange Nectar',
+      category: 'Floral Terroir',
+      intensity: 80,
+      description: 'Soft, delicate floral jasmine perfume with sweet mandarin orange and wild forest honey nectar.',
+      pairing: 'Almond biscotti or fresh honeycomb',
     },
   ];
 
@@ -133,10 +133,10 @@ export const SectionPour: React.FC = () => {
     <section
       id="section-pour"
       ref={sectionRef}
-      aria-label="Section 03: The Pour 9-Bar Extraction"
+      aria-label="Section 03: The Pour & Extraction"
       className="relative min-h-screen lg:h-screen w-full bg-[#070605] flex items-center justify-center overflow-hidden border-t border-[#221c17] py-12 lg:py-0"
     >
-      {/* Background Monumental Typography BEHIND Image */}
+      {/* Background Monumental Typography */}
       <div
         ref={backgroundTextRef}
         className="pointer-events-none absolute inset-0 z-0 flex flex-col items-center justify-center text-center opacity-75 select-none will-change-transform"
@@ -149,25 +149,25 @@ export const SectionPour: React.FC = () => {
         </span>
       </div>
 
-      {/* Foreground Pinned Section Content: 100vh framed */}
+      {/* Foreground Pinned Section Content */}
       <div className="relative z-10 mx-auto max-w-7xl w-full px-6 md:px-12 flex flex-col justify-between min-h-[70vh] lg:h-[84vh] py-6">
         {/* Top Header */}
         <div className="flex items-center justify-between border-b border-[#221c17]/80 pb-3">
           <div className="flex items-center gap-3 text-xs tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase">
             <span className="font-mono text-[#c89658]">03</span>
             <span className="h-[1px] w-8 bg-[#c89658]/60" />
-            <span>THE POUR / 9-BAR EXTRACTION</span>
+            <span>THE POUR / DAKSHIN EXTRACTION</span>
           </div>
 
           <div className="flex items-center gap-2 rounded-full border border-[#c89658]/40 bg-[#120e0b] px-3 py-0.5">
             <Award className="h-3.5 w-3.5 text-[#c89658]" />
-            <span className="font-mono text-xs font-bold text-[#e5b877]">91.5 / 100 Cupping Score</span>
+            <span className="font-mono text-xs font-bold text-[#e5b877]">94.5 / 100 Cupping Score</span>
           </div>
         </div>
 
-        {/* Middle Stage: Extraction Stream & Cupping Notes */}
+        {/* Middle Stage */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto py-4">
-          {/* Left Column: Vertical Reveal Image Container */}
+          {/* Left Column: Image Container */}
           <div className="lg:col-span-6 relative flex justify-center">
             <div
               ref={imageContainerRef}
@@ -176,7 +176,7 @@ export const SectionPour: React.FC = () => {
               <img
                 ref={imageRef}
                 src="/assets/pour-espresso.jpg"
-                alt="Bottomless portafilter velvet espresso extraction with golden crema tiger stripes"
+                alt="Velvet coffee extraction with golden crema and aroma"
                 className="h-full w-full object-cover object-center will-change-transform"
                 loading="eager"
               />
@@ -204,7 +204,7 @@ export const SectionPour: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Sommelier Cupping Wheel & Sensory Dial */}
+          {/* Right Column: Cupping Wheel & Sensory Dial */}
           <div ref={cuppingCardRef} className="lg:col-span-6 flex flex-col justify-center">
             <span className="text-[9px] font-sans tracking-[0.25em] text-[#8c827a] uppercase mb-2 block">
               Sensory Profile & Flavor Dial (Select Note)
@@ -280,7 +280,7 @@ export const SectionPour: React.FC = () => {
             <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-[#0a0806] border border-[#221c17]">
               <ShieldCheck className="h-4 w-4 text-[#c89658] shrink-0" />
               <span className="font-sans text-[10px] sm:text-[11px] text-[#8c827a]">
-                4mm thick hazelnut crema with suspension holding sugar for 6+ seconds.
+                4mm thick golden crema with dense suspension holding sugar for 6+ seconds.
               </span>
             </div>
           </div>
@@ -289,10 +289,10 @@ export const SectionPour: React.FC = () => {
         {/* Bottom Footer */}
         <div className="flex items-center justify-between border-t border-[#221c17]/80 pt-3 text-xs text-[#8c827a]">
           <span className="font-mono text-[10px] text-[#8c827a]">
-            Extraction Pressure: 9.0 Bar PID Controlled
+            Extraction: 9.0 Bar PID Controlled & Brass Decoction
           </span>
           <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#c89658]">
-            Liquid Gold Viscosity
+            Dakshin Liquid Gold
           </span>
         </div>
       </div>

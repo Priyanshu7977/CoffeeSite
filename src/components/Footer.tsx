@@ -10,22 +10,12 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [times, setTimes] = useState({
-    kyoto: '',
-    zurich: '',
-    milan: '',
-    newyork: '',
-  });
+  const [istTime, setIstTime] = useState('');
 
   useEffect(() => {
     const updateClocks = () => {
       const now = new Date();
-      setTimes({
-        kyoto: now.toLocaleTimeString('en-US', { timeZone: 'Asia/Tokyo', hour12: false, hour: '2-digit', minute: '2-digit' }),
-        zurich: now.toLocaleTimeString('en-US', { timeZone: 'Europe/Zurich', hour12: false, hour: '2-digit', minute: '2-digit' }),
-        milan: now.toLocaleTimeString('en-US', { timeZone: 'Europe/Rome', hour12: false, hour: '2-digit', minute: '2-digit' }),
-        newyork: now.toLocaleTimeString('en-US', { timeZone: 'America/New_York', hour12: false, hour: '2-digit', minute: '2-digit' }),
-      });
+      setIstTime(now.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour12: false, hour: '2-digit', minute: '2-digit' }));
     };
 
     updateClocks();
@@ -44,39 +34,39 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
   };
 
   const atelierClocks = [
-    { city: 'Kyoto Atelier', code: 'JST', time: times.kyoto || '18:42', status: 'Slow Drum Roasting' },
-    { city: 'Zurich Roastery', code: 'CET', time: times.zurich || '10:42', status: 'Cupping Lab Active' },
-    { city: 'Milan Tasting Room', code: 'CET', time: times.milan || '10:42', status: '9.0 Bar Extraction' },
-    { city: 'New York Vault', code: 'EST', time: times.newyork || '04:42', status: 'Cellar Allocations' },
+    { city: 'Bengaluru Atelier', code: 'IST', time: istTime || '18:42', status: 'Indiranagar Sensory Lab' },
+    { city: 'Chikmagalur Roastery', code: 'IST', time: istTime || '18:42', status: 'Cast-Iron Convection Drum' },
+    { city: 'Mumbai Vault', code: 'IST', time: istTime || '18:42', status: 'Colaba Heritage Cellars' },
+    { city: 'Araku Valley Roastery', code: 'IST', time: istTime || '18:42', status: 'Tribal Lot Processing' },
   ];
 
   const archiveEditions = [
-    { label: 'Obsidian Gesha 2,400M', target: '#section-reserve' },
-    { label: 'Cask Bourbon Reserve', target: '#section-reserve' },
-    { label: 'Midnight Volcano', target: '#section-reserve' },
-    { label: 'Kyoto Atelier Roast', target: '#section-reserve' },
+    { label: 'Baba Budan Obsidian Gesha', target: '#section-reserve' },
+    { label: 'Malabar Monsooned AA', target: '#section-reserve' },
+    { label: 'Araku Valley Tribal Honey', target: '#section-reserve' },
+    { label: 'Coorg Rainforest Peaberry', target: '#section-reserve' },
   ];
 
   const ritualLinks = [
-    { label: '9.0 Bar Velvet Espresso', target: '#section-brew-ritual' },
-    { label: 'V60 Conical Extraction', target: '#section-brew-ritual' },
-    { label: 'Chemex Clarification', target: '#section-brew-ritual' },
-    { label: 'French Press Emulsion', target: '#section-brew-ritual' },
+    { label: 'South Indian Filter Kaapi', target: '#section-brew-ritual' },
+    { label: 'Baba Budan V60 Pour Over', target: '#section-brew-ritual' },
+    { label: 'Malabar 9.0 Bar Espresso', target: '#section-brew-ritual' },
+    { label: 'Mysore Cold Maceration', target: '#section-brew-ritual' },
   ];
 
   const sensoryNotes = [
-    { name: 'Jasmine Blossom', note: 'Ethiopia Gesha' },
-    { name: 'Smoked Bergamot', note: 'Acoustic Crack' },
-    { name: 'Obsidian Cacao', note: 'Volcanic Ash' },
-    { name: 'Charred Bourbon Cask', note: 'Oak Aged' },
-    { name: 'Wild Honeycomb', note: 'Anaerobic Slow' },
+    { name: 'Jasmine Bloom', note: 'Chikmagalur Arabica' },
+    { name: 'Smoked Cardamom', note: 'Coorg Silver Oak' },
+    { name: 'Dark Mysore Cacao', note: 'Baba Budan Hills' },
+    { name: 'Monsoon Cured Oak', note: 'Malabar Coast' },
+    { name: 'Raw Jaggery Nectar', note: 'Araku Valley' },
   ];
 
   const atelierCertifications = [
     { icon: <Flame className="h-3.5 w-3.5 text-[#c89658]" />, title: '100% Cast-Iron Convection', desc: 'Acoustic roasting' },
-    { icon: <Droplets className="h-3.5 w-3.5 text-[#e5b877]" />, title: 'Micro-Terroir Lot 2,400M', desc: 'Single volcanic ridge' },
-    { icon: <Shield className="h-3.5 w-3.5 text-[#c89658]" />, title: '+350% Direct Ethical Premium', desc: 'Fair trade minimums' },
-    { icon: <Coffee className="h-3.5 w-3.5 text-[#e5b877]" />, title: 'Q-Grader Certified 94+ PTS', desc: 'Laboratory cupped' },
+    { icon: <Droplets className="h-3.5 w-3.5 text-[#e5b877]" />, title: 'Shade-Grown 1,900M ASL', desc: 'Western Ghats Terroir' },
+    { icon: <Shield className="h-3.5 w-3.5 text-[#c89658]" />, title: '+350% Direct Indian Ethical', desc: 'Estate minimums' },
+    { icon: <Coffee className="h-3.5 w-3.5 text-[#e5b877]" />, title: 'Q-Grader Certified 94+ PTS', desc: 'Cupping laboratory' },
   ];
 
   return (
@@ -88,7 +78,7 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
       {/* Background Typography Watermark - Perfectly Sized & Centered Without Clipping */}
       <div className="pointer-events-none absolute bottom-28 left-0 right-0 w-full text-center select-none overflow-hidden opacity-[0.035]">
         <span className="inline-block font-display text-[7.5vw] font-black uppercase tracking-[0.08em] text-[#e5b877] max-w-full">
-          NOIR ROAST
+          NOIR DAKSHIN
         </span>
       </div>
 
@@ -98,7 +88,7 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#120e0a]/90 border border-[#c89658]/40 mb-5 shadow-[0_0_20px_rgba(200,150,88,0.2)] backdrop-blur-md">
             <Sparkles className="h-3.5 w-3.5 text-[#c89658]" />
             <span className="text-[10px] sm:text-[11px] font-sans tracking-[0.35em] uppercase text-[#e5b877] font-semibold">
-              THE FINAL IMPRESSION • HAUTE TORRÉFACTION
+              THE FINAL IMPRESSION • DAKSHIN KAAPI ATELIER
             </span>
           </div>
 
@@ -110,7 +100,7 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
           </h2>
         </div>
 
-        {/* ================= 2. Haute Horlogerie Global Timepieces (4 Dials) ================= */}
+        {/* ================= 2. Haute Horlogerie Indian Atelier Timepieces (4 Dials) ================= */}
         <div className="mb-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {atelierClocks.map((clock) => (
             <div
@@ -140,13 +130,13 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
           ))}
         </div>
 
-        {/* ================= 3. Sensory Cupping & Terroir Telemetry Strip ================= */}
+        {/* ================= 3. Sensory Cupping & Indian Terroir Telemetry Strip ================= */}
         <div className="mb-16 rounded-3xl bg-[#0d0a08]/85 border border-[#2b2118] p-5 backdrop-blur-md shadow-2xl">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 shrink-0">
               <span className="h-2 w-2 rounded-full bg-[#c89658] animate-ping" />
               <span className="text-[10px] font-mono font-bold text-[#c89658] tracking-widest uppercase">
-                TASTING NOTES MATRIX
+                DAKSHIN SENSORY MATRIX
               </span>
             </div>
 
@@ -169,14 +159,14 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
           {/* Col 1: Maison Noir Brand & Origin Seal (4 cols) */}
           <div className="lg:col-span-4 space-y-4">
             <h3 className="font-display text-2xl sm:text-3xl tracking-[0.28em] font-bold text-[#f4eee6] uppercase drop-shadow-[0_0_25px_rgba(200,150,88,0.4)]">
-              NOIR ROAST
+              NOIR DAKSHIN
             </h3>
             <p className="font-sans text-xs sm:text-sm text-[#a89d93] font-light max-w-sm leading-relaxed">
-              Haute roastery maison est. 1998. Dedicated to extreme single-ridge terroir transparency, slow cast-iron convection, and unhurried sensory contemplation.
+              Haute Indian Kaapi Maison est. 1998. Dedicated to shade-grown Western Ghats terroir, traditional brass davarah alchemy, and slow cast-iron drum convection.
             </p>
             <div className="inline-flex items-center gap-2 rounded-full bg-[#120e0b] border border-[#c89658]/35 px-4 py-1.5 text-[10px] font-mono text-[#e5b877] tracking-widest uppercase shadow-md">
               <Compass className="h-3.5 w-3.5 text-[#c89658] animate-spin-slow" />
-              <span>Volcanic Gesha Village • 2,400m ASL</span>
+              <span>Baba Budan Giri • Chikmagalur 1,900m ASL</span>
             </div>
           </div>
 
@@ -211,7 +201,7 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
           {/* Col 3: The Ritual Atelier (2 cols) */}
           <div className="lg:col-span-2 space-y-3">
             <span className="text-[10px] font-sans tracking-[0.25em] text-[#c89658] uppercase block font-bold mb-2">
-              Brewing Ritual
+              Kaapi Rituals
             </span>
             <ul className="space-y-2 text-xs font-sans text-[#cfc5ba]">
               {ritualLinks.map((item) => (
@@ -241,11 +231,11 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
             <div className="flex items-center gap-2">
               <Shield className="h-3.5 w-3.5 text-[#c89658]" />
               <span className="text-[10px] font-sans tracking-[0.25em] text-[#c89658] uppercase font-bold">
-                Private Vault Dispatches
+                Private Dakshin Dispatches
               </span>
             </div>
             <p className="font-sans text-xs text-[#a89d93] leading-relaxed">
-              Receive strictly private allocations of numbered 12kg micro-batches before public cellar release.
+              Receive strictly private allocations of numbered 12kg Chikmagalur micro-batches before public cellar release.
             </p>
 
             <form onSubmit={handleSubscribe} className="space-y-2 pt-1">
@@ -284,15 +274,15 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
             </div>
             <div>
               <span className="font-serif italic text-sm text-[#f4eee6] block leading-tight">
-                Maison Noir Atelier
+                Maison Noir Dakshin
               </span>
               <span className="font-mono text-[9px] text-[#8c827a] tracking-widest uppercase">
-                35.0116° N, 135.7681° E • KYOTO & ZURICH
+                12.9716° N, 77.5946° E • BENGALURU & CHIKMAGALUR
               </span>
             </div>
           </div>
 
-          {/* Center: Atelier Craftsmanship & Sourcing Badges (Replacing repetitive nav) */}
+          {/* Center: Atelier Craftsmanship & Sourcing Badges */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-2xl">
             {atelierCertifications.map((cert) => (
               <div
@@ -311,11 +301,11 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
           {/* Right: Sommelier Direct & Magnetic Back To Summit Button */}
           <div className="flex items-center gap-4">
             <a
-              href="mailto:concierge@noirroast.com"
+              href="mailto:atelier@noirroast.com"
               className="hidden sm:inline-flex items-center gap-2 rounded-full bg-[#120e0b] border border-[#c89658]/35 px-4 py-2 text-[10px] font-sans tracking-widest uppercase text-[#e5b877] hover:bg-[#1a140f] hover:border-[#c89658] transition-all"
             >
               <Mail className="h-3 w-3 text-[#c89658]" />
-              <span>Sommelier Concierge</span>
+              <span>Dakshin Sommelier</span>
             </a>
 
             <MagneticButton strength={0.4}>
@@ -332,8 +322,8 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate }) => {
 
         {/* Bottom Micro Copyright Bar */}
         <div className="mt-12 pt-6 border-t border-[#1a140f] flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] font-mono text-[#6e6358] tracking-wider">
-          <span>© 1998–2026 NOIR ROAST MAISON DE HAUTE TORRÉFACTION.</span>
-          <span className="text-[#c89658]/80">ALL RIGHTS RESERVED • CRAFTED OBSESSIVELY</span>
+          <span>© 1998–2026 NOIR DAKSHIN ROAST MAISON DE HAUTE TORRÉFACTION.</span>
+          <span className="text-[#c89658]/80">ALL RIGHTS RESERVED • CHIKMAGALUR & BENGALURU</span>
         </div>
       </div>
     </footer>
