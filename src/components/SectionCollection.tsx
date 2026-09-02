@@ -14,6 +14,7 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
   const introBlackoutRef = useRef<HTMLDivElement | null>(null);
   const introTextRef = useRef<HTMLDivElement | null>(null);
   const productsContainerRef = useRef<HTMLDivElement | null>(null);
+  const slidesRef = useRef<(HTMLDivElement | null)[]>([]);
 
   const [activeProductIndex, setActiveProductIndex] = useState<number>(0);
 
@@ -26,121 +27,126 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
     if (!section || !introBlackout || !introText || !productsContainer) return;
 
     const ctx = gsap.context(() => {
-      const productSlides = productsContainer.querySelectorAll('.product-slide');
-      const totalProducts = productSlides.length;
+      const slides = slidesRef.current.filter(Boolean) as HTMLDivElement[];
+      const totalProducts = slides.length;
 
       const mm = gsap.matchMedia();
 
       mm.add('(min-width: 1024px)', () => {
-        // Desktop Pinned ScrollTrigger sequence
+        // Initialize slides: first visible, rest hidden
+        slides.forEach((slide, i) => {
+          gsap.set(slide, {
+            opacity: i === 0 ? 1 : 0,
+            y: i === 0 ? 0 : 30,
+            scale: i === 0 ? 1 : 0.96,
+            pointerEvents: i === 0 ? 'auto' : 'none',
+          });
+        });
+
+        // Generous pinned scroll distance so all 5 images land crisply and the last image HOLDS before unpinning
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
             start: 'top top',
-            end: () => `+=${(totalProducts + 1.2) * 100}%`,
+            end: () => `+=${(totalProducts + 2.0) * 100}%`,
             pin: true,
-            scrub: 0.8,
+            scrub: 0.6,
             anticipatePin: 1,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
               const progress = self.progress;
-              if (progress > 0.15) {
-                const productProgress = (progress - 0.15) / 0.85;
-                const idx = Math.min(
-                  totalProducts - 1,
-                  Math.max(0, Math.floor(productProgress * totalProducts))
-                );
+              if (progress <= 0.12) {
+                setActiveProductIndex(0);
+              } else {
+                // Map remaining progress (0.12 to 0.92) across the slides
+                const productProg = Math.min(1, Math.max(0, (progress - 0.12) / 0.80));
+                const idx = Math.min(totalProducts - 1, Math.floor(productProg * totalProducts));
                 setActiveProductIndex(idx);
               }
             },
           },
         });
 
-        // Intro
+        // 1. Intro Curtain Reveal (0.0 -> 0.12)
         tl.fromTo(
           introBlackout,
           { opacity: 1 },
-          { opacity: 1, duration: 0.6 },
+          { opacity: 1, duration: 0.05 },
           0
         )
           .fromTo(
             introText,
-            { opacity: 0, scale: 0.88 },
-            { opacity: 1, scale: 1.0, ease: 'power2.out', duration: 0.7 },
-            0.1
+            { opacity: 0, scale: 0.9 },
+            { opacity: 1, scale: 1.0, ease: 'power2.out', duration: 0.06 },
+            0.01
           )
           .to(
             introText,
-            { opacity: 0, y: -40, ease: 'power2.in', duration: 0.4 },
-            0.8
+            { opacity: 0, y: -30, ease: 'power2.in', duration: 0.04 },
+            0.07
           )
           .to(
             introBlackout,
-            { opacity: 0, ease: 'power2.inOut', duration: 0.5 },
-            0.9
+            { opacity: 0, ease: 'power2.inOut', duration: 0.05 },
+            0.08
           );
 
-        // Product slides
-        productSlides.forEach((slide, i) => {
-          const img = slide.querySelector('.product-img-box');
-          const text = slide.querySelector('.product-text-box');
-          const startTime = 1.0 + i * 0.9;
+        // 2. Sequential Crisp Product Landings (0.12 -> 0.82)
+        // Each product transitions in crisply with high contrast and full opacity
+        slides.forEach((slide, i) => {
+          if (i === 0) return; // First slide is already visible
 
-          if (i === 0) {
-            tl.fromTo(
-              slide,
-              { opacity: 0 },
-              { opacity: 1, duration: 0.5 },
-              startTime
-            )
-              .fromTo(
-                img,
-                { x: -50, opacity: 0, scale: 0.92 },
-                { x: 0, opacity: 1, scale: 1, ease: 'power3.out', duration: 0.7 },
-                startTime
-              )
-              .fromTo(
-                text,
-                { x: 50, opacity: 0 },
-                { x: 0, opacity: 1, ease: 'power3.out', duration: 0.7 },
-                startTime + 0.1
-              );
-          } else {
-            const prevSlide = productSlides[i - 1];
-            tl.to(
-              prevSlide,
-              { opacity: 0, scale: 0.95, y: -50, ease: 'power2.in', duration: 0.5 },
-              startTime - 0.25
-            )
-              .fromTo(
-                slide,
-                { opacity: 0, y: 50 },
-                { opacity: 1, y: 0, ease: 'power3.out', duration: 0.7 },
-                startTime
-              )
-              .fromTo(
-                img,
-                { scale: 1.2, opacity: 0 },
-                { scale: 1.0, opacity: 1, ease: 'power2.out', duration: 0.7 },
-                startTime
-              )
-              .fromTo(
-                text,
-                { x: 40, opacity: 0 },
-                { x: 0, opacity: 1, ease: 'power3.out', duration: 0.7 },
-                startTime + 0.1
-              );
-          }
+          const prevSlide = slides[i - 1];
+          const startTime = 0.12 + (i * 0.16);
+
+          // Fast, punchy crossfade: previous slide exits cleanly
+          tl.to(
+            prevSlide,
+            {
+              opacity: 0,
+              y: -25,
+              scale: 0.96,
+              pointerEvents: 'none',
+              ease: 'power2.inOut',
+              duration: 0.07,
+            },
+            startTime
+          );
+
+          // Current slide lands boldly with 100% opacity and crisp snap
+          tl.fromTo(
+            slide,
+            {
+              opacity: 0,
+              y: 25,
+              scale: 0.96,
+              pointerEvents: 'none',
+            },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1.0,
+              pointerEvents: 'auto',
+              ease: 'power2.out',
+              duration: 0.09,
+            },
+            startTime + 0.04
+          );
         });
+
+        // 3. Generous Dwell / Wait Phase for the Final 5th Image (0.82 -> 1.0)
+        // The last product stays crisp, full-screen, and completely visible while scrolling
+        tl.to({}, { duration: 0.18 }, 0.82);
       });
 
       mm.add('(max-width: 1023px)', () => {
+        // Mobile view simple fade for intro
         gsap.to(introBlackout, {
           opacity: 0,
           scrollTrigger: {
             trigger: section,
             start: 'top top',
-            end: '+=40%',
+            end: '+=30%',
             scrub: true,
           },
         });
@@ -151,6 +157,21 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
       ctx.revert();
     };
   }, []);
+
+  const goToSlide = (idx: number) => {
+    setActiveProductIndex(idx);
+    const slides = slidesRef.current.filter(Boolean) as HTMLDivElement[];
+    slides.forEach((slide, i) => {
+      gsap.to(slide, {
+        opacity: i === idx ? 1 : 0,
+        y: i === idx ? 0 : 20,
+        scale: i === idx ? 1 : 0.96,
+        pointerEvents: i === idx ? 'auto' : 'none',
+        duration: 0.4,
+        ease: 'power2.out',
+      });
+    });
+  };
 
   return (
     <section
@@ -191,7 +212,7 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
             {NOIR_PRODUCTS.map((p, idx) => (
               <button
                 key={p.id}
-                onClick={() => setActiveProductIndex(idx)}
+                onClick={() => goToSlide(idx)}
                 className={`transition-all duration-300 cursor-pointer focus-visible:ring-1 focus-visible:ring-[#c89658] ${
                   activeProductIndex === idx
                     ? 'font-bold text-[#c89658] scale-125'
@@ -204,35 +225,34 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
           </div>
         </div>
 
-        {/* Stacked Product Slides */}
+        {/* Stacked Product Slides - Controlled via GSAP */}
         <div className="relative flex-1 flex items-center justify-center my-auto py-4">
           {NOIR_PRODUCTS.map((product, idx) => (
             <div
               key={product.id}
-              className={`product-slide grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center transition-all duration-500 ${
-                activeProductIndex === idx
-                  ? 'opacity-100 scale-100 pointer-events-auto relative z-10'
-                  : 'opacity-0 scale-95 pointer-events-none absolute inset-0'
-              }`}
+              ref={(el) => {
+                slidesRef.current[idx] = el;
+              }}
+              className="product-slide absolute inset-0 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center will-change-transform"
             >
               {/* Left Column: Product Visual */}
               <div className="lg:col-span-6 flex justify-center">
-                <div className="product-img-box relative aspect-[4/5] max-h-[44vh] sm:max-h-[48vh] w-full max-w-sm overflow-hidden rounded-2xl border border-[#c89658]/40 shadow-[0_25px_80px_rgba(0,0,0,0.9)] group">
+                <div className="product-img-box relative aspect-[4/5] max-h-[44vh] sm:max-h-[48vh] w-full max-w-sm overflow-hidden rounded-2xl border border-[#c89658]/40 shadow-[0_25px_80px_rgba(0,0,0,0.95)] group bg-[#0d0a08]">
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="h-full w-full object-cover object-center filter brightness-90 contrast-110 transition-transform duration-700 group-hover:scale-105"
+                    className="h-full w-full object-cover object-center filter brightness-95 contrast-110 transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#070605]/85 via-transparent to-transparent pointer-events-none" />
 
                   {/* Top Badge */}
-                  <div className="absolute top-4 left-4 flex items-center gap-1.5 rounded-full bg-[#070605]/85 px-3 py-0.5 text-[9px] font-sans tracking-[0.2em] text-[#e5b877] uppercase border border-[#c89658]/30 backdrop-blur-md">
+                  <div className="absolute top-4 left-4 flex items-center gap-1.5 rounded-full bg-[#070605]/90 px-3 py-0.5 text-[9px] font-sans tracking-[0.2em] text-[#e5b877] uppercase border border-[#c89658]/30 backdrop-blur-md">
                     <Sparkles className="h-3 w-3 text-[#c89658]" />
                     <span>{product.badge}</span>
                   </div>
 
                   {/* Bottom Numbered Marker */}
-                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-xl bg-[#090705]/95 p-2.5 backdrop-blur-md border border-[#c89658]/20">
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-xl bg-[#090705]/95 p-2.5 backdrop-blur-md border border-[#c89658]/25">
                     <span className="font-mono text-xs font-bold text-[#c89658]">
                       EDITION {product.num}
                     </span>
