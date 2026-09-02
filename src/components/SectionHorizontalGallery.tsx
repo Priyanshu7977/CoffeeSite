@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Mountain, Sun, Flame, Droplet, Sparkles } from 'lucide-react';
+import { Mountain, Sun, Flame, Droplet, Sparkles, Compass } from 'lucide-react';
 import { gsap } from '../utils/animations';
 
 export const SectionHorizontalGallery: React.FC = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const trackRef = useRef<HTMLDivElement | null>(null);
+  const slidesRef = useRef<(HTMLDivElement | null)[]>([]);
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
 
   const slides = [
@@ -52,57 +52,95 @@ export const SectionHorizontalGallery: React.FC = () => {
 
   useEffect(() => {
     const section = sectionRef.current;
-    const track = trackRef.current;
-
-    if (!section || !track) return;
+    if (!section) return;
 
     const ctx = gsap.context(() => {
-      const totalSlides = slides.length;
-      const xPercentage = -((totalSlides - 1) / totalSlides) * 100;
+      const slideElements = slidesRef.current.filter(Boolean) as HTMLDivElement[];
+      const totalSlides = slideElements.length;
 
       const mm = gsap.matchMedia();
 
       mm.add('(min-width: 1024px)', () => {
-        // Pinned timeline with snap and hold so slides never stop halfway
-        gsap.timeline({
+        // Initialize slides: Slide 0 is 100% visible, remaining are hidden
+        slideElements.forEach((el, idx) => {
+          gsap.set(el, {
+            opacity: idx === 0 ? 1 : 0,
+            y: idx === 0 ? 0 : 35,
+            scale: idx === 0 ? 1 : 0.96,
+            pointerEvents: idx === 0 ? 'auto' : 'none',
+          });
+        });
+
+        // Pinned sequential timeline: Each spread stays 100% full screen until scrolled
+        const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
             start: 'top top',
-            end: () => `+=${(totalSlides + 1.2) * 100}%`,
+            end: () => `+=${(totalSlides + 1.5) * 100}%`,
             pin: true,
             scrub: 0.6,
             anticipatePin: 1,
             invalidateOnRefresh: true,
-            snap: {
-              snapTo: (progress) => {
-                // Map progress (0.0 to 0.8) to discrete slide snaps (0, 0.33, 0.66, 1.0)
-                const effectiveProg = Math.min(1, progress / 0.8);
-                const step = 1 / (totalSlides - 1);
-                const snappedStep = Math.round(effectiveProg / step) * step;
-                return snappedStep * 0.8;
-              },
-              duration: { min: 0.25, max: 0.45 },
-              delay: 0.05,
-              ease: 'power2.inOut',
-            },
             onUpdate: (self) => {
               const p = self.progress;
-              const mapped = Math.min(1, Math.max(0, p / 0.8));
-              const idx = Math.min(totalSlides - 1, Math.round(mapped * (totalSlides - 1)));
-              setActiveSlideIndex(idx);
+              // Map progress cleanly to active index
+              const mapped = Math.min(totalSlides - 1, Math.floor(p * totalSlides));
+              setActiveSlideIndex(mapped);
             },
           },
-        })
-          .to(
-            track,
+        });
+
+        // Sequential Transitions: Each spread holds, then cleanly transitions to the next
+        slideElements.forEach((slide, i) => {
+          if (i === 0) return;
+
+          const prevSlide = slideElements[i - 1];
+          const startTime = (i - 0.15) / totalSlides;
+
+          // Previous spread smoothly exits
+          tl.to(
+            prevSlide,
             {
-              xPercent: xPercentage,
-              ease: 'none',
-              duration: 0.8,
+              opacity: 0,
+              y: -30,
+              scale: 0.96,
+              pointerEvents: 'none',
+              ease: 'power2.inOut',
+              duration: 0.08,
             },
-            0
-          )
-          .to({}, { duration: 0.2 }, 0.8);
+            startTime
+          );
+
+          // Current spread lands 100% full-screen and crisp
+          tl.fromTo(
+            slide,
+            {
+              opacity: 0,
+              y: 30,
+              scale: 0.96,
+              pointerEvents: 'none',
+            },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1.0,
+              pointerEvents: 'auto',
+              ease: 'power2.out',
+              duration: 0.1,
+            },
+            startTime + 0.04
+          );
+        });
+
+        // Dedicated dwell hold for the final 4th spread before releasing pin
+        tl.to({}, { duration: 0.2 }, 0.8);
+      });
+
+      mm.add('(max-width: 1023px)', () => {
+        // On mobile, slides are stacked naturally
+        slideElements.forEach((el) => {
+          gsap.set(el, { opacity: 1, y: 0, scale: 1, pointerEvents: 'auto' });
+        });
       });
     }, sectionRef);
 
@@ -111,6 +149,21 @@ export const SectionHorizontalGallery: React.FC = () => {
     };
   }, [slides.length]);
 
+  const goToSlide = (idx: number) => {
+    setActiveSlideIndex(idx);
+    const slideElements = slidesRef.current.filter(Boolean) as HTMLDivElement[];
+    slideElements.forEach((slide, i) => {
+      gsap.to(slide, {
+        opacity: i === idx ? 1 : 0,
+        y: i === idx ? 0 : 25,
+        scale: i === idx ? 1 : 0.96,
+        pointerEvents: i === idx ? 'auto' : 'none',
+        duration: 0.45,
+        ease: 'power2.out',
+      });
+    });
+  };
+
   return (
     <section
       id="section-gallery"
@@ -118,53 +171,53 @@ export const SectionHorizontalGallery: React.FC = () => {
       aria-label="Section 05: Cinematic Magazine Archive Spreads"
       className="relative min-h-screen lg:h-screen w-full bg-[#070605] overflow-hidden border-t border-[#221c17]"
     >
-      {/* Top Floating Gallery Header with Interactive Spread Selectors */}
+      {/* Top Floating Gallery Header */}
       <div className="absolute top-5 left-4 sm:left-6 md:left-12 right-4 sm:right-6 md:right-12 z-30 flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
-        <div className="flex items-center gap-2 text-[10px] sm:text-xs tracking-[0.25em] text-[#c89658] font-sans font-semibold uppercase bg-[#070605]/85 px-3.5 sm:px-4 py-1.5 rounded-full border border-[#c89658]/35 backdrop-blur-md">
+        <div className="flex items-center gap-2 text-[10px] sm:text-xs tracking-[0.25em] text-[#c89658] font-sans font-semibold uppercase bg-[#070605]/90 px-3.5 sm:px-4 py-1.5 rounded-full border border-[#c89658]/40 backdrop-blur-md shadow-lg">
           <Sparkles className="h-3 w-3 text-[#c89658]" />
           <span>CINEMATIC ARCHIVE / DAKSHIN MAGAZINE</span>
         </div>
 
-        {/* Spread Navigation Indicators */}
-        <div className="hidden sm:flex items-center gap-1.5 p-1 rounded-full bg-[#070605]/90 border border-[#c89658]/30 backdrop-blur-md">
+        {/* Interactive Spread Navigation Indicators */}
+        <div className="flex items-center gap-1.5 p-1 rounded-full bg-[#070605]/90 border border-[#c89658]/35 backdrop-blur-md shadow-lg">
           {slides.map((s, idx) => (
-            <div
+            <button
               key={s.id}
-              className={`px-3 py-1 rounded-full text-[10px] font-mono tracking-widest uppercase transition-all duration-300 ${
+              onClick={() => goToSlide(idx)}
+              className={`px-3 py-1 rounded-full text-[10px] font-mono tracking-widest uppercase transition-all duration-300 cursor-pointer ${
                 activeSlideIndex === idx
-                  ? 'bg-[#c89658] text-[#070605] font-bold shadow-[0_0_10px_rgba(200,150,88,0.4)]'
-                  : 'text-[#8c827a]'
+                  ? 'bg-[#c89658] text-[#070605] font-bold shadow-[0_0_12px_rgba(200,150,88,0.45)]'
+                  : 'text-[#8c827a] hover:text-[#f4eee6]'
               }`}
             >
               0{idx + 1} • {s.title.split(' ')[0]}
-            </div>
+            </button>
           ))}
         </div>
       </div>
 
-      {/* Horizontal Moving Track */}
-      <div
-        ref={trackRef}
-        className="flex flex-col lg:flex-row h-auto lg:h-full w-full lg:w-[400vw] will-change-transform"
-      >
+      {/* Full-Screen Stacked Spreads Container (100% Full Screen, Zero Half Cuts) */}
+      <div className="relative h-auto lg:h-full w-full flex flex-col lg:block">
         {slides.map((slide, idx) => {
           const Icon = slide.icon;
-          const isLast = idx === slides.length - 1;
 
           return (
             <div
               key={slide.id}
-              className="relative flex min-h-screen lg:h-screen w-full lg:w-screen flex-shrink-0 items-center justify-center p-6 md:p-12 lg:p-16 xl:p-20 overflow-hidden select-none border-b lg:border-b-0 border-[#1c1612]"
+              ref={(el) => {
+                slidesRef.current[idx] = el;
+              }}
+              className="relative lg:absolute lg:inset-0 min-h-screen lg:h-full w-full flex items-center justify-center p-6 md:p-12 lg:p-16 xl:p-20 overflow-hidden select-none will-change-transform border-b lg:border-b-0 border-[#1c1612]"
             >
               {/* Background Full Bleed Spread Photography */}
               <div className="absolute inset-0 z-0 overflow-hidden">
                 <img
                   src={slide.image}
                   alt={slide.title}
-                  className="h-full w-full object-cover object-center filter brightness-[0.52] contrast-110"
+                  className="h-full w-full object-cover object-center filter brightness-[0.55] contrast-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#070605]/95 via-[#070605]/65 to-[#070605]/90" />
-                <div className="absolute inset-0 bg-radial-vignette opacity-80" />
+                <div className="absolute inset-0 bg-radial-vignette opacity-85" />
               </div>
 
               {/* Spread Magazine Layout */}
@@ -181,7 +234,7 @@ export const SectionHorizontalGallery: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Strictly Non-Breaking Title with Fluid Responsive Sizing */}
+                  {/* Strictly Non-Breaking Title */}
                   <h2 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold tracking-wider text-[#f4eee6] uppercase drop-shadow-[0_0_35px_rgba(200,150,88,0.25)] leading-tight my-2 whitespace-nowrap">
                     {slide.title}
                   </h2>
@@ -193,7 +246,7 @@ export const SectionHorizontalGallery: React.FC = () => {
 
                 {/* Right Side: Editorial Metadata Card */}
                 <div className="lg:col-span-5 flex flex-col justify-center">
-                  <div className="rounded-2xl bg-[#0f0c09]/95 border border-[#c89658]/40 p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
+                  <div className="rounded-3xl bg-[#0f0c09]/95 border border-[#c89658]/40 p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6">
                     <div className="flex items-center justify-between border-b border-[#221c17] pb-4">
                       <div className="flex items-center gap-2">
                         <Icon className="h-5 w-5 text-[#c89658]" />
@@ -216,11 +269,12 @@ export const SectionHorizontalGallery: React.FC = () => {
                     </div>
 
                     <div className="pt-4 border-t border-[#221c17] flex items-center justify-between text-xs text-[#8c827a]">
-                      <span className="font-sans uppercase tracking-[0.15em]">
-                        Film Progression
-                      </span>
-                      <span className="font-mono text-[#e5b877]">
-                        {isLast ? '04 / 04 (Complete)' : `Spread 0${idx + 1} of 04`}
+                      <div className="flex items-center gap-1.5 font-mono text-[#8c827a]">
+                        <Compass className="h-3.5 w-3.5 text-[#c89658]" />
+                        <span>Dakshin Magazine Archive</span>
+                      </div>
+                      <span className="font-mono text-[#e5b877] font-bold">
+                        0{idx + 1} / 04
                       </span>
                     </div>
                   </div>
