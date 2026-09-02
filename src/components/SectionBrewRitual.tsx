@@ -28,20 +28,28 @@ export const SectionBrewRitual: React.FC = () => {
           </div>
 
           {/* 3 Brew Method Buttons */}
-          <div className="flex items-center gap-1.5 p-1 rounded-full bg-white/90 border border-[#2D2926]/10 shadow-sm overflow-x-auto max-w-full">
+          <div className="grid grid-cols-3 gap-1.5 p-1 rounded-2xl sm:rounded-full bg-white/90 border border-[#2D2926]/10 shadow-sm w-full md:w-auto">
             {NOIR_BREW_METHODS.map((method) => {
               const isSelected = activeMethodId === method.id;
+              const shortLabel =
+                method.id === 'filter-kaapi'
+                  ? 'Kaapi'
+                  : method.id === 'pourover'
+                  ? 'Pour Over'
+                  : 'Espresso';
+
               return (
                 <button
                   key={method.id}
                   onClick={() => setActiveMethodId(method.id)}
-                  className={`px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full font-sans text-xs font-bold tracking-wide transition-all cursor-pointer whitespace-nowrap ${
+                  className={`px-2 sm:px-5 py-2 rounded-xl sm:rounded-full font-sans text-xs font-bold tracking-wide transition-all cursor-pointer text-center flex items-center justify-center ${
                     isSelected
-                      ? 'bg-[#F5DADF] text-[#2D2926] shadow-sm'
+                      ? 'bg-[#F5DADF] border border-[#2D2926]/15 text-[#2D2926] shadow-sm'
                       : 'text-[#5E5854] hover:text-[#2D2926]'
                   }`}
                 >
-                  {method.name}
+                  <span className="sm:hidden">{shortLabel}</span>
+                  <span className="hidden sm:inline">{method.name}</span>
                 </button>
               );
             })}

@@ -273,19 +273,19 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
           </div>
         </div>
 
-        {/* Mobile Batch Tabs */}
-        <div className="flex lg:hidden items-center justify-between gap-1 p-1 rounded-full bg-white/90 border border-[#2D2926]/10 my-4 overflow-x-auto shadow-sm">
+        {/* Mobile Batch Tabs: 4-Column Grid fitting phone width */}
+        <div className="grid grid-cols-4 gap-1 p-1 rounded-2xl bg-white/90 border border-[#2D2926]/10 my-3 shadow-sm lg:hidden w-full">
           {reserveBatches.map((card, idx) => (
             <button
               key={card.id}
               onClick={() => setMobileActiveIndex(idx)}
-              className={`px-3 py-1.5 rounded-full text-xs font-sans transition-all whitespace-nowrap ${
+              className={`py-1.5 px-1 rounded-xl text-xs font-sans text-center transition-all ${
                 mobileActiveIndex === idx
-                  ? 'bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm'
+                  ? 'bg-[#F5DADF] border border-[#2D2926]/15 text-[#2D2926] font-bold shadow-sm'
                   : 'text-[#5E5854]'
               }`}
             >
-              0{idx + 1} {card.name.split(' ')[0]}
+              0{idx + 1}
             </button>
           ))}
         </div>
