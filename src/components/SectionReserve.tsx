@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Star, Shield } from 'lucide-react';
+import { ArrowRight, Star, Shield, RotateCw } from 'lucide-react';
 import { gsap } from '../utils/animations';
 import type { ReserveBatch } from '../types';
 
@@ -11,12 +11,12 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
   const sectionRef = useRef<HTMLElement | null>(null);
   const cardGridRef = useRef<HTMLDivElement | null>(null);
 
-  // Allow manual toggle click for mobile/touch devices
-  const [flippedCards, setFlippedCards] = useState<{ [id: string]: boolean }>({});
+  // Manual flip state for direct user clicks/taps
+  const [manualFlips, setManualFlips] = useState<{ [id: string]: boolean }>({});
 
   const toggleCard = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    setFlippedCards((prev) => ({
+    setManualFlips((prev) => ({
       ...prev,
       [id]: !prev[id],
     }));
@@ -31,7 +31,7 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
   })[] = [
     {
       id: 'batch-01',
-      name: 'Obsidian Geisha 2,400M',
+      name: 'Obsidian Gesha 2,400M',
       vintage: '2026 Reserve Allocation',
       origin: 'Ethiopia / Gesha Village',
       region: 'Bench Maji Block 04',
@@ -48,41 +48,42 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
       description: 'Grown on the highest volcanic crests of Bench Maji. Fermented in sealed stainless tanks under controlled temperature before slow raised-bed drying for 32 days.',
       bullets: [
         'Single-estate wild heirloom 1931 Gesha',
-        '2,400m ASL high-altitude volcanic soil',
+        '2,400m ASL high-altitude volcanic terroir',
         'Bergamot blossom & 85% cacao finish',
         'Strictly limited to 85 numbered tins',
       ],
       rating: '4.9/5',
-      ratingCount: 'rated by 1,400+ connoisseurs',
+      ratingCount: 'rated by 1,400+ sommeliers',
       iconSvg: (
         <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* 3D Isometric Luxury Package with Origami Wing */}
+          {/* 3D Metallic Roasted Coffee Bean with Golden Crema Spiral */}
           <defs>
-            <linearGradient id="boxGrad1" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#e5b877" />
-              <stop offset="50%" stopColor="#a37640" />
-              <stop offset="100%" stopColor="#4a3319" />
+            <linearGradient id="beanGrad1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#d49b5c" />
+              <stop offset="45%" stopColor="#7a4b22" />
+              <stop offset="100%" stopColor="#24150a" />
             </linearGradient>
-            <linearGradient id="boxGrad2" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#8c827a" />
-              <stop offset="100%" stopColor="#2b231c" />
+            <linearGradient id="beanGrad2" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#f3c28a" />
+              <stop offset="50%" stopColor="#8c5828" />
+              <stop offset="100%" stopColor="#1a0f07" />
             </linearGradient>
-            <linearGradient id="silverShine" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
-              <stop offset="50%" stopColor="#b3aba2" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#3d352e" stopOpacity="0.8" />
+            <linearGradient id="goldCrema" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#ffe4a0" />
+              <stop offset="50%" stopColor="#c89658" />
+              <stop offset="100%" stopColor="#66441b" />
             </linearGradient>
           </defs>
-          {/* Box Bottom & Sides */}
-          <path d="M60 100 L25 80 L25 50 L60 70 Z" fill="url(#boxGrad2)" stroke="#5c4a3b" strokeWidth="1.5" />
-          <path d="M60 100 L95 80 L95 50 L60 70 Z" fill="#1c1612" stroke="#5c4a3b" strokeWidth="1.5" />
-          {/* Flaps open */}
-          <path d="M25 50 L10 40 L45 30 L60 40 Z" fill="url(#silverShine)" stroke="#8c827a" strokeWidth="1.5" />
-          <path d="M95 50 L110 40 L75 30 L60 40 Z" fill="url(#silverShine)" stroke="#8c827a" strokeWidth="1.5" />
-          {/* Origami Aeroplane / Golden Wing Taking Flight */}
-          <path d="M35 55 L85 25 L65 70 Z" fill="url(#boxGrad1)" filter="drop-shadow(0 8px 12px rgba(0,0,0,0.6))" />
-          <path d="M65 70 L85 25 L55 45 Z" fill="#ffd28d" opacity="0.9" />
-          <path d="M35 55 L65 70 L55 45 Z" fill="#8c5825" />
+          {/* Left Bean Half */}
+          <path d="M56 22 C30 24 18 45 20 72 C22 92 38 102 54 100 C57 78 52 50 56 22 Z" fill="url(#beanGrad1)" stroke="#52361b" strokeWidth="1.5" filter="drop-shadow(0 10px 18px rgba(0,0,0,0.8))" />
+          {/* Right Bean Half */}
+          <path d="M64 22 C90 24 102 45 100 72 C98 92 82 102 66 100 C63 78 68 50 64 22 Z" fill="url(#beanGrad2)" stroke="#52361b" strokeWidth="1.5" />
+          {/* Center Center S-Curve Crevice */}
+          <path d="M58 24 Q65 48 55 68 Q46 88 62 98" stroke="url(#goldCrema)" strokeWidth="3.5" strokeLinecap="round" />
+          {/* Aromatic Steam Waves */}
+          <path d="M40 16 Q48 8 44 2" stroke="#e5b877" strokeWidth="2" strokeLinecap="round" opacity="0.75" />
+          <path d="M60 14 Q68 6 64 0" stroke="#e5b877" strokeWidth="2.5" strokeLinecap="round" opacity="0.9" />
+          <path d="M80 16 Q88 8 84 2" stroke="#e5b877" strokeWidth="2" strokeLinecap="round" opacity="0.75" />
         </svg>
       ),
     },
@@ -113,33 +114,39 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
       ratingCount: 'rated by 980+ connoisseurs',
       iconSvg: (
         <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* 3D Charred Oak Aging Barrel with Golden Hoops */}
           <defs>
-            <linearGradient id="tagGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#cfc8be" />
-              <stop offset="50%" stopColor="#786e64" />
-              <stop offset="100%" stopColor="#2e2721" />
+            <linearGradient id="barrelGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#3d2a1c" />
+              <stop offset="30%" stopColor="#784f2d" />
+              <stop offset="50%" stopColor="#9e6c40" />
+              <stop offset="70%" stopColor="#784f2d" />
+              <stop offset="100%" stopColor="#24180f" />
             </linearGradient>
-            <linearGradient id="goldCoin" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#ffe6a3" />
-              <stop offset="60%" stopColor="#c89658" />
-              <stop offset="100%" stopColor="#69451d" />
+            <linearGradient id="metalHoop" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#8c775d" />
+              <stop offset="50%" stopColor="#ffd994" />
+              <stop offset="100%" stopColor="#5c452b" />
             </linearGradient>
           </defs>
-          {/* Main 3D Angled Price Tag */}
-          <path d="M40 25 L80 25 L100 65 L60 105 L20 65 Z" fill="url(#tagGrad)" stroke="#8c827a" strokeWidth="2" filter="drop-shadow(0 10px 15px rgba(0,0,0,0.7))" />
-          <circle cx="60" cy="40" r="7" fill="#070605" stroke="#a3988d" strokeWidth="2" />
-          {/* Percentage / Seal Symbol on Tag */}
-          <text x="60" y="80" textAnchor="middle" fill="#f4eee6" fontSize="26" fontWeight="bold" fontFamily="sans-serif">%</text>
-          {/* 3D Floating Golden Coins */}
-          <ellipse cx="25" cy="85" rx="14" ry="10" fill="url(#goldCoin)" stroke="#ffd28d" strokeWidth="1.5" />
-          <ellipse cx="90" cy="35" rx="12" ry="8" fill="url(#goldCoin)" stroke="#ffd28d" strokeWidth="1.5" />
-          <ellipse cx="102" cy="50" rx="9" ry="6" fill="url(#goldCoin)" stroke="#ffd28d" strokeWidth="1.2" />
+          {/* Barrel Staves Outer Body */}
+          <path d="M38 24 Q60 20 82 24 Q96 60 82 96 Q60 100 38 96 Q24 60 38 24 Z" fill="url(#barrelGrad)" stroke="#2b1a0e" strokeWidth="2" filter="drop-shadow(0 10px 18px rgba(0,0,0,0.85))" />
+          {/* Top Metallic Hoop */}
+          <path d="M32 38 Q60 33 88 38" stroke="url(#metalHoop)" strokeWidth="4.5" strokeLinecap="round" />
+          {/* Center Metallic Hoop Pair */}
+          <path d="M26 56 Q60 50 94 56" stroke="url(#metalHoop)" strokeWidth="4.5" strokeLinecap="round" />
+          <path d="M26 64 Q60 58 94 64" stroke="url(#metalHoop)" strokeWidth="4.5" strokeLinecap="round" />
+          {/* Bottom Metallic Hoop */}
+          <path d="M32 82 Q60 77 88 82" stroke="url(#metalHoop)" strokeWidth="4.5" strokeLinecap="round" />
+          {/* Golden Tap Droplet */}
+          <circle cx="60" cy="60" r="4.5" fill="#ffd994" stroke="#c89658" strokeWidth="1.5" />
+          <path d="M60 66 L60 74 Q60 77 63 77" stroke="#e5b877" strokeWidth="2" strokeLinecap="round" />
         </svg>
       ),
     },
     {
       id: 'batch-03',
-      name: 'Custom Product Boxes',
+      name: 'Midnight Volcano',
       vintage: 'Single Estate Crop',
       origin: 'Sumatra / Mount Kerinci',
       region: 'Kerinci Highlands',
@@ -152,46 +159,52 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
       roastLevel: 'Heavy Espresso Roast',
       price: '$42.00',
       badge: 'Intense Body Edition',
-      shortDesc: 'Dense volcanic cherries crafted with custom micro-lot pairing.',
+      shortDesc: 'Dense shade-grown volcanic cherries processed via wet-hulling.',
       description: 'Dense shade-grown volcanic cherries processed via traditional wet-hulling with triple hand-sorting to eliminate every minor defect.',
       bullets: [
-        'Bespoke roast profiling to order',
-        'Wet-hulled Giling Basah heritage method',
+        'Triple hand-sorted zero-defect grade 1',
+        'Heavy dark espresso roast profile',
         'Smoked fig, cedar resin & dark truffle',
-        '100% zero-defect sorted beans',
+        'Low wine acidity with massive crema',
       ],
       rating: '5.0/5',
-      ratingCount: 'rated by 2,200+ stores',
+      ratingCount: 'rated by 2,200+ connoisseurs',
       iconSvg: (
         <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* 3D High-Extraction Bottomless Portafilter with Liquid Amber Stream */}
           <defs>
-            <linearGradient id="storeGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#b3aba2" />
-              <stop offset="100%" stopColor="#2e2721" />
+            <linearGradient id="chromeSteel" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#ffffff" />
+              <stop offset="40%" stopColor="#9c9388" />
+              <stop offset="70%" stopColor="#574f46" />
+              <stop offset="100%" stopColor="#241e19" />
             </linearGradient>
-            <linearGradient id="awningGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#e5b877" />
-              <stop offset="100%" stopColor="#734f24" />
+            <linearGradient id="amberStream" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#ffd28d" />
+              <stop offset="50%" stopColor="#c87f35" />
+              <stop offset="100%" stopColor="#5e3009" />
             </linearGradient>
           </defs>
-          {/* Main Atelier / Shop Front Window */}
-          <rect x="25" y="35" width="70" height="65" rx="10" fill="url(#storeGrad)" stroke="#665c52" strokeWidth="2" filter="drop-shadow(0 10px 16px rgba(0,0,0,0.8))" />
-          {/* Awning stripes */}
-          <path d="M20 38 Q60 22 100 38 L95 55 Q60 40 25 55 Z" fill="url(#awningGrad)" stroke="#2b231c" strokeWidth="1.5" />
-          {/* Atelier Display Door / Coffee Machine Window */}
-          <rect x="42" y="60" width="36" height="40" rx="5" fill="#070605" stroke="#8c827a" strokeWidth="1.5" />
-          {/* Slider Equalizer Knobs on side */}
-          <rect x="75" y="48" width="38" height="32" rx="7" fill="#1f1a16" stroke="#c89658" strokeWidth="1.5" />
-          <line x1="82" y1="56" x2="106" y2="56" stroke="#665c52" strokeWidth="2" />
-          <circle cx="89" cy="56" r="3.5" fill="#e5b877" />
-          <line x1="82" y1="70" x2="106" y2="70" stroke="#665c52" strokeWidth="2" />
-          <circle cx="99" cy="70" r="3.5" fill="#e5b877" />
+          {/* Portafilter Handle */}
+          <path d="M20 78 L42 62" stroke="#1c1612" strokeWidth="12" strokeLinecap="round" />
+          <path d="M20 78 L38 64" stroke="#c89658" strokeWidth="3" strokeLinecap="round" />
+          {/* Heavy Chrome Basket Collar */}
+          <ellipse cx="68" cy="46" rx="34" ry="20" fill="url(#chromeSteel)" stroke="#2b231c" strokeWidth="2" filter="drop-shadow(0 10px 18px rgba(0,0,0,0.85))" />
+          {/* Inner Basket Coffee Crema Mesh */}
+          <ellipse cx="68" cy="46" rx="26" ry="14" fill="#361f10" stroke="#c89658" strokeWidth="1.5" />
+          {/* Concentric Crema Tiger Striping */}
+          <path d="M50 46 Q68 54 86 46" stroke="#e5b877" strokeWidth="2.5" />
+          <path d="M56 42 Q68 48 80 42" stroke="#d49048" strokeWidth="2" />
+          {/* Viscous Molten Espresso Extraction Stream */}
+          <path d="M68 56 Q66 75 68 102" stroke="url(#amberStream)" strokeWidth="6" strokeLinecap="round" />
+          {/* Bottom Droplet Formation */}
+          <circle cx="68" cy="104" r="5" fill="#ffe09c" />
         </svg>
       ),
     },
     {
       id: 'batch-04',
-      name: 'Sales Booster Pack',
+      name: 'Kyoto Atelier Roast',
       vintage: 'Kyoto Special Edition',
       origin: 'Japan & Colombia Terroir',
       region: 'Kyoto Atelier Blend No. 4',
@@ -204,38 +217,43 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
       roastLevel: 'Medium Roast Filter',
       price: '$46.00',
       badge: 'Kyoto Atelier Special',
-      shortDesc: 'Curated limited batch pack designed for maximum sensory finish.',
+      shortDesc: 'Slow-roasted in Kyoto convection roaster for exquisite clarity.',
       description: 'Slow-roasted in our Kyoto convection roaster with precise airflow curve profiling for sweet acidity and lingering honey finish.',
       bullets: [
         'Dual-origin Gesha & Pink Bourbon fusion',
-        'Optimized for pour-over & cold drip',
-        'Bright champagne acidity & plum honey',
+        'Slow drum convection thermal curve',
+        'Champagne acidity & wild plum honey',
         'Includes batch calibration booklet',
       ],
       rating: '4.9/5',
-      ratingCount: 'rated by 3,100+ stores',
+      ratingCount: 'rated by 1,800+ connoisseurs',
       iconSvg: (
         <svg viewBox="0 0 120 120" className="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-2xl" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* 3D Cast-Iron Roaster Drum & Precision Convection Flame */}
           <defs>
-            <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#e5b877" />
-              <stop offset="50%" stopColor="#9e733d" />
-              <stop offset="100%" stopColor="#3d2b16" />
+            <linearGradient id="roasterDrum" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#7a7065" />
+              <stop offset="40%" stopColor="#3d352c" />
+              <stop offset="100%" stopColor="#140f0c" />
             </linearGradient>
-            <linearGradient id="arrowGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="50%" stopColor="#d6cec5" />
-              <stop offset="100%" stopColor="#8c827a" />
+            <linearGradient id="flameGrad" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0%" stopColor="#c84518" />
+              <stop offset="50%" stopColor="#f59e0b" />
+              <stop offset="100%" stopColor="#fffbeb" />
             </linearGradient>
           </defs>
-          {/* 3D Ascending Growth Bars */}
-          <rect x="22" y="72" width="16" height="32" rx="4" fill="url(#barGrad)" stroke="#c89658" strokeWidth="1.5" />
-          <rect x="44" y="54" width="16" height="50" rx="4" fill="url(#barGrad)" stroke="#c89658" strokeWidth="1.5" />
-          <rect x="66" y="38" width="16" height="66" rx="4" fill="url(#barGrad)" stroke="#c89658" strokeWidth="1.5" />
-          <rect x="88" y="24" width="16" height="80" rx="4" fill="url(#barGrad)" stroke="#c89658" strokeWidth="1.5" />
-          {/* 3D Ascending Growth Arrow */}
-          <path d="M15 65 L45 42 L70 50 L102 14" stroke="url(#arrowGrad)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" filter="drop-shadow(0 6px 12px rgba(0,0,0,0.8))" />
-          <path d="M84 14 L104 14 L104 34" stroke="url(#arrowGrad)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Cast Iron Roaster Cylinder */}
+          <ellipse cx="60" cy="38" rx="38" ry="16" fill="url(#roasterDrum)" stroke="#c89658" strokeWidth="1.5" />
+          <path d="M22 38 L22 74 Q60 90 98 74 L98 38 Z" fill="url(#roasterDrum)" stroke="#2e251e" strokeWidth="2" filter="drop-shadow(0 10px 18px rgba(0,0,0,0.85))" />
+          <ellipse cx="60" cy="74" rx="38" ry="16" fill="#140f0c" stroke="#c89658" strokeWidth="1.5" />
+          {/* Inner Drum Viewing Aperture */}
+          <circle cx="60" cy="56" r="13" fill="#070605" stroke="#e5b877" strokeWidth="2" />
+          {/* Active Roasting Thermal Embers / Flame inside */}
+          <path d="M60 48 Q67 56 60 64 Q53 56 60 48 Z" fill="url(#flameGrad)" filter="drop-shadow(0 0 8px #f59e0b)" />
+          {/* Embers Floating up */}
+          <circle cx="50" cy="40" r="1.5" fill="#ffe299" />
+          <circle cx="70" cy="36" r="2" fill="#ffe299" />
+          <circle cx="60" cy="28" r="1.8" fill="#ffe299" />
         </svg>
       ),
     },
@@ -247,36 +265,53 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
 
     if (!section || !cardGrid) return;
 
-    const cards = cardGrid.querySelectorAll('.flip-card-wrapper');
+    const cards = cardGrid.querySelectorAll('.flip-card-inner');
 
     const ctx = gsap.context(() => {
-      // Scroll-Driven 3D Flip Cascade
+      // PINNED ScrollTrigger sequence for dynamic ON-SCROLL 3D Card Flipping
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: 'top 75%',
-          end: 'bottom 20%',
-          scrub: 0.6,
+          start: 'top top',
+          end: '+=160%',
+          pin: true,
+          scrub: 1.0,
+          anticipatePin: 1,
           invalidateOnRefresh: true,
         },
       });
 
-      // Smooth 3D entrance and settling
+      // 1. Initial entrance of all 4 cards into 3D space (0 -> 0.25 progress)
       tl.fromTo(
         cards,
         {
-          transform: 'perspective(1400px) rotateY(-80deg) scale(0.9)',
+          transform: 'perspective(1400px) rotateY(-60deg) scale(0.92)',
           opacity: 0,
-          y: 40,
         },
         {
           transform: 'perspective(1400px) rotateY(0deg) scale(1)',
           opacity: 1,
-          y: 0,
-          stagger: 0.12,
-          ease: 'power3.out',
-        }
+          stagger: 0.08,
+          ease: 'power2.out',
+          duration: 0.35,
+        },
+        0
       );
+
+      // 2. Sequential ON-SCROLL 3D Flipping from Front to Back (0.35 -> 0.95 progress)
+      // Each card flips in 3D as user scrolls through the pinned section!
+      cards.forEach((card, index) => {
+        const flipStart = 0.35 + index * 0.14;
+        tl.to(
+          card,
+          {
+            transform: 'perspective(1400px) rotateY(180deg) scale(1)',
+            ease: 'power3.inOut',
+            duration: 0.28,
+          },
+          flipStart
+        );
+      });
     }, sectionRef);
 
     return () => {
@@ -288,58 +323,65 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
     <section
       id="section-reserve"
       ref={sectionRef}
-      aria-label="Section 07: The Reserve Vault Card Showcase"
-      className="relative min-h-screen w-full bg-[#070605] py-20 md:py-32 px-6 md:px-12 flex items-center justify-center overflow-hidden border-t border-[#221c17]"
+      aria-label="Section 07: The Reserve Vault On-Scroll Card Flip"
+      className="relative min-h-screen w-full bg-[#070605] py-16 lg:py-0 flex items-center justify-center overflow-hidden border-t border-[#221c17]"
     >
-      <div className="mx-auto max-w-7xl w-full">
+      <div className="mx-auto max-w-7xl w-full px-6 md:px-12 flex flex-col justify-between min-h-[85vh] py-6">
         {/* Section Header */}
-        <div className="mb-14 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#221c17] pb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#221c17] pb-4">
           <div>
-            <div className="flex items-center gap-3 text-xs tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase mb-3">
+            <div className="flex items-center gap-3 text-xs tracking-[0.3em] text-[#c89658] font-sans font-semibold uppercase mb-2">
               <span className="font-mono text-[#c89658]">07</span>
               <span className="h-[1px] w-8 bg-[#c89658]/60" />
               <span>THE VAULT / PRIVATE EDITIONS</span>
             </div>
-            <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl text-[#f4eee6] font-light tracking-tight max-w-2xl">
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-[#f4eee6] font-light tracking-tight max-w-2xl">
               The Reserve Vault. <br />
-              <span className="italic text-[#e5b877]">Interactive Allocation Cards.</span>
+              <span className="italic text-[#e5b877] font-display font-semibold">On-Scroll Flipping Cards.</span>
             </h2>
           </div>
 
-          <div className="flex items-center gap-3 font-sans text-xs tracking-[0.2em] text-[#8c827a] uppercase">
-            <Shield className="h-4 w-4 text-[#c89658]" />
-            <span>Hover or Click Any Card to Flip in 3D</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 font-sans text-xs tracking-[0.2em] text-[#8c827a] uppercase">
+              <Shield className="h-4 w-4 text-[#c89658]" />
+              <span>12kg Numbered Tins</span>
+            </div>
+            <span className="text-[#3a3026]">•</span>
+            <span className="text-[11px] font-sans tracking-[0.2em] uppercase text-[#c89658] flex items-center gap-1.5">
+              <RotateCw className="h-3 w-3 animate-spin-slow" />
+              Scroll to Flip Cards
+            </span>
           </div>
         </div>
 
-        {/* 4 3D Flipping Cards in Grid matching reference */}
+        {/* 4 3D Flipping Cards in Grid matching reference design */}
         <div
           ref={cardGridRef}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 perspective-1500"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 perspective-1500 my-auto py-6"
         >
           {reserveCards.map((card) => {
-            const isFlipped = !!flippedCards[card.id];
+            const isManualFlipped = manualFlips[card.id];
 
             return (
               <div
                 key={card.id}
-                className="flip-card-wrapper relative h-[460px] w-full perspective-1200 cursor-pointer group"
+                className="flip-card-wrapper relative h-[450px] sm:h-[470px] w-full perspective-1200 cursor-pointer group"
                 onClick={() => toggleCard(card.id)}
               >
                 {/* 3D Flipping Inner Element */}
                 <div
                   className={`flip-card-inner relative h-full w-full preserve-3d transition-transform duration-700 ease-[cubic-bezier(0.4,0.2,0.2,1)] rounded-3xl ${
-                    isFlipped ? '[transform:rotateY(180deg)]' : 'group-hover:[transform:rotateY(180deg)]'
+                    isManualFlipped ? '[transform:rotateY(180deg)!important]' : ''
                   }`}
                 >
                   {/* ==================== FRONT FACE (Exact match to Reference Image 1) ==================== */}
-                  <div className="absolute inset-0 backface-hidden rounded-3xl bg-[#13110f] border border-[#2e2620] p-8 flex flex-col justify-between items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-all duration-300 group-hover:border-[#c89658]/60 group-hover:shadow-[0_20px_50px_rgba(200,150,88,0.15)]">
+                  <div className="absolute inset-0 backface-hidden rounded-3xl bg-[#13110f] border border-[#2e2620] p-7 flex flex-col justify-between items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-all duration-300 group-hover:border-[#c89658]/60 group-hover:shadow-[0_20px_50px_rgba(200,150,88,0.15)]">
                     {/* Top Ambient Glow Pill */}
                     <div className="w-full flex justify-end">
                       <span className="h-2 w-2 rounded-full bg-[#c89658]/40 group-hover:bg-[#c89658] group-hover:shadow-[0_0_8px_#c89658] transition-all" />
                     </div>
 
-                    {/* Centered 3D Metallic Coffee / Batch Icon */}
+                    {/* Centered 3D Metallic Coffee Icon */}
                     <div className="my-auto flex flex-col items-center justify-center transform transition-transform duration-500 group-hover:scale-105">
                       {card.iconSvg}
                     </div>
@@ -349,6 +391,9 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
                       <h3 className="font-sans text-lg sm:text-xl font-bold text-[#f4eee6] tracking-tight leading-snug">
                         {card.name}
                       </h3>
+                      <span className="text-[11px] font-sans text-[#8c827a] block mt-1 tracking-wider uppercase">
+                        {card.origin}
+                      </span>
                     </div>
                   </div>
 
@@ -400,7 +445,7 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
                         }}
                         className="flex items-center gap-1.5 rounded-full bg-[#f4eee6] hover:bg-[#e5b877] text-[#070605] px-4 py-2 text-xs font-sans font-bold tracking-tight transition-all duration-300 shadow-md hover:shadow-[0_0_15px_rgba(229,184,119,0.5)] cursor-pointer shrink-0"
                       >
-                        <span>Buy Plugin</span>
+                        <span>Request Batch</span>
                         <ArrowRight className="h-3.5 w-3.5" />
                       </button>
                     </div>
@@ -409,6 +454,16 @@ export const SectionReserve: React.FC<SectionReserveProps> = ({ onSelectBatch })
               </div>
             );
           })}
+        </div>
+
+        {/* Bottom Footer */}
+        <div className="flex items-center justify-between border-t border-[#221c17] pt-3 text-xs text-[#8c827a]">
+          <span className="font-serif italic text-[#a89d93]">
+            “Roasted slowly to order in 12kg numbered micro-casks.”
+          </span>
+          <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-[#c89658]">
+            Scroll Down to Flip • Scroll Up to Reset
+          </span>
         </div>
       </div>
     </section>
