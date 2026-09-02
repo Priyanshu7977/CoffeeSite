@@ -41,23 +41,24 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
         });
       });
 
-      // Calibrated pinned scroll timeline with balanced pacing and solid hold for Slide 4
+      // Calibrated pinned scroll timeline with exact progress thresholds for 100% sync
       const tl = gsap.timeline({
         scrollTrigger: {
+          id: 'collection-scroll',
           trigger: section,
           start: 'top top',
-          end: '+=250%',
+          end: '+=240%',
           pin: true,
-          scrub: 0.7,
+          scrub: 0.65,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             const p = self.progress;
-            if (p < 0.25) {
+            if (p < 0.22) {
               setActiveProductIndex(0);
-            } else if (p < 0.50) {
+            } else if (p < 0.48) {
               setActiveProductIndex(1);
-            } else if (p < 0.75) {
+            } else if (p < 0.74) {
               setActiveProductIndex(2);
             } else {
               setActiveProductIndex(3);
@@ -66,10 +67,11 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
         },
       });
 
-      // 1. Slide 0 Hold Window (Baba Budan Obsidian)
-      tl.to({}, { duration: 0.5 });
+      // Total duration = 3.8s
+      // 1. Slide 0 Hold Window (Baba Budan Obsidian) [0s -> 0.6s]
+      tl.to({}, { duration: 0.6 });
 
-      // 2. Slide 0 -> Slide 1 Transition (02 Malabar Monsooned Cask)
+      // 2. Slide 0 -> Slide 1 Transition (02 Malabar Monsooned Cask) [0.6s -> 1.0s]
       tl.to(slides[0], {
         opacity: 0,
         y: -30,
@@ -86,10 +88,10 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
         '<0.15'
       );
 
-      // Slide 1 Hold Window
-      tl.to({}, { duration: 0.5 });
+      // Slide 1 Hold Window [1.0s -> 1.6s]
+      tl.to({}, { duration: 0.6 });
 
-      // 3. Slide 1 -> Slide 2 Transition (03 Araku Valley Tribal Honey)
+      // 3. Slide 1 -> Slide 2 Transition (03 Araku Valley Tribal Honey) [1.6s -> 2.0s]
       tl.to(slides[1], {
         opacity: 0,
         y: -30,
@@ -106,10 +108,10 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
         '<0.15'
       );
 
-      // Slide 2 Hold Window
-      tl.to({}, { duration: 0.5 });
+      // Slide 2 Hold Window [2.0s -> 2.6s]
+      tl.to({}, { duration: 0.6 });
 
-      // 4. Slide 2 -> Slide 3 Transition (04 Coorg Rainforest Peaberry)
+      // 4. Slide 2 -> Slide 3 Transition (04 Coorg Rainforest Peaberry) [2.6s -> 3.0s]
       tl.to(slides[2], {
         opacity: 0,
         y: -30,
@@ -126,7 +128,7 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
         '<0.15'
       );
 
-      // 5. Generous Hold Window for the Last Slide (Slide 3) so it never rushes or glitches away
+      // 5. Generous Hold Window for Slide 3 [3.0s -> 3.8s]
       tl.to({}, { duration: 0.8 });
     }, sectionRef);
 
@@ -137,30 +139,38 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
 
   const goToSlide = (idx: number) => {
     setActiveProductIndex(idx);
-    const slides = slidesRef.current.filter(Boolean) as HTMLDivElement[];
-    slides.forEach((slide, i) => {
-      if (i === idx) {
-        gsap.to(slide, {
-          opacity: 1,
-          y: 0,
-          scale: 1.0,
-          visibility: 'visible',
-          pointerEvents: 'auto',
-          duration: 0.4,
-          ease: 'power2.out',
-        });
-      } else {
-        gsap.to(slide, {
-          opacity: 0,
-          y: i < idx ? -30 : 30,
-          scale: 0.94,
-          visibility: 'hidden',
-          pointerEvents: 'none',
-          duration: 0.35,
-          ease: 'power2.out',
-        });
-      }
-    });
+    const st = ScrollTrigger.getById('collection-scroll');
+    if (st) {
+      const progressTargets = [0.08, 0.35, 0.61, 0.88];
+      const targetProgress = progressTargets[idx] ?? 0;
+      const targetScroll = st.start + (st.end - st.start) * targetProgress;
+      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    } else {
+      const slides = slidesRef.current.filter(Boolean) as HTMLDivElement[];
+      slides.forEach((slide, i) => {
+        if (i === idx) {
+          gsap.to(slide, {
+            opacity: 1,
+            y: 0,
+            scale: 1.0,
+            visibility: 'visible',
+            pointerEvents: 'auto',
+            duration: 0.4,
+            ease: 'power2.out',
+          });
+        } else {
+          gsap.to(slide, {
+            opacity: 0,
+            y: i < idx ? -30 : 30,
+            scale: 0.94,
+            visibility: 'hidden',
+            pointerEvents: 'none',
+            duration: 0.35,
+            ease: 'power2.out',
+          });
+        }
+      });
+    }
   };
 
   return (
@@ -168,20 +178,20 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
       id="section-collection"
       ref={sectionRef}
       aria-label="Section 04: The Coffee Collection"
-      className="relative h-screen w-full bg-[#FAF7F5] text-[#2D2926] flex items-center justify-center overflow-hidden border-t border-[#2D2926]/10"
+      className="relative min-h-screen lg:h-screen w-full bg-[#FAF7F5] text-[#2D2926] flex items-center justify-center overflow-hidden border-t border-[#2D2926]/10"
     >
       <div
         ref={productsContainerRef}
-        className="relative z-10 mx-auto max-w-6xl w-full px-6 md:px-12 flex flex-col justify-between h-[86vh] py-6"
+        className="relative z-10 mx-auto max-w-6xl w-full px-5 sm:px-8 md:px-12 flex flex-col justify-between h-full min-h-[92vh] lg:h-[86vh] py-4 sm:py-6"
       >
         {/* Top Header & Number Navigation */}
-        <div className="flex items-center justify-between border-b border-[#2D2926]/10 pb-3 gap-3">
-          <div className="text-xs tracking-[0.25em] text-[#2D2926] font-sans font-bold uppercase flex items-center gap-2">
-            <Sparkles className="h-3.5 w-3.5 text-[#E05A7E]" />
+        <div className="flex items-center justify-between border-b border-[#2D2926]/10 pb-2.5 sm:pb-3 gap-2 shrink-0">
+          <div className="text-[11px] sm:text-xs tracking-[0.25em] text-[#2D2926] font-sans font-bold uppercase flex items-center gap-1.5 sm:gap-2">
+            <Sparkles className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
             <span>04 / THE COLLECTION</span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {onOpenCollectionPage && (
               <button
                 onClick={onOpenCollectionPage}
@@ -192,14 +202,14 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
               </button>
             )}
 
-            <div className="flex items-center gap-1.5 py-0.5">
+            <div className="flex items-center gap-1 sm:gap-1.5 py-0.5">
               {featuredProducts.map((p, idx) => (
                 <button
                   key={p.id}
                   onClick={() => goToSlide(idx)}
-                  className={`px-3 py-1 rounded-full text-xs font-mono transition-all cursor-pointer ${
+                  className={`px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-mono font-bold transition-all cursor-pointer ${
                     activeProductIndex === idx
-                      ? 'bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm'
+                      ? 'bg-[#F5DADF] border border-[#2D2926]/15 text-[#2D2926] shadow-sm'
                       : 'text-[#8C827A] hover:text-[#2D2926]'
                   }`}
                 >
@@ -211,27 +221,27 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
         </div>
 
         {/* Stacked Product Slides */}
-        <div className="relative flex-1 flex items-center justify-center my-auto py-4">
+        <div className="relative flex-1 flex items-center justify-center my-auto py-2 sm:py-4 min-h-[58vh]">
           {featuredProducts.map((product, idx) => (
             <div
               key={product.id}
               ref={(el) => {
                 slidesRef.current[idx] = el;
               }}
-              className="product-slide absolute inset-0 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center will-change-transform"
+              className="product-slide absolute inset-0 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 lg:gap-16 items-center will-change-transform"
             >
-              {/* Left Column: Dominant Large Product Visual */}
+              {/* Left Column: Product Visual */}
               <div className="lg:col-span-6 flex justify-center">
-                <div className="relative aspect-[4/5] max-h-[48vh] w-full max-w-sm overflow-hidden rounded-3xl border border-[#2D2926]/10 shadow-[0_20px_50px_rgba(45,41,38,0.08)] bg-white group">
+                <div className="relative aspect-[4/3] sm:aspect-[4/5] max-h-[28vh] sm:max-h-[38vh] lg:max-h-[48vh] w-full max-w-[280px] sm:max-w-sm overflow-hidden rounded-2xl sm:rounded-3xl border border-[#2D2926]/10 shadow-[0_15px_40px_rgba(45,41,38,0.06)] bg-white group">
                   <img
                     src={product.image}
                     alt={product.name}
                     className="h-full w-full object-cover object-center filter brightness-100 transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute top-4 left-4 rounded-full bg-[#F5DADF] px-3 py-1 border border-[#2D2926]/10 text-[11px] font-mono text-[#2D2926] font-bold shadow-sm">
+                  <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 rounded-full bg-[#F5DADF] px-2.5 sm:px-3 py-0.5 sm:py-1 border border-[#2D2926]/10 text-[10px] sm:text-[11px] font-mono text-[#2D2926] font-bold shadow-sm">
                     {product.roastLevel}
                   </div>
-                  <div className="absolute bottom-4 right-4 rounded-full bg-white/90 backdrop-blur-md px-3 py-1 border border-[#2D2926]/10 text-[11px] font-mono text-[#5E5854] shadow-sm">
+                  <div className="absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4 rounded-full bg-white/90 backdrop-blur-md px-2.5 sm:px-3 py-0.5 sm:py-1 border border-[#2D2926]/10 text-[10px] sm:text-[11px] font-mono text-[#5E5854] shadow-sm font-semibold">
                     {product.altitude}
                   </div>
                 </div>
@@ -240,28 +250,28 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
               {/* Right Column: Content Hierarchy */}
               <div className="lg:col-span-6 flex flex-col justify-center text-left items-start">
                 {/* Category / Origin */}
-                <span className="text-xs tracking-[0.3em] font-sans uppercase text-[#E05A7E] font-bold mb-2 flex items-center gap-1.5">
-                  <Compass className="h-3 w-3 text-[#E05A7E]" />
-                  {product.origin.toUpperCase()}
+                <span className="text-[10px] sm:text-xs tracking-[0.25em] font-sans uppercase text-[#E05A7E] font-bold mb-1 sm:mb-2 flex items-center gap-1.5">
+                  <Compass className="h-3 w-3 text-[#E05A7E] shrink-0" />
+                  <span>{product.origin.toUpperCase()}</span>
                 </span>
 
                 {/* Coffee Name */}
-                <h3 className="font-display text-3xl sm:text-5xl text-[#2D2926] font-bold tracking-tight mb-2">
+                <h3 className="font-display text-2xl sm:text-4xl lg:text-5xl text-[#2D2926] font-bold tracking-tight mb-1 sm:mb-2 leading-tight">
                   {product.name}
                 </h3>
 
                 {/* Tasting Notes */}
-                <p className="font-sans text-xs sm:text-sm text-[#E05A7E] font-bold tracking-wide mb-4">
+                <p className="font-sans text-xs sm:text-sm text-[#E05A7E] font-bold tracking-wide mb-2 sm:mb-3">
                   {product.notes.join(' · ')}
                 </p>
 
                 {/* Short Description */}
-                <p className="font-sans text-xs sm:text-sm text-[#5E5854] font-normal leading-relaxed max-w-md mb-6">
+                <p className="font-sans text-xs sm:text-sm text-[#5E5854] font-normal leading-relaxed max-w-md line-clamp-2 sm:line-clamp-3 mb-3 sm:mb-5">
                   {product.description}
                 </p>
 
                 {/* Price & Explore Action */}
-                <div className="flex items-center gap-6">
+                <div className="flex items-center justify-between sm:justify-start gap-3 sm:gap-6 w-full pt-1">
                   <span className="font-display text-2xl sm:text-3xl text-[#2D2926] font-bold">
                     {product.price}
                   </span>
@@ -269,26 +279,26 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
                   <MagneticButton strength={0.3}>
                     <button
                       onClick={() => onDiscoverProduct(product)}
-                      className="flex items-center gap-2 rounded-full bg-[#2D2926] text-white px-6 py-3 text-xs font-sans font-bold tracking-[0.2em] uppercase transition-all duration-300 shadow-md hover:bg-[#1F1C1A] hover:scale-105 cursor-pointer"
+                      className="flex items-center gap-2 rounded-full bg-[#2D2926] text-white px-5 sm:px-6 py-2.5 sm:py-3 text-xs font-sans font-bold tracking-[0.15em] uppercase transition-all duration-300 shadow-md hover:bg-[#1F1C1A] hover:scale-105 cursor-pointer"
                     >
                       <span>Explore Lot</span>
                       <ArrowRight className="h-3.5 w-3.5" />
                     </button>
                   </MagneticButton>
 
-                  {/* Mobile Quick Arrows */}
+                  {/* Mobile Quick Navigation Arrows */}
                   <div className="flex items-center gap-1.5 sm:hidden">
                     <button
                       onClick={() => goToSlide((activeProductIndex - 1 + featuredProducts.length) % featuredProducts.length)}
                       aria-label="Previous Coffee"
-                      className="h-9 w-9 rounded-full border border-[#2D2926]/10 bg-white flex items-center justify-center text-[#2D2926] shadow-sm cursor-pointer"
+                      className="h-8 w-8 rounded-full border border-[#2D2926]/15 bg-white flex items-center justify-center text-[#2D2926] shadow-sm cursor-pointer active:scale-95"
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => goToSlide((activeProductIndex + 1) % featuredProducts.length)}
                       aria-label="Next Coffee"
-                      className="h-9 w-9 rounded-full border border-[#2D2926]/10 bg-white flex items-center justify-center text-[#2D2926] shadow-sm cursor-pointer"
+                      className="h-8 w-8 rounded-full border border-[#2D2926]/15 bg-white flex items-center justify-center text-[#2D2926] shadow-sm cursor-pointer active:scale-95"
                     >
                       <ChevronRight className="h-4 w-4" />
                     </button>
@@ -300,9 +310,9 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
         </div>
 
         {/* Bottom Marker */}
-        <div className="flex items-center justify-between border-t border-[#2D2926]/10 pt-3 text-xs text-[#8C827A]">
-          <span>Single-Estate Harvests • 250g Micro-Tins</span>
-          <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between border-t border-[#2D2926]/10 pt-2.5 sm:pt-3 text-[11px] sm:text-xs text-[#8C827A] shrink-0">
+          <span className="hidden sm:inline">Single-Estate Harvests • 250g Micro-Tins</span>
+          <div className="flex items-center justify-between w-full sm:w-auto gap-4">
             {onOpenCollectionPage && (
               <button
                 onClick={onOpenCollectionPage}
