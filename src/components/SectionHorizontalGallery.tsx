@@ -5,6 +5,7 @@ import { gsap } from '../utils/animations';
 export const SectionHorizontalGallery: React.FC = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const slidesRef = useRef<(HTMLDivElement | null)[]>([]);
+  const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const [activeSlideIndex, setActiveSlideIndex] = useState<number>(0);
 
   const slides = [
@@ -61,85 +62,102 @@ export const SectionHorizontalGallery: React.FC = () => {
       const mm = gsap.matchMedia();
 
       mm.add('(min-width: 1024px)', () => {
-        // Initialize slides: Slide 0 is 100% visible, remaining are hidden
+        // Initial setup: Slide 0 is at xPercent: 0, Slides 1..3 are offscreen at xPercent: 100
         slideElements.forEach((el, idx) => {
           gsap.set(el, {
-            opacity: idx === 0 ? 1 : 0,
-            y: idx === 0 ? 0 : 35,
-            scale: idx === 0 ? 1 : 0.96,
-            pointerEvents: idx === 0 ? 'auto' : 'none',
+            xPercent: idx === 0 ? 0 : 100,
+            zIndex: idx + 1,
+            opacity: 1,
+            boxShadow: idx === 0 ? 'none' : '-25px 0 60px rgba(0,0,0,0.85)',
           });
         });
 
-        // Pinned sequential timeline: Each spread stays 100% full screen until scrolled
+        // Timeline: Each slide slides in from the RIGHT (xPercent: 100 -> 0) and lands on screen
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
             start: 'top top',
-            end: () => `+=${(totalSlides + 1.5) * 100}%`,
+            end: () => `+=${(totalSlides + 1.2) * 100}%`,
             pin: true,
-            scrub: 0.6,
+            scrub: 0.7,
             anticipatePin: 1,
             invalidateOnRefresh: true,
+            snap: {
+              snapTo: [0, 0.28, 0.58, 0.88],
+              duration: { min: 0.25, max: 0.5 },
+              delay: 0.05,
+              ease: 'power2.inOut',
+            },
             onUpdate: (self) => {
               const p = self.progress;
-              // Map progress cleanly to active index
-              const mapped = Math.min(totalSlides - 1, Math.floor(p * totalSlides));
-              setActiveSlideIndex(mapped);
+              if (p < 0.2) {
+                setActiveSlideIndex(0);
+              } else if (p < 0.45) {
+                setActiveSlideIndex(1);
+              } else if (p < 0.75) {
+                setActiveSlideIndex(2);
+              } else {
+                setActiveSlideIndex(3);
+              }
             },
           },
         });
 
-        // Sequential Transitions: Each spread holds, then cleanly transitions to the next
-        slideElements.forEach((slide, i) => {
-          if (i === 0) return;
+        timelineRef.current = tl;
 
-          const prevSlide = slideElements[i - 1];
-          const startTime = (i - 0.15) / totalSlides;
+        // Sequence:
+        // Hold 0 -> Slide 1 in from right -> Hold 1 -> Slide 2 in from right -> Hold 2 -> Slide 3 in from right -> Hold 3
+        
+        // 1. Dwell on Slide 0
+        tl.to({}, { duration: 0.5 });
 
-          // Previous spread smoothly exits
-          tl.to(
-            prevSlide,
-            {
-              opacity: 0,
-              y: -30,
-              scale: 0.96,
-              pointerEvents: 'none',
-              ease: 'power2.inOut',
-              duration: 0.08,
-            },
-            startTime
-          );
+        // 2. Slide 1 (Malabar Shore) comes in from RIGHT to LAND ON SCREEN
+        tl.to(
+          slideElements[0],
+          { xPercent: -18, scale: 0.96, filter: 'brightness(0.55)', ease: 'power2.inOut', duration: 1.0 },
+          'step1'
+        ).to(
+          slideElements[1],
+          { xPercent: 0, ease: 'power2.out', duration: 1.0 },
+          'step1'
+        );
 
-          // Current spread lands 100% full-screen and crisp
-          tl.fromTo(
-            slide,
-            {
-              opacity: 0,
-              y: 30,
-              scale: 0.96,
-              pointerEvents: 'none',
-            },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1.0,
-              pointerEvents: 'auto',
-              ease: 'power2.out',
-              duration: 0.1,
-            },
-            startTime + 0.04
-          );
-        });
+        // Dwell on Slide 1
+        tl.to({}, { duration: 0.6 });
 
-        // Dedicated dwell hold for the final 4th spread before releasing pin
-        tl.to({}, { duration: 0.2 }, 0.8);
+        // 3. Slide 2 (Cast Iron Roast) comes in from RIGHT to LAND ON SCREEN
+        tl.to(
+          slideElements[1],
+          { xPercent: -18, scale: 0.96, filter: 'brightness(0.55)', ease: 'power2.inOut', duration: 1.0 },
+          'step2'
+        ).to(
+          slideElements[2],
+          { xPercent: 0, ease: 'power2.out', duration: 1.0 },
+          'step2'
+        );
+
+        // Dwell on Slide 2
+        tl.to({}, { duration: 0.6 });
+
+        // 4. Slide 3 (Filter Kaapi) comes in from RIGHT to LAND ON SCREEN
+        tl.to(
+          slideElements[2],
+          { xPercent: -18, scale: 0.96, filter: 'brightness(0.55)', ease: 'power2.inOut', duration: 1.0 },
+          'step3'
+        ).to(
+          slideElements[3],
+          { xPercent: 0, ease: 'power2.out', duration: 1.0 },
+          'step3'
+        );
+
+        // Final dwell hold on Slide 3 before releasing pin
+        tl.to({}, { duration: 0.8 });
       });
 
       mm.add('(max-width: 1023px)', () => {
-        // On mobile, slides are stacked naturally
+        // Natural stack on mobile
         slideElements.forEach((el) => {
-          gsap.set(el, { opacity: 1, y: 0, scale: 1, pointerEvents: 'auto' });
+          gsap.set(el, { xPercent: 0, opacity: 1, scale: 1, filter: 'none' });
         });
       });
     }, sectionRef);
@@ -149,18 +167,36 @@ export const SectionHorizontalGallery: React.FC = () => {
     };
   }, [slides.length]);
 
-  const goToSlide = (idx: number) => {
-    setActiveSlideIndex(idx);
+  const goToSlide = (targetIdx: number) => {
+    setActiveSlideIndex(targetIdx);
     const slideElements = slidesRef.current.filter(Boolean) as HTMLDivElement[];
+
     slideElements.forEach((slide, i) => {
-      gsap.to(slide, {
-        opacity: i === idx ? 1 : 0,
-        y: i === idx ? 0 : 25,
-        scale: i === idx ? 1 : 0.96,
-        pointerEvents: i === idx ? 'auto' : 'none',
-        duration: 0.45,
-        ease: 'power2.out',
-      });
+      if (i < targetIdx) {
+        gsap.to(slide, {
+          xPercent: -18,
+          scale: 0.96,
+          filter: 'brightness(0.55)',
+          duration: 0.5,
+          ease: 'power2.out',
+        });
+      } else if (i === targetIdx) {
+        gsap.to(slide, {
+          xPercent: 0,
+          scale: 1.0,
+          filter: 'brightness(1)',
+          duration: 0.5,
+          ease: 'power2.out',
+        });
+      } else {
+        gsap.to(slide, {
+          xPercent: 100,
+          scale: 1.0,
+          filter: 'brightness(1)',
+          duration: 0.5,
+          ease: 'power2.out',
+        });
+      }
     });
   };
 
@@ -172,7 +208,7 @@ export const SectionHorizontalGallery: React.FC = () => {
       className="relative min-h-screen lg:h-screen w-full bg-[#070605] overflow-hidden border-t border-[#221c17]"
     >
       {/* Top Floating Gallery Header */}
-      <div className="absolute top-5 left-4 sm:left-6 md:left-12 right-4 sm:right-6 md:right-12 z-30 flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
+      <div className="absolute top-5 left-4 sm:left-6 md:left-12 right-4 sm:right-6 md:right-12 z-40 flex flex-wrap items-center justify-between gap-3 pointer-events-auto">
         <div className="flex items-center gap-2 text-[10px] sm:text-xs tracking-[0.25em] text-[#c89658] font-sans font-semibold uppercase bg-[#070605]/90 px-3.5 sm:px-4 py-1.5 rounded-full border border-[#c89658]/40 backdrop-blur-md shadow-lg">
           <Sparkles className="h-3 w-3 text-[#c89658]" />
           <span>CINEMATIC ARCHIVE / DAKSHIN MAGAZINE</span>
@@ -196,7 +232,7 @@ export const SectionHorizontalGallery: React.FC = () => {
         </div>
       </div>
 
-      {/* Full-Screen Stacked Spreads Container (100% Full Screen, Zero Half Cuts) */}
+      {/* Full-Screen Magazine Spreads Stack */}
       <div className="relative h-auto lg:h-full w-full flex flex-col lg:block">
         {slides.map((slide, idx) => {
           const Icon = slide.icon;
@@ -207,7 +243,7 @@ export const SectionHorizontalGallery: React.FC = () => {
               ref={(el) => {
                 slidesRef.current[idx] = el;
               }}
-              className="relative lg:absolute lg:inset-0 min-h-screen lg:h-full w-full flex items-center justify-center p-6 md:p-12 lg:p-16 xl:p-20 overflow-hidden select-none will-change-transform border-b lg:border-b-0 border-[#1c1612]"
+              className="relative lg:absolute lg:inset-0 min-h-screen lg:h-full w-full flex items-center justify-center p-6 md:p-12 lg:p-16 xl:p-20 overflow-hidden select-none will-change-transform bg-[#070605] border-b lg:border-b-0 border-[#1c1612]"
             >
               {/* Background Full Bleed Spread Photography */}
               <div className="absolute inset-0 z-0 overflow-hidden">
