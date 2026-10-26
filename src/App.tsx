@@ -532,6 +532,7 @@ export const App: React.FC = () => {
                 userSession={userSession}
                 onOpenLogin={() => setIsLoginModalOpen(true)}
                 onLogout={handleLogout}
+                onOpenInventoryHud={() => setIsInventoryHudOpen(true)}
               />
               <Footer
                 onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}

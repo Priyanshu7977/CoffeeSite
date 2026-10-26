@@ -46,6 +46,12 @@ export const AUTHORIZED_IMS_ACCOUNTS = [
     name: 'Lead IMS Systems Engineer',
     role: 'IMS_ENGINEER' as const,
   },
+  {
+    email: 'priyanshubipin2006@gmail.com',
+    password: 'Noir@Admin2026',
+    name: 'Priyanshu Singh (Owner & Admin)',
+    role: 'ADMIN' as const,
+  },
 ];
 
 // Initial realistic specialty micro-lot allocation levels

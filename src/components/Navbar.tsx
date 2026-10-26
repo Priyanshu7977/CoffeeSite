@@ -128,15 +128,17 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right Actions */}
         <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-          {/* Inventory HUD Trigger */}
-          <button
-            onClick={onOpenInventoryHud}
-            className="flex items-center gap-1 rounded-full border border-[#2D2926]/15 bg-[#FAF7F5] px-2.5 py-1.5 text-[11px] font-mono font-bold text-[#2D2926] hover:bg-neutral-100 transition-colors"
-            title="Open Real-Time Inventory Control HUD"
-          >
-            <Package className="h-3.5 w-3.5 text-[#E05A7E]" />
-            <span className="hidden xl:inline">Stock</span>
-          </button>
+          {/* Inventory HUD Trigger — ONLY VISIBLE TO OWNER AND IMS ENGINEER */}
+          {(userSession?.role === 'ADMIN' || userSession?.role === 'IMS_ENGINEER') && (
+            <button
+              onClick={onOpenInventoryHud}
+              className="flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-50 px-2.5 sm:px-3 py-1.5 text-[11px] font-mono font-bold text-emerald-800 hover:bg-emerald-100 transition-colors shadow-2xs cursor-pointer animate-fadeIn"
+              title="Open Authorized Real-Time Inventory Control HUD"
+            >
+              <Package className="h-3.5 w-3.5 text-emerald-600" />
+              <span className="hidden xl:inline">IMS [{userSession.role === 'ADMIN' ? 'OWNER' : 'ENG'}]</span>
+            </button>
+          )}
 
           {/* VIP Status */}
           <MagneticButton strength={0.3}>
@@ -220,25 +222,27 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             ))}
 
-            <div className="pt-2 flex gap-2">
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  onOpenInventoryHud();
-                }}
-                className="flex-1 py-2.5 rounded-xl border border-[#2D2926]/20 bg-[#FAF7F5] text-xs font-bold text-[#2D2926] flex items-center justify-center gap-1.5"
-              >
-                <Package className="h-3.5 w-3.5 text-[#E05A7E]" />
-                <span>Live Stock HUD</span>
-              </button>
+            <div className="pt-2 flex flex-col gap-2">
+              {(userSession?.role === 'ADMIN' || userSession?.role === 'IMS_ENGINEER') && (
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    onOpenInventoryHud();
+                  }}
+                  className="w-full py-2.5 rounded-xl border border-emerald-500/40 bg-emerald-50 text-xs font-bold text-emerald-800 flex items-center justify-center gap-1.5"
+                >
+                  <Package className="h-3.5 w-3.5 text-emerald-600" />
+                  <span>IMS Stock Control ({userSession.role})</span>
+                </button>
+              )}
               <button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
                   navigate('/collection');
                 }}
-                className="flex-1 py-2.5 rounded-xl bg-[#2D2926] text-white text-xs font-bold uppercase tracking-wider shadow-md"
+                className="w-full py-2.5 rounded-xl bg-[#2D2926] text-white text-xs font-bold uppercase tracking-wider shadow-md text-center"
               >
-                Shop 10 Lots
+                Explore All 12 Lots
               </button>
             </div>
           </div>

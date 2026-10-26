@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Lock, Sparkles, User, Mail, Phone, ArrowRight, AlertCircle } from 'lucide-react';
 import { sanitizeName, sanitizePhone, isValidEmail, isValidName, isValidPhone, hasMaliciousContent, stripDangerousMarkup } from '../utils/validation';
 import { dispatchVIPWelcomeEmail, type AutomatedEmail } from '../utils/emailService';
+import { authenticateIMS } from '../utils/inventorySystem';
 
 export interface UserSession {
   name: string;
@@ -9,6 +10,7 @@ export interface UserSession {
   phone: string;
   memberId: string;
   isLoggedIn: boolean;
+  role?: 'CUSTOMER' | 'ADMIN' | 'IMS_ENGINEER';
 }
 
 interface LoginModalProps {
@@ -131,6 +133,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           phone,
           memberId,
           isLoggedIn: true,
+          role: 'CUSTOMER',
         };
 
         const dispatched = dispatchVIPWelcomeEmail(fullName, email, memberId, phone);
@@ -151,13 +154,25 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
       setIsProcessing(true);
       setTimeout(() => {
-        const derivedName = email.split('@')[0].replace(/[^a-zA-Z]/g, ' ').trim() || 'MEMBER';
+        // Authenticate credentials against IMS system
+        const imsAuth = authenticateIMS(email, password);
+        let role: 'CUSTOMER' | 'ADMIN' | 'IMS_ENGINEER' = 'CUSTOMER';
+        let memberName = email.split('@')[0].replace(/[^a-zA-Z]/g, ' ').trim() || 'MEMBER';
+        let memberId = 'NR-7729';
+
+        if (imsAuth.success && imsAuth.session) {
+          role = imsAuth.session.role;
+          memberName = imsAuth.session.name;
+          memberId = role === 'ADMIN' ? 'NOIR-OWNER-01' : 'NOIR-ENG-02';
+        }
+
         const userSession: UserSession = {
-          name: derivedName.toUpperCase(),
+          name: memberName,
           email,
-          phone: '+91 98765 43210',
-          memberId: 'NR-7729',
+          phone: '+91 79776 41125',
+          memberId,
           isLoggedIn: true,
+          role,
         };
         onLoginSuccess(userSession);
         setIsProcessing(false);

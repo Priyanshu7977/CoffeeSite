@@ -11,8 +11,7 @@ import {
   Lock, 
   KeyRound, 
   UserCheck, 
-  LogOut,
-  Info
+  LogOut
 } from 'lucide-react';
 import { useInventory } from '../hooks/useInventory';
 import { NOIR_PRODUCTS } from '../data/products';
@@ -55,12 +54,6 @@ export const InventoryHudModal: React.FC<InventoryHudModalProps> = ({ isOpen, on
       setActionNotice(`Authenticated as ${res.session?.role}: ${res.session?.name}`);
       setTimeout(() => setActionNotice(''), 3000);
     }
-  };
-
-  const handleQuickFill = (demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    setAuthError('');
   };
 
   const handleSafeAction = (actionFn: () => void, description: string) => {
@@ -191,41 +184,11 @@ export const InventoryHudModal: React.FC<InventoryHudModalProps> = ({ isOpen, on
 
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl bg-[#2D2926] text-[#FAF7F5] font-bold text-xs uppercase tracking-wider hover:bg-black transition-colors flex items-center justify-center gap-2 shadow-md"
+                className="w-full py-3 rounded-xl bg-[#2D2926] text-[#FAF7F5] font-bold text-xs uppercase tracking-wider hover:bg-black transition-colors flex items-center justify-center gap-2 shadow-md cursor-pointer"
               >
                 <UserCheck className="h-4 w-4" />
                 <span>Verify Credentials & Unlock IMS</span>
               </button>
-
-              {/* Demo Credentials Helper Box */}
-              <div className="pt-3 border-t border-[#2D2926]/10 text-[11px] text-[#5E5854] space-y-2">
-                <div className="flex items-center gap-1 font-mono font-bold text-[#2D2926]">
-                  <Info className="h-3 w-3 text-[#E05A7E]" />
-                  <span>Authorized Personnel Credentials:</span>
-                </div>
-                
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('admin@noirroast.com', 'Noir@Admin2026')}
-                    className="flex-1 p-2 rounded-lg bg-[#FAF7F5] hover:bg-neutral-200 border border-[#2D2926]/10 text-left transition-colors cursor-pointer"
-                  >
-                    <div className="font-bold text-[#2D2926]">Role: ADMIN</div>
-                    <div className="text-[10px] text-[#8C827A] font-mono">admin@noirroast.com</div>
-                    <div className="text-[10px] text-[#E05A7E] font-mono">Pass: Noir@Admin2026</div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleQuickFill('ims.engineer@noirroast.com', 'Noir@Engine2026')}
-                    className="flex-1 p-2 rounded-lg bg-[#FAF7F5] hover:bg-neutral-200 border border-[#2D2926]/10 text-left transition-colors cursor-pointer"
-                  >
-                    <div className="font-bold text-[#2D2926]">Role: IMS ENGINEER</div>
-                    <div className="text-[10px] text-[#8C827A] font-mono">ims.engineer@noirroast.com</div>
-                    <div className="text-[10px] text-[#E05A7E] font-mono">Pass: Noir@Engine2026</div>
-                  </button>
-                </div>
-              </div>
             </form>
           </div>
         ) : (

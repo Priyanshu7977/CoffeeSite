@@ -6,7 +6,9 @@ import {
   Award, 
   LogOut,
   Bell,
-  CheckCircle2
+  CheckCircle2,
+  ShieldCheck,
+  Package
 } from 'lucide-react';
 import type { UserSession } from '../components/LoginModal';
 
@@ -14,12 +16,14 @@ interface AccountPageProps {
   userSession: UserSession | null;
   onOpenLogin: () => void;
   onLogout: () => void;
+  onOpenInventoryHud?: () => void;
 }
 
 export const AccountPage: React.FC<AccountPageProps> = ({
   userSession,
   onOpenLogin,
   onLogout,
+  onOpenInventoryHud,
 }) => {
   const navigate = useNavigate();
 
@@ -105,6 +109,35 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                 </div>
               </div>
             </div>
+
+            {/* Authorized Personnel IMS Control Center */}
+            {(userSession.role === 'ADMIN' || userSession.role === 'IMS_ENGINEER') && (
+              <div className="p-6 rounded-3xl bg-emerald-50 border border-emerald-300 shadow-sm space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="h-5 w-5 text-emerald-700 shrink-0" />
+                    <h3 className="font-display font-bold text-lg text-emerald-950">
+                      Authorized Inventory Management Control
+                    </h3>
+                  </div>
+                  <span className="self-start sm:self-auto px-2.5 py-0.5 rounded-full bg-emerald-200 text-emerald-900 font-mono text-[10px] font-bold uppercase">
+                    {userSession.role} PRIVILEGES ACTIVE
+                  </span>
+                </div>
+                <p className="text-xs text-emerald-800 leading-relaxed">
+                  You are authenticated with full operator authorization. You can monitor stock thresholds, trigger automated restocking batches, and oversee real-time lot allocations across India.
+                </p>
+                {onOpenInventoryHud && (
+                  <button
+                    onClick={onOpenInventoryHud}
+                    className="px-6 py-2.5 rounded-xl bg-emerald-800 text-white font-bold text-xs flex items-center gap-2 hover:bg-emerald-900 transition-colors shadow-sm cursor-pointer"
+                  >
+                    <Package className="h-4 w-4" />
+                    <span>Launch Live IMS Control HUD</span>
+                  </button>
+                )}
+              </div>
+            )}
 
             {/* Member Details & Allocation Records */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
