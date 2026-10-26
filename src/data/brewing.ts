@@ -1,0 +1,43 @@
+import type { BrewMethod } from '../types';
+
+export const NOIR_BREW_METHODS: BrewMethod[] = [
+  {
+    id: 'filter-kaapi',
+    name: 'FILTER KAAPI',
+    tagline: 'Traditional Brass Davarah & Tumbler Aeration',
+    time: '4 Minutes 30 Seconds',
+    grind: 'Fine 350µm Conical Burr Decoction',
+    temp: '94.0°C Pure Western Ghats Spring Water',
+    ratio: '1:4.0 Decoction (30g powder → 120ml thick extract)',
+    description: 'The iconic South Indian brewing ritual. Slow gravitational percolation through stainless steel or brass drip filters, yielding an intense, dark decoction frothed by hand between tumbler and davarah.',
+    image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=1200&auto=format&fit=crop&q=85',
+    proTip: 'Pour from a height of one meter ("Meter Chai / Kaapi style") to naturally aerate the velvet golden froth without artificial steam.',
+    yieldVolume: 'Traditional Davarah (150ml)',
+  },
+  {
+    id: 'pourover',
+    name: 'BABA BUDAN POUR OVER',
+    tagline: 'Chikmagalur High-Elevation Clarity',
+    time: '3 Minutes 30 Seconds',
+    grind: 'Medium-Fine 650µm Unimodal Burrs',
+    temp: '93.0°C Mineral Water',
+    ratio: '1:16.0 (20g in → 320g out)',
+    description: 'Gravity-fed conical percolation that illuminates delicate cardamom and floral jasmine esters of shade-grown Western Ghats Arabica without bitter sediment.',
+    image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&auto=format&fit=crop&q=85',
+    proTip: 'Saturate the grounds with a 45-second 50g bloom, then execute 3 continuous concentric spiral pours.',
+    yieldVolume: 'Single Terracotta Carafe (300ml)',
+  },
+  {
+    id: 'espresso',
+    name: 'MALABAR 9-BAR ESPRESSO',
+    tagline: 'Monsoon-Cured Viscous Extraction',
+    time: '27.5 Seconds',
+    grind: 'Ultra-Fine 280µm Titanium Burrs',
+    temp: '93.5°C PID Controlled',
+    ratio: '1:2.0 (18.5g in → 37g out)',
+    description: 'Exposed to Arabian Sea coastal winds, Malabar beans produce an unmatched golden crema with notes of dark chocolate, jaggery caramel, and roasted oak.',
+    image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=1200&auto=format&fit=crop&q=85',
+    proTip: 'Perform a 4-second gentle pre-infusion at 2 bars before ramping to 9 bars of full extraction pressure.',
+    yieldVolume: 'Double Shot (37ml)',
+  },
+];
