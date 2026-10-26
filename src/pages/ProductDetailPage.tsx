@@ -34,8 +34,8 @@ const GRIND_OPTIONS = [
 
 export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   onAddToCart,
-  onOpenCart,
-  cartCount,
+  onOpenCart: _onOpenCart,
+  cartCount: _cartCount,
   cartItems,
 }) => {
   const { id } = useParams<{ id: string }>();
@@ -101,7 +101,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={handleShare}
               className="p-2 rounded-full border border-[#2D2926]/15 hover:bg-neutral-100 text-[#2D2926] transition-colors relative"
@@ -114,18 +114,15 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 </span>
               )}
             </button>
-            <button
-              onClick={onOpenCart}
-              className="relative flex items-center gap-2 px-4 py-2 rounded-full bg-[#2D2926] text-[#FAF7F5] text-xs font-bold hover:bg-black transition-colors"
-            >
-              <ShoppingBag className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Cart</span>
-              {cartCount > 0 && (
-                <span className="h-4 w-4 rounded-full bg-[#E05A7E] text-white text-[10px] flex items-center justify-center font-bold">
-                  {cartCount}
-                </span>
-              )}
-            </button>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 text-xs font-mono font-medium text-[#5E5854]">
+              <span className={`h-2 w-2 rounded-full ${stockStatus === 'OUT_OF_STOCK' ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'}`} />
+              <span className="hidden sm:inline font-semibold">
+                {stockStatus === 'OUT_OF_STOCK' ? 'OUT OF STOCK' : `${currentStock} TINS REMAINING`}
+              </span>
+              <span className="sm:hidden font-semibold">
+                {stockStatus === 'OUT_OF_STOCK' ? 'SOLD OUT' : `${currentStock} LEFT`}
+              </span>
+            </span>
           </div>
         </div>
       </header>

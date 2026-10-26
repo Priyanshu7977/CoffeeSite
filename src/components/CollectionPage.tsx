@@ -7,9 +7,7 @@ import {
   Check, 
   SlidersHorizontal,
   Compass,
-  Coffee,
-  ShieldCheck,
-  User
+  Coffee
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { NOIR_PRODUCTS } from '../data/products';
@@ -22,20 +20,20 @@ interface CollectionPageProps {
   onBackToHome: () => void;
   onDiscoverProduct: (product: Product) => void;
   onAddToCart: (product: Product, grind: string) => void;
-  onOpenCart: () => void;
-  cartCount: number;
-  onOpenLogin: () => void;
-  userSession: UserSession | null;
+  onOpenCart?: () => void;
+  cartCount?: number;
+  onOpenLogin?: () => void;
+  userSession?: UserSession | null;
 }
 
 export const CollectionPage: React.FC<CollectionPageProps> = ({
   onBackToHome,
   onDiscoverProduct,
   onAddToCart,
-  onOpenCart,
-  cartCount,
-  onOpenLogin,
-  userSession,
+  onOpenCart: _onOpenCart,
+  cartCount: _cartCount,
+  onOpenLogin: _onOpenLogin,
+  userSession: _userSession,
 }) => {
   const [selectedRoastFilter, setSelectedRoastFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'acidity'>('featured');
@@ -126,40 +124,12 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
             </div>
           </div>
 
-          {/* Right Action Icons */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5">
-            <button
-              onClick={onOpenLogin}
-              className={`flex items-center gap-1.5 rounded-full border px-2.5 sm:px-3.5 py-1.5 text-[10px] sm:text-[11px] font-sans tracking-[0.1em] sm:tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer ${
-                userSession?.isLoggedIn
-                  ? 'border-[#E05A7E] bg-[#F5DADF] text-[#2D2926] font-bold'
-                  : 'border-[#2D2926]/15 bg-[#FAF7F5] text-[#2D2926] hover:bg-[#F5DADF]/40'
-              }`}
-            >
-              {userSession?.isLoggedIn ? (
-                <>
-                  <ShieldCheck className="h-3.5 w-3.5 text-[#2D2926]" />
-                  <span className="max-w-[60px] sm:max-w-[80px] truncate font-bold">{userSession.name.split(' ')[0]}</span>
-                </>
-              ) : (
-                <>
-                  <User className="h-3.5 w-3.5 text-[#5E5854]" />
-                  <span className="hidden sm:inline font-bold">VIP Pass</span>
-                </>
-              )}
-            </button>
-
-            <button
-              onClick={onOpenCart}
-              className={`flex items-center gap-1.5 rounded-full border px-2.5 sm:px-3.5 py-1.5 text-[10px] sm:text-[11px] font-sans tracking-[0.1em] sm:tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer ${
-                cartCount > 0
-                  ? 'border-[#2D2926]/15 bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm'
-                  : 'border-[#2D2926]/15 bg-[#FAF7F5] text-[#2D2926] hover:bg-[#F5DADF]/40'
-              }`}
-            >
-              <ShoppingBag className="h-3.5 w-3.5 text-[#2D2926]" />
-              <span>({cartCount.toString().padStart(2, '0')})</span>
-            </button>
+          {/* Right Status Badge (Global Navbar handles VIP & Cart) */}
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 text-[10px] sm:text-[11px] font-mono font-semibold text-[#5E5854]">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>10 SINGLE-ORIGIN LOTS</span>
+            </span>
           </div>
         </div>
       </header>
