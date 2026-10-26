@@ -104,7 +104,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <nav className="hidden items-center gap-5 lg:gap-6 md:flex shrink-0">
           {[
             { label: 'COLLECTION', path: '/collection' },
-            { label: 'RESERVE', path: '/reserve' },
+            { label: 'BREW LAB', path: '/brew' },
             { label: 'ABOUT US', path: '/about' },
             { label: 'CONTACT', path: '/contact' },
           ].map((item) => (
@@ -203,7 +203,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {[
               { label: 'HOME OVERVIEW', path: '/' },
               { label: 'SPECIALTY COFFEE LOTS', path: '/collection' },
-              { label: 'PRIVATE VAULT RESERVES', path: '/reserve' },
+              { label: 'BREW LAB & GUIDES', path: '/brew' },
               { label: 'ABOUT OUR STARTUP', path: '/about' },
               { label: 'CONTACT & ROASTERY MAP', path: '/contact' },
               { label: 'CURATED ALLOCATION CART', path: '/cart' },

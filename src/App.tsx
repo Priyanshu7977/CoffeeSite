@@ -32,7 +32,7 @@ import { CheckoutModal } from './components/CheckoutModal';
 import { EmailNotificationModal } from './components/EmailNotificationModal';
 import { InventoryHudModal } from './components/InventoryHudModal';
 import { ProductDetailPage } from './pages/ProductDetailPage';
-import { ReservePage } from './pages/ReservePage';
+import { BrewingPage } from './pages/BrewingPage';
 import { AboutUsPage } from './pages/AboutUsPage';
 import { ContactPage } from './pages/ContactPage';
 import { CartPage } from './pages/CartPage';
@@ -416,12 +416,45 @@ export const App: React.FC = () => {
           }
         />
 
-        {/* Dedicated Reserve Vault Page */}
+        {/* Dedicated Master Brew Lab & Extraction Studio */}
+        <Route
+          path="/brew"
+          element={
+            <div className="pt-20">
+              <BrewingPage
+                onDiscoverProduct={handleDiscoverProduct}
+                onAddToCart={handleAddToCollection}
+              />
+              <Footer
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/brewing"
+          element={
+            <div className="pt-20">
+              <BrewingPage
+                onDiscoverProduct={handleDiscoverProduct}
+                onAddToCart={handleAddToCollection}
+              />
+              <Footer
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
         <Route
           path="/reserve"
           element={
             <div className="pt-20">
-              <ReservePage />
+              <BrewingPage
+                onDiscoverProduct={handleDiscoverProduct}
+                onAddToCart={handleAddToCollection}
+              />
               <Footer
                 onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 onNavigate={handleNavigate}
@@ -433,18 +466,6 @@ export const App: React.FC = () => {
         {/* Dedicated About Us (College Student Startup) Page */}
         <Route
           path="/about"
-          element={
-            <div className="pt-20">
-              <AboutUsPage />
-              <Footer
-                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                onNavigate={handleNavigate}
-              />
-            </div>
-          }
-        />
-        <Route
-          path="/brewing"
           element={
             <div className="pt-20">
               <AboutUsPage />

@@ -53,6 +53,13 @@ export interface Product {
   year: string;
 }
 
+export interface BrewStage {
+  title: string;
+  timeSec: number;
+  waterMl: number;
+  instruction: string;
+}
+
 export interface BrewMethod {
   id: string;
   name: string;
@@ -65,6 +72,8 @@ export interface BrewMethod {
   image: string;
   proTip: string;
   yieldVolume: string;
+  stages?: BrewStage[];
+  recommendedProductIds?: string[];
 }
 
 export interface CollectionItem {

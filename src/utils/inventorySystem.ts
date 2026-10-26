@@ -60,6 +60,8 @@ export const INITIAL_INVENTORY_RECORD: Record<string, number> = {
   'prod-08': 5,  // Biligiri Rangan Wild Arabica
   'prod-09': 11, // Anamalai Highlands Dark Cacao
   'prod-10': 0,  // Wayanad Robusta Royale (Out of Stock Showcase - Restockable)
+  'prod-11': 8,  // Kodagu Wild Spice Cinnamon
+  'prod-12': 12, // Chikmagalur Elephant Monsooned AA
 };
 
 /**

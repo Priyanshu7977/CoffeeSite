@@ -128,7 +128,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 text-[10px] sm:text-[11px] font-mono font-semibold text-[#5E5854]">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>10 SINGLE-ORIGIN LOTS</span>
+              <span>12 SINGLE-ORIGIN LOTS</span>
             </span>
           </div>
         </div>
@@ -141,7 +141,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F5DADF] border border-[#2D2926]/10 text-[10px] sm:text-xs font-sans font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#2D2926] mb-2.5">
                 <Sparkles className="h-3.5 w-3.5 text-[#E05A7E]" />
-                <span>10 SINGLE-ESTATE HARVESTS • 250G MICRO-TINS</span>
+                <span>12 SINGLE-ESTATE HARVESTS • 250G MICRO-TINS</span>
               </div>
               <h1 className="font-display text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#2D2926]">
                 Single-Origin <span className="italic text-[#E05A7E]">Curations.</span>
@@ -172,7 +172,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
             {/* Roast Level Filter Tabs */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 lg:pb-0 scrollbar-none w-full lg:w-auto">
               {[
-                { id: 'all', label: 'All 10 Lots' },
+                { id: 'all', label: 'All 12 Lots' },
                 { id: 'light', label: 'Light Roast' },
                 { id: 'medium', label: 'Medium Roast' },
                 { id: 'dark', label: 'Dark Roast' },
