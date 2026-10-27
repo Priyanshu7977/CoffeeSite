@@ -17,16 +17,13 @@ export const Hero: React.FC<HeroProps> = () => {
   const titleLine3Ref = useRef<HTMLHeadingElement | null>(null);
   const subtitleRef = useRef<HTMLParagraphElement | null>(null);
   const badgeRef = useRef<HTMLDivElement | null>(null);
-  const circularMaskRef = useRef<HTMLDivElement | null>(null);
-  const transitionVideoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
     const video = videoRef.current;
     const textContainer = textContainerRef.current;
-    const circularMask = circularMaskRef.current;
 
-    if (!section || !video || !textContainer || !circularMask) return;
+    if (!section || !video || !textContainer) return;
 
     // Ensure video plays smoothly
     video.play().catch(() => {});
@@ -66,41 +63,31 @@ export const Hero: React.FC<HeroProps> = () => {
           '-=0.5'
         );
 
-      // 2. Full Pinned Cinematic Video ScrollTrigger Sequence with Landing Pause
-      const scrollTl = gsap.timeline({
+      // 2. Smooth, non-pinning cinematic parallax scroll (no jumping or scroll hijacking)
+      gsap.to(video, {
+        yPercent: 15,
+        scale: 1.08,
+        filter: 'blur(2px) brightness(0.8) contrast(115%)',
+        ease: 'none',
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: '+=130%',
-          pin: true,
-          scrub: 0.7,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
+          end: 'bottom top',
+          scrub: 0.5,
         },
       });
 
-      // Initial Landing Pause: Lets user land completely on Hero before scroll motion begins
-      scrollTl.to({}, { duration: 0.35 });
-
-      scrollTl
-        .fromTo(
-          video,
-          { scale: 1.0, opacity: 1, yPercent: 0, filter: 'blur(0px) brightness(0.95) contrast(110%)' },
-          { scale: 1.22, opacity: 0.35, yPercent: 8, filter: 'blur(3px) brightness(0.75) contrast(115%)', ease: 'none', duration: 1.0 },
-          0.35
-        )
-        .fromTo(
-          textContainer,
-          { y: 0, opacity: 1 },
-          { y: -100, opacity: 0, ease: 'power1.in', duration: 0.8 },
-          0.35
-        )
-        .fromTo(
-          circularMask,
-          { clipPath: 'circle(0% at 50% 50%)', opacity: 0 },
-          { clipPath: 'circle(120% at 50% 50%)', opacity: 1, ease: 'power2.out', duration: 0.9 },
-          0.55
-        );
+      gsap.to(textContainer, {
+        yPercent: -25,
+        opacity: 0.15,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 0.5,
+        },
+      });
     }, sectionRef);
 
     return () => {
@@ -128,24 +115,6 @@ export const Hero: React.FC<HeroProps> = () => {
         {/* Cinematic Overlays: Warm Espresso Gradients */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#1F1C1A] via-transparent to-[#1F1C1A]/65 pointer-events-none" />
         <div className="absolute inset-0 bg-[#1F1C1A]/35 pointer-events-none" />
-      </div>
-
-      {/* Circular Organic Aperture Transition Video / Next Chapter Reveal */}
-      <div
-        ref={circularMaskRef}
-        className="absolute inset-0 z-10 pointer-events-none overflow-hidden will-change-transform opacity-0"
-        style={{ clipPath: 'circle(0% at 50% 50%)' }}
-      >
-        <video
-          ref={transitionVideoRef}
-          src="/assets/videos/coffee-bloom-transition.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="h-full w-full object-cover object-center filter brightness-90 contrast-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1F1C1A] via-[#1F1C1A]/40 to-[#1F1C1A]" />
       </div>
 
       {/* Floating Heritage Badge - Top Right */}

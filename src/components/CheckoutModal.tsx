@@ -187,6 +187,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     e.preventDefault();
     setErrorMessage('');
 
+    if (!items || items.length === 0 || totalItemCount <= 0) {
+      setErrorMessage('Your cart is empty. Please add coffee before proceeding to checkout.');
+      return;
+    }
+
     if (!isValidName(fullName)) {
       setErrorMessage('Please enter a valid recipient name (alphabets only).');
       return;
@@ -210,6 +215,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const handleExecuteSettlement = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
+
+    if (!items || items.length === 0 || totalItemCount <= 0) {
+      setErrorMessage('Your cart is empty. Please add coffee before completing your order.');
+      return;
+    }
 
     if (paymentMethod === 'card') {
       const cleanNum = cardNumber.replace(/\s/g, '');

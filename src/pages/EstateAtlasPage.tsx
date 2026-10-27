@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -13,6 +13,7 @@ import {
   Flame,
   Activity
 } from 'lucide-react';
+import { gsap } from '../utils/animations';
 import { NOIR_PRODUCTS } from '../data/products';
 import type { Product } from '../types';
 
@@ -166,6 +167,89 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Animation Refs for Coffee Guide Landing & Scroll Effects
+  const heroRef = useRef<HTMLElement | null>(null);
+  const heroBadgeRef = useRef<HTMLDivElement | null>(null);
+  const heroTitleRef = useRef<HTMLHeadingElement | null>(null);
+  const heroDescRef = useRef<HTMLParagraphElement | null>(null);
+  const heroMetricsRef = useRef<HTMLDivElement | null>(null);
+
+  const section1Ref = useRef<HTMLElement | null>(null);
+  const section2Ref = useRef<HTMLElement | null>(null);
+  const section3Ref = useRef<HTMLElement | null>(null);
+  const section4Ref = useRef<HTMLElement | null>(null);
+  const section5Ref = useRef<HTMLElement | null>(null);
+  const section6Ref = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // 1. Hero Landing Entrance
+      const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      if (heroBadgeRef.current) {
+        heroTl.fromTo(
+          heroBadgeRef.current,
+          { opacity: 0, y: 25 },
+          { opacity: 1, y: 0, duration: 0.7, delay: 0.1 }
+        );
+      }
+      if (heroTitleRef.current) {
+        heroTl.fromTo(
+          heroTitleRef.current,
+          { opacity: 0, y: 35 },
+          { opacity: 1, y: 0, duration: 0.8 },
+          '-=0.4'
+        );
+      }
+      if (heroDescRef.current) {
+        heroTl.fromTo(
+          heroDescRef.current,
+          { opacity: 0, y: 25 },
+          { opacity: 1, y: 0, duration: 0.8 },
+          '-=0.5'
+        );
+      }
+      if (heroMetricsRef.current) {
+        heroTl.fromTo(
+          heroMetricsRef.current.children,
+          { opacity: 0, y: 30, scale: 0.94 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.7, stagger: 0.1 },
+          '-=0.4'
+        );
+      }
+
+      // 2. Sections Progressive Scroll Reveals
+      const scrollSections = [
+        section1Ref.current,
+        section2Ref.current,
+        section3Ref.current,
+        section4Ref.current,
+        section5Ref.current,
+        section6Ref.current,
+      ];
+
+      scrollSections.forEach((sec) => {
+        if (!sec) return;
+        gsap.fromTo(
+          sec,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.85,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: sec,
+              start: 'top 82%',
+            },
+          }
+        );
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   const handleAddLotToCart = (product: Product) => {
     const grind = selectedGrinds[product.id] || 'Filter Fine (Brass Davarah)';
     if (onAddToCart) {
@@ -217,26 +301,26 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       )}
 
       {/* 2. Hero Section: Clean & Friendly */}
-      <section className="relative overflow-hidden border-b border-[#2D2926]/10 bg-gradient-to-b from-white to-[#FAF7F5] pt-14 pb-16 px-6 md:px-12">
+      <section ref={heroRef} className="relative overflow-hidden border-b border-[#2D2926]/10 bg-gradient-to-b from-white to-[#FAF7F5] pt-14 pb-16 px-6 md:px-12">
         <div className="mx-auto max-w-5xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#2D2926]/10 bg-[#F5DADF]/60 px-4 py-1.5 text-xs font-mono font-bold tracking-widest text-[#2D2926] uppercase mb-6 shadow-2xs">
+          <div ref={heroBadgeRef} className="inline-flex items-center gap-2 rounded-full border border-[#2D2926]/10 bg-[#F5DADF]/60 px-4 py-1.5 text-xs font-mono font-bold tracking-widest text-[#2D2926] uppercase mb-6 shadow-2xs">
             <Compass className="h-3.5 w-3.5 text-[#E05A7E]" />
             <span>COFFEE ORIGINS • TASTING NOTES • BREWING GUIDE</span>
           </div>
 
-          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl text-[#2D2926] font-bold tracking-tight leading-[1.12] mb-6">
+          <h1 ref={heroTitleRef} className="font-display text-4xl sm:text-5xl md:text-6xl text-[#2D2926] font-bold tracking-tight leading-[1.12] mb-6">
             The South Indian <br />
             <span className="italic text-[#E05A7E]">Estate & Terroir Atlas.</span>
           </h1>
 
-          <p className="mx-auto max-w-3xl font-serif text-base sm:text-lg text-[#5E5854] leading-relaxed mb-10">
+          <p ref={heroDescRef} className="mx-auto max-w-3xl font-serif text-base sm:text-lg text-[#5E5854] leading-relaxed mb-10">
             Beyond standard single-origins lies the profound microclimate science of the Western and Eastern Ghats. 
             Inspect elevation topographies, red laterite soil mineral density, biochemical fermentation kinetics, 
             and verified SCA cupping fingerprints across India's most sacred coffee valleys.
           </p>
 
           {/* Key Metrics Strip */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto pt-4 border-t border-[#2D2926]/10">
+          <div ref={heroMetricsRef} className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto pt-4 border-t border-[#2D2926]/10">
             <div className="p-4 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
               <span className="font-mono text-xl sm:text-2xl font-bold text-[#2D2926] block mb-0.5">1,920m</span>
               <span className="text-[11px] font-sans tracking-wider uppercase text-[#8C827A] font-bold">Peak Altitude</span>
@@ -258,7 +342,7 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       </section>
 
       {/* 3. Interactive Regional Terroir Inspector */}
-      <section className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-white">
+      <section ref={section1Ref} className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-white">
         <div className="mx-auto max-w-6xl">
           <div className="mb-10 text-center max-w-2xl mx-auto">
             <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-2">
@@ -398,7 +482,7 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       </section>
 
       {/* 4. SCA Q-Grader Cupping Radar & Brix Sugar Analysis */}
-      <section className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
+      <section ref={section2Ref} className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 text-center max-w-2xl mx-auto">
             <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-2">
@@ -544,7 +628,7 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       </section>
 
       {/* 5. Biochemical Fermentation & Roastery Physics */}
-      <section className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-white">
+      <section ref={section3Ref} className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-white">
         <div className="mx-auto max-w-6xl">
           <div className="mb-12 text-center max-w-2xl mx-auto">
             <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-2">
@@ -600,7 +684,7 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       </section>
 
       {/* 6. Water Mineral Chemistry & Brewing Extraction Metrics */}
-      <section className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
+      <section ref={section4Ref} className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
         <div className="mx-auto max-w-5xl">
           <div className="mb-10 text-center max-w-2xl mx-auto">
             <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-2">
@@ -649,7 +733,7 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       </section>
 
       {/* 7. Seasonal Agricultural Harvest Calendar */}
-      <section className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-white">
+      <section ref={section5Ref} className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-white">
         <div className="mx-auto max-w-5xl">
           <div className="mb-10 text-center max-w-2xl mx-auto">
             <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-2">
@@ -709,7 +793,7 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       </section>
 
       {/* 8. Direct Single-Estate Coffee Cards */}
-      <section className="py-16 md:py-24 px-6 md:px-12 bg-[#FAF7F5]">
+      <section ref={section6Ref} className="py-16 md:py-24 px-6 md:px-12 bg-[#FAF7F5]">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
             <div>

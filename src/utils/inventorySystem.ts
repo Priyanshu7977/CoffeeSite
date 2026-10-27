@@ -198,8 +198,11 @@ class InventoryManager {
    * Public Read: Anyone can view stock levels
    */
   public getStock(productId: string): number {
+    if (!productId || typeof productId !== 'string' || !Object.prototype.hasOwnProperty.call(this.inventory, productId)) {
+      return 0;
+    }
     const stock = this.inventory[productId];
-    return typeof stock === 'number' && stock >= 0 ? stock : 0;
+    return typeof stock === 'number' && Number.isFinite(stock) && stock >= 0 ? stock : 0;
   }
 
   /**
@@ -254,10 +257,26 @@ class InventoryManager {
    * Atomic commit during customer checkout.
    */
   public commitOrder(items: Array<{ productId: string; quantity: number }>): { success: boolean; error?: string } {
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return { success: false, error: 'Cannot commit an empty order.' };
+    }
+
+    const validItems = items.filter(
+      (i) => i && typeof i.productId === 'string' && Number.isFinite(i.quantity) && i.quantity > 0
+    );
+    if (validItems.length === 0) {
+      return { success: false, error: 'Order must contain at least one item with valid quantity.' };
+    }
+
     // 1. Validation phase (pure check, no mutations)
-    for (const item of items) {
+    for (const item of validItems) {
+      if (!Object.prototype.hasOwnProperty.call(this.inventory, item.productId)) {
+        return {
+          success: false,
+          error: `Inventory error: Invalid or unrecognized lot ID "${item.productId}".`,
+        };
+      }
       const stock = this.getStock(item.productId);
-      if (item.quantity <= 0) continue;
       if (stock < item.quantity) {
         return {
           success: false,
@@ -267,8 +286,7 @@ class InventoryManager {
     }
 
     // 2. Execution phase (atomic decrement)
-    for (const item of items) {
-      if (item.quantity <= 0) continue;
+    for (const item of validItems) {
       const current = this.getStock(item.productId);
       this.inventory[item.productId] = Math.max(0, current - item.quantity);
     }
@@ -293,7 +311,12 @@ class InventoryManager {
   public restock(productId: string, quantity: number, session?: IMSUserSession | null): number {
     this.verifyIMSAuthorization(session);
 
+    if (!productId || typeof productId !== 'string' || !Object.prototype.hasOwnProperty.call(this.inventory, productId)) {
+      throw new Error(`Invalid or unrecognized lot ID "${productId}".`);
+    }
+
     const safeQty = Math.max(1, Math.floor(quantity));
+    if (!Number.isFinite(safeQty)) return this.getStock(productId);
     const current = this.getStock(productId);
     const newStock = current + safeQty;
     this.inventory[productId] = newStock;
@@ -307,7 +330,12 @@ class InventoryManager {
   public setStockDirect(productId: string, quantity: number, session?: IMSUserSession | null): number {
     this.verifyIMSAuthorization(session);
 
+    if (!productId || typeof productId !== 'string' || !Object.prototype.hasOwnProperty.call(this.inventory, productId)) {
+      throw new Error(`Invalid or unrecognized lot ID "${productId}".`);
+    }
+
     const safeQty = Math.max(0, Math.floor(quantity));
+    if (!Number.isFinite(safeQty)) return this.getStock(productId);
     this.inventory[productId] = safeQty;
     this.saveInventory();
     return safeQty;

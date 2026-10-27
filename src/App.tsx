@@ -303,7 +303,7 @@ export const App: React.FC = () => {
         <Route
           path="/"
           element={
-            <main className="relative w-full pt-16 sm:pt-20">
+            <main className="relative w-full overflow-hidden">
               {/* 00. Hero Viewport */}
               <div data-cursor="explore">
                 <Hero onExplore={() => handleNavigate('#section-bean')} />

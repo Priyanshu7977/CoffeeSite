@@ -15,7 +15,7 @@ import {
   RotateCw,
   FlaskConical
 } from 'lucide-react';
-import { gsap, ScrollTrigger } from '../utils/animations';
+import { gsap } from '../utils/animations';
 
 export const AboutUsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -45,9 +45,6 @@ export const AboutUsPage: React.FC = () => {
     2: false,
     3: false,
   });
-
-  // Active scroll-flip stage for progress bar
-  const [activeFlipStage, setActiveFlipStage] = useState<number>(0);
 
   const commandments = [
     {
@@ -200,15 +197,32 @@ export const AboutUsPage: React.FC = () => {
         );
       }
 
-      // 4. THE 4 NOIR COMMANDMENTS: LANDING & SEQUENTIAL SCROLL-FLIP ANIMATION
+      // 4. THE 4 NOIR COMMANDMENTS: SMOOTH LANDING ENTRANCE ANIMATION
       const commandmentsSection = commandmentsSectionRef.current;
       const validCards = cardElementsRef.current.filter(Boolean);
 
       if (commandmentsSection && validCards.length === 4) {
-        // Step A: When the section scrolls into view, ALL 4 CARDS LAND SMOOTHLY
+        if (commandmentsHeaderRef.current) {
+          gsap.fromTo(
+            commandmentsHeaderRef.current,
+            { y: 35, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.8,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: commandmentsSection,
+                start: 'top 80%',
+              },
+            }
+          );
+        }
+
+        // When the section scrolls into view, ALL 4 CARDS LAND SMOOTHLY TOGETHER
         gsap.fromTo(
           validCards,
-          { y: 70, opacity: 0, scale: 0.92 },
+          { y: 60, opacity: 0, scale: 0.94 },
           {
             y: 0,
             opacity: 1,
@@ -222,28 +236,6 @@ export const AboutUsPage: React.FC = () => {
             },
           }
         );
-
-        // Step B: Progressive Scroll-Driven Sequential Card Flipping
-        // As user scrolls through the section, each card flips in each scroll stage
-        ScrollTrigger.create({
-          trigger: commandmentsSection,
-          start: 'top 55%',
-          end: 'bottom 40%',
-          scrub: true,
-          onUpdate: (self) => {
-            const p = self.progress;
-            // 4 flip stages: 0 to 4
-            const stage = Math.min(4, Math.floor(p * 5));
-            setActiveFlipStage(stage);
-
-            setFlippedCards({
-              0: p > 0.18,
-              1: p > 0.40,
-              2: p > 0.62,
-              3: p > 0.84,
-            });
-          },
-        });
       }
     });
 
@@ -510,14 +502,10 @@ export const AboutUsPage: React.FC = () => {
             Every single bean we roast is governed by four non-negotiable rules.
           </p>
 
-          {/* Interactive Scroll-Flip Visual Guide */}
+          {/* Interactive Flip Guide */}
           <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F5DADF]/60 border border-[#2D2926]/10 text-[11px] font-mono text-[#2D2926]">
-            <RotateCw className="h-3.5 w-3.5 text-[#E05A7E] animate-spin-slow" />
-            <span>
-              {activeFlipStage > 0 
-                ? `Commandment 0${Math.min(4, activeFlipStage)} Dossier Unveiled • Scroll down to continue sequence` 
-                : 'Scroll down or tap any card to flip and inspect the hostel lab secrets'}
-            </span>
+            <RotateCw className="h-3.5 w-3.5 text-[#E05A7E]" />
+            <span>Click or tap any card to flip and reveal the core coffee commandment</span>
           </div>
         </div>
 
@@ -547,10 +535,49 @@ export const AboutUsPage: React.FC = () => {
                   }}
                   className="relative w-full h-full rounded-3xl"
                 >
-                  {/* FRONT FACE */}
+                  {/* FRONT FACE (Dossier & Student Story - Shown First) */}
                   <div
                     style={{ backfaceVisibility: 'hidden' }}
-                    className="absolute inset-0 rounded-3xl bg-white border border-[#2D2926]/10 p-6 shadow-[0_15px_40px_rgba(45,41,38,0.06)] flex flex-col justify-between hover:border-[#2D2926]/30 transition-colors"
+                    className="absolute inset-0 rounded-3xl bg-[#2D2926] text-[#FAF7F5] border border-white/10 p-6 shadow-2xl flex flex-col justify-between hover:border-white/20 transition-all"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/10">
+                        <span className="px-2.5 py-0.5 rounded-full bg-white/10 text-[10px] font-mono font-bold text-[#F5DADF]">
+                          {cmd.badge}
+                        </span>
+                        <span className="text-xs font-mono text-white/50">RULE {cmd.num} DOSSIER</span>
+                      </div>
+
+                      <span className="text-[10px] font-mono uppercase text-[#C89658] font-bold block mb-1">
+                        THE STUDENT LAB DOSSIER
+                      </span>
+                      <h4 className="font-display font-bold text-base text-[#FAF7F5] mb-2 leading-tight">
+                        {cmd.title}
+                      </h4>
+                      <p className="text-xs text-[#FAF7F5]/80 leading-relaxed font-sans font-normal">
+                        "{cmd.backStory}"
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold flex items-center gap-1">
+                        <ShieldCheck className="h-3 w-3" />
+                        <span>Verified Standard</span>
+                      </span>
+                      <span className="text-[11px] font-mono text-[#F5DADF] font-bold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                        <span>Flip to Rule</span>
+                        <RotateCw className="h-3 w-3" />
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* BACK FACE (Main Commandment & Rule - Revealed After Flip) */}
+                  <div
+                    style={{ 
+                      backfaceVisibility: 'hidden',
+                      transform: 'rotateY(180deg)',
+                    }}
+                    className="absolute inset-0 rounded-3xl bg-white text-[#2D2926] border border-[#2D2926]/10 p-6 shadow-[0_15px_40px_rgba(45,41,38,0.06)] flex flex-col justify-between"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-4">
@@ -580,46 +607,7 @@ export const AboutUsPage: React.FC = () => {
                       <span className="font-mono text-[11px] font-semibold text-[#2D2926]">
                         {cmd.metric}
                       </span>
-                      <span className="flex items-center gap-1 text-[11px] font-mono text-[#E05A7E] font-bold group-hover:translate-x-0.5 transition-transform">
-                        <span>Flip</span>
-                        <RotateCw className="h-3 w-3" />
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* BACK FACE (Lab Secret & Real Student Story) */}
-                  <div
-                    style={{ 
-                      backfaceVisibility: 'hidden',
-                      transform: 'rotateY(180deg)',
-                    }}
-                    className="absolute inset-0 rounded-3xl bg-[#2D2926] text-[#FAF7F5] border border-white/10 p-6 shadow-2xl flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/10">
-                        <span className="px-2.5 py-0.5 rounded-full bg-white/10 text-[10px] font-mono font-bold text-[#F5DADF]">
-                          {cmd.badge}
-                        </span>
-                        <span className="text-xs font-mono text-white/50">RULE {cmd.num} SECRET</span>
-                      </div>
-
-                      <span className="text-[10px] font-mono uppercase text-[#C89658] font-bold block mb-1">
-                        THE STUDENT LAB DOSSIER
-                      </span>
-                      <h4 className="font-display font-bold text-base text-[#FAF7F5] mb-2 leading-tight">
-                        {cmd.title}
-                      </h4>
-                      <p className="text-xs text-[#FAF7F5]/80 leading-relaxed font-sans font-normal">
-                        "{cmd.backStory}"
-                      </p>
-                    </div>
-
-                    <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold flex items-center gap-1">
-                        <ShieldCheck className="h-3 w-3" />
-                        <span>Verified Standard</span>
-                      </span>
-                      <span className="text-[11px] font-mono text-[#F5DADF] font-bold flex items-center gap-1">
+                      <span className="flex items-center gap-1 text-[11px] font-mono text-[#E05A7E] font-bold">
                         <span>Flip Back</span>
                         <RotateCw className="h-3 w-3" />
                       </span>

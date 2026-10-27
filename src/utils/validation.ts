@@ -6,17 +6,17 @@
 /**
  * Checks whether an input contains potentially malicious script, iframe, or HTML tags
  */
-export const hasMaliciousContent = (value: string): boolean => {
-  if (!value) return false;
-  const maliciousPattern = /<[^>]*>?|javascript:|data:|vbscript:|on\w+\s*=|script|iframe|embed|object/i;
+export const hasMaliciousContent = (value: unknown): boolean => {
+  if (!value || typeof value !== 'string') return false;
+  const maliciousPattern = /<[^>]*>?|javascript:|data:|vbscript:|on\w+\s*=|script|iframe|embed|object|__proto__|constructor\s*\(|prototype\b/i;
   return maliciousPattern.test(value);
 };
 
 /**
  * Strips all HTML tags, script tags, iframe tags, and event handlers
  */
-export const stripDangerousMarkup = (value: string): string => {
-  if (!value) return '';
+export const stripDangerousMarkup = (value: unknown): string => {
+  if (!value || typeof value !== 'string') return '';
   return value
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
@@ -61,7 +61,8 @@ export const sanitizePhone = (value: string): string => {
 /**
  * Validates if a phone number contains at least 7 valid numeric digits.
  */
-export const isValidPhone = (value: string): boolean => {
+export const isValidPhone = (value: unknown): boolean => {
+  if (!value || typeof value !== 'string') return false;
   const digitsOnly = value.replace(/\D/g, '');
   return digitsOnly.length >= 7 && digitsOnly.length <= 15;
 };
