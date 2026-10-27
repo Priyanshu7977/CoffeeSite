@@ -147,7 +147,7 @@ export const SectionManifesto: React.FC = () => {
                   “The acoustic crack guides our craft.”
                 </span>
                 <span className="text-[10px] font-mono text-[#F5DADF] tracking-widest uppercase block mt-1 font-bold">
-                  CHIKMAGALUR & BENGALURU ATELIER
+                  CHIKMAGALUR & BENGALURU ROASTERY
                 </span>
               </div>
             </div>

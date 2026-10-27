@@ -95,7 +95,7 @@ export const ContactPage: React.FC = () => {
               <span>Back to Home</span>
             </button>
             <span className="text-xs font-mono text-[#8C827A] hidden sm:inline">
-              / ATELIER & ROASTERY CONTACT
+              / CONTACT US
             </span>
           </div>
 
@@ -111,11 +111,11 @@ export const ContactPage: React.FC = () => {
         <div className="mx-auto max-w-4xl text-center">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F5DADF] text-[#2D2926] text-xs font-bold tracking-wider uppercase mb-5">
             <MessageSquare className="h-3.5 w-3.5 text-[#E05A7E]" />
-            <span>DIRECT ATELIER COMMUNICATIONS</span>
+            <span>CUSTOMER CARE & ROASTERY</span>
           </div>
 
           <h1 className="font-display text-4xl sm:text-6xl font-bold tracking-tight text-[#2D2926] leading-[1.08] mb-5">
-            Let's Talk <span className="italic text-[#E05A7E]">Coffee</span>, Collaborations & Allocations.
+            Let's Talk <span className="italic text-[#E05A7E]">Coffee</span>, Collaborations & Orders.
           </h1>
 
           <p className="max-w-2xl mx-auto text-[#5E5854] text-base leading-relaxed font-sans font-normal">
@@ -252,8 +252,8 @@ export const ContactPage: React.FC = () => {
                   >
                     <option value="General Inquiry">General Question & Feedback</option>
                     <option value="College Startup Collaboration">College Festival / Campus Popup Collaboration</option>
-                    <option value="Bulk Roasting">Bulk Office / Wholesale Micro-Lots</option>
-                    <option value="Private Reserve Order">Private Cellar Allocation Inquiry</option>
+                    <option value="Bulk Roasting">Bulk Office / Wholesale Coffee</option>
+                    <option value="Private Reserve Order">Custom / Bulk Coffee Order</option>
                     <option value="Roastery Visit">Roastery Tasting Session Booking</option>
                   </select>
                 </div>
@@ -291,7 +291,7 @@ export const ContactPage: React.FC = () => {
                 className="w-full py-3 rounded-xl bg-[#2D2926] text-[#FAF7F5] font-bold text-xs uppercase tracking-wider hover:bg-black transition-all cursor-pointer flex items-center justify-center gap-2 shadow-md disabled:opacity-50"
               >
                 <Send className="h-4 w-4 text-[#E05A7E]" />
-                <span>{isSubmitting ? 'Routing Message...' : 'Transmit Dispatch'}</span>
+                <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
               </button>
             </form>
           </div>
@@ -308,7 +308,7 @@ export const ContactPage: React.FC = () => {
                 </span>
                 <h3 className="font-display text-2xl font-bold mb-1">Priyanshu Singh</h3>
                 <p className="text-xs text-[#FAF7F5]/70 mb-6">
-                  Founder & Head Roaster • Noir Dakshin Maison
+                  Founder & Head Roaster • Noir Dakshin Coffee
                 </p>
 
                 <div className="space-y-4 text-xs">
@@ -361,7 +361,7 @@ export const ContactPage: React.FC = () => {
                       <Building className="h-4 w-4" />
                     </div>
                     <div>
-                      <span className="text-[10px] font-mono text-white/50 block">ATELIER ADDRESS</span>
+                      <span className="text-[10px] font-mono text-white/50 block">ROASTERY ADDRESS</span>
                       <span className="text-xs text-[#FAF7F5] leading-snug block">
                         Plot 42, 12th Main Road, HAL 2nd Stage, Indiranagar, Bengaluru, KA 560038
                       </span>
@@ -396,7 +396,7 @@ export const ContactPage: React.FC = () => {
                 Represent Noir Roast in Your College
               </h4>
               <p className="text-xs sm:text-sm text-[#5E5854] leading-relaxed mb-4">
-                Passionate about specialty coffee in your university? Join our student ambassador fellowship. Get complimentary monthly reserve micro-lot tins, 15% discount vouchers for your campus peers, barista brewing kit gear, and hands-on roasting mentorship at our Indiranagar atelier lab.
+                Passionate about specialty coffee in your university? Join our student ambassador fellowship. Get complimentary monthly coffee tins, 15% discount vouchers for your campus peers, barista brewing kit gear, and hands-on roasting mentorship at our Indiranagar roastery lab.
               </p>
             </div>
 

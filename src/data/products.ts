@@ -91,7 +91,7 @@ export const NOIR_PRODUCTS: Product[] = [
     process: 'Oak Cask & Anaerobic Fusion',
     roastLevel: 'Signature Noir Roast',
     notes: ['Toasted Jaggery', '88% Dark Cacao', 'Smoked Mysore Vanilla'],
-    description: 'The crowning jewel of the NOIR DAKSHIN MAISON since 1998. An unhurried assemblage of high-grown Karnataka Arabicas slow-roasted in cast-iron convection drums.',
+    description: 'The crowning jewel of NOIR DAKSHIN COFFEE since 1998. An unhurried blend of high-grown Karnataka Arabicas slow-roasted in cast-iron convection drums.',
     brewRecommendation: 'Traditional Brass Davarah or Bottomless Portafilter. Unbroken 1:2 extraction.',
     acidity: 75,
     body: 96,
@@ -139,7 +139,7 @@ export const NOIR_PRODUCTS: Product[] = [
     price: '₹3,800',
     image: 'https://images.unsplash.com/photo-1561047029-3000c68339ca?w=800&auto=format&fit=crop&q=85',
     badge: 'Reserve Geisha Micro-Lot',
-    year: '2026 Limited Allocation',
+    year: '2026 Limited Roast',
   },
   {
     id: 'prod-08',

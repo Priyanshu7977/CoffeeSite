@@ -237,8 +237,8 @@ class InventoryManager {
         maxAddable,
         status,
         message: maxAddable === 0
-          ? `You have already added all ${stock} available units to your allocation.`
-          : `Only ${maxAddable} additional units can be allocated to your order.`,
+          ? `You have already added all ${stock} available units to your cart.`
+          : `Only ${maxAddable} additional units can be added to your cart.`,
       };
     }
 

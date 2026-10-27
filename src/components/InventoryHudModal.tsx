@@ -304,7 +304,7 @@ export const InventoryHudModal: React.FC<InventoryHudModalProps> = ({ isOpen, on
                       {/* Quick Action Bar */}
                       <div className="mt-3 pt-2.5 border-t border-[#2D2926]/5 flex items-center justify-between text-xs">
                         <span className="text-[11px] text-[#8C827A] font-mono">
-                          Allocation: {stock} units
+                          Available Stock: {stock} units
                         </span>
                         <div className="flex gap-1.5">
                           <button

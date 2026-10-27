@@ -296,7 +296,7 @@ export const AboutUsPage: React.FC = () => {
             className="font-display text-4xl sm:text-6xl font-bold tracking-tight text-[#2D2926] leading-[1.08] mb-6"
           >
             From 2 A.M. Hostel Cramming to <br className="hidden sm:inline" />
-            <span className="italic text-[#E05A7E]">India's Most Obsessive</span> Coffee Atelier.
+            <span className="italic text-[#E05A7E]">India's Most Obsessive</span> Coffee Roastery.
           </h1>
 
           <p 
@@ -406,7 +406,7 @@ export const AboutUsPage: React.FC = () => {
               OUR CHRONICLE
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#2D2926]">
-              From Hostel Room 304 to The Atelier
+              From Hostel Room 304 to The Roastery
             </h2>
             <p className="mt-2 text-xs sm:text-sm text-[#5E5854]">
               How three broke college dreamers built an uncompromised Indian specialty coffee brand.
@@ -483,7 +483,7 @@ export const AboutUsPage: React.FC = () => {
                 <Award className="h-4 w-4 text-[#C89658]" />
               </div>
               <h3 className="font-display text-xl font-bold text-[#2D2926] mb-2">
-                The Modern Dakshin Atelier
+                The Modern Dakshin Roastery
               </h3>
               <p className="text-xs sm:text-sm text-[#5E5854] leading-relaxed">
                 Today, Noir Roast partners directly with 4 premier single-estate farms across South India. We roast 94.5+ SCA cupping score micro-lots daily, maintaining 100% student independence, direct trade ethics, and zero compromises.
@@ -615,8 +615,9 @@ export const AboutUsPage: React.FC = () => {
                     </div>
 
                     <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold">
-                        ✓ Verified Protocol
+                      <span className="text-[10px] font-mono text-emerald-400 font-semibold flex items-center gap-1">
+                        <ShieldCheck className="h-3 w-3" />
+                        <span>Verified Standard</span>
                       </span>
                       <span className="text-[11px] font-mono text-[#F5DADF] font-bold flex items-center gap-1">
                         <span>Flip Back</span>
@@ -653,7 +654,7 @@ export const AboutUsPage: React.FC = () => {
               onClick={() => navigate('/collection')}
               className="px-6 py-3 rounded-full bg-[#FAF7F5] text-[#2D2926] font-bold text-xs uppercase tracking-wider hover:bg-[#F5DADF] transition-all cursor-pointer shadow-md text-center"
             >
-              Shop Micro-Lots
+              Shop Coffee
             </button>
             <button
               onClick={() => navigate('/contact')}

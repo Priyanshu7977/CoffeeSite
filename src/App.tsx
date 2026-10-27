@@ -660,7 +660,7 @@ export const App: React.FC = () => {
         selectedBatch={selectedBatch}
       />
 
-      {/* 4. Full Haute Atelier Checkout Flow Modal */}
+      {/* 4. Full Checkout Flow Modal */}
       <CheckoutModal
         isOpen={isCheckoutModalOpen}
         onClose={() => setIsCheckoutModalOpen(false)}

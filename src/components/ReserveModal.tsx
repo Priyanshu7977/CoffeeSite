@@ -142,7 +142,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
             </div>
 
             <span className="text-xs font-mono tracking-[0.25em] uppercase text-[#E05A7E] mb-1 font-bold">
-              ALLOCATION CONFIRMED
+              RESERVATION CONFIRMED
             </span>
 
             <h3 className="font-display text-2xl sm:text-3xl text-[#2D2926] font-bold mb-2">
@@ -184,7 +184,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
             <div className="mb-6">
               <div className="flex items-center gap-1.5 text-xs font-sans tracking-[0.25em] uppercase text-[#E05A7E] mb-1 font-bold">
                 <Package className="h-3.5 w-3.5 text-[#E05A7E]" />
-                <span>PRIVATE ALLOCATION REQUEST</span>
+                <span>SPECIAL RESERVE ORDER</span>
               </div>
               <h3 className="font-display text-2xl sm:text-3xl text-[#2D2926] font-bold">
                 {defaultBatch.name}
@@ -299,7 +299,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
                 type="submit"
                 className="w-full py-3.5 rounded-full bg-[#2D2926] text-white font-sans text-xs font-bold tracking-[0.2em] uppercase transition-all shadow-md hover:bg-[#1F1C1A] hover:scale-105 cursor-pointer"
               >
-                Confirm Allocation Request
+                Confirm Order Request
               </button>
             </form>
           </div>

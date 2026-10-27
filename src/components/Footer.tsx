@@ -26,7 +26,7 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate: _onNavi
     {
       id: 'rev-02',
       name: 'Ananya Deshmukh',
-      role: 'Beverage Director • Mumbai Cellar',
+      role: 'Beverage Director • Mumbai',
       location: 'Mumbai',
       lot: 'MALABAR MONSOONED CASK',
       rating: 5,
@@ -36,7 +36,7 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate: _onNavi
     {
       id: 'rev-03',
       name: 'Chef Rohan Mehra',
-      role: 'Executive Chef • Atelier Le Bistro',
+      role: 'Executive Chef • Bengaluru Bistro',
       location: 'Bengaluru',
       lot: 'FILTER KAAPI CEREMONY',
       rating: 5,
@@ -179,11 +179,11 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate: _onNavi
             <div className="flex items-center gap-2 mb-2">
               <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
               <span className="text-xs font-mono tracking-[0.25em] uppercase text-[#F5DADF] font-bold">
-                LIVE DISPATCHES • 12 VERIFIED CELLAR REVIEWS
+                CUSTOMER REVIEWS • 12 VERIFIED EXPERIENCES
               </span>
             </div>
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl text-white font-bold tracking-tight">
-              Words from the <span className="italic text-[#F5DADF] font-medium">cellar.</span>
+              What Our <span className="italic text-[#F5DADF] font-medium">Customers Say.</span>
             </h2>
           </div>
 
@@ -241,7 +241,7 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate: _onNavi
                       {/* Verified Badge */}
                       <div className="flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-[10px] font-mono font-bold text-[#F5DADF]">
                         <ShieldCheck className="h-3 w-3 text-emerald-400" />
-                        <span>VERIFIED ALLOCATION</span>
+                        <span>VERIFIED PURCHASE</span>
                       </div>
                     </div>
 
@@ -322,12 +322,12 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate: _onNavi
           {/* Col 2: Navigation */}
           <div className="md:col-span-3 space-y-2">
             <span className="text-xs font-sans tracking-widest text-[#F5DADF] uppercase font-bold block mb-2">
-              Atelier Sitemap
+              Quick Links
             </span>
             <ul className="space-y-1.5 text-xs font-sans text-[#FAF7F5]/75">
-              <li><a href="/collection" className="hover:text-[#F5DADF] transition-colors">Coffee Collection (12 Lots)</a></li>
-              <li><a href="/atlas" className="hover:text-[#F5DADF] transition-colors">Estate & Terroir Atlas</a></li>
-              <li><a href="/about" className="hover:text-[#F5DADF] transition-colors">About Our Student Startup</a></li>
+              <li><a href="/collection" className="hover:text-[#F5DADF] transition-colors">Coffee Collection</a></li>
+              <li><a href="/atlas" className="hover:text-[#F5DADF] transition-colors">Coffee & Taste Guide</a></li>
+              <li><a href="/about" className="hover:text-[#F5DADF] transition-colors">About Us</a></li>
               <li><a href="/contact" className="hover:text-[#F5DADF] transition-colors">Contact & Roastery Map</a></li>
             </ul>
           </div>
@@ -335,10 +335,10 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate: _onNavi
           {/* Col 3: Newsletter */}
           <div className="md:col-span-4 space-y-2.5">
             <span className="text-xs font-sans tracking-widest text-[#F5DADF] uppercase font-bold block mb-2">
-              Direct Owner Desk
+              Customer Support
             </span>
             <p className="font-sans text-xs text-[#FAF7F5]/75 leading-relaxed">
-              Founder: <strong>Priyanshu Singh</strong> • Bengaluru Atelier<br />
+              Founder: <strong>Priyanshu Singh</strong> • Bengaluru Roastery<br />
               Phone: <a href="tel:+917977641125" className="text-[#F5DADF] hover:underline font-mono">+91 79776 41125</a><br />
               Email: <a href="mailto:priyanshubipin2006@gmail.com" className="text-[#F5DADF] hover:underline font-mono">priyanshubipin2006@gmail.com</a>
             </p>
@@ -350,19 +350,19 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate: _onNavi
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Join VIP dispatch register"
+                  placeholder="Enter email for fresh roast alerts"
                   className="w-full rounded-full bg-[#2D2926] border border-white/15 px-4 py-2.5 pr-24 text-xs text-white placeholder-[#FAF7F5]/40 focus:border-[#F5DADF] focus:outline-none font-sans"
                 />
                 <button
                   type="submit"
                   className="absolute right-1 rounded-full bg-[#F5DADF] text-[#2D2926] px-4 py-1.5 text-xs font-sans font-bold uppercase hover:bg-white transition-all cursor-pointer shadow-sm"
                 >
-                  Join
+                  Subscribe
                 </button>
               </div>
               {isSubscribed && (
                 <span className="text-[11px] text-[#F5DADF] flex items-center gap-1 mt-1.5 font-bold">
-                  <Check className="h-3 w-3" /> Priority invitation confirmed.
+                  <Check className="h-3 w-3" /> Subscription confirmed.
                 </span>
               )}
             </form>
@@ -371,7 +371,7 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate: _onNavi
 
         {/* Bottom Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#FAF7F5]/60">
-          <span>© 1998–2026 NOIR DAKSHIN MAISON. ALL RIGHTS RESERVED.</span>
+          <span>© 1998–2026 NOIR DAKSHIN COFFEE. ALL RIGHTS RESERVED.</span>
 
           <div className="flex items-center gap-4">
             <a href="mailto:priyanshubipin2006@gmail.com" className="flex items-center gap-1.5 hover:text-[#F5DADF] transition-colors">

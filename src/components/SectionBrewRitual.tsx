@@ -20,7 +20,7 @@ export const SectionBrewRitual: React.FC = () => {
           <div>
             <div className="text-xs tracking-[0.25em] text-[#2D2926] font-sans font-bold uppercase mb-2 flex items-center gap-2">
               <Sparkles className="h-3.5 w-3.5 text-[#E05A7E]" />
-              <span>06 / BREWING ATELIER</span>
+              <span>06 / BREWING GUIDE</span>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl md:text-5xl text-[#2D2926] font-bold tracking-tight">
               The daily <span className="italic text-[#E05A7E] font-medium">ritual.</span>

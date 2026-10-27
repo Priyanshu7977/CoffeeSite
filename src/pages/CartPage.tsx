@@ -48,12 +48,12 @@ export const CartPage: React.FC<CartPageProps> = ({
     const clean = promoCode.trim().toUpperCase();
     if (clean === 'NOIRVIP10' || clean === 'FIRSTROAST') {
       setDiscountPercent(10);
-      setPromoMessage('10% VIP Roastery Discount applied successfully!');
+      setPromoMessage('10% Discount applied successfully!');
     } else if (clean === 'COFFEE20') {
       setDiscountPercent(20);
-      setPromoMessage('20% Master Allocation Discount applied!');
+      setPromoMessage('20% Discount applied successfully!');
     } else {
-      setPromoMessage('Invalid voucher code. Try "NOIRVIP10"');
+      setPromoMessage('Invalid coupon code. Try "NOIRVIP10"');
     }
   };
 
@@ -78,17 +78,17 @@ export const CartPage: React.FC<CartPageProps> = ({
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/15 text-xs font-semibold hover:bg-neutral-200 transition-colors"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Continue Curating</span>
+            <span>Continue Shopping</span>
           </button>
           <div className="text-xs font-mono uppercase tracking-widest text-[#8C827A]">
-            Allocation Review & Cart ({items.reduce((s, i) => s + i.quantity, 0)} Items)
+            Shopping Cart ({items.reduce((s, i) => s + i.quantity, 0)} Items)
           </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-7xl px-4 sm:px-8 pt-8">
         <h1 className="text-3xl sm:text-4xl font-display font-bold text-[#2D2926] mb-8">
-          Your Curated Allocation
+          Your Shopping Cart
         </h1>
 
         {items.length === 0 ? (
@@ -98,13 +98,13 @@ export const CartPage: React.FC<CartPageProps> = ({
               Your Cart is Empty
             </h2>
             <p className="mt-2 text-sm text-[#8C827A] max-w-md mx-auto">
-              You haven't allocated any specialty micro-lots yet. Discover our 10 shade-grown harvest lots.
+              Your cart is currently empty. Explore our fresh roasted coffees.
             </p>
             <button
               onClick={() => navigate('/collection')}
               className="mt-6 px-6 py-3 rounded-full bg-[#2D2926] text-[#FAF7F5] font-bold text-xs hover:bg-black transition-colors"
             >
-              Explore 10 Coffee Lots →
+              Explore All Coffees →
             </button>
           </div>
         ) : (
@@ -129,8 +129,8 @@ export const CartPage: React.FC<CartPageProps> = ({
                 <div className="flex justify-between text-xs font-semibold mb-1.5">
                   <span>
                     {subtotal >= 3500
-                      ? '🎉 You have unlocked Complimentary Express Shipping!'
-                      : `Add ₹${3500 - subtotal} more for Complimentary Express Shipping`}
+                      ? 'You have unlocked Free Express Shipping!'
+                      : `Add ₹${3500 - subtotal} more for Free Express Shipping`}
                   </span>
                   <span className="font-mono text-[#E05A7E]">
                     {Math.min(100, Math.round((subtotal / 3500) * 100))}%
@@ -229,10 +229,10 @@ export const CartPage: React.FC<CartPageProps> = ({
                   onClick={onClearCart}
                   className="text-[#8C827A] hover:text-rose-600 underline font-mono"
                 >
-                  Clear All Allocations
+                  Clear Cart
                 </button>
                 <Link to="/collection" className="text-[#2D2926] font-bold hover:underline">
-                  + Add Another Micro-Lot
+                  + Add More Coffee
                 </Link>
               </div>
             </div>
@@ -241,7 +241,7 @@ export const CartPage: React.FC<CartPageProps> = ({
             <div className="lg:col-span-4 space-y-6">
               <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#2D2926]/10 shadow-sm space-y-6">
                 <h3 className="font-display font-bold text-xl text-[#2D2926]">
-                  Allocation Summary
+                  Order Summary
                 </h3>
 
                 {/* Promo Code Input */}
@@ -279,7 +279,7 @@ export const CartPage: React.FC<CartPageProps> = ({
 
                   {discountPercent > 0 && (
                     <div className="flex justify-between text-emerald-700 font-medium">
-                      <span>VIP Privilege Discount ({discountPercent}%)</span>
+                      <span>Discount ({discountPercent}%)</span>
                       <span className="font-mono font-bold">
                         -₹{discountAmount.toLocaleString('en-IN')}
                       </span>
@@ -287,14 +287,14 @@ export const CartPage: React.FC<CartPageProps> = ({
                   )}
 
                   <div className="flex justify-between">
-                    <span>Climate-Neutral Shipping</span>
+                    <span>Shipping</span>
                     <span className="font-mono font-bold text-[#2D2926]">
-                      {shipping === 0 ? 'COMPLIMENTARY' : `₹${shipping}`}
+                      {shipping === 0 ? 'FREE' : `₹${shipping}`}
                     </span>
                   </div>
 
                   <div className="flex justify-between pt-3 border-t border-[#2D2926]/10 text-base font-display font-bold text-[#2D2926]">
-                    <span>Total Allocation</span>
+                    <span>Total Amount</span>
                     <span className="text-xl">
                       ₹{finalTotal.toLocaleString('en-IN')}
                     </span>
@@ -307,7 +307,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                   disabled={stockErrors.length > 0}
                   className="w-full py-4 rounded-2xl bg-[#2D2926] text-[#FAF7F5] font-bold text-sm flex items-center justify-center gap-2 hover:bg-black transition-all shadow-xl disabled:bg-neutral-300 disabled:cursor-not-allowed"
                 >
-                  <span>Proceed to Final Allocation</span>
+                  <span>Proceed to Checkout</span>
                   <ArrowRight className="h-4 w-4" />
                 </button>
 

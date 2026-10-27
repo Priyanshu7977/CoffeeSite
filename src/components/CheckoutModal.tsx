@@ -241,7 +241,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
       if (!commitResult.success) {
         setStep('payment');
-        setErrorMessage(commitResult.error || 'Inventory allocation error: Insufficient stock remaining.');
+        setErrorMessage(commitResult.error || 'Inventory error: Insufficient stock remaining.');
         return;
       }
 
@@ -322,7 +322,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               }`}
             >
               <span className="h-5 w-5 rounded-full bg-white flex items-center justify-center text-[10px] font-mono font-bold">2</span>
-              <span>Settlement</span>
+              <span>Payment</span>
             </div>
           </div>
         )}
@@ -475,7 +475,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     <span className="font-semibold text-[#2D2926]">₹{subtotalNumeric.toLocaleString('en-IN')}</span>
                   </div>
                   <div className="flex justify-between text-[#5E5854]">
-                    <span>Estate Dispatch:</span>
+                    <span>Shipping:</span>
                     <span className="text-[#E05A7E] font-bold">FREE</span>
                   </div>
                   <div className="flex justify-between text-sm font-semibold text-[#2D2926] pt-1 border-t border-[#2D2926]/10">
@@ -491,7 +491,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 type="submit"
                 className="w-full sm:w-auto px-7 py-3 rounded-full bg-[#2D2926] text-white font-sans text-xs font-bold tracking-[0.2em] uppercase transition-all cursor-pointer flex items-center justify-center gap-2 shadow-md hover:bg-[#1F1C1A] hover:scale-105"
               >
-                <span>Continue to Settlement</span>
+                <span>Continue to Payment</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>
@@ -617,10 +617,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <Award className="h-7 w-7 text-[#E05A7E] animate-spin-slow" />
             </div>
             <h4 className="font-display text-2xl text-[#2D2926] font-bold">
-              Authorizing Settlement...
+              Processing Payment...
             </h4>
             <p className="font-sans text-xs text-[#5E5854] max-w-sm">
-              Registering your single-estate lot in our Chikmagalur ledger.
+              Securing your freshly roasted coffee order.
             </p>
           </div>
         )}
@@ -637,7 +637,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 Order Confirmed!
               </h3>
               <p className="font-sans text-xs text-[#5E5854] mt-1 max-w-md mx-auto">
-                Invoice <strong>#{confirmedOrderNumber}</strong>. A confirmation email has been dispatched to {email}.
+                Order <strong>#{confirmedOrderNumber}</strong>. A confirmation email has been sent to {email}.
               </p>
             </div>
 
@@ -645,7 +645,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               <div className="rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 p-3.5 text-left space-y-1.5 text-xs text-[#5E5854]">
                 <div className="flex items-center gap-1.5 text-[#2D2926] font-bold">
                   <Mail className="h-3.5 w-3.5 text-[#E05A7E]" />
-                  <span>Confirmation Dispatched</span>
+                  <span>Confirmation Sent</span>
                 </div>
                 <p>Sent to: <strong className="text-[#2D2926]">{latestEmail.to}</strong></p>
               </div>

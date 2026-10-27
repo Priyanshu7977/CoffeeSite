@@ -99,7 +99,7 @@ export const ProductDetailOverlay: React.FC<ProductDetailOverlayProps> = ({
                 <Coffee className="h-4 w-4 text-[#E05A7E] shrink-0 mt-0.5" />
                 <div>
                   <span className="text-[10px] font-sans tracking-widest text-[#2D2926] uppercase block font-bold">
-                    Atelier Brewing Recommendation
+                    Brewing Recommendation
                   </span>
                   <p className="font-serif italic text-xs text-[#5E5854] font-medium">
                     {product.brewRecommendation}

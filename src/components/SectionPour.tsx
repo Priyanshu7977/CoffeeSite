@@ -233,7 +233,7 @@ export const SectionPour: React.FC = () => {
         {/* Bottom Marker */}
         <div className="flex items-center justify-between border-t border-[#2D2926]/10 pt-2.5 sm:pt-3 text-[11px] sm:text-xs text-[#8C827A]">
           <span>Traditional Brass Davarah & 9-Bar Extraction</span>
-          <span className="font-mono text-[#2D2926] font-bold">BENGALURU ATELIER PROTOCOL</span>
+          <span className="font-mono text-[#2D2926] font-bold">BENGALURU ROASTERY GUIDE</span>
         </div>
       </div>
     </section>

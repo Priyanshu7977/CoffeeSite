@@ -118,8 +118,8 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                 <span className="font-display text-[10px] font-bold">N</span>
               </div>
               <span className="font-display text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] font-bold text-[#2D2926] uppercase truncate max-w-[130px] sm:max-w-none">
-                <span className="hidden sm:inline">THE ATELIER COLLECTION</span>
-                <span className="sm:hidden">ATELIER</span>
+                <span className="hidden sm:inline">COFFEE COLLECTION</span>
+                <span className="sm:hidden">COFFEES</span>
               </span>
             </div>
           </div>

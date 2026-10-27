@@ -52,21 +52,21 @@ export const AccountPage: React.FC<AccountPageProps> = ({
               <User className="h-8 w-8" />
             </div>
             <h2 className="text-3xl font-display font-bold text-[#2D2926]">
-              NOIR DAKSHIN MAISON
+              NOIR DAKSHIN COFFEE
             </h2>
             <p className="mt-2 text-sm text-[#8C827A] max-w-md mx-auto">
-              Sign in to access exclusive harvest pre-allocations, view authenticated certificate archives, and customize your roasting profiles.
+              Sign in to view your orders, saved addresses, and profile details.
             </p>
             <button
               onClick={onOpenLogin}
               className="mt-6 px-8 py-3.5 rounded-full bg-[#2D2926] text-[#FAF7F5] font-bold text-sm hover:bg-black transition-colors shadow-lg"
             >
-              Sign In to Member Portal
+              Sign In to Your Account
             </button>
           </div>
         ) : (
           <div className="space-y-8">
-            {/* Digital VIP Membership Card */}
+            {/* Digital Membership Card */}
             <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#1F1C1A] via-[#2D2926] to-[#0D0B0A] text-white p-6 sm:p-8 shadow-2xl border border-white/10">
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#E05A7E]/10 rounded-full filter blur-3xl pointer-events-none" />
 
@@ -78,7 +78,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                         NOIR DAKSHIN
                       </span>
                       <span className="px-2.5 py-0.5 rounded-full bg-[#F5DADF] text-[#2D2926] text-[10px] font-bold uppercase tracking-widest">
-                        VIP ALLIANCE
+                        CUSTOMER
                       </span>
                     </div>
                     <p className="text-[11px] text-[#8C827A] font-mono mt-0.5">
@@ -90,7 +90,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
 
                 <div>
                   <div className="text-[11px] font-mono text-[#8C827A] uppercase tracking-widest">
-                    Member Allocation Holder
+                    Registered Customer
                   </div>
                   <div className="text-xl sm:text-2xl font-display font-bold tracking-tight text-[#FAF7F5]">
                     {userSession.name}
@@ -99,11 +99,11 @@ export const AccountPage: React.FC<AccountPageProps> = ({
 
                 <div className="flex items-end justify-between border-t border-white/10 pt-3">
                   <div>
-                    <div className="text-[10px] text-[#8C827A] font-mono">REGISTRY ID</div>
+                    <div className="text-[10px] text-[#8C827A] font-mono">ACCOUNT ID</div>
                     <div className="text-sm font-mono font-bold text-[#F5DADF]">{userSession.memberId}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-[#8C827A] font-mono">CONTACT ALLOCATION</div>
+                    <div className="text-[10px] text-[#8C827A] font-mono">ACCOUNT EMAIL</div>
                     <div className="text-xs font-mono text-white/80">{userSession.email}</div>
                   </div>
                 </div>
@@ -125,7 +125,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                   </span>
                 </div>
                 <p className="text-xs text-emerald-800 leading-relaxed">
-                  You are authenticated with full operator authorization. You can monitor stock thresholds, trigger automated restocking batches, and oversee real-time lot allocations across India.
+                  You are authenticated with full operator authorization. You can monitor stock thresholds, trigger automated restocking batches, and oversee real-time inventory stock across India.
                 </p>
                 {onOpenInventoryHud && (
                   <button
@@ -139,13 +139,13 @@ export const AccountPage: React.FC<AccountPageProps> = ({
               </div>
             )}
 
-            {/* Member Details & Allocation Records */}
+            {/* Customer Details & Order Preferences */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Profile Details */}
               <div className="p-6 rounded-3xl bg-white border border-[#2D2926]/10 shadow-sm space-y-4">
                 <h3 className="font-display font-bold text-lg text-[#2D2926] flex items-center gap-2">
                   <User className="h-4 w-4 text-[#E05A7E]" />
-                  Curator Profile
+                  Customer Profile
                 </h3>
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between py-1.5 border-b border-[#2D2926]/5">
@@ -181,15 +181,15 @@ export const AccountPage: React.FC<AccountPageProps> = ({
               <div className="p-6 rounded-3xl bg-white border border-[#2D2926]/10 shadow-sm space-y-4">
                 <h3 className="font-display font-bold text-lg text-[#2D2926] flex items-center gap-2">
                   <Bell className="h-4 w-4 text-[#E05A7E]" />
-                  Allocation Alert Preferences
+                  Fresh Roast Alert Preferences
                 </h3>
                 <p className="text-xs text-[#5E5854]">
-                  Receive immediate alerts when rare micro-lots (such as Nilgiri Geisha or Monsooned Malabar) are fresh-roasted.
+                  Receive alerts when fresh seasonal coffees (such as Nilgiri Geisha or Monsooned Malabar) are roasted.
                 </p>
                 <div className="space-y-3 pt-2">
                   <label className="flex items-center gap-3 text-xs cursor-pointer">
                     <input type="checkbox" defaultChecked className="rounded accent-[#2D2926]" />
-                    <span>SMS / WhatsApp dispatch notification with tracking</span>
+                    <span>SMS / WhatsApp order updates with tracking</span>
                   </label>
                   <label className="flex items-center gap-3 text-xs cursor-pointer">
                     <input type="checkbox" defaultChecked className="rounded accent-[#2D2926]" />

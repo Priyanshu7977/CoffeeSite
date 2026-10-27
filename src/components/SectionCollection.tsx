@@ -197,7 +197,7 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
                 onClick={onOpenCollectionPage}
                 className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-white border border-[#2D2926]/15 text-[10px] sm:text-xs font-sans font-bold text-[#2D2926] hover:bg-[#F5DADF] transition-all cursor-pointer shadow-sm whitespace-nowrap active:scale-95"
               >
-                <span>View All 12 Lots</span>
+                <span>Shop All 12 Coffees</span>
                 <ArrowRight className="h-3 w-3 text-[#E05A7E]" />
               </button>
             )}
@@ -318,11 +318,11 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
                 onClick={onOpenCollectionPage}
                 className="font-sans font-bold text-[#E05A7E] hover:underline cursor-pointer"
               >
-                Explore All 10 Curations →
+                Shop All Coffees →
               </button>
             )}
             <span className="font-mono text-[#2D2926] font-bold">
-              0{activeProductIndex + 1} OF 04 LOTS
+              0{activeProductIndex + 1} OF 04
             </span>
           </div>
         </div>

@@ -171,7 +171,7 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
     if (onAddToCart) {
       onAddToCart(product, grind);
     }
-    setToastMessage(`Added ${product.name} (${grind}) to your allocation.`);
+    setToastMessage(`Added ${product.name} (${grind}) to your cart.`);
     setTimeout(() => setToastMessage(null), 3500);
   };
 
@@ -190,10 +190,10 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
 
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline text-xs font-mono font-bold tracking-wider text-[#8C827A] uppercase">
-              SOUTH INDIAN TERROIR & CUPPING ATLAS
+              SOUTH INDIAN COFFEE & ORIGIN GUIDE
             </span>
             <span className="h-1.5 w-1.5 rounded-full bg-[#E05A7E]" />
-            <span className="font-mono text-xs font-bold text-[#E05A7E]">ATELIER COMPENDIUM</span>
+            <span className="font-mono text-xs font-bold text-[#E05A7E]">COFFEE GUIDE</span>
           </div>
 
           <button
@@ -201,7 +201,7 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
             className="flex items-center gap-1.5 rounded-full bg-[#2D2926] px-4 py-1.5 text-xs font-sans font-bold text-white shadow-sm hover:bg-[#E05A7E] transition-all cursor-pointer"
           >
             <ShoppingBag className="h-3.5 w-3.5" />
-            <span>View All 12 Lots</span>
+            <span>Shop All Coffees</span>
           </button>
         </div>
       </div>
@@ -216,12 +216,12 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
         </div>
       )}
 
-      {/* 2. Hero Section: Scientific & Agronomical Prestige */}
+      {/* 2. Hero Section: Clean & Friendly */}
       <section className="relative overflow-hidden border-b border-[#2D2926]/10 bg-gradient-to-b from-white to-[#FAF7F5] pt-14 pb-16 px-6 md:px-12">
         <div className="mx-auto max-w-5xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-[#2D2926]/10 bg-[#F5DADF]/60 px-4 py-1.5 text-xs font-mono font-bold tracking-widest text-[#2D2926] uppercase mb-6 shadow-2xs">
             <Compass className="h-3.5 w-3.5 text-[#E05A7E]" />
-            <span>SCIENTIFIC AGRONOMY • TERROIR GEOGRAPHY • Q-GRADER METRICS</span>
+            <span>COFFEE ORIGINS • TASTING NOTES • BREWING GUIDE</span>
           </div>
 
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl text-[#2D2926] font-bold tracking-tight leading-[1.12] mb-6">
@@ -449,7 +449,7 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
 
                 <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2">
                   <span className="text-[10px] font-mono uppercase tracking-wider text-[#8C827A] font-bold block">
-                    Atelier Cupping Notes
+                    Tasting Notes
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {activeCuppingLot.notes.map((note) => (
@@ -472,7 +472,7 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
                     className="rounded-xl bg-[#2D2926] text-white px-4 py-2 text-xs font-sans font-bold hover:bg-[#E05A7E] transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
                   >
                     <ShoppingBag className="h-3.5 w-3.5" />
-                    <span>Allocate This Lot</span>
+                    <span>Add to Cart</span>
                   </button>
                 </div>
               </div>
@@ -708,23 +708,23 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
         </div>
       </section>
 
-      {/* 8. Direct Single-Estate Allocation Cards */}
+      {/* 8. Direct Single-Estate Coffee Cards */}
       <section className="py-16 md:py-24 px-6 md:px-12 bg-[#FAF7F5]">
         <div className="mx-auto max-w-6xl">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
             <div>
               <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-1">
-                VERIFIED SINGLE-ESTATE ALLOCATIONS
+                FRESH ROASTED SELECTION
               </span>
               <h2 className="font-display text-3xl sm:text-4xl text-[#2D2926] font-bold">
-                Acquire Analyzed Micro-Lots.
+                Order Fresh Roasted Coffee.
               </h2>
             </div>
             <button
               onClick={() => navigate('/collection')}
               className="text-xs font-sans font-bold tracking-wider uppercase text-[#E05A7E] hover:underline flex items-center gap-1"
             >
-              <span>Explore All 12 Terroir Lots</span>
+              <span>View All 12 Coffees</span>
               <span>→</span>
             </button>
           </div>

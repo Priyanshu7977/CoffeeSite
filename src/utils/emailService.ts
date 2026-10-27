@@ -65,11 +65,11 @@ const sendLiveEmailDispatch = async (payload: {
         _captcha: 'false',
         Recipient_Name: payload.recipientName,
         Order_Invoice_No: payload.orderNumber || 'N/A',
-        Allocations_Manifest: payload.itemsList || 'N/A',
+        Order_Items: payload.itemsList || 'N/A',
         Total_Amount_Settled: payload.total || 'N/A',
         Dispatch_Address: payload.address || 'N/A',
-        Maison_Message: payload.message,
-        Atelier_Heritage: 'NOIR DAKSHIN ROAST MAISON • CHIKMAGALUR & BENGALURU',
+        Roastery_Message: payload.message,
+        Roastery_Heritage: 'NOIR DAKSHIN COFFEE ROASTERS • CHIKMAGALUR & BENGALURU',
       }),
     });
   } catch (err) {
@@ -96,8 +96,8 @@ export const dispatchOrderConfirmationEmail = (
     id: `EMAIL-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
     to: recipientEmail,
     recipientName,
-    subject: `Order Confirmation #${orderNumber} • NOIR DAKSHIN ROAST MAISON`,
-    previewText: `Your allocation of ${items.length} shade-grown Chikmagalur lot(s) is confirmed under wax seal.`,
+    subject: `Order Confirmation #${orderNumber} • NOIR DAKSHIN COFFEE`,
+    previewText: `Your order of ${items.length} fresh-roasted coffee item(s) is confirmed.`,
     type: 'order_confirmation',
     timestamp: new Date().toISOString(),
     details: {
@@ -131,7 +131,7 @@ export const dispatchOrderConfirmationEmail = (
     total: totalAmount,
     itemsList: itemsText,
     address: shippingAddress,
-    message: `Thank you for securing your allocation with NOIR DAKSHIN ROAST. Your order #${orderNumber} has been recorded in our Chikmagalur cast-iron roasting ledger. Each micro-tin is hand-stamped with our master wax seal.`,
+    message: `Thank you for your order with NOIR DAKSHIN COFFEE. Your order #${orderNumber} has been received and scheduled for fresh roasting and shipment from Chikmagalur.`,
   });
 
   return email;
@@ -150,13 +150,13 @@ export const dispatchVIPWelcomeEmail = (
     id: `EMAIL-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
     to: recipientEmail,
     recipientName,
-    subject: `Welcome to the Noir Dakshin Vault Circle • Member #${membershipId}`,
-    previewText: `Your private access credentials have been authenticated for Bengaluru & Chikmagalur cellar reserves.`,
+    subject: `Welcome to Noir Dakshin Coffee • Customer #${membershipId}`,
+    previewText: `Your customer account has been created for fresh roasts and exclusive orders.`,
     type: 'vip_welcome',
     timestamp: new Date().toISOString(),
     details: {
       membershipId,
-      tier: 'Dakshin Vault Premier Member',
+      tier: 'Registered Customer',
       shippingAddress: `Phone: ${phone}`,
     },
   };
@@ -173,7 +173,7 @@ export const dispatchVIPWelcomeEmail = (
     toEmail: recipientEmail,
     subject: email.subject,
     recipientName,
-    message: `Welcome to the Noir Dakshin Vault Allocation Circle. Member ID: #${membershipId}. You now hold priority allocations to our limited 12kg single-ridge shade-grown Western Ghats roasts.`,
+    message: `Welcome to Noir Dakshin Coffee. Customer ID: #${membershipId}. You now have priority access to our fresh seasonal roasts.`,
   });
 
   return email;

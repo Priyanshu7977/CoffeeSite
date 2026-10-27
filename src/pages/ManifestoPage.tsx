@@ -27,7 +27,7 @@ export const ManifestoPage: React.FC = () => {
       <main className="mx-auto max-w-7xl px-4 sm:px-8 pt-10">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F5DADF] text-[#2D2926] text-xs font-bold uppercase tracking-wider mb-3">
-            <Feather className="h-3.5 w-3.5 text-[#E05A7E]" /> Maison Philosophy
+            <Feather className="h-3.5 w-3.5 text-[#E05A7E]" /> Roastery Philosophy
           </div>
           <h1 className="text-4xl sm:text-5xl font-display font-bold text-[#2D2926] tracking-tight">
             Coffee Without Compromise

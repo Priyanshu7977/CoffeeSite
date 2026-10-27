@@ -54,7 +54,7 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
         <div className="rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 p-3 mb-4 space-y-1 text-xs text-[#5E5854]">
           <div className="flex justify-between flex-wrap gap-1">
             <span className="text-[#8C827A]">From:</span>
-            <span className="font-mono text-[#2D2926] font-bold">atelier@noirroast.com (NOIR DAKSHIN)</span>
+            <span className="font-mono text-[#2D2926] font-bold">contact@noirroast.com (NOIR DAKSHIN)</span>
           </div>
           <div className="flex justify-between flex-wrap gap-1">
             <span className="text-[#8C827A]">To:</span>
@@ -78,20 +78,20 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
           </div>
 
           <div className="space-y-3 font-sans text-xs text-[#5E5854] leading-relaxed">
-            <p className="font-bold text-[#2D2926]">Salutations {email.recipientName},</p>
+            <p className="font-bold text-[#2D2926]">Hello {email.recipientName},</p>
             {email.type === 'order_confirmation' ? (
               <>
                 <p>
-                  Your order <strong>#{email.details.orderNumber}</strong> has been logged into our cast-iron roasting ledger.
+                  Your order <strong>#{email.details.orderNumber}</strong> has been logged into our roastery schedule.
                 </p>
                 <p>
-                  Each batch is hand-weighed, nitrogen-sealed, and dispatched from Chikmagalur directly to your address.
+                  Each batch is freshly roasted, sealed, and shipped from Chikmagalur directly to your address.
                 </p>
 
                 {email.details.items && (
                   <div className="rounded-xl bg-white border border-[#2D2926]/10 p-3.5 space-y-2 mt-2">
                     <span className="text-[9px] font-sans uppercase text-[#E05A7E] block tracking-widest font-bold">
-                      RESERVED MICRO-LOT SELECTION
+                      ORDER ITEMS
                     </span>
                     {email.details.items.map((it, idx) => (
                       <div key={idx} className="flex justify-between items-center text-xs pb-1.5 border-b border-[#2D2926]/10 last:border-b-0 last:pb-0">
@@ -103,7 +103,7 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
                       </div>
                     ))}
                     <div className="pt-2 flex justify-between items-center text-xs font-bold border-t border-[#2D2926]/10">
-                      <span className="text-[#2D2926]">Total Settled:</span>
+                      <span className="text-[#2D2926]">Total Paid:</span>
                       <span className="font-display text-sm text-[#2D2926] font-bold">{email.details.totalAmount}</span>
                     </div>
                   </div>
@@ -117,11 +117,11 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
             ) : (
               <>
                 <p>
-                  Welcome to the <strong>Noir Dakshin Private Cellar</strong>. You hold priority allocation rights to our seasonal harvest releases.
+                  Welcome to <strong>Noir Dakshin Coffee</strong>. You now have priority access to our fresh seasonal roasts.
                 </p>
                 <div className="rounded-xl bg-white border border-[#2D2926]/10 p-3.5 text-center space-y-1">
                   <span className="text-[10px] font-sans tracking-widest text-[#E05A7E] uppercase block font-bold">
-                    YOUR CELLAR PASSPORT NUMBER
+                    YOUR CUSTOMER ID NUMBER
                   </span>
                   <span className="font-mono text-lg font-bold text-[#2D2926] tracking-wider block">
                     #{email.details.membershipId}
@@ -138,9 +138,9 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({ 
           <div className="pt-3 border-t border-[#2D2926]/10 flex items-center justify-between text-[10px] font-mono text-[#8C827A]">
             <div className="flex items-center gap-1">
               <Shield className="h-3 w-3 text-[#E05A7E]" />
-              <span>NOIR DAKSHIN HAUTE MAISON</span>
+              <span>NOIR DAKSHIN COFFEE</span>
             </div>
-            <span>OFFICIAL DISPATCH</span>
+            <span>ORDER CONFIRMATION</span>
           </div>
         </div>
 

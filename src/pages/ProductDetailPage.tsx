@@ -156,7 +156,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 )}
                 {stockStatus === 'LOW_STOCK' && (
                   <span className="px-3 py-1 rounded-full bg-amber-500 text-white font-mono text-xs font-bold shadow-lg">
-                    Vault Allocation: Only {currentStock} Left
+                    Low Stock: Only {currentStock} Left
                   </span>
                 )}
                 {stockStatus === 'IN_STOCK' && (
@@ -349,14 +349,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 >
                   {justAdded ? (
                     <>
-                      <Check className="h-4 w-4" /> Added to Allocation!
+                      <Check className="h-4 w-4" /> Added to Cart!
                     </>
                   ) : stockStatus === 'OUT_OF_STOCK' ? (
                     <>Out of Stock</>
                   ) : (
                     <>
                       <ShoppingBag className="h-4 w-4" />
-                      Add to Allocation • {product.price}
+                      Add to Cart • {product.price}
                     </>
                   )}
                 </button>

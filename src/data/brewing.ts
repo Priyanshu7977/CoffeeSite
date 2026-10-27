@@ -123,7 +123,7 @@ export const NOIR_BREW_METHODS: BrewMethod[] = [
   },
   {
     id: 'aeropress',
-    name: 'INVERTED AEROPRESS ATELIER',
+    name: 'INVERTED AEROPRESS METHOD',
     tagline: 'Full Immersion Clarity with Micro-Filtering',
     time: '2 Minutes 15 Seconds',
     grind: 'Medium-Fine 550µm Ceramic Burrs',

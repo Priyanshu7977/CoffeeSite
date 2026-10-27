@@ -104,7 +104,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <nav className="hidden items-center gap-5 lg:gap-6 md:flex shrink-0">
           {[
             { label: 'COLLECTION', path: '/collection' },
-            { label: 'ESTATE ATLAS', path: '/atlas' },
+            { label: 'COFFEE GUIDE', path: '/atlas' },
             { label: 'ABOUT US', path: '/about' },
             { label: 'CONTACT', path: '/contact' },
           ].map((item) => (
@@ -140,7 +140,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
-          {/* VIP Status */}
+          {/* Account Status */}
           <MagneticButton strength={0.3}>
             <button
               onClick={() => {
@@ -166,7 +166,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               ) : (
                 <>
                   <User className="h-3.5 w-3.5 text-[#5E5854]" />
-                  <span className="hidden sm:inline font-bold">VIP Pass</span>
+                  <span className="hidden sm:inline font-bold">Account</span>
                 </>
               )}
             </button>
@@ -203,13 +203,13 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="pointer-events-auto mx-auto max-w-lg mt-2 rounded-3xl bg-white/98 border border-[#2D2926]/10 p-5 shadow-2xl md:hidden animate-fadeIn backdrop-blur-xl">
           <div className="flex flex-col gap-3">
             {[
-              { label: 'HOME OVERVIEW', path: '/' },
-              { label: 'SPECIALTY COFFEE LOTS', path: '/collection' },
-              { label: 'ESTATE & TERROIR ATLAS', path: '/atlas' },
-              { label: 'ABOUT OUR STARTUP', path: '/about' },
-              { label: 'CONTACT & ROASTERY MAP', path: '/contact' },
-              { label: 'CURATED ALLOCATION CART', path: '/cart' },
-              { label: 'VIP MEMBER ACCOUNT', path: '/account' },
+              { label: 'HOME', path: '/' },
+              { label: 'SHOP COFFEE', path: '/collection' },
+              { label: 'COFFEE GUIDE', path: '/atlas' },
+              { label: 'ABOUT US', path: '/about' },
+              { label: 'CONTACT US', path: '/contact' },
+              { label: 'SHOPPING CART', path: '/cart' },
+              { label: 'MY ACCOUNT', path: '/account' },
             ].map((item) => (
               <button
                 key={item.label}
@@ -242,7 +242,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }}
                 className="w-full py-2.5 rounded-xl bg-[#2D2926] text-white text-xs font-bold uppercase tracking-wider shadow-md text-center"
               >
-                Explore All 12 Lots
+                Explore All Coffees
               </button>
             </div>
           </div>

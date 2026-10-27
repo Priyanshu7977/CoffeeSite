@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Lock, Sparkles, User, Mail, Phone, ArrowRight, AlertCircle } from 'lucide-react';
+import { X, Lock, User, Mail, Phone, ArrowRight, AlertCircle } from 'lucide-react';
 import { sanitizeName, sanitizePhone, isValidEmail, isValidName, isValidPhone, hasMaliciousContent, stripDangerousMarkup } from '../utils/validation';
 import { dispatchVIPWelcomeEmail, type AutomatedEmail } from '../utils/emailService';
 import { authenticateIMS } from '../utils/inventorySystem';
@@ -203,19 +203,18 @@ export const LoginModal: React.FC<LoginModalProps> = ({
         {/* Eyebrow & Brand */}
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 mb-2 shadow-sm">
-            <Sparkles className="h-3 w-3 text-[#E05A7E]" />
             <span className="text-[10px] font-sans tracking-[0.25em] uppercase text-[#2D2926] font-bold">
-              VIP CELLAR ACCESS
+              CUSTOMER ACCOUNT
             </span>
           </div>
 
           <h3 className="font-display text-2xl text-[#2D2926] font-bold">
-            {isRegisterMode ? 'Maison Registration' : 'Atelier Sign In'}
+            {isRegisterMode ? 'Create Account' : 'Sign In'}
           </h3>
           <p className="font-sans text-xs text-[#5E5854] mt-1 max-w-xs mx-auto">
             {isRegisterMode
-              ? 'Join our private cellar for priority allocation of limited micro-lots.'
-              : 'Sign in to access your reserve allocations and order ledger.'}
+              ? 'Sign up to track orders, save delivery details, and get fresh roast updates.'
+              : 'Sign in to view your order history and account details.'}
           </p>
         </div>
 
@@ -350,7 +349,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               <span className="animate-pulse">Authenticating...</span>
             ) : (
               <>
-                <span>{isRegisterMode ? 'Create VIP Membership' : 'Enter Cellar'}</span>
+                <span>{isRegisterMode ? 'Create Account' : 'Sign In'}</span>
                 <ArrowRight className="h-4 w-4" />
               </>
             )}

@@ -15,7 +15,7 @@ export const NotFoundPage: React.FC = () => {
         The Extraction Path Has Drifted
       </h1>
       <p className="mt-4 text-sm sm:text-base text-[#5E5854] max-w-md">
-        The lot or page you are looking for has been relocated or archived in our cellar.
+        The coffee or page you are looking for does not exist or has been moved.
       </p>
 
       <div className="mt-8 flex flex-wrap gap-4 justify-center">
@@ -31,7 +31,7 @@ export const NotFoundPage: React.FC = () => {
           className="px-6 py-3 rounded-full bg-white border border-[#2D2926]/15 text-[#2D2926] font-bold text-xs flex items-center gap-2 hover:bg-neutral-100 transition-colors"
         >
           <Compass className="h-4 w-4 text-[#E05A7E]" />
-          <span>Explore 10 Coffee Lots</span>
+          <span>Explore All Coffees</span>
         </Link>
       </div>
     </div>

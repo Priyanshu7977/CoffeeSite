@@ -251,7 +251,7 @@ export const SectionHorizontalGallery: React.FC = () => {
                     <div className="pt-3 border-t border-[#2D2926]/10 flex items-center justify-between text-xs text-[#8C827A]">
                       <div className="flex items-center gap-1.5">
                         <Compass className="h-3.5 w-3.5 text-[#2D2926]" />
-                        <span>Maison Archive</span>
+                        <span>Estate Story</span>
                       </div>
                       <span className="font-mono text-[#2D2926]">Spread 0{idx + 1} of 04</span>
                     </div>
@@ -261,7 +261,7 @@ export const SectionHorizontalGallery: React.FC = () => {
 
               {/* Bottom Marker */}
               <div className="absolute bottom-4 sm:bottom-6 left-6 md:left-12 right-6 md:right-12 flex items-center justify-between border-t border-[#2D2926]/10 pt-3 text-xs text-[#8C827A]">
-                <span>NOIR DAKSHIN • HAUTE KAAPI MAGAZINE</span>
+                <span>NOIR DAKSHIN • COFFEE JOURNAL</span>
                 <span className="font-mono text-[#2D2926] font-bold">{slide.title}</span>
               </div>
             </div>

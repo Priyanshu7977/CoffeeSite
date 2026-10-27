@@ -172,7 +172,7 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
           className="mb-3 sm:mb-5 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F5DADF] text-[#2D2926] text-[10px] sm:text-xs tracking-[0.25em] font-sans font-bold uppercase shadow-sm"
         >
           <Sparkles className="h-3 w-3 text-[#E05A7E]" />
-          <span>NOIR DAKSHIN ROAST / BABA BUDAN ATELIER EST. 1998</span>
+          <span>NOIR DAKSHIN ROAST / BABA BUDAN ROASTERY EST. 1998</span>
         </div>
 
         {/* Monumental Modern Headline in Space Grotesk */}
