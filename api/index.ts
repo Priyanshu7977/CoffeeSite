@@ -1,8 +1,11 @@
 /**
  * Vercel Serverless Function Entry Point
- * Routes all /api/* requests to the Express application.
+ * Routes /api requests to the Express application.
  */
 
 import { app } from '../src/server/app';
 
-export default app;
+export default function handler(req: any, res: any) {
+  return app(req, res);
+}
+

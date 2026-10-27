@@ -47,10 +47,26 @@ app.use(
 
 app.use(express.urlencoded({ extended: true }));
 
+// Express Router mounted for both direct and rewritten paths
+const apiRouter = express.Router();
+
+/**
+ * 0. Root API status
+ */
+apiRouter.get('/', (_req: Request, res: Response) => {
+  const { keyId } = getRazorpayCredentials();
+  res.json({
+    status: 'ok',
+    service: 'Noir Dakshin Coffee Payment Gateway',
+    razorpayConfigured: Boolean(keyId),
+    timestamp: new Date().toISOString(),
+  });
+});
+
 /**
  * 1. Health check
  */
-app.get('/api/health', (_req: Request, res: Response) => {
+apiRouter.get('/health', (_req: Request, res: Response) => {
   const { keyId } = getRazorpayCredentials();
   res.json({
     status: 'ok',
@@ -64,10 +80,10 @@ app.get('/api/health', (_req: Request, res: Response) => {
  * 2. Public Gateway Configuration
  * Only returns the PUBLIC Key ID and configurable QR options. NEVER exposes the secret!
  */
-app.get('/api/payment/config', (_req: Request, res: Response) => {
+apiRouter.get('/payment/config', (_req: Request, res: Response) => {
   const { keyId } = getRazorpayCredentials();
   res.json({
-    keyId,
+    keyId: keyId || process.env.VITE_RAZORPAY_KEY_ID || '',
     currency: 'INR',
     merchantName: 'NOIR DAKSHIN COFFEE',
     customQrOptions: CUSTOM_UPI_QR_OPTIONS,
@@ -82,7 +98,7 @@ app.get('/api/payment/config', (_req: Request, res: Response) => {
  * - If COD: Marks pending
  * - If Custom UPI QR: Marks awaiting_manual_verification
  */
-app.post('/api/payment/create-order', async (req: Request, res: Response): Promise<void> => {
+apiRouter.post('/payment/create-order', async (req: Request, res: Response): Promise<void> => {
   try {
     const { items, customer, discountCode, paymentMethod, customQrId } = req.body;
 
@@ -159,6 +175,17 @@ app.post('/api/payment/create-order', async (req: Request, res: Response): Promi
 
     // 3A. Razorpay Flow
     if (validPaymentMethod === 'razorpay') {
+      const { keyId, keySecret } = getRazorpayCredentials();
+
+      if (!keyId || !keySecret) {
+        res.status(500).json({
+          success: false,
+          error:
+            'Razorpay credentials are not configured on the server. Please add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in Vercel Project Settings > Environment Variables.',
+        });
+        return;
+      }
+
       try {
         const rzpOrder = await createRazorpayOrder(
           valuation.pricing.amountInPaise,
@@ -168,8 +195,6 @@ app.post('/api/payment/create-order', async (req: Request, res: Response): Promi
 
         newOrder.razorpayOrderId = rzpOrder.id;
         OrdersStore.saveOrder(newOrder);
-
-        const { keyId } = getRazorpayCredentials();
 
         res.json({
           success: true,
@@ -201,7 +226,12 @@ app.post('/api/payment/create-order', async (req: Request, res: Response): Promi
       OrdersStore.saveOrder(newOrder);
 
       // Deduct stock for approved COD order
-      inventorySystem.commitOrder(valuation.items.map((it: { productId: string; quantity: number }) => ({ productId: it.productId, quantity: it.quantity })));
+      inventorySystem.commitOrder(
+        valuation.items.map((it: { productId: string; quantity: number }) => ({
+          productId: it.productId,
+          quantity: it.quantity,
+        }))
+      );
 
       res.json({
         success: true,
@@ -224,7 +254,12 @@ app.post('/api/payment/create-order', async (req: Request, res: Response): Promi
       OrdersStore.saveOrder(newOrder);
 
       // Reserve stock while awaiting verification
-      inventorySystem.commitOrder(valuation.items.map((it: { productId: string; quantity: number }) => ({ productId: it.productId, quantity: it.quantity })));
+      inventorySystem.commitOrder(
+        valuation.items.map((it: { productId: string; quantity: number }) => ({
+          productId: it.productId,
+          quantity: it.quantity,
+        }))
+      );
 
       res.json({
         success: true,
@@ -250,7 +285,7 @@ app.post('/api/payment/create-order', async (req: Request, res: Response): Promi
  * - Updates order to 'captured'
  * - Deducts inventory
  */
-app.post('/api/payment/verify-signature', async (req: Request, res: Response): Promise<void> => {
+apiRouter.post('/payment/verify-signature', async (req: Request, res: Response): Promise<void> => {
   try {
     const { orderId, razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
@@ -333,7 +368,12 @@ app.post('/api/payment/verify-signature', async (req: Request, res: Response): P
     });
 
     // 5. Decrement inventory
-    inventorySystem.commitOrder(order.items.map((it: { productId: string; quantity: number }) => ({ productId: it.productId, quantity: it.quantity })));
+    inventorySystem.commitOrder(
+      order.items.map((it: { productId: string; quantity: number }) => ({
+        productId: it.productId,
+        quantity: it.quantity,
+      }))
+    );
 
     res.json({
       success: true,
@@ -350,7 +390,7 @@ app.post('/api/payment/verify-signature', async (req: Request, res: Response): P
  * 5. Submit Custom Direct UPI UTR Reference
  * Does NOT mark order paid immediately; marks as awaiting_manual_verification
  */
-app.post('/api/payment/submit-utr', (req: Request, res: Response): void => {
+apiRouter.post('/payment/submit-utr', (req: Request, res: Response): void => {
   try {
     const { orderId, utrNumber, customQrId } = req.body;
 
@@ -405,7 +445,7 @@ app.post('/api/payment/submit-utr', (req: Request, res: Response): void => {
  * - Validates webhook signature using raw body
  * - Idempotently updates order when payment is captured
  */
-app.post('/api/payment/webhook', (req: Request, res: Response): void => {
+apiRouter.post('/payment/webhook', (req: Request, res: Response): void => {
   try {
     const signature = (req.headers['x-razorpay-signature'] as string) || '';
     const rawBody = (req as unknown as { rawBody?: Buffer }).rawBody;
@@ -443,7 +483,12 @@ app.post('/api/payment/webhook', (req: Request, res: Response): void => {
               fulfillmentStatus: 'roasting',
             });
             // Commit stock
-            inventorySystem.commitOrder(order.items.map((it: { productId: string; quantity: number }) => ({ productId: it.productId, quantity: it.quantity })));
+            inventorySystem.commitOrder(
+              order.items.map((it: { productId: string; quantity: number }) => ({
+                productId: it.productId,
+                quantity: it.quantity,
+              }))
+            );
           }
         }
       }
@@ -472,7 +517,7 @@ app.post('/api/payment/webhook', (req: Request, res: Response): void => {
  * 7. Customer Orders History
  * Only returns orders matching the customer's email or member ID
  */
-app.get('/api/orders/my-orders', (req: Request, res: Response): void => {
+apiRouter.get('/orders/my-orders', (req: Request, res: Response): void => {
   const email = (req.query.email as string) || '';
   const memberId = (req.query.memberId as string) || '';
 
@@ -488,7 +533,7 @@ app.get('/api/orders/my-orders', (req: Request, res: Response): void => {
 /**
  * 8. Single Order Lookup
  */
-app.get('/api/orders/:orderId', (req: Request, res: Response): void => {
+apiRouter.get('/orders/:orderId', (req: Request, res: Response): void => {
   const orderId = String(req.params.orderId || '');
   const order = OrdersStore.getOrderById(orderId) || OrdersStore.getOrderByNumber(orderId);
 
@@ -503,7 +548,7 @@ app.get('/api/orders/:orderId', (req: Request, res: Response): void => {
 /**
  * 9. Admin: View All Orders (Protected by IMS Role)
  */
-app.get('/api/admin/orders', (req: Request, res: Response): void => {
+apiRouter.get('/admin/orders', (req: Request, res: Response): void => {
   const authHeader = req.headers.authorization || '';
   const roleHeader = (req.headers['x-admin-role'] as string) || '';
 
@@ -519,7 +564,7 @@ app.get('/api/admin/orders', (req: Request, res: Response): void => {
 /**
  * 10. Admin: Verify UTR Reference
  */
-app.post('/api/admin/verify-utr', (req: Request, res: Response): void => {
+apiRouter.post('/admin/verify-utr', (req: Request, res: Response): void => {
   const { orderId, isApproved, verifiedBy, notes } = req.body;
 
   if (!orderId) {
@@ -542,8 +587,17 @@ app.post('/api/admin/verify-utr', (req: Request, res: Response): void => {
   res.json({ success: true, message: 'Order verification updated.', order: updated });
 });
 
+// Mount the router on both '/api' and '/' so all rewrites/prefixes work seamlessly
+app.use('/api', apiRouter);
+app.use('/', apiRouter);
+
+// Fallback 404 handler (prevents unhandled hangs)
+app.use((req: Request, res: Response) => {
+  res.status(404).json({ success: false, error: 'API endpoint not found', path: req.url });
+});
+
 // Error handling fallback
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Unhandled API error:', err);
-  res.status(500).json({ success: false, error: 'Internal server error.' });
+  res.status(500).json({ success: false, error: err.message || 'Internal server error.' });
 });

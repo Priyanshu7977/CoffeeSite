@@ -5,29 +5,37 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import type { CustomerOrder } from '../types/payment';
 
-const ORDERS_DIR = path.resolve(process.cwd(), 'data');
-const ORDERS_FILE = path.join(ORDERS_DIR, 'orders.json');
+function getOrdersFilePath(): string {
+  try {
+    const localDir = path.resolve(process.cwd(), 'data');
+    if (!fs.existsSync(localDir)) {
+      fs.mkdirSync(localDir, { recursive: true });
+    }
+    return path.join(localDir, 'orders.json');
+  } catch {
+    const tmpDir = path.join(os.tmpdir(), 'noir-dakshin-orders');
+    try {
+      if (!fs.existsSync(tmpDir)) {
+        fs.mkdirSync(tmpDir, { recursive: true });
+      }
+    } catch {
+      // Ignored
+    }
+    return path.join(tmpDir, 'orders.json');
+  }
+}
 
 // In-Memory Fast Cache & Primary Record
 let ordersCache: Map<string, CustomerOrder> = new Map();
 
-function ensureDataDir(): void {
-  try {
-    if (!fs.existsSync(ORDERS_DIR)) {
-      fs.mkdirSync(ORDERS_DIR, { recursive: true });
-    }
-  } catch (err) {
-    console.warn('Orders directory creation notice:', err);
-  }
-}
-
 function loadOrdersFromDisk(): void {
   try {
-    ensureDataDir();
-    if (fs.existsSync(ORDERS_FILE)) {
-      const raw = fs.readFileSync(ORDERS_FILE, 'utf-8');
+    const filePath = getOrdersFilePath();
+    if (fs.existsSync(filePath)) {
+      const raw = fs.readFileSync(filePath, 'utf-8');
       if (raw.trim()) {
         const parsed: CustomerOrder[] = JSON.parse(raw);
         if (Array.isArray(parsed)) {
@@ -37,21 +45,21 @@ function loadOrdersFromDisk(): void {
       }
     }
   } catch (err) {
-    console.warn('Error reading orders from disk, using in-memory store:', err);
+    console.warn('Orders storage read notice (in-memory active):', err);
   }
 }
 
 function persistOrdersToDisk(): void {
   try {
-    ensureDataDir();
+    const filePath = getOrdersFilePath();
     const list = Array.from(ordersCache.values());
-    fs.writeFileSync(ORDERS_FILE, JSON.stringify(list, null, 2), 'utf-8');
+    fs.writeFileSync(filePath, JSON.stringify(list, null, 2), 'utf-8');
   } catch (err) {
-    console.warn('Failed to persist orders to disk (running in-memory):', err);
+    console.warn('Orders persistence notice (in-memory active):', err);
   }
 }
 
-// Initial load
+// Initial safe load
 loadOrdersFromDisk();
 
 export class OrdersStore {
