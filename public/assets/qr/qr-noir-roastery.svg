@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FAF7F5"/>
+      <stop offset="100%" stop-color="#F2EBE5"/>
+    </linearGradient>
+    <linearGradient id="qrGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1F1C1A"/>
+      <stop offset="100%" stop-color="#2D2926"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer Card Frame -->
+  <rect width="400" height="400" rx="28" fill="url(#bgGrad1)" stroke="#2D2926" stroke-opacity="0.15" stroke-width="2"/>
+  
+  <!-- Inner QR White Pad -->
+  <rect x="30" y="30" width="340" height="340" rx="20" fill="#FFFFFF" stroke="#2D2926" stroke-opacity="0.08" stroke-width="1.5"/>
+  
+  <!-- Corner Position Detection Markers (Top Left) -->
+  <rect x="55" y="55" width="70" height="70" rx="12" fill="none" stroke="url(#qrGrad1)" stroke-width="12"/>
+  <rect x="75" y="75" width="30" height="30" rx="6" fill="#2D2926"/>
+  
+  <!-- Corner Position Detection Markers (Top Right) -->
+  <rect x="275" y="55" width="70" height="70" rx="12" fill="none" stroke="url(#qrGrad1)" stroke-width="12"/>
+  <rect x="295" y="75" width="30" height="30" rx="6" fill="#2D2926"/>
+  
+  <!-- Corner Position Detection Markers (Bottom Left) -->
+  <rect x="55" y="275" width="70" height="70" rx="12" fill="none" stroke="url(#qrGrad1)" stroke-width="12"/>
+  <rect x="75" y="295" width="30" height="30" rx="6" fill="#2D2926"/>
+
+  <!-- Stylized High-Density Data Matrix Dots -->
+  <!-- Row 1 -->
+  <rect x="145" y="60" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="175" y="60" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="205" y="60" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="235" y="60" width="16" height="16" rx="3" fill="#2D2926"/>
+  <!-- Row 2 -->
+  <rect x="145" y="90" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="190" y="90" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="235" y="90" width="16" height="16" rx="3" fill="#2D2926"/>
+  <!-- Row 3 -->
+  <rect x="145" y="120" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="190" y="120" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="220" y="120" width="30" height="16" rx="3" fill="#2D2926"/>
+  <!-- Row 4 (Mid Upper) -->
+  <rect x="60" y="145" width="16" height="30" rx="3" fill="#2D2926"/>
+  <rect x="90" y="145" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="275" y="145" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="320" y="145" width="16" height="30" rx="3" fill="#2D2926"/>
+
+  <!-- Row 5 (Center Band) -->
+  <rect x="60" y="190" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="105" y="190" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="275" y="190" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="305" y="190" width="30" height="16" rx="3" fill="#2D2926"/>
+
+  <!-- Row 6 (Mid Lower) -->
+  <rect x="60" y="220" width="16" height="30" rx="3" fill="#2D2926"/>
+  <rect x="90" y="235" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="275" y="220" width="16" height="30" rx="3" fill="#2D2926"/>
+  <rect x="305" y="235" width="30" height="16" rx="3" fill="#2D2926"/>
+
+  <!-- Row 7 (Lower Mid Matrix) -->
+  <rect x="145" y="260" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="190" y="260" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="220" y="260" width="30" height="16" rx="3" fill="#2D2926"/>
+
+  <!-- Row 8 (Bottom Band) -->
+  <rect x="145" y="290" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="175" y="290" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="220" y="290" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="250" y="290" width="16" height="16" rx="3" fill="#2D2926"/>
+
+  <!-- Row 9 (Bottom End) -->
+  <rect x="145" y="320" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="190" y="320" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="220" y="320" width="46" height="16" rx="3" fill="#2D2926"/>
+
+  <!-- Central Branded Coffee & Bank Shield -->
+  <rect x="150" y="150" width="100" height="100" rx="18" fill="#1F1C1A" stroke="#FAF7F5" stroke-width="4"/>
+  <circle cx="200" cy="190" r="22" fill="#E05A7E"/>
+  <!-- Coffee Bean Symbol in Center -->
+  <path d="M192,185 C192,175 208,175 208,185 C208,195 192,205 192,205 C192,205 192,195 192,185 Z" fill="#FAF7F5"/>
+  <path d="M208,195 C208,205 192,205 192,195 C192,185 208,175 208,175 C208,175 208,185 208,195 Z" fill="#FAF7F5"/>
+  <line x1="200" y1="174" x2="200" y2="206" stroke="#1F1C1A" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Text Label -->
+  <text x="200" y="232" font-family="'Space Grotesk', sans-serif" font-size="10" font-weight="700" fill="#FAF7F5" text-anchor="middle" letter-spacing="1">HDFC • NOIR</text>
+</svg>

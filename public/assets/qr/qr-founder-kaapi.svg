@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FAF7F5"/>
+      <stop offset="100%" stop-color="#F5EFEA"/>
+    </linearGradient>
+    <linearGradient id="qrGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D2926"/>
+      <stop offset="100%" stop-color="#3D3733"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer Card Frame -->
+  <rect width="400" height="400" rx="28" fill="url(#bgGrad2)" stroke="#C89658" stroke-opacity="0.3" stroke-width="2"/>
+  
+  <!-- Inner QR White Pad -->
+  <rect x="30" y="30" width="340" height="340" rx="20" fill="#FFFFFF" stroke="#2D2926" stroke-opacity="0.08" stroke-width="1.5"/>
+  
+  <!-- Corner Position Detection Markers (Top Left) -->
+  <rect x="55" y="55" width="70" height="70" rx="12" fill="none" stroke="url(#qrGrad2)" stroke-width="12"/>
+  <rect x="75" y="75" width="30" height="30" rx="6" fill="#C89658"/>
+  
+  <!-- Corner Position Detection Markers (Top Right) -->
+  <rect x="275" y="55" width="70" height="70" rx="12" fill="none" stroke="url(#qrGrad2)" stroke-width="12"/>
+  <rect x="295" y="75" width="30" height="30" rx="6" fill="#C89658"/>
+  
+  <!-- Corner Position Detection Markers (Bottom Left) -->
+  <rect x="55" y="275" width="70" height="70" rx="12" fill="none" stroke="url(#qrGrad2)" stroke-width="12"/>
+  <rect x="75" y="295" width="30" height="30" rx="6" fill="#C89658"/>
+
+  <!-- Stylized Matrix Blocks -->
+  <rect x="145" y="60" width="24" height="16" rx="3" fill="#2D2926"/>
+  <rect x="180" y="60" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="210" y="60" width="40" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="145" y="90" width="40" height="16" rx="3" fill="#2D2926"/>
+  <rect x="195" y="90" width="25" height="16" rx="3" fill="#2D2926"/>
+  <rect x="230" y="90" width="20" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="145" y="120" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="175" y="120" width="35" height="16" rx="3" fill="#2D2926"/>
+  <rect x="220" y="120" width="30" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="60" y="145" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="105" y="145" width="16" height="30" rx="3" fill="#2D2926"/>
+  <rect x="275" y="145" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="305" y="145" width="32" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="60" y="190" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="90" y="190" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="275" y="190" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="320" y="190" width="16" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="60" y="225" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="105" y="225" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="275" y="225" width="16" height="25" rx="3" fill="#2D2926"/>
+  <rect x="305" y="225" width="30" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="145" y="260" width="16" height="16" rx="3" fill="#2D2926"/>
+  <rect x="175" y="260" width="40" height="16" rx="3" fill="#2D2926"/>
+  <rect x="225" y="260" width="25" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="145" y="290" width="35" height="16" rx="3" fill="#2D2926"/>
+  <rect x="190" y="290" width="20" height="16" rx="3" fill="#2D2926"/>
+  <rect x="220" y="290" width="30" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="145" y="320" width="20" height="16" rx="3" fill="#2D2926"/>
+  <rect x="175" y="320" width="45" height="16" rx="3" fill="#2D2926"/>
+  <rect x="230" y="320" width="20" height="16" rx="3" fill="#2D2926"/>
+
+  <!-- Central Branded Emblem -->
+  <rect x="150" y="150" width="100" height="100" rx="18" fill="#2D2926" stroke="#FAF7F5" stroke-width="4"/>
+  <circle cx="200" cy="190" r="22" fill="#C89658"/>
+  <text x="200" y="196" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="800" fill="#2D2926" text-anchor="middle">PS</text>
+  <text x="200" y="232" font-family="'Space Grotesk', sans-serif" font-size="10" font-weight="700" fill="#FAF7F5" text-anchor="middle" letter-spacing="1">ICICI • PRIYANSHU</text>
+</svg>

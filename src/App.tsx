@@ -667,6 +667,7 @@ export const App: React.FC = () => {
         isOpen={isCheckoutModalOpen}
         onClose={() => setIsCheckoutModalOpen(false)}
         items={collectionItems}
+        userSession={userSession}
         onOrderCompleted={handleClearCollection}
         onEmailDispatched={handleEmailDispatched}
       />

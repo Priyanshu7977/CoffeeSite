@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FAF7F5"/>
+      <stop offset="100%" stop-color="#EDE7E0"/>
+    </linearGradient>
+    <linearGradient id="qrGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F2B20"/>
+      <stop offset="100%" stop-color="#2D2926"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer Card Frame -->
+  <rect width="400" height="400" rx="28" fill="url(#bgGrad3)" stroke="#10B981" stroke-opacity="0.3" stroke-width="2"/>
+  
+  <!-- Inner QR White Pad -->
+  <rect x="30" y="30" width="340" height="340" rx="20" fill="#FFFFFF" stroke="#2D2926" stroke-opacity="0.08" stroke-width="1.5"/>
+  
+  <!-- Corner Position Detection Markers (Top Left) -->
+  <rect x="55" y="55" width="70" height="70" rx="12" fill="none" stroke="url(#qrGrad3)" stroke-width="12"/>
+  <rect x="75" y="75" width="30" height="30" rx="6" fill="#047857"/>
+  
+  <!-- Corner Position Detection Markers (Top Right) -->
+  <rect x="275" y="55" width="70" height="70" rx="12" fill="none" stroke="url(#qrGrad3)" stroke-width="12"/>
+  <rect x="295" y="75" width="30" height="30" rx="6" fill="#047857"/>
+  
+  <!-- Corner Position Detection Markers (Bottom Left) -->
+  <rect x="55" y="275" width="70" height="70" rx="12" fill="none" stroke="url(#qrGrad3)" stroke-width="12"/>
+  <rect x="75" y="295" width="30" height="30" rx="6" fill="#047857"/>
+
+  <!-- Matrix Elements -->
+  <rect x="145" y="60" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="185" y="60" width="25" height="16" rx="3" fill="#2D2926"/>
+  <rect x="220" y="60" width="30" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="145" y="90" width="20" height="16" rx="3" fill="#2D2926"/>
+  <rect x="175" y="90" width="45" height="16" rx="3" fill="#2D2926"/>
+  <rect x="230" y="90" width="20" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="145" y="120" width="35" height="16" rx="3" fill="#2D2926"/>
+  <rect x="190" y="120" width="20" height="16" rx="3" fill="#2D2926"/>
+  <rect x="220" y="120" width="30" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="60" y="145" width="20" height="16" rx="3" fill="#2D2926"/>
+  <rect x="90" y="145" width="35" height="16" rx="3" fill="#2D2926"/>
+  <rect x="275" y="145" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="315" y="145" width="20" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="60" y="190" width="35" height="16" rx="3" fill="#2D2926"/>
+  <rect x="105" y="190" width="20" height="16" rx="3" fill="#2D2926"/>
+  <rect x="275" y="190" width="20" height="16" rx="3" fill="#2D2926"/>
+  <rect x="305" y="190" width="30" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="60" y="225" width="20" height="25" rx="3" fill="#2D2926"/>
+  <rect x="90" y="225" width="35" height="16" rx="3" fill="#2D2926"/>
+  <rect x="275" y="225" width="35" height="16" rx="3" fill="#2D2926"/>
+  <rect x="320" y="225" width="15" height="25" rx="3" fill="#2D2926"/>
+
+  <rect x="145" y="260" width="30" height="16" rx="3" fill="#2D2926"/>
+  <rect x="185" y="260" width="20" height="16" rx="3" fill="#2D2926"/>
+  <rect x="215" y="260" width="35" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="145" y="290" width="20" height="16" rx="3" fill="#2D2926"/>
+  <rect x="175" y="290" width="40" height="16" rx="3" fill="#2D2926"/>
+  <rect x="225" y="290" width="25" height="16" rx="3" fill="#2D2926"/>
+
+  <rect x="145" y="320" width="40" height="16" rx="3" fill="#2D2926"/>
+  <rect x="195" y="320" width="20" height="16" rx="3" fill="#2D2926"/>
+  <rect x="225" y="320" width="25" height="16" rx="3" fill="#2D2926"/>
+
+  <!-- Central Branded Shield -->
+  <rect x="150" y="150" width="100" height="100" rx="18" fill="#064E3B" stroke="#FAF7F5" stroke-width="4"/>
+  <circle cx="200" cy="190" r="22" fill="#10B981"/>
+  <!-- Leaf icon -->
+  <path d="M190,198 C190,180 205,175 212,175 C212,190 205,205 190,205 Z" fill="#FAF7F5"/>
+  <line x1="190" y1="205" x2="208" y2="180" stroke="#064E3B" stroke-width="2"/>
+  <text x="200" y="232" font-family="'Space Grotesk', sans-serif" font-size="10" font-weight="700" fill="#FAF7F5" text-anchor="middle" letter-spacing="1">SBI • RESERVE</text>
+</svg>
