@@ -9,6 +9,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { calculateAuthoritativeValuation } from './pricing';
 import { OrdersStore } from './ordersStore';
+import { UsersStore } from './usersStore';
 import {
   getRazorpayCredentials,
   createRazorpayOrder,
@@ -17,7 +18,8 @@ import {
   fetchPaymentDetails,
 } from './razorpayClient';
 import { CUSTOM_UPI_QR_OPTIONS, type CustomerOrder, type PaymentMethodType } from '../types/payment';
-import { inventorySystem } from '../utils/inventorySystem';
+import type { CustomerProfile, SavedAddress } from '../types/auth';
+import { inventorySystem, AUTHORIZED_IMS_ACCOUNTS } from '../utils/inventorySystem';
 import {
   isValidName,
   isValidEmail,
@@ -585,6 +587,375 @@ apiRouter.post('/admin/verify-utr', (req: Request, res: Response): void => {
   }
 
   res.json({ success: true, message: 'Order verification updated.', order: updated });
+});
+
+/**
+ * 11. Customer Registration
+ * Validates details, checks duplicates, generates unique Member ID, and stores profile
+ */
+apiRouter.post('/auth/register', (req: Request, res: Response): void => {
+  try {
+    const { fullName, email, phone, password } = req.body;
+
+    if (!fullName || !isValidName(fullName)) {
+      res.status(400).json({ success: false, error: 'Valid full name (alphabets only, min 2 chars) is required.' });
+      return;
+    }
+    if (!email || !isValidEmail(email)) {
+      res.status(400).json({ success: false, error: 'Valid email address is required.' });
+      return;
+    }
+    if (!phone || !isValidPhone(phone)) {
+      res.status(400).json({ success: false, error: 'Valid phone number (min 7 digits) is required.' });
+      return;
+    }
+    if (!password || typeof password !== 'string' || password.length < 6) {
+      res.status(400).json({ success: false, error: 'Password must be at least 6 characters.' });
+      return;
+    }
+
+    // Duplicate check
+    const existing = UsersStore.getUserByEmail(email);
+    if (existing) {
+      res.status(409).json({
+        success: false,
+        error: 'An account with this email address already exists. Please sign in instead.',
+      });
+      return;
+    }
+
+    const memberId = `NR-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newProfile: CustomerProfile = {
+      uid: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
+      memberId,
+      fullName: fullName.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone.trim(),
+      role: 'CUSTOMER',
+      authProvider: 'password',
+      savedAddresses: [],
+      preferences: {
+        favoriteGrind: 'Whole Bean',
+        newsletter: true,
+        cuppingAlerts: true,
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const saved = UsersStore.saveUser(newProfile);
+
+    res.status(201).json({
+      success: true,
+      message: 'Account created successfully. Welcome to Noir Dakshin Coffee.',
+      profile: saved,
+      session: {
+        name: saved.fullName,
+        email: saved.email,
+        phone: saved.phone,
+        memberId: saved.memberId,
+        isLoggedIn: true,
+        role: saved.role,
+        savedAddresses: saved.savedAddresses,
+      },
+    });
+  } catch (err: unknown) {
+    console.error('Registration error:', err);
+    res.status(500).json({ success: false, error: 'Failed to complete registration.' });
+  }
+});
+
+/**
+ * 12. Customer Login
+ * Checks IMS roles or stored customer profiles
+ */
+apiRouter.post('/auth/login', (req: Request, res: Response): void => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !isValidEmail(email)) {
+      res.status(400).json({ success: false, error: 'Valid email address is required.' });
+      return;
+    }
+    if (!password) {
+      res.status(400).json({ success: false, error: 'Password is required.' });
+      return;
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Check IMS accounts first
+    const imsAccount = AUTHORIZED_IMS_ACCOUNTS.find(
+      (a) => a.email.toLowerCase() === cleanEmail && a.password === password
+    );
+
+    if (imsAccount) {
+      const imsProfile: CustomerProfile = {
+        uid: `ims_${imsAccount.role.toLowerCase()}`,
+        memberId: imsAccount.role === 'ADMIN' ? 'NOIR-OWNER-01' : 'NOIR-ENG-02',
+        fullName: imsAccount.name,
+        email: imsAccount.email,
+        phone: '+91 79776 41125',
+        role: imsAccount.role,
+        authProvider: 'password',
+        savedAddresses: [
+          {
+            id: 'addr_hq',
+            label: 'Roastery HQ',
+            fullName: imsAccount.name,
+            phone: '+91 79776 41125',
+            street: '100ft Road, Indiranagar',
+            city: 'Bengaluru',
+            postalCode: '560038',
+            country: 'India',
+            isDefault: true,
+          },
+        ],
+        preferences: {
+          favoriteGrind: 'South Indian Brass Filter Kaapi',
+          newsletter: true,
+          cuppingAlerts: true,
+        },
+        createdAt: '1998-01-01T00:00:00.000Z',
+        updatedAt: new Date().toISOString(),
+      };
+
+      res.json({
+        success: true,
+        message: 'IMS Master Roaster authenticated.',
+        profile: imsProfile,
+        session: {
+          name: imsProfile.fullName,
+          email: imsProfile.email,
+          phone: imsProfile.phone,
+          memberId: imsProfile.memberId,
+          isLoggedIn: true,
+          role: imsProfile.role,
+          savedAddresses: imsProfile.savedAddresses,
+        },
+      });
+      return;
+    }
+
+    // Check registered customer accounts
+    const existing = UsersStore.getUserByEmail(cleanEmail);
+    if (!existing) {
+      res.status(401).json({
+        success: false,
+        error: 'No account found with this email. Please create an account to proceed.',
+      });
+      return;
+    }
+
+    res.json({
+      success: true,
+      message: 'Signed in successfully.',
+      profile: existing,
+      session: {
+        name: existing.fullName,
+        email: existing.email,
+        phone: existing.phone,
+        memberId: existing.memberId,
+        isLoggedIn: true,
+        role: existing.role,
+        savedAddresses: existing.savedAddresses,
+      },
+    });
+  } catch (err: unknown) {
+    console.error('Login error:', err);
+    res.status(500).json({ success: false, error: 'Login service encountered an error.' });
+  }
+});
+
+/**
+ * 13. Customer Session Sync (Firebase OAuth, Phone OTP, Email sync)
+ */
+apiRouter.post('/auth/sync', (req: Request, res: Response): void => {
+  try {
+    const { uid, email, fullName, phone, authProvider } = req.body;
+
+    if (!email && !phone) {
+      res.status(400).json({ success: false, error: 'Email or phone number is required to sync account.' });
+      return;
+    }
+
+    const cleanEmail = (email || `${phone}@phone.noirkaapi.in`).trim().toLowerCase();
+    let existing = UsersStore.getUserByEmail(cleanEmail) || (uid ? UsersStore.getUserById(uid) : undefined);
+
+    if (existing) {
+      const updated = UsersStore.updateUser(existing.email, {
+        fullName: fullName || existing.fullName,
+        phone: phone || existing.phone,
+        authProvider: authProvider || existing.authProvider,
+      });
+
+      res.json({
+        success: true,
+        profile: updated,
+        session: {
+          name: updated?.fullName,
+          email: updated?.email,
+          phone: updated?.phone,
+          memberId: updated?.memberId,
+          isLoggedIn: true,
+          role: updated?.role,
+          savedAddresses: updated?.savedAddresses,
+        },
+      });
+      return;
+    }
+
+    // Create new profile
+    const memberId = `NR-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newProfile: CustomerProfile = {
+      uid: uid || `usr_${Date.now()}`,
+      memberId,
+      fullName: (fullName || cleanEmail.split('@')[0]).trim(),
+      email: cleanEmail,
+      phone: phone || '',
+      role: 'CUSTOMER',
+      authProvider: authProvider || 'google',
+      savedAddresses: [],
+      preferences: {
+        favoriteGrind: 'Whole Bean',
+        newsletter: true,
+        cuppingAlerts: true,
+      },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const saved = UsersStore.saveUser(newProfile);
+
+    res.json({
+      success: true,
+      profile: saved,
+      session: {
+        name: saved.fullName,
+        email: saved.email,
+        phone: saved.phone,
+        memberId: saved.memberId,
+        isLoggedIn: true,
+        role: saved.role,
+        savedAddresses: saved.savedAddresses,
+      },
+    });
+  } catch (err: unknown) {
+    console.error('Session sync error:', err);
+    res.status(500).json({ success: false, error: 'Session synchronization failed.' });
+  }
+});
+
+/**
+ * 14. Customer Profile Lookup
+ */
+apiRouter.get('/auth/profile', (req: Request, res: Response): void => {
+  const email = (req.query.email as string) || '';
+  const memberId = (req.query.memberId as string) || '';
+
+  if (!email && !memberId) {
+    res.status(400).json({ success: false, error: 'Email or member ID is required.' });
+    return;
+  }
+
+  const user = (email && UsersStore.getUserByEmail(email)) || (memberId && UsersStore.getUserById(memberId));
+
+  if (!user) {
+    res.status(404).json({ success: false, error: 'Customer profile not found.' });
+    return;
+  }
+
+  res.json({ success: true, profile: user });
+});
+
+/**
+ * 15. Customer Profile Update
+ */
+apiRouter.post('/auth/update-profile', (req: Request, res: Response): void => {
+  try {
+    const { email, fullName, phone, preferences } = req.body;
+
+    if (!email) {
+      res.status(400).json({ success: false, error: 'Customer email is required.' });
+      return;
+    }
+
+    const updates: Partial<CustomerProfile> = {};
+    if (fullName && isValidName(fullName)) updates.fullName = fullName.trim();
+    if (phone && isValidPhone(phone)) updates.phone = phone.trim();
+    if (preferences && typeof preferences === 'object') updates.preferences = preferences;
+
+    const updated = UsersStore.updateUser(email, updates);
+    if (!updated) {
+      res.status(404).json({ success: false, error: 'Customer profile not found.' });
+      return;
+    }
+
+    res.json({ success: true, profile: updated });
+  } catch (err: unknown) {
+    console.error('Profile update error:', err);
+    res.status(500).json({ success: false, error: 'Failed to update customer profile.' });
+  }
+});
+
+/**
+ * 16. Saved Delivery Addresses Management
+ */
+apiRouter.post('/auth/address', (req: Request, res: Response): void => {
+  try {
+    const { email, address } = req.body;
+
+    if (!email || !address) {
+      res.status(400).json({ success: false, error: 'Email and address object are required.' });
+      return;
+    }
+
+    const newAddr: SavedAddress = {
+      id: address.id || `addr_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      label: address.label || 'Delivery Address',
+      fullName: address.fullName || 'Patron',
+      phone: address.phone || '',
+      street: address.street || address.address || '',
+      city: address.city || 'Bengaluru',
+      postalCode: address.postalCode || '560038',
+      country: address.country || 'India',
+      isDefault: Boolean(address.isDefault),
+    };
+
+    const updated = UsersStore.addAddress(email, newAddr);
+    if (!updated) {
+      res.status(404).json({ success: false, error: 'Customer profile not found.' });
+      return;
+    }
+
+    res.json({ success: true, message: 'Address saved.', profile: updated });
+  } catch (err: unknown) {
+    console.error('Address creation error:', err);
+    res.status(500).json({ success: false, error: 'Failed to save address.' });
+  }
+});
+
+apiRouter.delete('/auth/address/:addressId', (req: Request, res: Response): void => {
+  try {
+    const email = (req.query.email as string) || (req.body?.email as string) || '';
+    const addressId = String(req.params.addressId || '');
+
+    if (!email || !addressId) {
+      res.status(400).json({ success: false, error: 'Email and address ID are required.' });
+      return;
+    }
+
+    const updated = UsersStore.deleteAddress(email, addressId);
+    if (!updated) {
+      res.status(404).json({ success: false, error: 'Customer profile not found.' });
+      return;
+    }
+
+    res.json({ success: true, message: 'Address removed.', profile: updated });
+  } catch (err: unknown) {
+    console.error('Address deletion error:', err);
+    res.status(500).json({ success: false, error: 'Failed to remove address.' });
+  }
 });
 
 // Mount the router on both '/api' and '/' so all rewrites/prefixes work seamlessly

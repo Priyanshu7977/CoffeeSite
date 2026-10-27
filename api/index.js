@@ -537,6 +537,145 @@ var OrdersStore = class {
   }
 };
 
+// src/server/usersStore.ts
+import fs2 from "node:fs";
+import path2 from "node:path";
+import os2 from "node:os";
+function getUsersFilePath() {
+  try {
+    const localDir = path2.resolve(process.cwd(), "data");
+    if (!fs2.existsSync(localDir)) {
+      fs2.mkdirSync(localDir, { recursive: true });
+    }
+    return path2.join(localDir, "users.json");
+  } catch {
+    const tmpDir = path2.join(os2.tmpdir(), "noir-dakshin-orders");
+    try {
+      if (!fs2.existsSync(tmpDir)) {
+        fs2.mkdirSync(tmpDir, { recursive: true });
+      }
+    } catch {
+    }
+    return path2.join(tmpDir, "users.json");
+  }
+}
+var usersCache = /* @__PURE__ */ new Map();
+function loadUsersFromDisk() {
+  try {
+    const filePath = getUsersFilePath();
+    if (fs2.existsSync(filePath)) {
+      const raw = fs2.readFileSync(filePath, "utf-8");
+      if (raw.trim()) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          usersCache = new Map(parsed.map((u) => [u.email.toLowerCase(), u]));
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Users storage read notice (in-memory active):", err);
+  }
+}
+function persistUsersToDisk() {
+  try {
+    const filePath = getUsersFilePath();
+    const list = Array.from(usersCache.values());
+    fs2.writeFileSync(filePath, JSON.stringify(list, null, 2), "utf-8");
+  } catch (err) {
+    console.warn("Users persistence notice (in-memory active):", err);
+  }
+}
+loadUsersFromDisk();
+var UsersStore = class {
+  /**
+   * Retrieves a user by their email address
+   */
+  static getUserByEmail(email) {
+    return usersCache.get(email.toLowerCase().trim());
+  }
+  /**
+   * Retrieves a user by their UID or Member ID
+   */
+  static getUserById(identifier) {
+    const clean = identifier.trim().toLowerCase();
+    for (const user of usersCache.values()) {
+      if (user.uid.toLowerCase() === clean || user.memberId.toLowerCase() === clean || user.email.toLowerCase() === clean) {
+        return user;
+      }
+    }
+    return void 0;
+  }
+  /**
+   * Saves or registers a new customer profile
+   */
+  static saveUser(user) {
+    user.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+    usersCache.set(user.email.toLowerCase().trim(), user);
+    persistUsersToDisk();
+    return user;
+  }
+  /**
+   * Updates an existing profile
+   */
+  static updateUser(email, updates) {
+    const existing = this.getUserByEmail(email);
+    if (!existing) return void 0;
+    const updated = {
+      ...existing,
+      ...updates,
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    usersCache.set(email.toLowerCase().trim(), updated);
+    persistUsersToDisk();
+    return updated;
+  }
+  /**
+   * Adds a delivery address to the customer's profile
+   */
+  static addAddress(email, address) {
+    const user = this.getUserByEmail(email);
+    if (!user) return void 0;
+    const currentAddresses = user.savedAddresses || [];
+    if (address.isDefault) {
+      currentAddresses.forEach((a) => a.isDefault = false);
+    } else if (currentAddresses.length === 0) {
+      address.isDefault = true;
+    }
+    const updatedAddresses = [...currentAddresses, address];
+    return this.updateUser(email, { savedAddresses: updatedAddresses });
+  }
+  /**
+   * Deletes a delivery address
+   */
+  static deleteAddress(email, addressId) {
+    const user = this.getUserByEmail(email);
+    if (!user) return void 0;
+    const filtered = (user.savedAddresses || []).filter((a) => a.id !== addressId);
+    if (filtered.length > 0 && !filtered.some((a) => a.isDefault)) {
+      filtered[0].isDefault = true;
+    }
+    return this.updateUser(email, { savedAddresses: filtered });
+  }
+  /**
+   * Sets default delivery address
+   */
+  static setDefaultAddress(email, addressId) {
+    const user = this.getUserByEmail(email);
+    if (!user) return void 0;
+    const updated = (user.savedAddresses || []).map((a) => ({
+      ...a,
+      isDefault: a.id === addressId
+    }));
+    return this.updateUser(email, { savedAddresses: updated });
+  }
+  /**
+   * Returns all users (for diagnostics / admin)
+   */
+  static getAllUsers() {
+    return Array.from(usersCache.values());
+  }
+};
+
 // src/server/razorpayClient.ts
 import crypto from "node:crypto";
 import Razorpay from "razorpay";
@@ -655,6 +794,26 @@ var CUSTOM_UPI_QR_OPTIONS = [
 // src/utils/inventorySystem.ts
 var STORAGE_KEY = "noir_inventory_registry_v1";
 var IMS_SESSION_KEY = "noir_ims_auth_session_v1";
+var AUTHORIZED_IMS_ACCOUNTS = [
+  {
+    email: "admin@noirroast.com",
+    password: "Noir@Admin2026",
+    name: "Master Roaster Administrator",
+    role: "ADMIN"
+  },
+  {
+    email: "ims.engineer@noirroast.com",
+    password: "Noir@Engine2026",
+    name: "Lead IMS Systems Engineer",
+    role: "IMS_ENGINEER"
+  },
+  {
+    email: "priyanshubipin2006@gmail.com",
+    password: "Noir@Admin2026",
+    name: "Priyanshu Singh (Owner & Admin)",
+    role: "ADMIN"
+  }
+];
 var INITIAL_INVENTORY_RECORD = {
   "prod-01": 14,
   // Baba Budan Obsidian
@@ -1354,6 +1513,310 @@ apiRouter.post("/admin/verify-utr", (req, res) => {
     return;
   }
   res.json({ success: true, message: "Order verification updated.", order: updated });
+});
+apiRouter.post("/auth/register", (req, res) => {
+  try {
+    const { fullName, email, phone, password } = req.body;
+    if (!fullName || !isValidName(fullName)) {
+      res.status(400).json({ success: false, error: "Valid full name (alphabets only, min 2 chars) is required." });
+      return;
+    }
+    if (!email || !isValidEmail(email)) {
+      res.status(400).json({ success: false, error: "Valid email address is required." });
+      return;
+    }
+    if (!phone || !isValidPhone(phone)) {
+      res.status(400).json({ success: false, error: "Valid phone number (min 7 digits) is required." });
+      return;
+    }
+    if (!password || typeof password !== "string" || password.length < 6) {
+      res.status(400).json({ success: false, error: "Password must be at least 6 characters." });
+      return;
+    }
+    const existing = UsersStore.getUserByEmail(email);
+    if (existing) {
+      res.status(409).json({
+        success: false,
+        error: "An account with this email address already exists. Please sign in instead."
+      });
+      return;
+    }
+    const memberId = `NR-2026-${Math.floor(1e3 + Math.random() * 9e3)}`;
+    const newProfile = {
+      uid: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
+      memberId,
+      fullName: fullName.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone.trim(),
+      role: "CUSTOMER",
+      authProvider: "password",
+      savedAddresses: [],
+      preferences: {
+        favoriteGrind: "Whole Bean",
+        newsletter: true,
+        cuppingAlerts: true
+      },
+      createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    const saved = UsersStore.saveUser(newProfile);
+    res.status(201).json({
+      success: true,
+      message: "Account created successfully. Welcome to Noir Dakshin Coffee.",
+      profile: saved,
+      session: {
+        name: saved.fullName,
+        email: saved.email,
+        phone: saved.phone,
+        memberId: saved.memberId,
+        isLoggedIn: true,
+        role: saved.role,
+        savedAddresses: saved.savedAddresses
+      }
+    });
+  } catch (err) {
+    console.error("Registration error:", err);
+    res.status(500).json({ success: false, error: "Failed to complete registration." });
+  }
+});
+apiRouter.post("/auth/login", (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !isValidEmail(email)) {
+      res.status(400).json({ success: false, error: "Valid email address is required." });
+      return;
+    }
+    if (!password) {
+      res.status(400).json({ success: false, error: "Password is required." });
+      return;
+    }
+    const cleanEmail = email.trim().toLowerCase();
+    const imsAccount = AUTHORIZED_IMS_ACCOUNTS.find(
+      (a) => a.email.toLowerCase() === cleanEmail && a.password === password
+    );
+    if (imsAccount) {
+      const imsProfile = {
+        uid: `ims_${imsAccount.role.toLowerCase()}`,
+        memberId: imsAccount.role === "ADMIN" ? "NOIR-OWNER-01" : "NOIR-ENG-02",
+        fullName: imsAccount.name,
+        email: imsAccount.email,
+        phone: "+91 79776 41125",
+        role: imsAccount.role,
+        authProvider: "password",
+        savedAddresses: [
+          {
+            id: "addr_hq",
+            label: "Roastery HQ",
+            fullName: imsAccount.name,
+            phone: "+91 79776 41125",
+            street: "100ft Road, Indiranagar",
+            city: "Bengaluru",
+            postalCode: "560038",
+            country: "India",
+            isDefault: true
+          }
+        ],
+        preferences: {
+          favoriteGrind: "South Indian Brass Filter Kaapi",
+          newsletter: true,
+          cuppingAlerts: true
+        },
+        createdAt: "1998-01-01T00:00:00.000Z",
+        updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      };
+      res.json({
+        success: true,
+        message: "IMS Master Roaster authenticated.",
+        profile: imsProfile,
+        session: {
+          name: imsProfile.fullName,
+          email: imsProfile.email,
+          phone: imsProfile.phone,
+          memberId: imsProfile.memberId,
+          isLoggedIn: true,
+          role: imsProfile.role,
+          savedAddresses: imsProfile.savedAddresses
+        }
+      });
+      return;
+    }
+    const existing = UsersStore.getUserByEmail(cleanEmail);
+    if (!existing) {
+      res.status(401).json({
+        success: false,
+        error: "No account found with this email. Please create an account to proceed."
+      });
+      return;
+    }
+    res.json({
+      success: true,
+      message: "Signed in successfully.",
+      profile: existing,
+      session: {
+        name: existing.fullName,
+        email: existing.email,
+        phone: existing.phone,
+        memberId: existing.memberId,
+        isLoggedIn: true,
+        role: existing.role,
+        savedAddresses: existing.savedAddresses
+      }
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ success: false, error: "Login service encountered an error." });
+  }
+});
+apiRouter.post("/auth/sync", (req, res) => {
+  try {
+    const { uid, email, fullName, phone, authProvider } = req.body;
+    if (!email && !phone) {
+      res.status(400).json({ success: false, error: "Email or phone number is required to sync account." });
+      return;
+    }
+    const cleanEmail = (email || `${phone}@phone.noirkaapi.in`).trim().toLowerCase();
+    let existing = UsersStore.getUserByEmail(cleanEmail) || (uid ? UsersStore.getUserById(uid) : void 0);
+    if (existing) {
+      const updated = UsersStore.updateUser(existing.email, {
+        fullName: fullName || existing.fullName,
+        phone: phone || existing.phone,
+        authProvider: authProvider || existing.authProvider
+      });
+      res.json({
+        success: true,
+        profile: updated,
+        session: {
+          name: updated?.fullName,
+          email: updated?.email,
+          phone: updated?.phone,
+          memberId: updated?.memberId,
+          isLoggedIn: true,
+          role: updated?.role,
+          savedAddresses: updated?.savedAddresses
+        }
+      });
+      return;
+    }
+    const memberId = `NR-2026-${Math.floor(1e3 + Math.random() * 9e3)}`;
+    const newProfile = {
+      uid: uid || `usr_${Date.now()}`,
+      memberId,
+      fullName: (fullName || cleanEmail.split("@")[0]).trim(),
+      email: cleanEmail,
+      phone: phone || "",
+      role: "CUSTOMER",
+      authProvider: authProvider || "google",
+      savedAddresses: [],
+      preferences: {
+        favoriteGrind: "Whole Bean",
+        newsletter: true,
+        cuppingAlerts: true
+      },
+      createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    const saved = UsersStore.saveUser(newProfile);
+    res.json({
+      success: true,
+      profile: saved,
+      session: {
+        name: saved.fullName,
+        email: saved.email,
+        phone: saved.phone,
+        memberId: saved.memberId,
+        isLoggedIn: true,
+        role: saved.role,
+        savedAddresses: saved.savedAddresses
+      }
+    });
+  } catch (err) {
+    console.error("Session sync error:", err);
+    res.status(500).json({ success: false, error: "Session synchronization failed." });
+  }
+});
+apiRouter.get("/auth/profile", (req, res) => {
+  const email = req.query.email || "";
+  const memberId = req.query.memberId || "";
+  if (!email && !memberId) {
+    res.status(400).json({ success: false, error: "Email or member ID is required." });
+    return;
+  }
+  const user = email && UsersStore.getUserByEmail(email) || memberId && UsersStore.getUserById(memberId);
+  if (!user) {
+    res.status(404).json({ success: false, error: "Customer profile not found." });
+    return;
+  }
+  res.json({ success: true, profile: user });
+});
+apiRouter.post("/auth/update-profile", (req, res) => {
+  try {
+    const { email, fullName, phone, preferences } = req.body;
+    if (!email) {
+      res.status(400).json({ success: false, error: "Customer email is required." });
+      return;
+    }
+    const updates = {};
+    if (fullName && isValidName(fullName)) updates.fullName = fullName.trim();
+    if (phone && isValidPhone(phone)) updates.phone = phone.trim();
+    if (preferences && typeof preferences === "object") updates.preferences = preferences;
+    const updated = UsersStore.updateUser(email, updates);
+    if (!updated) {
+      res.status(404).json({ success: false, error: "Customer profile not found." });
+      return;
+    }
+    res.json({ success: true, profile: updated });
+  } catch (err) {
+    console.error("Profile update error:", err);
+    res.status(500).json({ success: false, error: "Failed to update customer profile." });
+  }
+});
+apiRouter.post("/auth/address", (req, res) => {
+  try {
+    const { email, address } = req.body;
+    if (!email || !address) {
+      res.status(400).json({ success: false, error: "Email and address object are required." });
+      return;
+    }
+    const newAddr = {
+      id: address.id || `addr_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      label: address.label || "Delivery Address",
+      fullName: address.fullName || "Patron",
+      phone: address.phone || "",
+      street: address.street || address.address || "",
+      city: address.city || "Bengaluru",
+      postalCode: address.postalCode || "560038",
+      country: address.country || "India",
+      isDefault: Boolean(address.isDefault)
+    };
+    const updated = UsersStore.addAddress(email, newAddr);
+    if (!updated) {
+      res.status(404).json({ success: false, error: "Customer profile not found." });
+      return;
+    }
+    res.json({ success: true, message: "Address saved.", profile: updated });
+  } catch (err) {
+    console.error("Address creation error:", err);
+    res.status(500).json({ success: false, error: "Failed to save address." });
+  }
+});
+apiRouter.delete("/auth/address/:addressId", (req, res) => {
+  try {
+    const email = req.query.email || req.body?.email || "";
+    const addressId = String(req.params.addressId || "");
+    if (!email || !addressId) {
+      res.status(400).json({ success: false, error: "Email and address ID are required." });
+      return;
+    }
+    const updated = UsersStore.deleteAddress(email, addressId);
+    if (!updated) {
+      res.status(404).json({ success: false, error: "Customer profile not found." });
+      return;
+    }
+    res.json({ success: true, message: "Address removed.", profile: updated });
+  } catch (err) {
+    console.error("Address deletion error:", err);
+    res.status(500).json({ success: false, error: "Failed to remove address." });
+  }
 });
 app.use("/api", apiRouter);
 app.use("/", apiRouter);

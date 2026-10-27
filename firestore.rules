@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Customer Profiles Collection
+    // Security: Only the authenticated user can read or modify their own profile data
+    match /customers/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Saved Delivery Addresses Subcollection
+    match /customers/{userId}/addresses/{addressId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Coffee Orders Collection
+    // Customers can only access orders matching their authenticated UID or email
+    match /orders/{orderId} {
+      allow read: if request.auth != null && (
+        resource.data.customerId == request.auth.uid ||
+        resource.data.customerEmail == request.auth.token.email ||
+        request.auth.token.role in ['ADMIN', 'IMS_ENGINEER']
+      );
+      
+      // Order creation allowed during authenticated checkout
+      allow create: if request.auth != null;
+      
+      // Only authorized roastery staff can mutate payment or fulfillment status
+      allow update, delete: if request.auth != null && request.auth.token.role in ['ADMIN', 'IMS_ENGINEER'];
+    }
+  }
+}

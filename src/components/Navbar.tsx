@@ -16,7 +16,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   onOpenReserve: _onOpenReserve,
   onOpenCollection,
-  onOpenLogin,
+  onOpenLogin: _onOpenLogin,
   onOpenInventoryHud,
   userSession,
   collectionCount,
@@ -147,7 +147,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 if (userSession?.isLoggedIn) {
                   navigate('/account');
                 } else {
-                  onOpenLogin();
+                  navigate('/login');
                 }
               }}
               className={`flex items-center gap-1.5 rounded-full border px-3 sm:px-3.5 py-1.5 text-[11px] font-sans tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer ${

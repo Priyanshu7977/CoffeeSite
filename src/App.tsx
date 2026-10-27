@@ -34,7 +34,11 @@ import { AboutUsPage } from './pages/AboutUsPage';
 import { ContactPage } from './pages/ContactPage';
 import { CartPage } from './pages/CartPage';
 import { AccountPage } from './pages/AccountPage';
+import { LoginPage } from './pages/LoginPage';
+import { SignupPage } from './pages/SignupPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { useAuth } from './context/AuthContext';
+import { NOIR_PRODUCTS } from './data/products';
 import { inventorySystem } from './utils/inventorySystem';
 import { recordCartActivity } from './utils/emailAutomationSystem';
 import type { ReserveBatch, Product, CollectionItem } from './types';
@@ -69,15 +73,8 @@ export const App: React.FC = () => {
   const [isInventoryHudOpen, setIsInventoryHudOpen] = useState<boolean>(false);
   const [activeDispatchedEmail, setActiveDispatchedEmail] = useState<AutomatedEmail | null>(null);
 
-  // User Auth & Session State with LocalStorage Persistence
-  const [userSession, setUserSession] = useState<UserSession | null>(() => {
-    try {
-      const saved = localStorage.getItem('noir_user_session');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  });
+  // User Auth & Session from global AuthContext
+  const { userSession } = useAuth();
 
   // Collection Cart State with LocalStorage Persistence
   const [collectionItems, setCollectionItems] = useState<CollectionItem[]>(() => {
@@ -247,22 +244,21 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleLoginSuccess = (session: UserSession) => {
-    setUserSession(session);
-    try {
-      localStorage.setItem('noir_user_session', JSON.stringify(session));
-    } catch {
-      // Local fallback
-    }
+  const handleLoginSuccess = (_session: UserSession) => {
+    // AuthContext already manages user session persistence
   };
 
-  const handleLogout = () => {
-    setUserSession(null);
-    try {
-      localStorage.removeItem('noir_user_session');
-    } catch {
-      // Ignored
-    }
+
+  const handleReorderOrderItems = (
+    orderItems: Array<{ productId: string; grind?: string; quantity: number }>
+  ) => {
+    orderItems.forEach((it) => {
+      const existingProduct = NOIR_PRODUCTS.find((p) => p.id === it.productId);
+      if (existingProduct) {
+        handleAddToCollection(existingProduct, it.grind || 'Whole Bean', it.quantity || 1);
+      }
+    });
+    setIsCollectionDrawerOpen(true);
   };
 
   const handleEmailDispatched = (email: AutomatedEmail) => {
@@ -609,16 +605,43 @@ export const App: React.FC = () => {
           }
         />
 
+        {/* Dedicated Login Page */}
+        <Route
+          path="/login"
+          element={
+            <div className="pt-20">
+              <LoginPage />
+              <Footer
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+
+        {/* Dedicated Signup Page */}
+        <Route
+          path="/signup"
+          element={
+            <div className="pt-20">
+              <SignupPage />
+              <Footer
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+
         {/* Dedicated VIP Account Hub */}
         <Route
           path="/account"
           element={
             <div className="pt-20">
               <AccountPage
-                userSession={userSession}
                 onOpenLogin={() => setIsLoginModalOpen(true)}
-                onLogout={handleLogout}
                 onOpenInventoryHud={() => setIsInventoryHudOpen(true)}
+                onReorderItems={handleReorderOrderItems}
               />
               <Footer
                 onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}

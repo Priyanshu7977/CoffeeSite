@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   X,
   Lock,
@@ -12,6 +13,7 @@ import {
   Copy,
   Clock,
   Sparkles,
+  User,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import {
@@ -63,6 +65,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   onOrderCompleted,
   onEmailDispatched,
 }) => {
+  const navigate = useNavigate();
   const [step, setStep] = useState<CheckoutStep>('details');
 
   // Customer shipping details
@@ -104,6 +107,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         setFullName(userSession.name || '');
         setEmail(userSession.email || '');
         setPhone(userSession.phone || '');
+        const defaultAddr =
+          userSession.savedAddresses?.find((a) => a.isDefault) || userSession.savedAddresses?.[0];
+        if (defaultAddr) {
+          setAddress(defaultAddr.street || '');
+          setCity(defaultAddr.city || 'Bengaluru');
+          setPostalCode(defaultAddr.postalCode || '560038');
+          setCountry(defaultAddr.country || 'India');
+        }
       } else {
         setFullName('');
         setEmail('');
@@ -454,6 +465,37 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             <form onSubmit={handleProceedToPayment} className="lg:col-span-7 space-y-4">
               <div className="space-y-3">
+                {userSession?.isLoggedIn ? (
+                  <div className="flex items-center justify-between p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 mb-2">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>
+                        Logged in as <strong>{userSession.name}</strong> ({userSession.email})
+                      </span>
+                    </div>
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-800">
+                      {userSession.memberId}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between p-3 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 text-xs text-[#5E5854] mb-2">
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4 text-[#C89658] shrink-0" />
+                      <span>Already a coffee member?</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        navigate('/login?redirect=/cart');
+                      }}
+                      className="font-bold text-[#C89658] hover:text-[#2D2926] underline cursor-pointer"
+                    >
+                      Sign In to load saved details ↗
+                    </button>
+                  </div>
+                )}
+
                 <span className="text-[11px] font-mono uppercase tracking-widest text-[#E05A7E] font-bold block">
                   1. Recipient & Contact Information
                 </span>
