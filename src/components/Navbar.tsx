@@ -33,7 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     const handleScroll = () => {
       const currentScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
 
-      if (currentScrollY <= 40 || isMobileMenuOpen) {
+      if (currentScrollY <= 80 || isMobileMenuOpen) {
         setIsVisible(true);
         lastScrollY = currentScrollY;
         ticking = false;

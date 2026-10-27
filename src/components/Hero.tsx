@@ -65,7 +65,7 @@ export const Hero: React.FC<HeroProps> = () => {
 
       // 2. Smooth, non-pinning cinematic parallax scroll (no jumping or scroll hijacking)
       gsap.to(video, {
-        yPercent: 15,
+        yPercent: 12,
         scale: 1.08,
         filter: 'blur(2px) brightness(0.8) contrast(115%)',
         ease: 'none',
@@ -77,17 +77,34 @@ export const Hero: React.FC<HeroProps> = () => {
         },
       });
 
+      // Text gently settles downward and dissolves to 0 without ever colliding into the header
       gsap.to(textContainer, {
-        yPercent: -25,
-        opacity: 0.15,
-        ease: 'none',
+        y: 35,
+        scale: 0.96,
+        opacity: 0,
+        filter: 'blur(4px)',
+        ease: 'power1.out',
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: 'bottom top',
-          scrub: 0.5,
+          end: '55% top',
+          scrub: 0.6,
         },
       });
+
+      if (badgeRef.current) {
+        gsap.to(badgeRef.current, {
+          opacity: 0,
+          y: -10,
+          ease: 'power1.out',
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            end: '40% top',
+            scrub: 0.5,
+          },
+        });
+      }
     }, sectionRef);
 
     return () => {
@@ -99,7 +116,7 @@ export const Hero: React.FC<HeroProps> = () => {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative h-screen w-full overflow-hidden bg-[#1F1C1A] flex items-center justify-center"
+      className="relative min-h-[100dvh] w-full overflow-hidden bg-[#1F1C1A] flex flex-col items-center justify-center pt-28 sm:pt-32 md:pt-36 pb-12 sm:pb-16"
     >
       {/* Background Full-Screen Real Macro Coffee Brewing Video */}
       <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden bg-[#1F1C1A]">
@@ -120,7 +137,7 @@ export const Hero: React.FC<HeroProps> = () => {
       {/* Floating Heritage Badge - Top Right */}
       <div
         ref={badgeRef}
-        className="absolute top-20 sm:top-24 right-6 sm:right-10 z-20 hidden lg:flex items-center gap-2 rounded-full border border-[#2D2926]/10 bg-white/90 px-3.5 py-1.5 backdrop-blur-md shadow-md text-[#2D2926]"
+        className="absolute top-24 sm:top-28 lg:top-32 right-6 sm:right-10 z-20 hidden lg:flex items-center gap-2 rounded-full border border-[#2D2926]/10 bg-white/90 px-3.5 py-1.5 backdrop-blur-md shadow-md text-[#2D2926]"
       >
         <Compass className="h-3.5 w-3.5 text-[#E05A7E] animate-spin-slow" />
         <span className="text-[9px] sm:text-[10px] tracking-[0.22em] text-[#2D2926] font-sans uppercase font-bold">
@@ -131,12 +148,12 @@ export const Hero: React.FC<HeroProps> = () => {
       {/* Hero Typography Container: Fluid Vertically Constrained */}
       <div
         ref={textContainerRef}
-        className="relative z-20 mx-auto flex h-full max-h-[85vh] max-w-5xl flex-col items-center justify-center px-6 text-center will-change-transform select-none py-8"
+        className="relative z-20 mx-auto flex w-full max-w-5xl flex-col items-center justify-center px-4 sm:px-6 text-center will-change-transform select-none"
       >
         {/* Eyebrow */}
         <div
           ref={eyebrowRef}
-          className="mb-3 sm:mb-5 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F5DADF] text-[#2D2926] text-[10px] sm:text-xs tracking-[0.25em] font-sans font-bold uppercase shadow-sm"
+          className="mb-4 sm:mb-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F5DADF] text-[#2D2926] text-[10px] sm:text-xs tracking-[0.25em] font-sans font-bold uppercase shadow-sm"
         >
           <Sparkles className="h-3 w-3 text-[#E05A7E]" />
           <span>NOIR DAKSHIN ROAST / BABA BUDAN ROASTERY EST. 1998</span>
