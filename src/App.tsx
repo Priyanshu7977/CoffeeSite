@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useLenis } from './hooks/useLenis';
-import { useScrollProgress } from './hooks/useScrollProgress';
 import { PageLoader } from './components/PageLoader';
 import { CustomCursor } from './components/CustomCursor';
 import { AtmosphericCanvas } from './components/AtmosphericCanvas';
 import { Navbar } from './components/Navbar';
-import { SectionIndicator } from './components/SectionIndicator';
 import { LightLeak } from './components/LightLeak';
 import { Hero } from './components/Hero';
 import { SectionBean } from './components/SectionBean';
@@ -55,7 +53,6 @@ const ScrollToTopOnRoute = () => {
 
 export const App: React.FC = () => {
   const { scrollTo } = useLenis();
-  const { activeSection, progress } = useScrollProgress();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -300,16 +297,7 @@ export const App: React.FC = () => {
         collectionCount={totalCollectionCount}
       />
 
-      {/* 6. Section Indicator on Home View */}
-      {location.pathname === '/' && (
-        <SectionIndicator
-          activeCode={activeSection}
-          progress={progress}
-          onNavigate={handleNavigate}
-        />
-      )}
-
-      {/* 7. Multi-Page Routes */}
+      {/* Multi-Page Routes */}
       <Routes>
         {/* Home Page: Continuous Storyline Experience */}
         <Route

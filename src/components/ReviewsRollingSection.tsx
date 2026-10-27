@@ -5,12 +5,7 @@ import {
   RotateCw, 
   Quote, 
   Coffee, 
-  Sparkles, 
-  MapPin, 
-  ChevronLeft, 
-  ChevronRight,
-  Pause,
-  Play
+  MapPin
 } from 'lucide-react';
 
 export interface CustomerReview {
@@ -479,41 +474,15 @@ const FlipReviewCard: React.FC<ReviewCardProps> = ({
 };
 
 export const ReviewsRollingSection: React.FC = () => {
-  const [activeCategory, setActiveCategory] = useState<string>('all');
   const [flippedCardId, setFlippedCardId] = useState<string | null>(null);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const trackRef = useRef<HTMLDivElement>(null);
 
-  const filterBubbles = [
-    { id: 'all', title: 'All Reviews', icon: '☕', count: 12 },
-    { id: 'kaapi', title: 'Filter Kaapi', icon: '🥛', count: 4 },
-    { id: 'single-estate', title: 'Single Estate', icon: '⛰️', count: 4 },
-    { id: 'pourover', title: 'Pour Over', icon: '💧', count: 2 },
-    { id: 'monsooned', title: 'Monsooned', icon: '🌊', count: 2 },
-  ];
-
-  const filteredReviews =
-    activeCategory === 'all'
-      ? CUSTOMER_REVIEWS
-      : CUSTOMER_REVIEWS.filter((r) => r.category === activeCategory);
-
   // Duplicate for seamless infinite rolling marquee
-  const rollingReviews = [...filteredReviews, ...filteredReviews];
+  const rollingReviews = [...CUSTOMER_REVIEWS, ...CUSTOMER_REVIEWS];
 
   const handleToggleFlip = (id: string) => {
     setFlippedCardId((prev) => (prev === id ? null : id));
-  };
-
-  const scrollLeft = () => {
-    if (trackRef.current) {
-      trackRef.current.scrollBy({ left: -380, behavior: 'smooth' });
-    }
-  };
-
-  const scrollRight = () => {
-    if (trackRef.current) {
-      trackRef.current.scrollBy({ left: 380, behavior: 'smooth' });
-    }
   };
 
   return (
@@ -522,91 +491,20 @@ export const ReviewsRollingSection: React.FC = () => {
       <div className="pointer-events-none absolute top-1/2 -left-20 w-80 h-80 bg-[#E05A7E]/10 rounded-full blur-[90px]" />
       <div className="pointer-events-none absolute bottom-0 right-10 w-96 h-96 bg-[#C89658]/10 rounded-full blur-[100px]" />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-12 mb-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-12 mb-6">
         {/* Top Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 border-b border-white/10 pb-6">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono font-bold text-[#F5DADF] uppercase tracking-wider mb-2.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>LIVE CUSTOMER REVIEWS • 12 VERIFIED EXPERIENCES</span>
-            </div>
-
-            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
-              What Our <span className="italic text-[#F5DADF] font-medium">Customers Say.</span>
-            </h2>
-            <p className="text-xs sm:text-sm text-[#FAF7F5]/70 mt-1 max-w-lg">
-              Unfiltered feedback from certified Q-Graders, cafe baristas, and filter kaapi devotees across India.
-            </p>
+        <div className="border-b border-white/10 pb-6 text-center sm:text-left">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono font-bold text-[#F5DADF] uppercase tracking-wider mb-2.5">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span>LIVE CUSTOMER REVIEWS • 12 VERIFIED EXPERIENCES</span>
           </div>
 
-          {/* Rolling Controls & Pause Toggle */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsPaused((prev) => !prev)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/15 text-xs font-mono text-white hover:bg-white/15 transition-all cursor-pointer"
-              title={isPaused ? 'Resume auto-rolling' : 'Pause auto-rolling'}
-            >
-              {isPaused ? (
-                <>
-                  <Play className="h-3 w-3 text-emerald-400 fill-emerald-400" />
-                  <span>Auto-Roll Paused</span>
-                </>
-              ) : (
-                <>
-                  <Pause className="h-3 w-3 text-[#E05A7E]" />
-                  <span>Auto-Rolling</span>
-                </>
-              )}
-            </button>
-
-            <div className="flex items-center gap-1.5">
-              <button
-                onClick={scrollLeft}
-                aria-label="Scroll reviews left"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/5 hover:bg-white/15 text-white transition-all cursor-pointer active:scale-95"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <button
-                onClick={scrollRight}
-                aria-label="Scroll reviews right"
-                className="flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-white/5 hover:bg-white/15 text-white transition-all cursor-pointer active:scale-95"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Story Avatar Filter Bubbles (Inspired by Celestia lookbook) */}
-        <div className="pt-6 flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none justify-start sm:justify-center">
-          {filterBubbles.map((bubble) => {
-            const isSelected = activeCategory === bubble.id;
-            return (
-              <button
-                key={bubble.id}
-                onClick={() => {
-                  setActiveCategory(bubble.id);
-                  setFlippedCardId(null);
-                }}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-sans font-bold transition-all cursor-pointer shrink-0 ${
-                  isSelected
-                    ? 'bg-[#F5DADF] text-[#2D2926] shadow-md scale-105'
-                    : 'bg-white/5 hover:bg-white/15 text-[#FAF7F5]/80 border border-white/10'
-                }`}
-              >
-                <span className="text-sm">{bubble.icon}</span>
-                <span>{bubble.title}</span>
-                <span
-                  className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
-                    isSelected ? 'bg-[#2D2926] text-white' : 'bg-white/10 text-[#FAF7F5]/60'
-                  }`}
-                >
-                  {bubble.count}
-                </span>
-              </button>
-            );
-          })}
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
+            What Our <span className="italic text-[#F5DADF] font-medium">Customers Say.</span>
+          </h2>
+          <p className="text-xs sm:text-sm text-[#FAF7F5]/70 mt-1 max-w-lg">
+            Unfiltered feedback from certified Q-Graders, cafe baristas, and filter kaapi devotees across India.
+          </p>
         </div>
       </div>
 
@@ -640,14 +538,6 @@ export const ReviewsRollingSection: React.FC = () => {
             />
           ))}
         </div>
-      </div>
-
-      {/* Bottom Interactive Prompt */}
-      <div className="mt-4 text-center">
-        <span className="text-[11px] font-mono text-[#FAF7F5]/50 flex items-center justify-center gap-1.5">
-          <Sparkles className="h-3 w-3 text-[#E05A7E]" />
-          <span>Hover over any review to pause the roll • Click any card to flip and view roasting notes</span>
-        </span>
       </div>
     </section>
   );

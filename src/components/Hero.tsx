@@ -1,13 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { ChevronDown, Sparkles, Compass } from 'lucide-react';
+import { Sparkles, Compass } from 'lucide-react';
 import { gsap } from '../utils/animations';
-import { MagneticButton } from './MagneticButton';
 
 interface HeroProps {
-  onExplore: () => void;
+  onExplore?: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
+export const Hero: React.FC<HeroProps> = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -18,7 +17,6 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
   const titleLine3Ref = useRef<HTMLHeadingElement | null>(null);
   const subtitleRef = useRef<HTMLParagraphElement | null>(null);
   const badgeRef = useRef<HTMLDivElement | null>(null);
-  const ctaRef = useRef<HTMLDivElement | null>(null);
   const circularMaskRef = useRef<HTMLDivElement | null>(null);
   const transitionVideoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -62,9 +60,9 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
           '-=0.6'
         )
         .fromTo(
-          [ctaRef.current, badgeRef.current],
+          badgeRef.current,
           { opacity: 0, y: 15 },
-          { opacity: 1, y: 0, duration: 0.8, stagger: 0.1 },
+          { opacity: 1, y: 0, duration: 0.8 },
           '-=0.5'
         );
 
@@ -213,23 +211,6 @@ export const Hero: React.FC<HeroProps> = ({ onExplore }) => {
           <span>•</span>
           <span>Malabar Monsooned</span>
         </div>
-      </div>
-
-      {/* Bottom Scroll Indicator with Magnetic Physics */}
-      <div
-        ref={ctaRef}
-        className="absolute bottom-6 sm:bottom-8 left-1/2 z-20 -translate-x-1/2"
-      >
-        <MagneticButton onClick={onExplore} strength={0.4}>
-          <div className="flex flex-col items-center gap-2 group cursor-pointer">
-            <span className="text-[9px] tracking-[0.3em] font-sans uppercase text-white transition-colors group-hover:text-[#F5DADF] font-bold">
-              SCROLL TO DISCOVER
-            </span>
-            <div className="flex h-8 w-5 items-start justify-center rounded-full border border-white/40 p-1 transition-all group-hover:border-[#F5DADF] group-hover:shadow-[0_0_15px_rgba(245,218,223,0.5)]">
-              <ChevronDown className="h-3.5 w-3.5 text-[#F5DADF] animate-bounce" />
-            </div>
-          </div>
-        </MagneticButton>
       </div>
     </section>
   );
