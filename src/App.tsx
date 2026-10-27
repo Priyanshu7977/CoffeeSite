@@ -31,7 +31,7 @@ import { CheckoutModal } from './components/CheckoutModal';
 import { EmailNotificationModal } from './components/EmailNotificationModal';
 import { InventoryHudModal } from './components/InventoryHudModal';
 import { ProductDetailPage } from './pages/ProductDetailPage';
-import { HeritagePage } from './pages/HeritagePage';
+import { EstateAtlasPage } from './pages/EstateAtlasPage';
 import { AboutUsPage } from './pages/AboutUsPage';
 import { ContactPage } from './pages/ContactPage';
 import { CartPage } from './pages/CartPage';
@@ -410,12 +410,57 @@ export const App: React.FC = () => {
           }
         />
 
-        {/* Dedicated South Indian Heritage & Coffee Craft Storytelling Page */}
+        {/* Dedicated South Indian Estate & Terroir Atlas Page */}
+        <Route
+          path="/atlas"
+          element={
+            <div className="pt-20">
+              <EstateAtlasPage
+                onDiscoverProduct={handleDiscoverProduct}
+                onAddToCart={handleAddToCollection}
+              />
+              <Footer
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/estate-atlas"
+          element={
+            <div className="pt-20">
+              <EstateAtlasPage
+                onDiscoverProduct={handleDiscoverProduct}
+                onAddToCart={handleAddToCollection}
+              />
+              <Footer
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/terroir"
+          element={
+            <div className="pt-20">
+              <EstateAtlasPage
+                onDiscoverProduct={handleDiscoverProduct}
+                onAddToCart={handleAddToCollection}
+              />
+              <Footer
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
         <Route
           path="/heritage"
           element={
             <div className="pt-20">
-              <HeritagePage
+              <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
               />
@@ -430,7 +475,7 @@ export const App: React.FC = () => {
           path="/story"
           element={
             <div className="pt-20">
-              <HeritagePage
+              <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
               />
@@ -445,7 +490,7 @@ export const App: React.FC = () => {
           path="/craft"
           element={
             <div className="pt-20">
-              <HeritagePage
+              <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
               />
@@ -460,7 +505,7 @@ export const App: React.FC = () => {
           path="/brew"
           element={
             <div className="pt-20">
-              <HeritagePage
+              <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
               />
@@ -475,7 +520,7 @@ export const App: React.FC = () => {
           path="/brewing"
           element={
             <div className="pt-20">
-              <HeritagePage
+              <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
               />
@@ -490,7 +535,7 @@ export const App: React.FC = () => {
           path="/reserve"
           element={
             <div className="pt-20">
-              <HeritagePage
+              <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
               />
