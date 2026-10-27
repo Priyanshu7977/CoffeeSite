@@ -22,21 +22,25 @@ describe('Inventory Management System — Unit, RBAC Security & Chaos Invariants
   it('1. Initializes with correct micro-lot stock allocations', () => {
     expect(inventorySystem.getStock('prod-01')).toBe(14); // Baba Budan
     expect(inventorySystem.getStock('prod-05')).toBe(3);  // Low stock lot
-    expect(inventorySystem.getStock('prod-10')).toBe(0);  // Out of stock lot
+    expect(inventorySystem.getStock('prod-10')).toBe(10); // Wayanad Robusta
   });
 
   it('2. Evaluates stock statuses accurately with OUT_OF_STOCK terminology', () => {
     expect(inventorySystem.getStockStatus('prod-01')).toBe('IN_STOCK');
     expect(inventorySystem.getStockStatus('prod-05')).toBe('LOW_STOCK');
+    inventorySystem.setStockDirect('prod-10', 0, adminSession);
     expect(inventorySystem.getStockStatus('prod-10')).toBe('OUT_OF_STOCK');
   });
 
   it('3. Rejects user addition when lot is OUT_OF_STOCK and displays clean message', () => {
+    inventorySystem.setStockDirect('prod-10', 0, adminSession);
     const check = inventorySystem.checkAvailability('prod-10', 0, 1);
     expect(check.available).toBe(false);
     expect(check.status).toBe('OUT_OF_STOCK');
     expect(check.maxAddable).toBe(0);
     expect(check.message).toBe('This micro-lot is currently out of stock.');
+    // Reset back to initial
+    inventorySystem.resetAllToDefault(adminSession);
   });
 
   it('4. Prevents overselling when requested quantity exceeds available stock', () => {
@@ -123,7 +127,9 @@ describe('Inventory Management System — Unit, RBAC Security & Chaos Invariants
   });
 
   it('9. AUTHORIZED UPDATES: Admin and IMS Engineer can adjust and restock inventory', () => {
-    // Engineer restocks prod-10 (which was 0) by +6
+    // Admin sets prod-10 to 0 first to test restocking from zero
+    inventorySystem.setStockDirect('prod-10', 0, adminSession);
+    // Engineer restocks prod-10 by +6
     const updatedStock = inventorySystem.restock('prod-10', 6, engineerSession);
     expect(updatedStock).toBe(6);
     expect(inventorySystem.getStock('prod-10')).toBe(6);
@@ -137,6 +143,7 @@ describe('Inventory Management System — Unit, RBAC Security & Chaos Invariants
     // Admin resets inventory
     inventorySystem.resetAllToDefault(adminSession);
     expect(inventorySystem.getStock('prod-01')).toBe(14);
+    expect(inventorySystem.getStock('prod-10')).toBe(10);
   });
 
   it('10. Chaos Invariant: Stock can NEVER fall below zero even when set by operator', () => {

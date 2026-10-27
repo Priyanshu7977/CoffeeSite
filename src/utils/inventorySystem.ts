@@ -29,7 +29,7 @@ export interface InventoryCheckResult {
   message?: string;
 }
 
-const STORAGE_KEY = 'noir_inventory_registry_v1';
+const STORAGE_KEY = 'noir_inventory_registry_v2';
 const IMS_SESSION_KEY = 'noir_ims_auth_session_v1';
 
 // Authorized Admin & IMS Engineer Credentials
@@ -65,7 +65,7 @@ export const INITIAL_INVENTORY_RECORD: Record<string, number> = {
   'prod-07': 2,  // Nilgiri Blue Mountain Geisha (Ultra-rare allocation)
   'prod-08': 5,  // Biligiri Rangan Wild Arabica
   'prod-09': 11, // Anamalai Highlands Dark Cacao
-  'prod-10': 0,  // Wayanad Robusta Royale (Out of Stock Showcase - Restockable)
+  'prod-10': 10, // Wayanad Robusta Royale
   'prod-11': 8,  // Kodagu Wild Spice Cinnamon
   'prod-12': 12, // Chikmagalur Elephant Monsooned AA
 };

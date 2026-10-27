@@ -337,11 +337,6 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                         <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">
                           Numbered Tin
                         </span>
-                        {stock <= 0 && (
-                          <span className="text-[8px] sm:text-[9px] font-mono font-bold text-rose-700 bg-rose-50 px-1 py-0.2 rounded border border-rose-200">
-                            Out of Stock
-                          </span>
-                        )}
                         {stock > 0 && stock <= 3 && (
                           <span className="text-[8px] sm:text-[9px] font-mono font-bold text-amber-600 bg-amber-50 px-1 py-0.2 rounded">
                             {stock} Left
