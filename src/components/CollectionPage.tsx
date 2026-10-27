@@ -135,40 +135,40 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       </header>
 
       {/* Hero Collection Header */}
-      <section className="relative px-4 sm:px-8 md:px-12 pt-6 sm:pt-10 pb-6 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
+      <section className="relative px-4 sm:px-8 md:px-12 pt-4 sm:pt-6 pb-4 sm:pb-5 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
         <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 sm:gap-4">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F5DADF] border border-[#2D2926]/10 text-[10px] sm:text-xs font-sans font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#2D2926] mb-2.5">
-                <Sparkles className="h-3.5 w-3.5 text-[#E05A7E]" />
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#F5DADF] border border-[#2D2926]/10 text-[10px] sm:text-xs font-sans font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#2D2926] mb-1.5">
+                <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#E05A7E]" />
                 <span>12 SINGLE-ESTATE HARVESTS • 250G MICRO-TINS</span>
               </div>
-              <h1 className="font-display text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#2D2926]">
+              <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#2D2926]">
                 Single-Origin <span className="italic text-[#E05A7E]">Curations.</span>
               </h1>
-              <p className="font-sans text-xs sm:text-sm text-[#5E5854] max-w-2xl mt-1.5 leading-relaxed font-normal">
+              <p className="font-sans text-xs sm:text-sm text-[#5E5854] max-w-xl mt-1 leading-relaxed font-normal">
                 Shade-grown under native canopies in Chikmagalur, Coorg, Nilgiris, and Araku. Roast-profiled in small batches and nitrogen-sealed at peak aroma.
               </p>
             </div>
 
             {/* Quick Stats Pill */}
-            <div className="flex items-center gap-3 bg-white border border-[#2D2926]/10 rounded-2xl p-2.5 sm:p-4 shadow-sm self-start md:self-auto">
+            <div className="flex items-center gap-2.5 bg-white border border-[#2D2926]/10 rounded-xl sm:rounded-2xl p-2 sm:p-2.5 shadow-sm self-start md:self-auto">
               <div>
-                <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Showing</span>
-                <span className="font-display text-base sm:text-xl font-bold text-[#2D2926]">
+                <span className="text-[9px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Showing</span>
+                <span className="font-display text-sm sm:text-base font-bold text-[#2D2926]">
                   {filteredProducts.length} of {NOIR_PRODUCTS.length} Lots
                 </span>
               </div>
-              <div className="h-7 sm:h-8 w-[1px] bg-[#2D2926]/10" />
+              <div className="h-6 w-[1px] bg-[#2D2926]/10" />
               <div>
-                <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Dispatch</span>
+                <span className="text-[9px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Dispatch</span>
                 <span className="font-display text-xs sm:text-sm font-bold text-[#E05A7E]">Free Across India</span>
               </div>
             </div>
           </div>
 
           {/* Filter & Search Bar */}
-          <div className="mt-6 pt-5 border-t border-[#2D2926]/10 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4">
+          <div className="mt-4 pt-3 sm:pt-4 border-t border-[#2D2926]/10 flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 sm:gap-3">
             {/* Roast Level Filter Tabs */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 lg:pb-0 scrollbar-none w-full lg:w-auto">
               {[
@@ -181,7 +181,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                 <button
                   key={tab.id}
                   onClick={() => setSelectedRoastFilter(tab.id)}
-                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-sans tracking-wider font-bold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
+                  className={`px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-sans tracking-wider font-bold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
                     selectedRoastFilter === tab.id
                       ? 'bg-[#2D2926] text-white shadow-sm'
                       : 'bg-white border border-[#2D2926]/10 text-[#5E5854] hover:text-[#2D2926] hover:bg-[#F5DADF]/40'
@@ -193,7 +193,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
             </div>
 
             {/* Search & Sort Cluster */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5">
               {/* Search Box */}
               <div className="relative flex items-center flex-1 sm:flex-initial">
                 <Search className="absolute left-3.5 h-3.5 w-3.5 text-[#8C827A]" />
@@ -202,17 +202,17 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search lot or tasting note..."
-                  className="w-full sm:w-60 rounded-full bg-white border border-[#2D2926]/15 pl-9 pr-4 py-2 text-xs font-sans text-[#2D2926] placeholder-[#8C827A] focus:border-[#2D2926] focus:outline-none"
+                  className="w-full sm:w-56 rounded-full bg-white border border-[#2D2926]/15 pl-9 pr-4 py-1.5 text-xs font-sans text-[#2D2926] placeholder-[#8C827A] focus:border-[#2D2926] focus:outline-none"
                 />
               </div>
 
               {/* Sort Select */}
-              <div className="flex items-center gap-2 bg-white border border-[#2D2926]/15 rounded-full px-3 py-1.5 shadow-sm">
+              <div className="flex items-center gap-1.5 bg-white border border-[#2D2926]/15 rounded-full px-3 py-1 shadow-sm">
                 <SlidersHorizontal className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-                  className="bg-transparent text-xs font-sans font-bold text-[#2D2926] focus:outline-none cursor-pointer w-full sm:w-auto"
+                  className="bg-transparent text-xs font-sans font-bold text-[#2D2926] focus:outline-none cursor-pointer w-full sm:w-auto py-0.5"
                 >
                   <option value="featured">Featured Lots</option>
                   <option value="price-asc">Price: Low to High</option>
@@ -225,10 +225,10 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
         </div>
       </section>
 
-      {/* 10-Product Grid */}
-      <main className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 pt-8 sm:pt-10">
+      {/* 12-Product Grid */}
+      <main className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 pt-6 sm:pt-8">
         {filteredProducts.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-[#2D2926]/10 p-8">
+          <div className="text-center py-16 bg-white rounded-3xl border border-[#2D2926]/10 p-8">
             <Coffee className="h-10 w-10 text-[#E05A7E] mx-auto mb-3" />
             <h3 className="font-display text-xl font-bold text-[#2D2926]">No Coffee Lots Match Your Filter</h3>
             <p className="font-sans text-xs text-[#5E5854] mt-1">Try selecting a different roast level or clearing your search term.</p>
@@ -243,7 +243,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
             {filteredProducts.map((product) => {
               const isJustAdded = addedProductId === product.id;
               const stock = getStock(product.id);
@@ -252,11 +252,11 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                 <div
                   key={product.id}
                   onClick={() => onDiscoverProduct(product)}
-                  className="group rounded-3xl bg-white border border-[#2D2926]/10 p-5 shadow-[0_15px_40px_rgba(45,41,38,0.04)] hover:shadow-[0_20px_50px_rgba(45,41,38,0.12)] transition-all duration-500 flex flex-col justify-between cursor-pointer hover:-translate-y-1"
+                  className="group rounded-2xl sm:rounded-3xl bg-white border border-[#2D2926]/10 p-4 sm:p-4.5 shadow-[0_15px_40px_rgba(45,41,38,0.04)] hover:shadow-[0_20px_50px_rgba(45,41,38,0.12)] transition-all duration-300 flex flex-col justify-between cursor-pointer hover:-translate-y-1"
                 >
                   <div>
                     {/* Visual Card Image */}
-                    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-[#2D2926]/10 bg-[#FAF7F5] mb-5">
+                    <div className="relative aspect-[16/11] sm:aspect-[4/3] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-[#2D2926]/10 bg-[#FAF7F5] mb-3 sm:mb-3.5">
                       <img
                         src={product.image}
                         alt={product.name}
@@ -264,38 +264,38 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                       />
                       
                       {/* Roast Badge */}
-                      <div className="absolute top-3 left-3 rounded-full bg-[#F5DADF] px-3 py-1 border border-[#2D2926]/10 text-[10px] font-mono text-[#2D2926] font-bold shadow-sm">
+                      <div className="absolute top-2.5 left-2.5 rounded-full bg-[#F5DADF] px-2.5 py-0.5 border border-[#2D2926]/10 text-[9px] sm:text-[10px] font-mono text-[#2D2926] font-bold shadow-sm">
                         {product.roastLevel}
                       </div>
 
                       {/* Altitude Tag */}
-                      <div className="absolute top-3 right-3 rounded-full bg-white/95 backdrop-blur-md px-2.5 py-1 border border-[#2D2926]/10 text-[10px] font-mono text-[#5E5854] font-semibold shadow-sm">
+                      <div className="absolute top-2.5 right-2.5 rounded-full bg-white/95 backdrop-blur-md px-2 py-0.5 border border-[#2D2926]/10 text-[9px] sm:text-[10px] font-mono text-[#5E5854] font-semibold shadow-sm">
                         {product.altitude}
                       </div>
 
                       {/* Badge Pill */}
-                      <div className="absolute bottom-3 left-3 rounded-full bg-[#2D2926]/90 backdrop-blur-md text-white px-2.5 py-0.5 text-[9px] font-sans font-bold uppercase tracking-wider">
+                      <div className="absolute bottom-2.5 left-2.5 rounded-full bg-[#2D2926]/90 backdrop-blur-md text-white px-2 py-0.5 text-[8px] sm:text-[9px] font-sans font-bold uppercase tracking-wider">
                         {product.badge}
                       </div>
                     </div>
 
                     {/* Origin & Region */}
-                    <div className="flex items-center gap-1.5 text-xs font-sans text-[#E05A7E] font-bold uppercase tracking-wider mb-1.5">
-                      <Compass className="h-3.5 w-3.5 text-[#E05A7E]" />
+                    <div className="flex items-center gap-1 text-[11px] font-sans text-[#E05A7E] font-bold uppercase tracking-wider mb-1">
+                      <Compass className="h-3 w-3 text-[#E05A7E]" />
                       <span>{product.origin}</span>
                     </div>
 
                     {/* Name */}
-                    <h3 className="font-display text-xl sm:text-2xl font-bold text-[#2D2926] tracking-tight mb-2 group-hover:text-[#E05A7E] transition-colors">
+                    <h3 className="font-display text-lg sm:text-xl font-bold text-[#2D2926] tracking-tight mb-1.5 group-hover:text-[#E05A7E] transition-colors truncate">
                       {product.name}
                     </h3>
 
                     {/* Tasting Notes */}
-                    <div className="flex flex-wrap gap-1.5 mb-3">
+                    <div className="flex flex-wrap gap-1 mb-2">
                       {product.notes.map((note) => (
                         <span
                           key={note}
-                          className="px-2.5 py-0.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 text-[11px] font-sans font-medium text-[#5E5854]"
+                          className="px-2 py-0.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 text-[10px] sm:text-[11px] font-sans font-medium text-[#5E5854]"
                         >
                           {note}
                         </span>
@@ -303,27 +303,27 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                     </div>
 
                     {/* Short Description */}
-                    <p className="font-sans text-xs text-[#5E5854] leading-relaxed line-clamp-2 mb-4">
+                    <p className="font-sans text-[11px] sm:text-xs text-[#5E5854] leading-relaxed line-clamp-2 mb-2.5">
                       {product.description}
                     </p>
 
                     {/* Radar Profile Meters */}
-                    <div className="grid grid-cols-3 gap-2 py-3 border-t border-b border-[#2D2926]/10 mb-4 text-center">
+                    <div className="grid grid-cols-3 gap-2 py-2 border-t border-b border-[#2D2926]/10 mb-3 text-center">
                       <div>
-                        <span className="text-[9px] font-mono uppercase tracking-wider text-[#8C827A] block font-bold">Acidity</span>
-                        <div className="w-full bg-[#FAF7F5] h-1.5 rounded-full mt-1 overflow-hidden border border-[#2D2926]/10">
+                        <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-wider text-[#8C827A] block font-bold">Acidity</span>
+                        <div className="w-full bg-[#FAF7F5] h-1.5 rounded-full mt-0.5 overflow-hidden border border-[#2D2926]/10">
                           <div className="bg-[#E05A7E] h-full rounded-full" style={{ width: `${product.acidity}%` }} />
                         </div>
                       </div>
                       <div>
-                        <span className="text-[9px] font-mono uppercase tracking-wider text-[#8C827A] block font-bold">Body</span>
-                        <div className="w-full bg-[#FAF7F5] h-1.5 rounded-full mt-1 overflow-hidden border border-[#2D2926]/10">
+                        <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-wider text-[#8C827A] block font-bold">Body</span>
+                        <div className="w-full bg-[#FAF7F5] h-1.5 rounded-full mt-0.5 overflow-hidden border border-[#2D2926]/10">
                           <div className="bg-[#2D2926] h-full rounded-full" style={{ width: `${product.body}%` }} />
                         </div>
                       </div>
                       <div>
-                        <span className="text-[9px] font-mono uppercase tracking-wider text-[#8C827A] block font-bold">Sweetness</span>
-                        <div className="w-full bg-[#FAF7F5] h-1.5 rounded-full mt-1 overflow-hidden border border-[#2D2926]/10">
+                        <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-wider text-[#8C827A] block font-bold">Sweetness</span>
+                        <div className="w-full bg-[#FAF7F5] h-1.5 rounded-full mt-0.5 overflow-hidden border border-[#2D2926]/10">
                           <div className="bg-[#F5DADF] border border-[#2D2926]/20 h-full rounded-full" style={{ width: `${product.sweetness}%` }} />
                         </div>
                       </div>
@@ -331,33 +331,33 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                   </div>
 
                   {/* Card Bottom: Price & Quick Action */}
-                  <div className="flex items-center justify-between gap-3 pt-2">
+                  <div className="flex items-center justify-between gap-2 pt-1.5">
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[9px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">
+                        <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">
                           Numbered Tin
                         </span>
                         {stock <= 0 && (
-                          <span className="text-[9px] font-mono font-bold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">
+                          <span className="text-[8px] sm:text-[9px] font-mono font-bold text-rose-700 bg-rose-50 px-1 py-0.2 rounded border border-rose-200">
                             Out of Stock
                           </span>
                         )}
                         {stock > 0 && stock <= 3 && (
-                          <span className="text-[9px] font-mono font-bold text-amber-600 bg-amber-50 px-1.5 py-0.2 rounded">
+                          <span className="text-[8px] sm:text-[9px] font-mono font-bold text-amber-600 bg-amber-50 px-1 py-0.2 rounded">
                             {stock} Left
                           </span>
                         )}
                       </div>
-                      <span className="font-display text-2xl font-bold text-[#2D2926]">
+                      <span className="font-display text-xl sm:text-2xl font-bold text-[#2D2926]">
                         {product.price}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                       <Link
                         to={`/product/${product.id}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="px-3 py-2 rounded-full border border-[#2D2926]/15 text-[11px] font-bold text-[#2D2926] hover:bg-neutral-100 transition-colors"
+                        className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full border border-[#2D2926]/15 text-[11px] font-bold text-[#2D2926] hover:bg-neutral-100 transition-colors"
                       >
                         Details
                       </Link>
@@ -365,7 +365,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                       <button
                         onClick={(e) => handleQuickAdd(product, e)}
                         disabled={stock <= 0}
-                        className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-sans font-bold uppercase tracking-wider transition-all cursor-pointer shadow-sm ${
+                        className={`flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-sans font-bold uppercase tracking-wider transition-all cursor-pointer shadow-sm ${
                           stock <= 0
                             ? 'bg-neutral-100 text-neutral-500 border border-neutral-300 cursor-not-allowed font-bold'
                             : isJustAdded
@@ -378,12 +378,12 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                         ) : isJustAdded ? (
                           <>
                             <Check className="h-3.5 w-3.5 text-[#E05A7E]" />
-                            <span>In Cart</span>
+                            <span>Added</span>
                           </>
                         ) : (
                           <>
-                            <ShoppingBag className="h-3.5 w-3.5" />
-                            <span>Quick Add</span>
+                            <ShoppingBag className="h-3.5 w-3.5 text-[#F5DADF]" />
+                            <span>Add</span>
                           </>
                         )}
                       </button>

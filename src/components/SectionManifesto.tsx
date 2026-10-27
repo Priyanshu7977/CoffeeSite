@@ -62,7 +62,7 @@ export const SectionManifesto: React.FC = () => {
       id="section-manifesto"
       ref={sectionRef}
       aria-label="Section 08: The Dakshin Manifesto & About Noir"
-      className="relative min-h-screen w-full bg-[#1F1C1A] text-white flex items-center justify-center overflow-hidden py-20 lg:py-0 border-t border-[#2D2926]"
+      className="relative min-h-screen w-full bg-[#1F1C1A] text-white flex items-center justify-center py-8 sm:py-12 lg:py-10 border-t border-[#2D2926] overflow-hidden"
     >
       {/* Background Video from Original Section 8 - Full Height & Width Coverage */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-[#1F1C1A]">
@@ -80,30 +80,30 @@ export const SectionManifesto: React.FC = () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.1)_0%,rgba(31,28,26,0.7)_100%)] pointer-events-none" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-6xl w-full px-6 md:px-12 flex flex-col justify-between my-auto py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+      <div className="relative z-10 mx-auto max-w-6xl w-full px-5 sm:px-8 md:px-12 flex flex-col justify-between my-auto py-2 sm:py-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
           {/* Left Column: Philosophy Statement */}
           <div ref={leftColRef} className="lg:col-span-7 flex flex-col justify-center">
-            <div className="text-xs tracking-[0.25em] text-[#F5DADF] font-sans font-bold uppercase mb-4 flex items-center gap-2">
+            <div className="text-[11px] sm:text-xs tracking-[0.25em] text-[#F5DADF] font-sans font-bold uppercase mb-2 sm:mb-3 flex items-center gap-2">
               <Sparkles className="h-3.5 w-3.5 text-[#E05A7E]" />
               <span>08 / OUR MANIFESTO</span>
             </div>
 
             {/* Headline Statement */}
-            <div className="space-y-1 mb-6">
-              <h2 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.08] tracking-tight">
+            <div className="space-y-0.5 sm:space-y-1 mb-3 sm:mb-4">
+              <h2 className="font-display text-2xl sm:text-4xl lg:text-[2.6rem] font-bold text-white leading-[1.1] tracking-tight">
                 We do not mass produce.
               </h2>
-              <h2 className="font-display text-3xl sm:text-5xl lg:text-6xl font-medium italic text-[#E05A7E] leading-[1.08]">
+              <h2 className="font-display text-2xl sm:text-4xl lg:text-[2.6rem] font-medium italic text-[#E05A7E] leading-[1.1]">
                 We do not rush.
               </h2>
-              <h2 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold tracking-widest text-white uppercase leading-[1.08]">
+              <h2 className="font-display text-2xl sm:text-4xl lg:text-[2.6rem] font-bold tracking-widest text-white uppercase leading-[1.1]">
                 We do not compromise.
               </h2>
             </div>
 
             {/* Glassmorphic Supporting Copy */}
-            <div className="rounded-3xl bg-[#2D2926]/78 border border-white/15 p-6 backdrop-blur-xl shadow-2xl space-y-4">
+            <div className="rounded-2xl sm:rounded-3xl bg-[#2D2926]/85 border border-white/15 p-4 sm:p-5 backdrop-blur-xl shadow-2xl space-y-2.5 sm:space-y-3">
               <p className="font-sans text-xs sm:text-sm leading-relaxed text-[#FAF7F5]/90 font-normal">
                 In an industry driven by automated speed, NOIR DAKSHIN stands for deliberate friction. In 1670, Sufi mystic Baba Budan brought seven sacred seeds to the misty Chandragiri hills of Chikmagalur.
               </p>
@@ -112,21 +112,21 @@ export const SectionManifesto: React.FC = () => {
               </p>
 
               {/* 3 Pillars */}
-              <div className="grid grid-cols-3 gap-3 pt-4 border-t border-white/10">
-                <div className="rounded-2xl bg-white/5 border border-white/10 p-3 flex flex-col justify-between">
-                  <Flame className="h-4 w-4 text-[#E05A7E] mb-1.5" />
+              <div className="grid grid-cols-3 gap-2 sm:gap-2.5 pt-2.5 sm:pt-3 border-t border-white/10">
+                <div className="rounded-xl bg-white/5 border border-white/10 p-2 sm:p-2.5 flex flex-col justify-between">
+                  <Flame className="h-3.5 w-3.5 text-[#E05A7E] mb-1" />
                   <span className="font-display text-xs sm:text-sm text-white block font-bold">100% Cast Iron</span>
-                  <span className="text-[10px] font-sans text-[#FAF7F5]/60 uppercase font-semibold">Slow Convection</span>
+                  <span className="text-[9px] font-sans text-[#FAF7F5]/60 uppercase font-semibold">Slow Convection</span>
                 </div>
-                <div className="rounded-2xl bg-white/5 border border-white/10 p-3 flex flex-col justify-between">
-                  <Shield className="h-4 w-4 text-[#E05A7E] mb-1.5" />
+                <div className="rounded-xl bg-white/5 border border-white/10 p-2 sm:p-2.5 flex flex-col justify-between">
+                  <Shield className="h-3.5 w-3.5 text-[#E05A7E] mb-1" />
                   <span className="font-display text-xs sm:text-sm text-white block font-bold">+350% Direct</span>
-                  <span className="text-[10px] font-sans text-[#FAF7F5]/60 uppercase font-semibold">Estate Premium</span>
+                  <span className="text-[9px] font-sans text-[#FAF7F5]/60 uppercase font-semibold">Estate Premium</span>
                 </div>
-                <div className="rounded-2xl bg-white/5 border border-white/10 p-3 flex flex-col justify-between">
-                  <Award className="h-4 w-4 text-[#E05A7E] mb-1.5" />
+                <div className="rounded-xl bg-white/5 border border-white/10 p-2 sm:p-2.5 flex flex-col justify-between">
+                  <Award className="h-3.5 w-3.5 text-[#E05A7E] mb-1" />
                   <span className="font-display text-xs sm:text-sm text-white block font-bold">85 Tins Max</span>
-                  <span className="text-[10px] font-sans text-[#FAF7F5]/60 uppercase font-semibold">Numbered Lots</span>
+                  <span className="text-[9px] font-sans text-[#FAF7F5]/60 uppercase font-semibold">Numbered Lots</span>
                 </div>
               </div>
             </div>
@@ -134,7 +134,7 @@ export const SectionManifesto: React.FC = () => {
 
           {/* Right Column: Roastery Photo Card */}
           <div ref={rightColRef} className="lg:col-span-5 flex flex-col items-center justify-center">
-            <div className="relative w-full aspect-[4/5] max-h-[50vh] max-w-sm rounded-3xl overflow-hidden border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.5)] bg-black/40 group">
+            <div className="relative w-full aspect-[4/5] max-h-[38vh] sm:max-h-[44vh] max-w-xs sm:max-w-sm rounded-2xl sm:rounded-3xl overflow-hidden border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.5)] bg-black/40 group">
               <img
                 src="/assets/roast-drum.jpg"
                 alt="NOIR DAKSHIN Drum Roastery"
@@ -142,11 +142,11 @@ export const SectionManifesto: React.FC = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
-              <div className="absolute bottom-4 left-4 right-4 rounded-2xl bg-[#1F1C1A]/90 p-4 backdrop-blur-md border border-white/15 shadow-md">
-                <span className="text-xs font-serif italic text-white block font-medium">
+              <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 rounded-xl sm:rounded-2xl bg-[#1F1C1A]/90 p-3 sm:p-3.5 backdrop-blur-md border border-white/15 shadow-md">
+                <span className="text-[11px] sm:text-xs font-serif italic text-white block font-medium">
                   “The acoustic crack guides our craft.”
                 </span>
-                <span className="text-[10px] font-mono text-[#F5DADF] tracking-widest uppercase block mt-1 font-bold">
+                <span className="text-[9px] sm:text-[10px] font-mono text-[#F5DADF] tracking-widest uppercase block mt-0.5 sm:mt-1 font-bold">
                   CHIKMAGALUR & BENGALURU ROASTERY
                 </span>
               </div>
