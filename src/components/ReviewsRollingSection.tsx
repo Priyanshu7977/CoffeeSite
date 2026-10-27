@@ -350,9 +350,9 @@ const FlipReviewCard: React.FC<ReviewCardProps> = ({
             </div>
           </div>
 
-          {/* Bottom Info: Reviewer Profile & Flip Hint */}
+          {/* Bottom Info: Reviewer Profile */}
           <div className="relative z-10 pt-3 border-t border-white/10">
-            <div className="flex items-center justify-between gap-2 mb-2">
+            <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2.5 min-w-0">
                 <img
                   src={review.avatar}
@@ -383,17 +383,6 @@ const FlipReviewCard: React.FC<ReviewCardProps> = ({
                   {review.lot.split('•')[0].trim()}
                 </span>
               </div>
-            </div>
-
-            {/* Click to Flip Prompt */}
-            <div className="flex items-center justify-between text-[10px] font-mono text-[#FAF7F5]/50 group-hover:text-[#F5DADF] transition-colors pt-1">
-              <span className="flex items-center gap-1">
-                <RotateCw className="h-3 w-3 text-[#E05A7E] group-hover:rotate-180 transition-transform duration-500" />
-                <span>Click / Hover to Flip</span>
-              </span>
-              <span className="text-[9px] uppercase tracking-wider text-emerald-400">
-                ★ 5.0 Rating
-              </span>
             </div>
           </div>
         </div>
