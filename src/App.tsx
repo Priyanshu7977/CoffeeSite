@@ -15,7 +15,6 @@ import { SectionPour } from './components/SectionPour';
 import { SectionCollection } from './components/SectionCollection';
 import { SectionHorizontalGallery } from './components/SectionHorizontalGallery';
 import { SectionBrewRitual } from './components/SectionBrewRitual';
-import { SectionReserve } from './components/SectionReserve';
 import { SectionManifesto } from './components/SectionManifesto';
 import {
   InterludeFarmToCup,
@@ -32,7 +31,7 @@ import { CheckoutModal } from './components/CheckoutModal';
 import { EmailNotificationModal } from './components/EmailNotificationModal';
 import { InventoryHudModal } from './components/InventoryHudModal';
 import { ProductDetailPage } from './pages/ProductDetailPage';
-import { BrewingPage } from './pages/BrewingPage';
+import { HeritagePage } from './pages/HeritagePage';
 import { AboutUsPage } from './pages/AboutUsPage';
 import { ContactPage } from './pages/ContactPage';
 import { CartPage } from './pages/CartPage';
@@ -352,18 +351,13 @@ export const App: React.FC = () => {
                 <SectionHorizontalGallery />
               </div>
 
-              {/* 06. Brew Ritual */}
+              {/* 06. South Indian Kaapi Ritual */}
               <div data-cursor="view" className="relative">
                 <LightLeak position="bottom-left" intensity="subtle" />
                 <SectionBrewRitual />
               </div>
 
-              {/* 07. Reserve Vault Preview */}
-              <div data-cursor="reserve">
-                <SectionReserve onSelectBatch={(batch) => handleOpenReserve(batch)} />
-              </div>
-
-              {/* 08. The Noir Manifesto */}
+              {/* 07. The Noir Manifesto */}
               <SectionManifesto />
 
               {/* Footer */}
@@ -416,12 +410,57 @@ export const App: React.FC = () => {
           }
         />
 
-        {/* Dedicated Master Brew Lab & Extraction Studio */}
+        {/* Dedicated South Indian Heritage & Coffee Craft Storytelling Page */}
+        <Route
+          path="/heritage"
+          element={
+            <div className="pt-20">
+              <HeritagePage
+                onDiscoverProduct={handleDiscoverProduct}
+                onAddToCart={handleAddToCollection}
+              />
+              <Footer
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/story"
+          element={
+            <div className="pt-20">
+              <HeritagePage
+                onDiscoverProduct={handleDiscoverProduct}
+                onAddToCart={handleAddToCollection}
+              />
+              <Footer
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/craft"
+          element={
+            <div className="pt-20">
+              <HeritagePage
+                onDiscoverProduct={handleDiscoverProduct}
+                onAddToCart={handleAddToCollection}
+              />
+              <Footer
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
         <Route
           path="/brew"
           element={
             <div className="pt-20">
-              <BrewingPage
+              <HeritagePage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
               />
@@ -436,7 +475,7 @@ export const App: React.FC = () => {
           path="/brewing"
           element={
             <div className="pt-20">
-              <BrewingPage
+              <HeritagePage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
               />
@@ -451,7 +490,7 @@ export const App: React.FC = () => {
           path="/reserve"
           element={
             <div className="pt-20">
-              <BrewingPage
+              <HeritagePage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
               />

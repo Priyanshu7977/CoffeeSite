@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Timer, Coffee, Sparkles } from 'lucide-react';
+import { Coffee, Sparkles, Droplet } from 'lucide-react';
 import { NOIR_BREW_METHODS } from '../data/brewing';
 
 export const SectionBrewRitual: React.FC = () => {
@@ -82,7 +82,7 @@ export const SectionBrewRitual: React.FC = () => {
               {/* Bottom Specs */}
               <div className="absolute bottom-4 left-4 right-4 z-30 flex items-center justify-between rounded-2xl bg-white/95 p-3 backdrop-blur-md border border-[#2D2926]/10 text-xs shadow-md">
                 <div className="flex items-center gap-1.5 text-[#2D2926]">
-                  <Timer className="h-4 w-4 text-[#E05A7E]" />
+                  <Droplet className="h-4 w-4 text-[#E05A7E]" />
                   <span className="font-mono font-bold">{currentMethod.time}</span>
                 </div>
                 <span className="font-mono font-bold text-[#2D2926]">
@@ -113,7 +113,7 @@ export const SectionBrewRitual: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-4 rounded-2xl bg-white border border-[#2D2926]/10 shadow-sm">
                   <span className="text-[10px] font-sans tracking-widest uppercase text-[#8C827A] block mb-0.5 font-bold">
-                    Extraction Time
+                    Ideal Infusion
                   </span>
                   <span className="font-mono text-lg text-[#2D2926] font-bold">
                     {currentMethod.time}

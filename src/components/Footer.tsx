@@ -133,7 +133,7 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate: _onNavi
             </span>
             <ul className="space-y-1.5 text-xs font-sans text-[#FAF7F5]/75">
               <li><a href="/collection" className="hover:text-[#F5DADF] transition-colors">Coffee Collection</a></li>
-              <li><a href="/brew" className="hover:text-[#F5DADF] transition-colors">Master Brew Lab</a></li>
+              <li><a href="/heritage" className="hover:text-[#F5DADF] transition-colors">Our Heritage & Craft</a></li>
               <li><a href="/about" className="hover:text-[#F5DADF] transition-colors">About Our Student Startup</a></li>
               <li><a href="/contact" className="hover:text-[#F5DADF] transition-colors">Contact & Roastery Map</a></li>
             </ul>

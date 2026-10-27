@@ -37,7 +37,6 @@ export function useScrollProgress() {
         { id: 'section-collection', code: '04' },
         { id: 'section-gallery', code: '05' },
         { id: 'section-brew-ritual', code: '06' },
-        { id: 'section-reserve', code: '07' },
       ];
 
       const viewportCenter = window.innerHeight * 0.45;

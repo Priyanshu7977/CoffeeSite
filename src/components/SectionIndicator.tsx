@@ -19,7 +19,6 @@ export const SectionIndicator: React.FC<SectionIndicatorProps> = ({
     { code: '04', title: 'COLLECTION', target: '#section-collection' },
     { code: '05', title: 'ARCHIVE', target: '#section-gallery' },
     { code: '06', title: 'RITUAL', target: '#section-brew-ritual' },
-    { code: '07', title: 'VAULT', target: '#section-reserve' },
   ];
 
   return (
