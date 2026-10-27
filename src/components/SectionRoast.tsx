@@ -11,7 +11,6 @@ export const SectionRoast: React.FC = () => {
   const cardRef = useRef<HTMLDivElement | null>(null);
   const stageRef = useRef<number>(0);
   const [activeStage, setActiveStage] = useState<number>(0);
-  const [isInView, setIsInView] = useState<boolean>(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const stages = [
@@ -51,32 +50,14 @@ export const SectionRoast: React.FC = () => {
 
   const current = stages[activeStage];
 
-  // 1. Intersection Observer to detect when section comes into view on any device
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting);
-      },
-      { threshold: 0.2 }
-    );
-
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, []);
-
-  // 2. Automatic Continuous 1 -> 4 Roasting Stage Cycle
-  // Starts when this section comes into view, and keeps cycling continuously until scrolled away
-  useEffect(() => {
-    if (!isInView) {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
-      return;
+  // Start 1-second auto cycle ONLY when properly landed on this section
+  const startAutoCycle = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
     }
+    // Always start at Stage 1 (0) upon landing
+    setActiveStage(0);
+    stageRef.current = 0;
 
     timerRef.current = setInterval(() => {
       setActiveStage((prev) => {
@@ -84,31 +65,41 @@ export const SectionRoast: React.FC = () => {
         stageRef.current = next;
         return next;
       });
-    }, 2500);
+    }, 1000);
+  };
 
+  // Stop auto cycle and lock back to Stage 1 (0) until next proper landing
+  const stopAutoCycle = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setActiveStage(0);
+    stageRef.current = 0;
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
     };
-  }, [isInView]);
+  }, []);
 
   const handleStageClick = (stageId: number) => {
     stageRef.current = stageId;
     setActiveStage(stageId);
     if (timerRef.current) {
       clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    if (isInView) {
       timerRef.current = setInterval(() => {
         setActiveStage((prev) => {
           const next = (prev + 1) % 4;
           stageRef.current = next;
           return next;
         });
-      }, 2500);
+      }, 1000);
     }
   };
 
@@ -125,6 +116,7 @@ export const SectionRoast: React.FC = () => {
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
 
+      // Desktop: triggers landing ONLY when section pins at top of viewport
       mm.add('(min-width: 1024px)', () => {
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -135,10 +127,10 @@ export const SectionRoast: React.FC = () => {
             scrub: 0.65,
             anticipatePin: 1,
             invalidateOnRefresh: true,
-            onEnter: () => setIsInView(true),
-            onEnterBack: () => setIsInView(true),
-            onLeave: () => setIsInView(false),
-            onLeaveBack: () => setIsInView(false),
+            onEnter: () => startAutoCycle(),
+            onEnterBack: () => startAutoCycle(),
+            onLeave: () => stopAutoCycle(),
+            onLeaveBack: () => stopAutoCycle(),
           },
         });
 
@@ -177,15 +169,17 @@ export const SectionRoast: React.FC = () => {
           );
       });
 
+      // Mobile: triggers landing only when section is centered and landed on screen
       mm.add('(max-width: 1023px)', () => {
         const mobileTl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
-            start: 'top 75%',
-            onEnter: () => setIsInView(true),
-            onEnterBack: () => setIsInView(true),
-            onLeave: () => setIsInView(false),
-            onLeaveBack: () => setIsInView(false),
+            start: 'top 15%',
+            end: 'bottom 15%',
+            onEnter: () => startAutoCycle(),
+            onEnterBack: () => startAutoCycle(),
+            onLeave: () => stopAutoCycle(),
+            onLeaveBack: () => stopAutoCycle(),
           },
         });
 
@@ -276,37 +270,25 @@ export const SectionRoast: React.FC = () => {
                     <button
                       key={st.id}
                       onClick={() => handleStageClick(st.id)}
-                      className={`relative overflow-hidden p-2.5 rounded-xl border text-left transition-all duration-300 cursor-pointer ${
+                      className={`p-2.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
                         isActive
                           ? 'bg-[#F5DADF] border-[#F5DADF] text-[#2D2926] shadow-md scale-[1.02]'
-                          : 'bg-[#1F1C1A] border-white/10 text-[#FAF7F5]/70 hover:text-white hover:border-white/25'
+                          : 'bg-[#1F1C1A] border-white/10 text-[#FAF7F5]/70 hover:text-white hover:border-white/20'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <span className={`text-[10px] font-mono block font-bold ${isActive ? 'text-[#2D2926]' : 'text-[#E05A7E]'}`}>
-                          0{st.id + 1}
-                        </span>
-                        {isActive && (
-                          <span className="flex h-1.5 w-1.5 rounded-full bg-[#E05A7E] animate-pulse" />
-                        )}
-                      </div>
+                      <span className={`text-[10px] font-mono block font-bold ${isActive ? 'text-[#2D2926]' : 'text-[#E05A7E]'}`}>
+                        0{st.id + 1}
+                      </span>
                       <span className="text-xs font-sans font-semibold block truncate mt-0.5">
                         {st.name}
                       </span>
-                      {/* Active Live Progress Indicator Bar */}
-                      {isActive && (
-                        <div
-                          key={`progress-${st.id}`}
-                          className="absolute bottom-0 left-0 h-[2.5px] bg-[#E05A7E] rounded-full animate-roast-progress"
-                        />
-                      )}
                     </button>
                   );
                 })}
               </div>
 
               {/* Active Stage Info with Smooth Animation */}
-              <div key={activeStage} className="animate-fadeIn">
+              <div key={activeStage} className="transition-all duration-200">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-mono text-[#F5DADF] font-bold">
                     {current.time}

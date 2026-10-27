@@ -214,19 +214,6 @@
   animation: fadeIn 0.6s ease-out forwards;
 }
 
-@keyframes roastProgress {
-  0% {
-    width: 0%;
-  }
-  100% {
-    width: 100%;
-  }
-}
-
-.animate-roast-progress {
-  animation: roastProgress 2.5s linear forwards;
-}
-
 .animate-marquee-left {
   display: flex;
   width: max-content;
