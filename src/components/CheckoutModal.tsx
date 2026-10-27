@@ -16,6 +16,7 @@ import {
 } from '../utils/validation';
 import { dispatchOrderConfirmationEmail, type AutomatedEmail } from '../utils/emailService';
 import { inventorySystem } from '../utils/inventorySystem';
+import { markOrderCompleted } from '../utils/emailAutomationSystem';
 import type { CollectionItem } from '../types';
 
 interface CheckoutModalProps {
@@ -262,6 +263,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       onEmailDispatched(dispatched);
       setStep('confirmed');
       onOrderCompleted();
+      markOrderCompleted();
 
       try {
         confetti({

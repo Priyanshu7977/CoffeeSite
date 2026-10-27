@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -8,10 +8,24 @@ import {
   Minus, 
   ShieldCheck, 
   ArrowRight,
-  AlertTriangle
+  AlertTriangle,
+  Mail,
+  Clock,
+  Star,
+  Tag,
+  CheckCircle2,
+  Send,
+  Check
 } from 'lucide-react';
 import { useInventory } from '../hooks/useInventory';
 import type { CollectionItem } from '../types';
+import type { AutomatedEmail } from '../utils/emailService';
+import { 
+  getAutomationState, 
+  saveAutomationState, 
+  triggerAutomationStep, 
+  type CartAutomationState 
+} from '../utils/emailAutomationSystem';
 
 interface CartPageProps {
   items: CollectionItem[];
@@ -19,6 +33,9 @@ interface CartPageProps {
   onRemoveItem: (productId: string) => void;
   onClearCart: () => void;
   onOpenCheckout: () => void;
+  onEmailDispatched?: (email: AutomatedEmail) => void;
+  userEmail?: string;
+  userName?: string;
 }
 
 export const CartPage: React.FC<CartPageProps> = ({
@@ -27,12 +44,28 @@ export const CartPage: React.FC<CartPageProps> = ({
   onRemoveItem,
   onClearCart,
   onOpenCheckout,
+  onEmailDispatched,
+  userEmail,
+  userName,
 }) => {
   const navigate = useNavigate();
   const { getStock } = useInventory();
   const [promoCode, setPromoCode] = useState<string>('');
   const [discountPercent, setDiscountPercent] = useState<number>(0);
   const [promoMessage, setPromoMessage] = useState<string>('');
+
+  // Email Automation State
+  const [autoState, setAutoState] = useState<CartAutomationState>(() => getAutomationState());
+  const [recipientEmail, setRecipientEmail] = useState<string>(() => {
+    return userEmail || getAutomationState().customerEmail || '';
+  });
+  const [automationNotice, setAutomationNotice] = useState<string>('');
+
+  useEffect(() => {
+    if (userEmail && !recipientEmail) {
+      setRecipientEmail(userEmail);
+    }
+  }, [userEmail, recipientEmail]);
 
   const subtotal = items.reduce((sum, item) => {
     const priceNum = parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 0;
@@ -55,6 +88,52 @@ export const CartPage: React.FC<CartPageProps> = ({
     } else {
       setPromoMessage('Invalid coupon code. Try "NOIRVIP10"');
     }
+  };
+
+  const handleTriggerAutomation = (step: '1h' | '24h' | '48h') => {
+    const targetEmail = recipientEmail.trim() || userEmail || 'customer@noirroast.com';
+    const targetName = userName || 'Coffee Lover';
+
+    const dispatched = triggerAutomationStep(
+      step,
+      items,
+      `₹${finalTotal.toLocaleString('en-IN')}`,
+      targetEmail,
+      targetName
+    );
+
+    setAutoState(getAutomationState());
+
+    if (step === '48h') {
+      // Auto-apply the 10% discount code
+      setPromoCode('NOIRVIP10');
+      setDiscountPercent(10);
+      setPromoMessage('10% Discount automatically applied via 48-Hour Urgency!');
+      setAutomationNotice('48-Hour Urgency email dispatched with exclusive 10% coupon "NOIRVIP10" applied!');
+    } else if (step === '1h') {
+      setAutomationNotice(`1-Hour Cart reservation email dispatched to ${targetEmail}!`);
+    } else {
+      setAutomationNotice(`24-Hour Review & taste feedback email dispatched to ${targetEmail}!`);
+    }
+
+    if (onEmailDispatched) {
+      onEmailDispatched(dispatched);
+    }
+
+    setTimeout(() => setAutomationNotice(''), 6000);
+  };
+
+  const handleSaveEmail = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!recipientEmail.trim()) return;
+    const current = getAutomationState();
+    saveAutomationState({
+      ...current,
+      customerEmail: recipientEmail.trim(),
+    });
+    setAutoState(getAutomationState());
+    setAutomationNotice(`Email address saved for automatic roast alerts: ${recipientEmail.trim()}`);
+    setTimeout(() => setAutomationNotice(''), 4000);
   };
 
   // Check if any items in cart violate current inventory
@@ -109,8 +188,8 @@ export const CartPage: React.FC<CartPageProps> = ({
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Left Column: Cart Items */}
-            <div className="lg:col-span-8 space-y-4">
+            {/* Left Column: Cart Items & Automation Panel */}
+            <div className="lg:col-span-8 space-y-6">
               {/* Stock Warning Box if any */}
               {stockErrors.length > 0 && (
                 <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900 text-xs space-y-1">
@@ -222,6 +301,156 @@ export const CartPage: React.FC<CartPageProps> = ({
                     </div>
                   );
                 })}
+              </div>
+
+              {/* 1h / 24h / 48h Email Automation Suite Panel */}
+              <div className="bg-white rounded-3xl border border-[#2D2926]/10 p-6 sm:p-7 shadow-sm space-y-5">
+                <div className="border-b border-[#2D2926]/10 pb-4">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#E05A7E]/10 text-[#E05A7E] font-mono text-[10px] font-bold uppercase tracking-wider">
+                      <Clock className="h-3 w-3" /> 1HR • 24HR • 48HR EMAIL AUTOMATION
+                    </span>
+                    <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-bold">
+                      ACTIVE AUTOMATION SYSTEM
+                    </span>
+                  </div>
+                  <h3 className="font-display font-bold text-xl text-[#2D2926] mt-2">
+                    Roastery Email Sequences & Batch Hold
+                  </h3>
+                  <p className="text-xs text-[#5E5854] mt-1 leading-relaxed">
+                    Automatically guides visitors who add coffee to cart: 1-hour cart hold reminder, 24-hour customer reviews & tasting notes, and a 48-hour 10% discount urgency to complete your roast purchase.
+                  </p>
+                </div>
+
+                {/* Recipient Configuration */}
+                <form onSubmit={handleSaveEmail} className="p-3.5 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 text-xs flex-1">
+                    <Mail className="h-4 w-4 text-[#E05A7E] shrink-0" />
+                    <span className="text-[#5E5854] font-medium whitespace-nowrap">Your Email:</span>
+                    <input
+                      type="email"
+                      placeholder="Enter email to receive real automated messages"
+                      value={recipientEmail}
+                      onChange={(e) => setRecipientEmail(e.target.value)}
+                      className="px-3 py-1.5 rounded-xl border border-[#2D2926]/15 bg-white text-xs font-mono focus:outline-none focus:border-[#2D2926] flex-1 max-w-sm"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="px-4 py-1.5 rounded-xl bg-[#2D2926] text-white text-xs font-bold hover:bg-black transition-colors shrink-0"
+                  >
+                    Save Email
+                  </button>
+                </form>
+
+                {automationNotice && (
+                  <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <span>{automationNotice}</span>
+                  </div>
+                )}
+
+                {/* Automation Sequence 3-Stage Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                  {/* Stage 1: 1-Hour Cart Hold Alert */}
+                  <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 flex flex-col justify-between space-y-3">
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
+                          1-HOUR SEQUENCE
+                        </span>
+                        {autoState.step1hSent ? (
+                          <span className="text-[10px] font-mono text-emerald-700 flex items-center gap-0.5 font-bold">
+                            <Check className="h-3 w-3" /> Dispatched
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-mono text-amber-600">Pending</span>
+                        )}
+                      </div>
+                      <h4 className="font-display font-bold text-sm text-[#2D2926] mt-2">
+                        Cart & Small-Batch Hold
+                      </h4>
+                      <p className="text-[11px] text-[#5E5854] mt-1 leading-relaxed">
+                        Triggered when user visits & adds coffee to cart. Shares cart item summary and reserves the fresh roast lot.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleTriggerAutomation('1h')}
+                      className="w-full py-2.5 rounded-xl bg-white hover:bg-neutral-100 border border-[#2D2926]/15 text-[#2D2926] text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                    >
+                      <Send className="h-3 w-3 text-amber-600" />
+                      <span>{autoState.step1hSent ? 'Resend 1-Hr Alert' : 'Trigger 1-Hr Alert'}</span>
+                    </button>
+                  </div>
+
+                  {/* Stage 2: 24-Hour Review & Social Proof */}
+                  <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 flex flex-col justify-between space-y-3">
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-bold text-sky-800 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-full">
+                          24-HOUR SEQUENCE
+                        </span>
+                        {autoState.step24hSent ? (
+                          <span className="text-[10px] font-mono text-emerald-700 flex items-center gap-0.5 font-bold">
+                            <Check className="h-3 w-3" /> Dispatched
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-mono text-sky-600">Pending</span>
+                        )}
+                      </div>
+                      <h4 className="font-display font-bold text-sm text-[#2D2926] mt-2">
+                        Taste Reviews & Feedback
+                      </h4>
+                      <p className="text-[11px] text-[#5E5854] mt-1 leading-relaxed">
+                        Shares 5-star customer feedback, tasting notes, and freshness guarantees on added items, urging them to buy.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleTriggerAutomation('24h')}
+                      className="w-full py-2.5 rounded-xl bg-white hover:bg-neutral-100 border border-[#2D2926]/15 text-[#2D2926] text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm"
+                    >
+                      <Star className="h-3 w-3 text-sky-600" />
+                      <span>{autoState.step24hSent ? 'Resend 24-Hr Feedback' : 'Trigger 24-Hr Review'}</span>
+                    </button>
+                  </div>
+
+                  {/* Stage 3: 48-Hour Urgency & 10% Discount */}
+                  <div className="p-4 rounded-2xl bg-gradient-to-b from-rose-50/70 to-[#FAF7F5] border border-rose-200 flex flex-col justify-between space-y-3">
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-bold text-rose-800 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">
+                          48-HOUR URGE
+                        </span>
+                        {autoState.step48hSent ? (
+                          <span className="text-[10px] font-mono text-emerald-700 flex items-center gap-0.5 font-bold">
+                            <Check className="h-3 w-3" /> Dispatched
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-mono text-rose-600">Pending</span>
+                        )}
+                      </div>
+                      <h4 className="font-display font-bold text-sm text-[#2D2926] mt-2">
+                        10% Urgency Voucher
+                      </h4>
+                      <p className="text-[11px] text-[#5E5854] mt-1 leading-relaxed">
+                        Urges immediate order completion with code <span className="font-mono font-bold text-rose-700">NOIRVIP10</span> before batch reservation expires.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleTriggerAutomation('48h')}
+                      className="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm shadow-rose-600/20"
+                    >
+                      <Tag className="h-3 w-3" />
+                      <span>Apply 10% & Dispatch 48-Hr</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <div className="flex justify-between items-center text-xs">

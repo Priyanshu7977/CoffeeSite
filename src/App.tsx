@@ -38,6 +38,7 @@ import { CartPage } from './pages/CartPage';
 import { AccountPage } from './pages/AccountPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { inventorySystem } from './utils/inventorySystem';
+import { recordCartActivity } from './utils/emailAutomationSystem';
 import type { ReserveBatch, Product, CollectionItem } from './types';
 import type { AutomatedEmail } from './utils/emailService';
 
@@ -97,7 +98,17 @@ export const App: React.FC = () => {
     } catch (e) {
       console.warn('Cart persistence failed', e);
     }
-  }, [collectionItems]);
+    const subtotal = collectionItems.reduce((sum, item) => {
+      const priceNum = parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 0;
+      return sum + priceNum * item.quantity;
+    }, 0);
+    recordCartActivity(
+      collectionItems,
+      `₹${subtotal.toLocaleString('en-IN')}`,
+      userSession?.email,
+      userSession?.name
+    );
+  }, [collectionItems, userSession]);
 
   // 5-Second Cumulative Scroll Trigger for VIP Pass Prompt (only on Home page)
   const hasTriggeredScrollPopup = useRef<boolean>(false);
@@ -598,6 +609,9 @@ export const App: React.FC = () => {
                 onRemoveItem={handleRemoveCollectionItem}
                 onClearCart={handleClearCollection}
                 onOpenCheckout={() => setIsCheckoutModalOpen(true)}
+                onEmailDispatched={handleEmailDispatched}
+                userEmail={userSession?.email}
+                userName={userSession?.name}
               />
               <Footer
                 onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -687,6 +701,7 @@ export const App: React.FC = () => {
       <EmailNotificationModal
         email={activeDispatchedEmail}
         onClose={() => setActiveDispatchedEmail(null)}
+        onNavigateToCart={() => navigate('/cart')}
       />
     </div>
   );
