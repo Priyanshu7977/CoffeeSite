@@ -792,7 +792,7 @@ var CUSTOM_UPI_QR_OPTIONS = [
 ];
 
 // src/utils/inventorySystem.ts
-var STORAGE_KEY = "noir_inventory_registry_v1";
+var STORAGE_KEY = "noir_inventory_registry_v2";
 var IMS_SESSION_KEY = "noir_ims_auth_session_v1";
 var AUTHORIZED_IMS_ACCOUNTS = [
   {
@@ -833,8 +833,8 @@ var INITIAL_INVENTORY_RECORD = {
   // Biligiri Rangan Wild Arabica
   "prod-09": 11,
   // Anamalai Highlands Dark Cacao
-  "prod-10": 0,
-  // Wayanad Robusta Royale (Out of Stock Showcase - Restockable)
+  "prod-10": 10,
+  // Wayanad Robusta Royale
   "prod-11": 8,
   // Kodagu Wild Spice Cinnamon
   "prod-12": 12
