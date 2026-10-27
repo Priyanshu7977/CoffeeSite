@@ -10,9 +10,9 @@ export const SectionRoast: React.FC = () => {
   const headlineRef = useRef<HTMLDivElement | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const stageRef = useRef<number>(0);
-
-  // Default: Starts at 0 (Stage 01: Drying Phase)
   const [activeStage, setActiveStage] = useState<number>(0);
+  const [isInView, setIsInView] = useState<boolean>(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const stages = [
     {
@@ -51,6 +51,67 @@ export const SectionRoast: React.FC = () => {
 
   const current = stages[activeStage];
 
+  // 1. Intersection Observer to detect when section comes into view on any device
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  // 2. Automatic Continuous 1 -> 4 Roasting Stage Cycle
+  // Starts when this section comes into view, and keeps cycling continuously until scrolled away
+  useEffect(() => {
+    if (!isInView) {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      return;
+    }
+
+    timerRef.current = setInterval(() => {
+      setActiveStage((prev) => {
+        const next = (prev + 1) % 4;
+        stageRef.current = next;
+        return next;
+      });
+    }, 2500);
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [isInView]);
+
+  const handleStageClick = (stageId: number) => {
+    stageRef.current = stageId;
+    setActiveStage(stageId);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    if (isInView) {
+      timerRef.current = setInterval(() => {
+        setActiveStage((prev) => {
+          const next = (prev + 1) % 4;
+          stageRef.current = next;
+          return next;
+        });
+      }, 2500);
+    }
+  };
+
   useEffect(() => {
     const section = sectionRef.current;
     const blackout = blackoutRef.current;
@@ -69,19 +130,15 @@ export const SectionRoast: React.FC = () => {
           scrollTrigger: {
             trigger: section,
             start: 'top top',
-            end: '+=140%',
+            end: '+=100%',
             pin: true,
             scrub: 0.65,
             anticipatePin: 1,
             invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              // Smoothly sync scroll progression with stage 0 -> 1 -> 2 -> 3
-              const nextStage = Math.min(3, Math.max(0, Math.floor(self.progress * 4)));
-              if (nextStage !== stageRef.current) {
-                stageRef.current = nextStage;
-                setActiveStage(nextStage);
-              }
-            },
+            onEnter: () => setIsInView(true),
+            onEnterBack: () => setIsInView(true),
+            onLeave: () => setIsInView(false),
+            onLeaveBack: () => setIsInView(false),
           },
         });
 
@@ -125,6 +182,10 @@ export const SectionRoast: React.FC = () => {
           scrollTrigger: {
             trigger: section,
             start: 'top 75%',
+            onEnter: () => setIsInView(true),
+            onEnterBack: () => setIsInView(true),
+            onLeave: () => setIsInView(false),
+            onLeaveBack: () => setIsInView(false),
           },
         });
 
@@ -140,11 +201,6 @@ export const SectionRoast: React.FC = () => {
       ctx.revert();
     };
   }, []);
-
-  const handleStageClick = (stageId: number) => {
-    stageRef.current = stageId;
-    setActiveStage(stageId);
-  };
 
   return (
     <section
@@ -214,47 +270,64 @@ export const SectionRoast: React.FC = () => {
             <div className="rounded-3xl bg-[#2D2926]/95 border border-white/15 p-5 sm:p-7 backdrop-blur-xl shadow-2xl">
               {/* Stage Pills */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-                {stages.map((st) => (
-                  <button
-                    key={st.id}
-                    onClick={() => handleStageClick(st.id)}
-                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
-                      activeStage === st.id
-                        ? 'bg-[#F5DADF] border-[#F5DADF] text-[#2D2926] shadow-md scale-[1.02]'
-                        : 'bg-[#1F1C1A] border-white/10 text-[#FAF7F5]/70 hover:text-white'
-                    }`}
-                  >
-                    <span className={`text-[10px] font-mono block font-bold ${activeStage === st.id ? 'text-[#2D2926]' : 'text-[#E05A7E]'}`}>
-                      0{st.id + 1}
-                    </span>
-                    <span className="text-xs font-sans font-semibold block truncate">
-                      {st.name}
-                    </span>
-                  </button>
-                ))}
+                {stages.map((st) => {
+                  const isActive = activeStage === st.id;
+                  return (
+                    <button
+                      key={st.id}
+                      onClick={() => handleStageClick(st.id)}
+                      className={`relative overflow-hidden p-2.5 rounded-xl border text-left transition-all duration-300 cursor-pointer ${
+                        isActive
+                          ? 'bg-[#F5DADF] border-[#F5DADF] text-[#2D2926] shadow-md scale-[1.02]'
+                          : 'bg-[#1F1C1A] border-white/10 text-[#FAF7F5]/70 hover:text-white hover:border-white/25'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className={`text-[10px] font-mono block font-bold ${isActive ? 'text-[#2D2926]' : 'text-[#E05A7E]'}`}>
+                          0{st.id + 1}
+                        </span>
+                        {isActive && (
+                          <span className="flex h-1.5 w-1.5 rounded-full bg-[#E05A7E] animate-pulse" />
+                        )}
+                      </div>
+                      <span className="text-xs font-sans font-semibold block truncate mt-0.5">
+                        {st.name}
+                      </span>
+                      {/* Active Live Progress Indicator Bar */}
+                      {isActive && (
+                        <div
+                          key={`progress-${st.id}`}
+                          className="absolute bottom-0 left-0 h-[2.5px] bg-[#E05A7E] rounded-full animate-roast-progress"
+                        />
+                      )}
+                    </button>
+                  );
+                })}
               </div>
 
-              {/* Active Stage Info */}
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-mono text-[#F5DADF] font-bold">
-                  {current.time}
-                </span>
-                <span className="font-mono text-xs font-bold text-[#2D2926] bg-[#F5DADF] px-2.5 py-0.5 rounded-full shadow-sm">
-                  {current.temp}
-                </span>
-              </div>
+              {/* Active Stage Info with Smooth Animation */}
+              <div key={activeStage} className="animate-fadeIn">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-mono text-[#F5DADF] font-bold">
+                    {current.time}
+                  </span>
+                  <span className="font-mono text-xs font-bold text-[#2D2926] bg-[#F5DADF] px-2.5 py-0.5 rounded-full shadow-sm">
+                    {current.temp}
+                  </span>
+                </div>
 
-              <h3 className="font-display text-lg sm:text-2xl text-white mb-1.5 font-bold">
-                {current.name}
-              </h3>
+                <h3 className="font-display text-lg sm:text-2xl text-white mb-1.5 font-bold">
+                  {current.name}
+                </h3>
 
-              <p className="font-sans text-xs sm:text-sm text-[#FAF7F5]/80 font-normal leading-relaxed mb-4">
-                {current.desc}
-              </p>
+                <p className="font-sans text-xs sm:text-sm text-[#FAF7F5]/80 font-normal leading-relaxed mb-4">
+                  {current.desc}
+                </p>
 
-              <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs text-[#FAF7F5]/60">
-                <span className="truncate max-w-full sm:max-w-none text-[11px]">{current.telemetry}</span>
-                <span className="font-mono text-[#F5DADF] font-bold shrink-0 text-[10px]">LIVE TELEMETRY</span>
+                <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs text-[#FAF7F5]/60">
+                  <span className="truncate max-w-full sm:max-w-none text-[11px]">{current.telemetry}</span>
+                  <span className="font-mono text-[#F5DADF] font-bold shrink-0 text-[10px]">LIVE TELEMETRY</span>
+                </div>
               </div>
             </div>
           </div>
