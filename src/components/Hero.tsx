@@ -79,16 +79,16 @@ export const Hero: React.FC<HeroProps> = () => {
 
       // Text gently settles downward and dissolves to 0 without ever colliding into the header
       gsap.to(textContainer, {
-        y: 35,
-        scale: 0.96,
+        y: 20,
+        scale: 0.97,
         opacity: 0,
-        filter: 'blur(4px)',
+        filter: 'blur(3px)',
         ease: 'power1.out',
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: '55% top',
-          scrub: 0.6,
+          end: '50% top',
+          scrub: 0.5,
         },
       });
 
@@ -116,7 +116,7 @@ export const Hero: React.FC<HeroProps> = () => {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative min-h-[100dvh] w-full overflow-hidden bg-[#1F1C1A] flex flex-col items-center justify-center pt-28 sm:pt-32 md:pt-36 pb-12 sm:pb-16"
+      className="relative h-[100dvh] min-h-[100dvh] w-full overflow-hidden bg-[#1F1C1A] flex flex-col items-center justify-center pt-20 sm:pt-24 pb-8 sm:pb-10"
     >
       {/* Background Full-Screen Real Macro Coffee Brewing Video */}
       <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden bg-[#1F1C1A]">
@@ -137,10 +137,10 @@ export const Hero: React.FC<HeroProps> = () => {
       {/* Floating Heritage Badge - Top Right */}
       <div
         ref={badgeRef}
-        className="absolute top-24 sm:top-28 lg:top-32 right-6 sm:right-10 z-20 hidden lg:flex items-center gap-2 rounded-full border border-[#2D2926]/10 bg-white/90 px-3.5 py-1.5 backdrop-blur-md shadow-md text-[#2D2926]"
+        className="absolute top-20 sm:top-22 lg:top-24 right-5 sm:right-8 z-20 hidden lg:flex items-center gap-2 rounded-full border border-[#2D2926]/10 bg-white/90 px-3 py-1 backdrop-blur-md shadow-md text-[#2D2926]"
       >
-        <Compass className="h-3.5 w-3.5 text-[#E05A7E] animate-spin-slow" />
-        <span className="text-[9px] sm:text-[10px] tracking-[0.22em] text-[#2D2926] font-sans uppercase font-bold">
+        <Compass className="h-3 w-3 text-[#E05A7E] animate-spin-slow" />
+        <span className="text-[8.5px] sm:text-[9.5px] tracking-[0.2em] text-[#2D2926] font-sans uppercase font-bold">
           Altitude: 1,900M ASL • Baba Budan Giri
         </span>
       </div>
@@ -148,34 +148,34 @@ export const Hero: React.FC<HeroProps> = () => {
       {/* Hero Typography Container: Fluid Vertically Constrained */}
       <div
         ref={textContainerRef}
-        className="relative z-20 mx-auto flex w-full max-w-5xl flex-col items-center justify-center px-4 sm:px-6 text-center will-change-transform select-none"
+        className="relative z-20 mx-auto flex w-full max-w-4xl flex-col items-center justify-center px-4 sm:px-6 text-center will-change-transform select-none"
       >
         {/* Eyebrow */}
         <div
           ref={eyebrowRef}
-          className="mb-4 sm:mb-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F5DADF] text-[#2D2926] text-[10px] sm:text-xs tracking-[0.25em] font-sans font-bold uppercase shadow-sm"
+          className="mb-2 sm:mb-3.5 inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-[#F5DADF] text-[#2D2926] text-[9px] sm:text-[10px] md:text-xs tracking-[0.22em] font-sans font-bold uppercase shadow-sm"
         >
           <Sparkles className="h-3 w-3 text-[#E05A7E]" />
           <span>NOIR DAKSHIN ROAST / BABA BUDAN ROASTERY EST. 1998</span>
         </div>
 
         {/* Monumental Modern Headline in Space Grotesk */}
-        <div className="flex flex-col leading-[0.95] tracking-[-0.02em] text-white">
+        <div className="flex flex-col leading-[0.92] tracking-[-0.025em] text-white">
           <h1
             ref={titleLine1Ref}
-            className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white drop-shadow-2xl"
+            className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-bold tracking-tight text-white drop-shadow-2xl"
           >
             KAAPI,
           </h1>
           <h1
             ref={titleLine2Ref}
-            className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-medium tracking-tight text-[#F5DADF] italic my-0.5 sm:my-1.5 drop-shadow-[0_0_35px_rgba(245,218,223,0.5)]"
+            className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-medium tracking-tight text-[#F5DADF] italic my-0.5 sm:my-1 drop-shadow-[0_0_35px_rgba(245,218,223,0.5)]"
           >
             WITHOUT
           </h1>
           <h1
             ref={titleLine3Ref}
-            className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-widest text-white uppercase drop-shadow-[0_0_35px_rgba(245,218,223,0.35)]"
+            className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-bold tracking-widest text-white uppercase drop-shadow-[0_0_35px_rgba(245,218,223,0.35)]"
           >
             COMPROMISE.
           </h1>
@@ -184,13 +184,13 @@ export const Hero: React.FC<HeroProps> = () => {
         {/* Editorial Subtitle */}
         <p
           ref={subtitleRef}
-          className="mt-4 sm:mt-6 max-w-md font-sans text-xs sm:text-sm tracking-[0.2em] uppercase text-[#FAF7F5] font-semibold leading-relaxed"
+          className="mt-2.5 sm:mt-3.5 max-w-md font-sans text-[11px] sm:text-xs md:text-sm tracking-[0.18em] uppercase text-[#FAF7F5] font-semibold leading-relaxed"
         >
           Shade-Grown Western Ghats Terroir. Slow Cast-Iron Convection.
         </p>
 
         {/* Ambient Pill */}
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-[10px] sm:text-[11px] font-sans tracking-[0.2em] text-[#F5DADF]/85 uppercase font-medium">
+        <div className="mt-2 sm:mt-3 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 text-[9px] sm:text-[10px] md:text-[11px] font-sans tracking-[0.18em] text-[#F5DADF]/85 uppercase font-medium">
           <span>Batch No. 0984-DAKSHIN</span>
           <span>•</span>
           <span>Chikmagalur 1,900M</span>
