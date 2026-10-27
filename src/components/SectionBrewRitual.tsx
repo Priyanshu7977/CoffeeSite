@@ -1,16 +1,82 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Coffee, Sparkles, Droplet } from 'lucide-react';
+import { gsap, ScrollTrigger } from '../utils/animations';
 import { NOIR_BREW_METHODS } from '../data/brewing';
 
 export const SectionBrewRitual: React.FC = () => {
-  const [activeMethodId, setActiveMethodId] = useState<string>('filter-kaapi');
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [activeMethodIndex, setActiveMethodIndex] = useState<number>(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const currentMethod =
-    NOIR_BREW_METHODS.find((m) => m.id === activeMethodId) || NOIR_BREW_METHODS[0];
+    NOIR_BREW_METHODS[activeMethodIndex] || NOIR_BREW_METHODS[0];
+  const activeMethodId = currentMethod.id;
+
+  // Start 1-second auto cycle ONLY when properly landed on this section
+  const startAutoCycle = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    setActiveMethodIndex(0);
+
+    timerRef.current = setInterval(() => {
+      setActiveMethodIndex((prev) => (prev + 1) % NOIR_BREW_METHODS.length);
+    }, 1000);
+  };
+
+  // Stop auto cycle and lock back to Method 1 (0) until next proper landing
+  const stopAutoCycle = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setActiveMethodIndex(0);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, []);
+
+  const handleMethodClick = (index: number) => {
+    setActiveMethodIndex(index);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        setActiveMethodIndex((prev) => (prev + 1) % NOIR_BREW_METHODS.length);
+      }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 20%',
+        end: 'bottom 20%',
+        onEnter: () => startAutoCycle(),
+        onEnterBack: () => startAutoCycle(),
+        onLeave: () => stopAutoCycle(),
+        onLeaveBack: () => stopAutoCycle(),
+      });
+    }, sectionRef);
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
 
   return (
     <section
       id="section-brew-ritual"
+      ref={sectionRef}
       aria-label="Section 06: Brewing Ritual"
       className="relative min-h-screen w-full bg-[#F3ECE7] text-[#2D2926] py-16 md:py-24 px-6 md:px-12 flex items-center justify-center overflow-hidden border-t border-[#2D2926]/10"
     >
@@ -29,8 +95,8 @@ export const SectionBrewRitual: React.FC = () => {
 
           {/* 4 Brew Method Selector Buttons */}
           <div className="flex flex-wrap sm:flex-nowrap items-center justify-center gap-1.5 p-1.5 rounded-2xl sm:rounded-full bg-white/95 border border-[#2D2926]/10 shadow-sm w-full md:w-auto overflow-hidden">
-            {NOIR_BREW_METHODS.map((method) => {
-              const isSelected = activeMethodId === method.id;
+            {NOIR_BREW_METHODS.map((method, idx) => {
+              const isSelected = activeMethodIndex === idx;
               const cleanLabel =
                 method.id === 'filter-kaapi'
                   ? 'Filter Kaapi'
@@ -43,10 +109,10 @@ export const SectionBrewRitual: React.FC = () => {
               return (
                 <button
                   key={method.id}
-                  onClick={() => setActiveMethodId(method.id)}
-                  className={`flex-1 sm:flex-initial px-3.5 sm:px-5 py-2 rounded-xl sm:rounded-full font-sans text-xs font-bold tracking-wide transition-all cursor-pointer text-center flex items-center justify-center whitespace-nowrap ${
+                  onClick={() => handleMethodClick(idx)}
+                  className={`flex-1 sm:flex-initial px-3.5 sm:px-5 py-2 rounded-xl sm:rounded-full font-sans text-xs font-bold tracking-wide transition-all duration-200 cursor-pointer text-center flex items-center justify-center whitespace-nowrap ${
                     isSelected
-                      ? 'bg-[#F5DADF] border border-[#2D2926]/15 text-[#2D2926] shadow-sm'
+                      ? 'bg-[#F5DADF] border border-[#2D2926]/15 text-[#2D2926] shadow-sm scale-[1.02]'
                       : 'text-[#5E5854] hover:text-[#2D2926] hover:bg-neutral-50'
                   }`}
                 >
@@ -111,7 +177,7 @@ export const SectionBrewRitual: React.FC = () => {
               </div>
 
               {/* 4 Clean Specs Cards */}
-              <div className="grid grid-cols-2 gap-3">
+              <div key={activeMethodId} className="grid grid-cols-2 gap-3 transition-all duration-150">
                 <div className="p-4 rounded-2xl bg-white border border-[#2D2926]/10 shadow-sm">
                   <span className="text-[10px] font-sans tracking-widest uppercase text-[#8C827A] block mb-0.5 font-bold">
                     Ideal Infusion

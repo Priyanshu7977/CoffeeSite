@@ -10,6 +10,55 @@ export const SectionBean: React.FC = () => {
   const specsCardRef = useRef<HTMLDivElement | null>(null);
 
   const [activeTab, setActiveTab] = useState<'altitude' | 'soil' | 'harvest'>('altitude');
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const TABS: ('altitude' | 'soil' | 'harvest')[] = ['altitude', 'soil', 'harvest'];
+
+  // Start 1-second auto cycle ONLY when properly landed on this section
+  const startAutoCycle = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    setActiveTab('altitude');
+
+    timerRef.current = setInterval(() => {
+      setActiveTab((prev) => {
+        const nextIdx = (TABS.indexOf(prev) + 1) % TABS.length;
+        return TABS[nextIdx];
+      });
+    }, 1000);
+  };
+
+  // Stop auto cycle and lock back to Tab 1 (altitude) until next proper landing
+  const stopAutoCycle = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setActiveTab('altitude');
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, []);
+
+  const handleTabClick = (tab: 'altitude' | 'soil' | 'harvest') => {
+    setActiveTab(tab);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        setActiveTab((prev) => {
+          const nextIdx = (TABS.indexOf(prev) + 1) % TABS.length;
+          return TABS[nextIdx];
+        });
+      }, 1000);
+    }
+  };
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -22,16 +71,21 @@ export const SectionBean: React.FC = () => {
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
 
+      // Desktop: triggers landing ONLY when section pins at top of viewport
       mm.add('(min-width: 1024px)', () => {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
             start: 'top top',
-            end: '+=130%',
+            end: '+=100%',
             pin: true,
             scrub: 0.65,
             anticipatePin: 1,
             invalidateOnRefresh: true,
+            onEnter: () => startAutoCycle(),
+            onEnterBack: () => startAutoCycle(),
+            onLeave: () => stopAutoCycle(),
+            onLeaveBack: () => stopAutoCycle(),
           },
         });
 
@@ -58,11 +112,17 @@ export const SectionBean: React.FC = () => {
           );
       });
 
+      // Mobile: triggers landing only when section is centered and landed on screen
       mm.add('(max-width: 1023px)', () => {
         const mobileTl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
-            start: 'top 75%',
+            start: 'top 15%',
+            end: 'bottom 15%',
+            onEnter: () => startAutoCycle(),
+            onEnterBack: () => startAutoCycle(),
+            onLeave: () => stopAutoCycle(),
+            onLeaveBack: () => stopAutoCycle(),
           },
         });
 
@@ -169,10 +229,10 @@ export const SectionBean: React.FC = () => {
                 <button
                   role="tab"
                   aria-selected={activeTab === 'altitude'}
-                  onClick={() => setActiveTab('altitude')}
-                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all cursor-pointer ${
+                  onClick={() => handleTabClick('altitude')}
+                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all duration-200 cursor-pointer ${
                     activeTab === 'altitude'
-                      ? 'bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm'
+                      ? 'bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm scale-[1.02]'
                       : 'text-[#5E5854] hover:text-[#2D2926]'
                   }`}
                 >
@@ -182,10 +242,10 @@ export const SectionBean: React.FC = () => {
                 <button
                   role="tab"
                   aria-selected={activeTab === 'soil'}
-                  onClick={() => setActiveTab('soil')}
-                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all cursor-pointer ${
+                  onClick={() => handleTabClick('soil')}
+                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all duration-200 cursor-pointer ${
                     activeTab === 'soil'
-                      ? 'bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm'
+                      ? 'bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm scale-[1.02]'
                       : 'text-[#5E5854] hover:text-[#2D2926]'
                   }`}
                 >
@@ -195,10 +255,10 @@ export const SectionBean: React.FC = () => {
                 <button
                   role="tab"
                   aria-selected={activeTab === 'harvest'}
-                  onClick={() => setActiveTab('harvest')}
-                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all cursor-pointer ${
+                  onClick={() => handleTabClick('harvest')}
+                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all duration-200 cursor-pointer ${
                     activeTab === 'harvest'
-                      ? 'bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm'
+                      ? 'bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm scale-[1.02]'
                       : 'text-[#5E5854] hover:text-[#2D2926]'
                   }`}
                 >
@@ -208,19 +268,21 @@ export const SectionBean: React.FC = () => {
               </div>
 
               {/* Tab Content */}
-              <h3 className="font-display text-xl sm:text-2xl text-[#2D2926] mb-2 font-bold">
-                {currentSpec.title}
-              </h3>
+              <div key={activeTab} className="transition-all duration-150">
+                <h3 className="font-display text-xl sm:text-2xl text-[#2D2926] mb-2 font-bold">
+                  {currentSpec.title}
+                </h3>
 
-              <p className="font-sans text-xs sm:text-sm text-[#5E5854] leading-relaxed mb-5 font-normal">
-                {currentSpec.desc}
-              </p>
+                <p className="font-sans text-xs sm:text-sm text-[#5E5854] leading-relaxed mb-5 font-normal">
+                  {currentSpec.desc}
+                </p>
 
-              <div className="pt-3 border-t border-[#2D2926]/10 flex items-center justify-between text-xs text-[#8C827A]">
-                <span>{currentSpec.detail}</span>
-                <span className="font-sans text-[#2D2926] font-bold flex items-center gap-1">
-                  <Wind className="h-3 w-3 text-[#E05A7E]" /> 100% Shade-Grown
-                </span>
+                <div className="pt-3 border-t border-[#2D2926]/10 flex items-center justify-between text-xs text-[#8C827A]">
+                  <span>{currentSpec.detail}</span>
+                  <span className="font-sans text-[#2D2926] font-bold flex items-center gap-1">
+                    <Wind className="h-3 w-3 text-[#E05A7E]" /> 100% Shade-Grown
+                  </span>
+                </div>
               </div>
             </div>
           </div>

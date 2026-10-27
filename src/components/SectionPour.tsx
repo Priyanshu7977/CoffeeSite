@@ -9,6 +9,7 @@ export const SectionPour: React.FC = () => {
   const cuppingCardRef = useRef<HTMLDivElement | null>(null);
 
   const [activeNote, setActiveNote] = useState<number>(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const flavorNotes = [
     {
@@ -47,6 +48,46 @@ export const SectionPour: React.FC = () => {
 
   const current = flavorNotes[activeNote];
 
+  // Start 1-second auto cycle ONLY when properly landed on this section
+  const startAutoCycle = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    setActiveNote(0);
+
+    timerRef.current = setInterval(() => {
+      setActiveNote((prev) => (prev + 1) % 4);
+    }, 1000);
+  };
+
+  // Stop auto cycle and lock back to Note 1 (0) until next proper landing
+  const stopAutoCycle = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+    setActiveNote(0);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, []);
+
+  const handleNoteClick = (noteId: number) => {
+    setActiveNote(noteId);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = setInterval(() => {
+        setActiveNote((prev) => (prev + 1) % 4);
+      }, 1000);
+    }
+  };
+
   useEffect(() => {
     const section = sectionRef.current;
     const radarContainer = radarContainerRef.current;
@@ -58,16 +99,21 @@ export const SectionPour: React.FC = () => {
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
 
+      // Desktop: triggers landing ONLY when section pins at top of viewport
       mm.add('(min-width: 1024px)', () => {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
             start: 'top top',
-            end: '+=130%',
+            end: '+=100%',
             pin: true,
             scrub: 0.65,
             anticipatePin: 1,
             invalidateOnRefresh: true,
+            onEnter: () => startAutoCycle(),
+            onEnterBack: () => startAutoCycle(),
+            onLeave: () => stopAutoCycle(),
+            onLeaveBack: () => stopAutoCycle(),
           },
         });
 
@@ -94,11 +140,17 @@ export const SectionPour: React.FC = () => {
           );
       });
 
+      // Mobile: triggers landing only when section is centered and landed on screen
       mm.add('(max-width: 1023px)', () => {
         const mobileTl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
-            start: 'top 75%',
+            start: 'top 15%',
+            end: 'bottom 15%',
+            onEnter: () => startAutoCycle(),
+            onEnterBack: () => startAutoCycle(),
+            onLeave: () => stopAutoCycle(),
+            onLeaveBack: () => stopAutoCycle(),
           },
         });
 
@@ -184,10 +236,10 @@ export const SectionPour: React.FC = () => {
               {flavorNotes.map((note) => (
                 <button
                   key={note.id}
-                  onClick={() => setActiveNote(note.id)}
-                  className={`px-2.5 py-2 rounded-xl text-xs font-sans text-center transition-all cursor-pointer flex items-center justify-center ${
+                  onClick={() => handleNoteClick(note.id)}
+                  className={`px-2.5 py-2 rounded-xl text-xs font-sans text-center transition-all duration-200 cursor-pointer flex items-center justify-center ${
                     activeNote === note.id
-                      ? 'bg-[#F5DADF] border-2 border-[#2D2926] text-[#2D2926] font-bold shadow-sm'
+                      ? 'bg-[#F5DADF] border-2 border-[#2D2926] text-[#2D2926] font-bold shadow-sm scale-[1.02]'
                       : 'bg-white border border-[#2D2926]/15 text-[#2D2926]/80 hover:text-[#2D2926] hover:border-[#2D2926]/30 font-medium'
                   }`}
                 >
@@ -197,7 +249,7 @@ export const SectionPour: React.FC = () => {
             </div>
 
             {/* Selected Flavor Card */}
-            <div className="rounded-2xl sm:rounded-3xl bg-white border border-[#2D2926]/10 p-4 sm:p-5 shadow-[0_15px_40px_rgba(45,41,38,0.06)]">
+            <div key={activeNote} className="rounded-2xl sm:rounded-3xl bg-white border border-[#2D2926]/10 p-4 sm:p-5 shadow-[0_15px_40px_rgba(45,41,38,0.06)] transition-all duration-150">
               <div className="flex items-center justify-between mb-1.5 sm:mb-2">
                 <span className="text-[10px] sm:text-[11px] font-mono tracking-widest text-[#E05A7E] uppercase font-bold">
                   {current.category}
