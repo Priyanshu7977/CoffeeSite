@@ -342,31 +342,31 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       </section>
 
       {/* 3. Interactive Regional Terroir Inspector */}
-      <section ref={section1Ref} className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-white">
+      <section ref={section1Ref} className="py-8 sm:py-12 lg:py-14 px-4 sm:px-8 md:px-12 border-b border-[#2D2926]/10 bg-white">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-10 text-center max-w-2xl mx-auto">
-            <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-2">
+          <div className="mb-6 sm:mb-8 text-center max-w-2xl mx-auto">
+            <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-1.5">
               SECTION 01 / TERROIR GEOGRAPHY
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl text-[#2D2926] font-bold">
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl text-[#2D2926] font-bold">
               Explore the 4 Premier Microclimates.
             </h2>
-            <p className="font-sans text-sm text-[#5E5854] mt-2">
+            <p className="font-sans text-xs sm:text-sm text-[#5E5854] mt-1.5">
               Select an origin valley below to inspect its elevation, mineral soil composition, and native canopy biodiversity.
             </p>
           </div>
 
           {/* Region Tabs */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 p-1.5 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 max-w-4xl mx-auto mb-10 shadow-2xs">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 p-1.5 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 max-w-3xl mx-auto mb-6 sm:mb-8 shadow-2xs">
             {REGIONS.map((region) => {
               const isSelected = selectedRegionId === region.id;
               return (
                 <button
                   key={region.id}
                   onClick={() => setSelectedRegionId(region.id)}
-                  className={`px-3 py-2.5 rounded-xl text-xs font-sans font-bold transition-all cursor-pointer text-center flex flex-col items-center justify-center gap-0.5 ${
+                  className={`px-3 py-2 rounded-xl text-xs font-sans font-bold transition-all cursor-pointer text-center flex flex-col items-center justify-center gap-0.5 ${
                     isSelected
-                      ? 'bg-[#2D2926] text-white shadow-md'
+                      ? 'bg-[#2D2926] text-white shadow-md scale-[1.02]'
                       : 'text-[#5E5854] hover:text-[#2D2926]'
                   }`}
                 >
@@ -380,25 +380,25 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
           </div>
 
           {/* Detailed Terroir Panel */}
-          <div className="rounded-3xl border border-[#2D2926]/10 bg-[#FAF7F5] p-6 sm:p-10 shadow-sm">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="rounded-2xl sm:rounded-3xl border border-[#2D2926]/10 bg-[#FAF7F5] p-4 sm:p-6 lg:p-8 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
               {/* Left Image & Agronomy Card */}
               <div className="lg:col-span-5 relative">
-                <div className="relative aspect-[4/3] sm:aspect-square overflow-hidden rounded-2xl border border-[#2D2926]/10 shadow-md">
+                <div className="relative aspect-[16/11] sm:aspect-[4/3] max-h-[34vh] sm:max-h-[38vh] overflow-hidden rounded-xl sm:rounded-2xl border border-[#2D2926]/10 shadow-md">
                   <img
                     src={activeRegion.image}
                     alt={activeRegion.name}
                     className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-                  <div className="absolute top-3 left-3 rounded-full bg-white/95 px-3 py-1 text-xs font-mono font-bold text-[#2D2926] shadow-sm">
+                  <div className="absolute top-2.5 left-2.5 rounded-full bg-white/95 px-2.5 py-0.5 text-[11px] font-mono font-bold text-[#2D2926] shadow-sm">
                     {activeRegion.state}
                   </div>
-                  <div className="absolute bottom-3 left-3 right-3 text-white">
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-[#F5DADF] font-bold block mb-1">
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
+                    <span className="text-[9px] font-mono uppercase tracking-widest text-[#F5DADF] font-bold block mb-0.5">
                       VERIFIED SCA CUPPING BENCHMARK
                     </span>
-                    <span className="font-display text-lg font-bold">
+                    <span className="font-display text-base sm:text-lg font-bold">
                       {activeRegion.scaScore}
                     </span>
                   </div>
@@ -406,24 +406,24 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
               </div>
 
               {/* Right Agronomy Specs Grid */}
-              <div className="lg:col-span-7 space-y-6">
+              <div className="lg:col-span-7 space-y-4">
                 <div>
-                  <div className="flex items-center gap-2 text-xs font-mono text-[#E05A7E] font-bold uppercase mb-1">
+                  <div className="flex items-center gap-1.5 text-xs font-mono text-[#E05A7E] font-bold uppercase mb-1">
                     <MapPin className="h-3.5 w-3.5" />
                     <span>{activeRegion.state} • {activeRegion.elevation}</span>
                   </div>
-                  <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#2D2926] mb-3">
+                  <h3 className="font-display text-xl sm:text-2xl font-bold text-[#2D2926] mb-1.5">
                     {activeRegion.name}
                   </h3>
-                  <p className="font-sans text-xs sm:text-sm text-[#5E5854] leading-relaxed">
+                  <p className="font-sans text-xs sm:text-sm text-[#5E5854] leading-relaxed line-clamp-2 sm:line-clamp-none">
                     {activeRegion.description}
                   </p>
                 </div>
 
                 {/* Technical Agronomy Data Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="p-3.5 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#8C827A] font-bold block mb-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-white border border-[#2D2926]/10 shadow-2xs">
+                    <span className="text-[9px] font-mono uppercase tracking-wider text-[#8C827A] font-bold block mb-0.5">
                       Soil Mineral Profile
                     </span>
                     <span className="font-sans text-xs font-bold text-[#2D2926]">
@@ -431,8 +431,8 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#8C827A] font-bold block mb-1">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-white border border-[#2D2926]/10 shadow-2xs">
+                    <span className="text-[9px] font-mono uppercase tracking-wider text-[#8C827A] font-bold block mb-0.5">
                       Rainfall & Monsoon Vector
                     </span>
                     <span className="font-sans text-xs font-bold text-[#2D2926]">
@@ -440,8 +440,8 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#8C827A] font-bold block mb-1">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-white border border-[#2D2926]/10 shadow-2xs">
+                    <span className="text-[9px] font-mono uppercase tracking-wider text-[#8C827A] font-bold block mb-0.5">
                       Botanical Arabica Varietals
                     </span>
                     <span className="font-sans text-xs font-bold text-[#2D2926]">
@@ -449,8 +449,8 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#8C827A] font-bold block mb-1">
+                  <div className="p-2.5 sm:p-3 rounded-xl bg-white border border-[#2D2926]/10 shadow-2xs">
+                    <span className="text-[9px] font-mono uppercase tracking-wider text-[#8C827A] font-bold block mb-0.5">
                       Shade Canopy Ecosystem
                     </span>
                     <span className="font-sans text-xs font-bold text-[#2D2926]">
@@ -461,14 +461,14 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
 
                 {/* Key Aroma Compounds */}
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-[#8C827A] font-bold block mb-2">
+                  <span className="text-[9px] font-mono uppercase tracking-widest text-[#8C827A] font-bold block mb-1.5">
                     Dominant Olfactory Aromatics
                   </span>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {activeRegion.keyAromas.map((aroma) => (
                       <span
                         key={aroma}
-                        className="rounded-full bg-white px-3 py-1 text-xs font-sans font-semibold text-[#2D2926] border border-[#2D2926]/10 shadow-2xs"
+                        className="rounded-full bg-white px-2.5 py-0.5 text-xs font-sans font-semibold text-[#2D2926] border border-[#2D2926]/10 shadow-2xs"
                       >
                         {aroma}
                       </span>
@@ -482,31 +482,31 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       </section>
 
       {/* 4. SCA Q-Grader Cupping Radar & Brix Sugar Analysis */}
-      <section ref={section2Ref} className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
+      <section ref={section2Ref} className="py-8 sm:py-12 lg:py-14 px-4 sm:px-8 md:px-12 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-12 text-center max-w-2xl mx-auto">
-            <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-2">
+          <div className="mb-6 sm:mb-8 text-center max-w-2xl mx-auto">
+            <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-1.5">
               SECTION 02 / SENSORY LAB ANALYSIS
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl text-[#2D2926] font-bold">
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl text-[#2D2926] font-bold">
               Q-Grader Cupping Fingerprints.
             </h2>
-            <p className="font-sans text-sm text-[#5E5854] mt-2">
+            <p className="font-sans text-xs sm:text-sm text-[#5E5854] mt-1.5">
               Every single-estate batch is evaluated by licensed sensory cuppers for natural sweetness, body viscosity, and clean cup clarity.
             </p>
           </div>
 
           {/* Cupping Lot Selector */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-6 sm:mb-8">
             {NOIR_PRODUCTS.slice(0, 5).map((prod) => {
               const isSelected = activeCuppingLotId === prod.id;
               return (
                 <button
                   key={prod.id}
                   onClick={() => setActiveCuppingLotId(prod.id)}
-                  className={`px-4 py-2 rounded-xl text-xs font-sans font-bold transition-all cursor-pointer ${
+                  className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-sans font-bold transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-[#2D2926] text-white shadow-sm'
+                      ? 'bg-[#2D2926] text-white shadow-sm scale-[1.02]'
                       : 'bg-white text-[#5E5854] border border-[#2D2926]/10 hover:text-[#2D2926]'
                   }`}
                 >
@@ -517,29 +517,29 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
           </div>
 
           {/* Interactive Sensory Radar Dashboard */}
-          <div className="rounded-3xl border border-[#2D2926]/10 bg-white p-6 sm:p-10 shadow-sm">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="rounded-2xl sm:rounded-3xl border border-[#2D2926]/10 bg-white p-4 sm:p-6 lg:p-8 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
               {/* Lot Profile Summary */}
-              <div className="lg:col-span-5 space-y-4">
-                <div className="inline-flex items-center gap-2 rounded-full bg-[#E05A7E]/10 px-3 py-1 text-xs font-mono font-bold text-[#E05A7E]">
+              <div className="lg:col-span-5 space-y-3 sm:space-y-4">
+                <div className="inline-flex items-center gap-1.5 rounded-full bg-[#E05A7E]/10 px-2.5 py-0.5 text-xs font-mono font-bold text-[#E05A7E]">
                   <span>{activeCuppingLot.origin} • {activeCuppingLot.altitude}</span>
                 </div>
-                <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#2D2926]">
+                <h3 className="font-display text-xl sm:text-2xl font-bold text-[#2D2926]">
                   {activeCuppingLot.name}
                 </h3>
-                <p className="font-sans text-xs sm:text-sm text-[#5E5854] leading-relaxed">
+                <p className="font-sans text-xs sm:text-sm text-[#5E5854] leading-relaxed line-clamp-2 sm:line-clamp-none">
                   {activeCuppingLot.description}
                 </p>
 
-                <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2">
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-[#8C827A] font-bold block">
+                <div className="p-3 rounded-xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-1.5">
+                  <span className="text-[9px] font-mono uppercase tracking-wider text-[#8C827A] font-bold block">
                     Tasting Notes
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {activeCuppingLot.notes.map((note) => (
                       <span
                         key={note}
-                        className="rounded-lg bg-white px-2.5 py-1 text-[11px] font-mono font-bold text-[#2D2926] border border-[#2D2926]/10"
+                        className="rounded-lg bg-white px-2 py-0.5 text-[11px] font-mono font-bold text-[#2D2926] border border-[#2D2926]/10"
                       >
                         {note}
                       </span>
@@ -547,13 +547,13 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
                   </div>
                 </div>
 
-                <div className="pt-2 flex items-center justify-between">
-                  <span className="font-mono text-lg font-bold text-[#2D2926]">
+                <div className="pt-1 flex items-center justify-between">
+                  <span className="font-mono text-base sm:text-lg font-bold text-[#2D2926]">
                     {activeCuppingLot.price}
                   </span>
                   <button
                     onClick={() => handleAddLotToCart(activeCuppingLot)}
-                    className="rounded-xl bg-[#2D2926] text-white px-4 py-2 text-xs font-sans font-bold hover:bg-[#E05A7E] transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
+                    className="rounded-xl bg-[#2D2926] text-white px-3.5 py-1.5 text-xs font-sans font-bold hover:bg-[#E05A7E] transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
                   >
                     <ShoppingBag className="h-3.5 w-3.5" />
                     <span>Add to Cart</span>
@@ -562,7 +562,7 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
               </div>
 
               {/* Sensory Metric Bars */}
-              <div className="lg:col-span-7 space-y-5 bg-[#FAF7F5] p-6 rounded-2xl border border-[#2D2926]/10">
+              <div className="lg:col-span-7 space-y-4 bg-[#FAF7F5] p-4 sm:p-5 rounded-2xl border border-[#2D2926]/10">
                 <div className="flex items-center justify-between pb-2 border-b border-[#2D2926]/10">
                   <span className="text-xs font-mono font-bold uppercase text-[#2D2926]">
                     Sensory Metric Breakdown
@@ -574,11 +574,11 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
 
                 {/* Metric 1: Sweetness / Brix */}
                 <div>
-                  <div className="flex justify-between text-xs font-mono mb-1.5">
+                  <div className="flex justify-between text-xs font-mono mb-1">
                     <span className="font-bold text-[#2D2926]">Natural Sucrose Sweetness</span>
                     <span className="font-bold text-[#E05A7E]">{activeCuppingLot.sweetness} / 100</span>
                   </div>
-                  <div className="h-2.5 w-full bg-white rounded-full overflow-hidden border border-[#2D2926]/10">
+                  <div className="h-2 w-full bg-white rounded-full overflow-hidden border border-[#2D2926]/10">
                     <div
                       className="h-full bg-gradient-to-r from-[#C89658] to-[#E05A7E] rounded-full transition-all duration-500"
                       style={{ width: `${activeCuppingLot.sweetness}%` }}
@@ -588,11 +588,11 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
 
                 {/* Metric 2: Body / Viscosity */}
                 <div>
-                  <div className="flex justify-between text-xs font-mono mb-1.5">
+                  <div className="flex justify-between text-xs font-mono mb-1">
                     <span className="font-bold text-[#2D2926]">Body & Crema Viscosity</span>
                     <span className="font-bold text-[#2D2926]">{activeCuppingLot.body} / 100</span>
                   </div>
-                  <div className="h-2.5 w-full bg-white rounded-full overflow-hidden border border-[#2D2926]/10">
+                  <div className="h-2 w-full bg-white rounded-full overflow-hidden border border-[#2D2926]/10">
                     <div
                       className="h-full bg-[#2D2926] rounded-full transition-all duration-500"
                       style={{ width: `${activeCuppingLot.body}%` }}
@@ -602,11 +602,11 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
 
                 {/* Metric 3: Acidity Balance */}
                 <div>
-                  <div className="flex justify-between text-xs font-mono mb-1.5">
+                  <div className="flex justify-between text-xs font-mono mb-1">
                     <span className="font-bold text-[#2D2926]">Clean Fruit Acidity</span>
                     <span className="font-bold text-[#2D2926]">{activeCuppingLot.acidity} / 100</span>
                   </div>
-                  <div className="h-2.5 w-full bg-white rounded-full overflow-hidden border border-[#2D2926]/10">
+                  <div className="h-2 w-full bg-white rounded-full overflow-hidden border border-[#2D2926]/10">
                     <div
                       className="h-full bg-gradient-to-r from-[#2D2926] to-[#C89658] rounded-full transition-all duration-500"
                       style={{ width: `${activeCuppingLot.acidity}%` }}
@@ -615,8 +615,8 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
                 </div>
 
                 {/* Scientific Extraction Recommendation */}
-                <div className="pt-2 text-xs font-mono text-[#5E5854] flex items-start gap-2">
-                  <Activity className="h-4 w-4 text-[#E05A7E] shrink-0 mt-0.5" />
+                <div className="pt-1.5 text-xs font-mono text-[#5E5854] flex items-start gap-2">
+                  <Activity className="h-3.5 w-3.5 text-[#E05A7E] shrink-0 mt-0.5" />
                   <span>
                     <strong>Optimal Extraction Window:</strong> {activeCuppingLot.brewRecommendation}
                   </span>
@@ -628,51 +628,51 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       </section>
 
       {/* 5. Biochemical Fermentation & Roastery Physics */}
-      <section ref={section3Ref} className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-white">
+      <section ref={section3Ref} className="py-8 sm:py-12 lg:py-14 px-4 sm:px-8 md:px-12 border-b border-[#2D2926]/10 bg-white">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-12 text-center max-w-2xl mx-auto">
-            <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-2">
+          <div className="mb-6 sm:mb-8 text-center max-w-2xl mx-auto">
+            <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-1.5">
               SECTION 03 / BIOCHEMICAL PROCESSES
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl text-[#2D2926] font-bold">
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl text-[#2D2926] font-bold">
               The Science of Fermentation & Roasting.
             </h2>
-            <p className="font-sans text-sm text-[#5E5854] mt-2">
+            <p className="font-sans text-xs sm:text-sm text-[#5E5854] mt-1.5">
               How precise anaerobic tank purging, Malabar ocean winds, and convective drum physics transform raw cherries into liquid silk.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {PROCESSES.map((proc, idx) => {
               const Icon = proc.icon;
               return (
                 <div
                   key={proc.title}
-                  className="rounded-3xl border border-[#2D2926]/10 bg-[#FAF7F5] p-6 shadow-2xs flex flex-col justify-between hover:border-[#E05A7E] transition-all group"
+                  className="rounded-2xl border border-[#2D2926]/10 bg-[#FAF7F5] p-4 sm:p-4.5 shadow-2xs flex flex-col justify-between hover:border-[#E05A7E] transition-all group"
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center justify-between mb-2.5">
                       <span className="font-mono text-xs font-bold text-[#E05A7E]">
                         METHOD 0{idx + 1}
                       </span>
-                      <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center border border-[#2D2926]/10">
-                        <Icon className="h-4 w-4 text-[#2D2926] group-hover:text-[#E05A7E] transition-colors" />
+                      <div className="h-7 w-7 rounded-full bg-white flex items-center justify-center border border-[#2D2926]/10">
+                        <Icon className="h-3.5 w-3.5 text-[#2D2926] group-hover:text-[#E05A7E] transition-colors" />
                       </div>
                     </div>
 
-                    <h3 className="font-display text-lg font-bold text-[#2D2926] mb-1">
+                    <h3 className="font-display text-base font-bold text-[#2D2926] mb-0.5">
                       {proc.title}
                     </h3>
-                    <div className="text-[11px] font-mono text-[#E05A7E] font-semibold mb-3">
+                    <div className="text-[10px] font-mono text-[#E05A7E] font-semibold mb-2">
                       {proc.tag}
                     </div>
 
-                    <p className="font-sans text-xs text-[#5E5854] leading-relaxed mb-4">
+                    <p className="font-sans text-xs text-[#5E5854] leading-relaxed mb-3 line-clamp-3">
                       {proc.desc}
                     </p>
                   </div>
 
-                  <div className="pt-3 border-t border-[#2D2926]/10 space-y-1 text-[10px] font-mono text-[#8C827A]">
+                  <div className="pt-2.5 border-t border-[#2D2926]/10 space-y-0.5 text-[10px] font-mono text-[#8C827A]">
                     <div><strong>Parameter:</strong> {proc.temp}</div>
                     <div><strong>Kinetics:</strong> {proc.chemistry}</div>
                   </div>
@@ -684,46 +684,46 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       </section>
 
       {/* 6. Water Mineral Chemistry & Brewing Extraction Metrics */}
-      <section ref={section4Ref} className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
+      <section ref={section4Ref} className="py-8 sm:py-12 lg:py-14 px-4 sm:px-8 md:px-12 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
         <div className="mx-auto max-w-5xl">
-          <div className="mb-10 text-center max-w-2xl mx-auto">
-            <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-2">
+          <div className="mb-6 sm:mb-8 text-center max-w-2xl mx-auto">
+            <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-1.5">
               SECTION 04 / WATER & EXTRACTION CHEMISTRY
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl text-[#2D2926] font-bold">
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl text-[#2D2926] font-bold">
               The 98% Solvent: Water Chemistry.
             </h2>
-            <p className="font-sans text-sm text-[#5E5854] mt-2">
+            <p className="font-sans text-xs sm:text-sm text-[#5E5854] mt-1.5">
               Coffee is 98% water. Standard municipal tap water contains excess bicarbonates that mute fruit sugars. Here are our calibrated brewing specs:
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="rounded-3xl bg-white border border-[#2D2926]/10 p-6 shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+            <div className="rounded-2xl bg-white border border-[#2D2926]/10 p-4 sm:p-5 shadow-sm">
               <span className="text-[10px] font-mono uppercase tracking-widest text-[#E05A7E] font-bold block mb-1">
                 TOTAL DISSOLVED SOLIDS
               </span>
-              <h3 className="font-display text-2xl font-bold text-[#2D2926] mb-2">120 – 140 PPM</h3>
+              <h3 className="font-display text-xl sm:text-2xl font-bold text-[#2D2926] mb-1.5">120 – 140 PPM</h3>
               <p className="font-sans text-xs text-[#5E5854] leading-relaxed">
                 Clean, mineral-balanced spring water. Below 80 PPM extracts excessive sharp acidity; above 200 PPM causes chalky, muted extraction.
               </p>
             </div>
 
-            <div className="rounded-3xl bg-white border border-[#2D2926]/10 p-6 shadow-sm">
+            <div className="rounded-2xl bg-white border border-[#2D2926]/10 p-4 sm:p-5 shadow-sm">
               <span className="text-[10px] font-mono uppercase tracking-widest text-[#E05A7E] font-bold block mb-1">
                 CALCIUM & MAGNESIUM
               </span>
-              <h3 className="font-display text-2xl font-bold text-[#2D2926] mb-2">2:1 Ion Ratio</h3>
+              <h3 className="font-display text-xl sm:text-2xl font-bold text-[#2D2926] mb-1.5">2:1 Ion Ratio</h3>
               <p className="font-sans text-xs text-[#5E5854] leading-relaxed">
                 Magnesium ions bind directly with oxygenated fruit terpenes, while Calcium highlights rich Mysore cocoa lipids and natural crema body.
               </p>
             </div>
 
-            <div className="rounded-3xl bg-white border border-[#2D2926]/10 p-6 shadow-sm">
+            <div className="rounded-2xl bg-white border border-[#2D2926]/10 p-4 sm:p-5 shadow-sm">
               <span className="text-[10px] font-mono uppercase tracking-widest text-[#E05A7E] font-bold block mb-1">
                 EXTRACTION YIELD TARGET
               </span>
-              <h3 className="font-display text-2xl font-bold text-[#2D2926] mb-2">19.5% – 21.2%</h3>
+              <h3 className="font-display text-xl sm:text-2xl font-bold text-[#2D2926] mb-1.5">19.5% – 21.2%</h3>
               <p className="font-sans text-xs text-[#5E5854] leading-relaxed">
                 The golden extraction sweet-spot. Extracts sweet core fructose and aromatic oils while leaving bitter plant lignins behind in the spent puck.
               </p>
@@ -733,20 +733,20 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       </section>
 
       {/* 7. Seasonal Agricultural Harvest Calendar */}
-      <section ref={section5Ref} className="py-16 md:py-24 px-6 md:px-12 border-b border-[#2D2926]/10 bg-white">
+      <section ref={section5Ref} className="py-8 sm:py-12 lg:py-14 px-4 sm:px-8 md:px-12 border-b border-[#2D2926]/10 bg-white">
         <div className="mx-auto max-w-5xl">
-          <div className="mb-10 text-center max-w-2xl mx-auto">
-            <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-2">
+          <div className="mb-6 sm:mb-8 text-center max-w-2xl mx-auto">
+            <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-1.5">
               SECTION 05 / CROP ROTATION CALENDAR
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl text-[#2D2926] font-bold">
+            <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl text-[#2D2926] font-bold">
               The 12-Month Western Ghats Cycle.
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10">
-              <div className="flex items-center gap-2 text-xs font-mono text-[#E05A7E] font-bold uppercase mb-2">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
+            <div className="p-4 rounded-xl bg-[#FAF7F5] border border-[#2D2926]/10">
+              <div className="flex items-center gap-1.5 text-xs font-mono text-[#E05A7E] font-bold uppercase mb-1.5">
                 <Calendar className="h-3.5 w-3.5" />
                 <span>DEC – FEB</span>
               </div>
@@ -756,8 +756,8 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10">
-              <div className="flex items-center gap-2 text-xs font-mono text-[#E05A7E] font-bold uppercase mb-2">
+            <div className="p-4 rounded-xl bg-[#FAF7F5] border border-[#2D2926]/10">
+              <div className="flex items-center gap-1.5 text-xs font-mono text-[#E05A7E] font-bold uppercase mb-1.5">
                 <Calendar className="h-3.5 w-3.5" />
                 <span>MAR – MAY</span>
               </div>
@@ -767,8 +767,8 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10">
-              <div className="flex items-center gap-2 text-xs font-mono text-[#E05A7E] font-bold uppercase mb-2">
+            <div className="p-4 rounded-xl bg-[#FAF7F5] border border-[#2D2926]/10">
+              <div className="flex items-center gap-1.5 text-xs font-mono text-[#E05A7E] font-bold uppercase mb-1.5">
                 <Calendar className="h-3.5 w-3.5" />
                 <span>JUN – SEP</span>
               </div>
@@ -778,8 +778,8 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10">
-              <div className="flex items-center gap-2 text-xs font-mono text-[#E05A7E] font-bold uppercase mb-2">
+            <div className="p-4 rounded-xl bg-[#FAF7F5] border border-[#2D2926]/10">
+              <div className="flex items-center gap-1.5 text-xs font-mono text-[#E05A7E] font-bold uppercase mb-1.5">
                 <Calendar className="h-3.5 w-3.5" />
                 <span>OCT – NOV</span>
               </div>
@@ -793,14 +793,14 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       </section>
 
       {/* 8. Direct Single-Estate Coffee Cards */}
-      <section ref={section6Ref} className="py-16 md:py-24 px-6 md:px-12 bg-[#FAF7F5]">
+      <section ref={section6Ref} className="py-8 sm:py-12 lg:py-14 px-4 sm:px-8 md:px-12 bg-[#FAF7F5]">
         <div className="mx-auto max-w-6xl">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6 sm:mb-8">
             <div>
               <span className="text-xs font-mono tracking-[0.25em] text-[#E05A7E] font-bold uppercase block mb-1">
                 FRESH ROASTED SELECTION
               </span>
-              <h2 className="font-display text-3xl sm:text-4xl text-[#2D2926] font-bold">
+              <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl text-[#2D2926] font-bold">
                 Order Fresh Roasted Coffee.
               </h2>
             </div>
@@ -813,11 +813,11 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {NOIR_PRODUCTS.slice(0, 4).map((prod) => (
               <div
                 key={prod.id}
-                className="rounded-3xl border border-[#2D2926]/10 bg-white p-5 shadow-sm flex flex-col justify-between hover:shadow-md transition-all group"
+                className="rounded-2xl sm:rounded-3xl border border-[#2D2926]/10 bg-white p-3.5 sm:p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-all group"
               >
                 <div>
                   <div 
@@ -825,14 +825,14 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
                       if (onDiscoverProduct) onDiscoverProduct(prod);
                       else navigate(`/product/${prod.id}`);
                     }}
-                    className="relative aspect-square overflow-hidden rounded-2xl mb-4 bg-[#FAF7F5] border border-[#2D2926]/10 cursor-pointer"
+                    className="relative aspect-[16/11] sm:aspect-[4/3] overflow-hidden rounded-xl sm:rounded-2xl mb-2.5 bg-[#FAF7F5] border border-[#2D2926]/10 cursor-pointer"
                   >
                     <img
                       src={prod.image}
                       alt={prod.name}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute top-2.5 left-2.5 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-mono font-bold text-[#2D2926] shadow-sm">
+                    <div className="absolute top-2 left-2 rounded-full bg-white/95 px-2 py-0.5 text-[9px] sm:text-[10px] font-mono font-bold text-[#2D2926] shadow-sm">
                       {prod.badge}
                     </div>
                   </div>
@@ -842,28 +842,28 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
                       if (onDiscoverProduct) onDiscoverProduct(prod);
                       else navigate(`/product/${prod.id}`);
                     }}
-                    className="font-display text-base font-bold text-[#2D2926] mb-1 group-hover:text-[#E05A7E] transition-colors cursor-pointer"
+                    className="font-display text-sm sm:text-base font-bold text-[#2D2926] mb-0.5 group-hover:text-[#E05A7E] transition-colors cursor-pointer truncate"
                   >
                     {prod.name}
                   </h3>
-                  <div className="text-[11px] font-mono text-[#8C827A] mb-2 font-medium">
+                  <div className="text-[10px] sm:text-[11px] font-mono text-[#8C827A] mb-1.5 font-medium truncate">
                     {prod.region} • {prod.altitude}
                   </div>
 
-                  <p className="text-xs font-sans text-[#5E5854] line-clamp-2 leading-relaxed mb-4">
+                  <p className="text-xs font-sans text-[#5E5854] line-clamp-2 leading-relaxed mb-2.5">
                     {prod.description}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-[#2D2926]/10 space-y-3">
+                <div className="pt-2.5 border-t border-[#2D2926]/10 space-y-2">
                   <div>
-                    <label className="text-[10px] font-sans font-bold uppercase tracking-wider text-[#8C827A] block mb-1">
+                    <label className="text-[9px] font-sans font-bold uppercase tracking-wider text-[#8C827A] block mb-1">
                       Select Grind Profile
                     </label>
                     <select
                       value={selectedGrinds[prod.id] || 'Filter Fine (Brass Davarah)'}
                       onChange={(e) => setSelectedGrinds((prev) => ({ ...prev, [prod.id]: e.target.value }))}
-                      className="w-full rounded-xl bg-[#FAF7F5] border border-[#2D2926]/15 px-2.5 py-1.5 text-xs text-[#2D2926] font-sans font-medium focus:border-[#E05A7E] focus:outline-none"
+                      className="w-full rounded-lg bg-[#FAF7F5] border border-[#2D2926]/15 px-2 py-1 text-[11px] text-[#2D2926] font-sans font-medium focus:border-[#E05A7E] focus:outline-none"
                     >
                       <option value="Filter Fine (Brass Davarah)">Filter Fine (Brass Davarah)</option>
                       <option value="Medium Fine (Pour Over / V60)">Medium Fine (Pour Over)</option>
@@ -873,12 +873,12 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
                   </div>
 
                   <div className="flex items-center justify-between pt-1">
-                    <span className="font-mono text-base font-bold text-[#2D2926]">
+                    <span className="font-mono text-sm sm:text-base font-bold text-[#2D2926]">
                       {prod.price}
                     </span>
                     <button
                       onClick={() => handleAddLotToCart(prod)}
-                      className="rounded-xl bg-[#2D2926] text-white px-3.5 py-1.5 text-xs font-sans font-bold hover:bg-[#E05A7E] transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
+                      className="rounded-xl bg-[#2D2926] text-white px-3 py-1.5 text-xs font-sans font-bold hover:bg-[#E05A7E] transition-all cursor-pointer shadow-sm flex items-center gap-1.5"
                     >
                       <ShoppingBag className="h-3 w-3" />
                       <span>Add to Cart</span>
