@@ -139,33 +139,33 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       </div>
 
       {/* Hero Collection Header */}
-      <section className="relative px-4 sm:px-8 md:px-12 pt-4 sm:pt-6 pb-4 sm:pb-5 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
+      <section className="relative px-4 sm:px-8 md:px-12 pt-10 sm:pt-12 md:pt-14 pb-8 sm:pb-10 md:pb-12 border-b border-[#2D2926]/10 bg-gradient-to-b from-white to-[#FAF7F5]">
         <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 sm:gap-4 animate-heroFadeUp">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 animate-heroFadeUp">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#F5DADF] border border-[#2D2926]/10 text-[10px] sm:text-xs font-sans font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#2D2926] mb-1.5 shadow-2xs hover:scale-105 transition-transform duration-300">
-                <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#E05A7E] animate-spin-slow" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F5DADF] border border-[#2D2926]/10 text-[10px] sm:text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#2D2926] mb-4 sm:mb-5 shadow-2xs hover:scale-105 transition-transform duration-300">
+                <Sparkles className="h-3.5 w-3.5 text-[#E05A7E] animate-spin-slow" />
                 <span>12 SINGLE-ESTATE HARVESTS • 250G MICRO-TINS</span>
               </div>
-              <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#2D2926]">
+              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[#2D2926] mb-3 sm:mb-4">
                 Single-Origin <span className="italic text-[#E05A7E]">Curations.</span>
               </h1>
-              <p className="font-sans text-xs sm:text-sm text-[#5E5854] max-w-xl mt-1 leading-relaxed font-normal">
+              <p className="font-sans text-sm sm:text-base text-[#5E5854] max-w-2xl leading-relaxed mb-4 sm:mb-6 font-normal">
                 Shade-grown under native canopies in Chikmagalur, Coorg, Nilgiris, and Araku. Roast-profiled in small batches and nitrogen-sealed at peak aroma.
               </p>
             </div>
 
             {/* Quick Stats Pill */}
-            <div className="flex items-center gap-2.5 bg-white border border-[#2D2926]/10 rounded-xl sm:rounded-2xl p-2 sm:p-2.5 shadow-sm self-start md:self-auto hover:shadow-md transition-shadow duration-300">
+            <div className="flex items-center gap-3 bg-white border border-[#2D2926]/10 rounded-2xl p-3 shadow-xs self-start md:self-auto hover:shadow-md transition-shadow duration-300 mb-2 md:mb-6">
               <div>
-                <span className="text-[9px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Showing</span>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Showing</span>
                 <span className="font-display text-sm sm:text-base font-bold text-[#2D2926]">
                   {filteredProducts.length} of {NOIR_PRODUCTS.length} Lots
                 </span>
               </div>
-              <div className="h-6 w-[1px] bg-[#2D2926]/10" />
+              <div className="h-7 w-[1px] bg-[#2D2926]/10" />
               <div>
-                <span className="text-[9px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Dispatch</span>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Dispatch</span>
                 <span className="font-display text-xs sm:text-sm font-bold text-[#E05A7E] flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-[#E05A7E] animate-ping" />
                   Free Across India
@@ -175,9 +175,9 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
           </div>
 
           {/* Filter & Search Bar */}
-          <div className="mt-4 pt-3 sm:pt-4 border-t border-[#2D2926]/10 flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 sm:gap-3 animate-heroFadeUp [animation-delay:120ms]">
+          <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-[#2D2926]/10 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 animate-heroFadeUp [animation-delay:120ms]">
             {/* Roast Level Filter Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 lg:pb-0 scrollbar-none w-full lg:w-auto">
+            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1.5 lg:pb-0 scrollbar-none w-full lg:w-auto">
               {[
                 { id: 'all', label: 'All 12 Lots' },
                 { id: 'light', label: 'Light Roast' },
@@ -188,7 +188,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                 <button
                   key={tab.id}
                   onClick={() => setSelectedRoastFilter(tab.id)}
-                  className={`px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-sans tracking-wider font-bold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
+                  className={`px-3.5 sm:px-4 py-2 rounded-full text-xs font-sans tracking-wider font-bold transition-all cursor-pointer whitespace-nowrap active:scale-95 ${
                     selectedRoastFilter === tab.id
                       ? 'bg-[#2D2926] text-white shadow-sm'
                       : 'bg-white border border-[#2D2926]/10 text-[#5E5854] hover:text-[#2D2926] hover:bg-[#F5DADF]/40'
@@ -209,12 +209,12 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search lot or tasting note..."
-                  className="w-full sm:w-56 rounded-full bg-white border border-[#2D2926]/15 pl-9 pr-4 py-1.5 text-xs font-sans text-[#2D2926] placeholder-[#8C827A] focus:border-[#2D2926] focus:outline-none"
+                  className="w-full sm:w-60 rounded-full bg-white border border-[#2D2926]/15 pl-9 pr-4 py-2 text-xs font-sans text-[#2D2926] placeholder-[#8C827A] focus:border-[#2D2926] focus:outline-none shadow-2xs"
                 />
               </div>
 
               {/* Sort Select */}
-              <div className="flex items-center gap-1.5 bg-white border border-[#2D2926]/15 rounded-full px-3 py-1 shadow-sm">
+              <div className="flex items-center gap-1.5 bg-white border border-[#2D2926]/15 rounded-full px-3.5 py-1.5 shadow-2xs">
                 <SlidersHorizontal className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
                 <select
                   value={sortBy}
@@ -233,7 +233,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       </section>
 
       {/* 12-Product Grid */}
-      <main className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 pt-6 sm:pt-8">
+      <main className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12 pt-8 sm:pt-12">
         {filteredProducts.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-3xl border border-[#2D2926]/10 p-8">
             <Coffee className="h-10 w-10 text-[#E05A7E] mx-auto mb-3" />
