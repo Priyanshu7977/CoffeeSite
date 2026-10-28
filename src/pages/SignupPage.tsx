@@ -134,7 +134,7 @@ export const SignupPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pt-28 pb-20 px-4 sm:px-6 relative overflow-hidden flex items-center justify-center">
+    <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pt-20 sm:pt-24 pb-16 px-4 sm:px-6 relative overflow-hidden flex items-center justify-center">
       {/* Decorative Warm Ambient Gradients */}
       <div className="absolute top-10 left-1/4 w-96 h-96 bg-[#C89658]/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-80 h-80 bg-[#E05A7E]/10 rounded-full blur-3xl pointer-events-none" />

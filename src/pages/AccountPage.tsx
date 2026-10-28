@@ -245,9 +245,9 @@ export const AccountPage: React.FC<AccountPageProps> = ({
   const addresses = profile?.savedAddresses || userSession?.savedAddresses || [];
 
   return (
-    <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-24">
+    <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-20">
       {/* Sub-Header (Safely positioned below global Navbar) */}
-      <div className="pt-24 sm:pt-28 pb-4 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/70 backdrop-blur-md">
+      <div className="pt-18 sm:pt-20 pb-3 sm:pb-3.5 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/70 backdrop-blur-md">
         <div className="mx-auto max-w-5xl flex items-center justify-between">
           <button
             onClick={() => navigate('/')}
@@ -262,7 +262,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
         </div>
       </div>
 
-      <main className="mx-auto max-w-5xl px-4 sm:px-8 pt-8 space-y-8">
+      <main className="mx-auto max-w-5xl px-4 sm:px-8 pt-5 sm:pt-6 space-y-6">
         {!userSession?.isLoggedIn ? (
           /* Unauthenticated State */
           <div className="text-center py-16 bg-white rounded-3xl border border-[#2D2926]/10 p-8 shadow-xs">
@@ -292,12 +292,12 @@ export const AccountPage: React.FC<AccountPageProps> = ({
           </div>
         ) : (
           /* Authenticated Dashboard */
-          <div className="space-y-8 animate-fadeIn">
+          <div className="space-y-6 animate-fadeIn">
             {/* VIP Member Pass Banner */}
-            <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#1F1C1A] via-[#2D2926] to-[#0D0B0A] text-white p-6 sm:p-8 shadow-2xl border border-white/10">
+            <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#1F1C1A] via-[#2D2926] to-[#0D0B0A] text-white p-5 sm:p-6 shadow-xl border border-white/10">
               <div className="absolute top-0 right-0 w-72 h-72 bg-[#C89658]/15 rounded-full filter blur-3xl pointer-events-none" />
 
-              <div className="relative z-10 flex flex-col justify-between h-56 sm:h-60">
+              <div className="relative z-10 flex flex-col justify-between min-h-[175px] sm:min-h-[185px]">
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
@@ -315,7 +315,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                   <Award className="h-8 w-8 text-[#C89658]" />
                 </div>
 
-                <div>
+                <div className="my-2">
                   <div className="text-[10px] font-mono text-[#A69C94] uppercase tracking-widest">
                     Registered Cellar Patron
                   </div>
@@ -324,18 +324,18 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-end justify-between border-t border-white/10 pt-3">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3">
                   <div>
                     <div className="text-[10px] text-[#A69C94] font-mono uppercase">Member ID</div>
                     <div className="text-sm font-mono font-bold text-[#C89658]">{userSession.memberId}</div>
                   </div>
-                  <div>
-                    <div className="text-[10px] text-[#A69C94] font-mono uppercase">Registered Email</div>
-                    <div className="text-xs font-mono text-white/90">{userSession.email}</div>
+                  <div className="max-w-[280px]">
+                    <div className="text-[10px] text-[#A69C94] font-mono uppercase">Registered Account</div>
+                    <div className="text-xs font-mono text-white/90 truncate">{userSession.email}</div>
                   </div>
                   <button
                     onClick={() => logout()}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-400/40 bg-rose-950/40 text-rose-200 hover:bg-rose-900/60 transition-colors text-[11px] font-mono cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-400/40 bg-rose-950/40 text-rose-200 hover:bg-rose-900/60 transition-colors text-[11px] font-mono cursor-pointer ml-auto sm:ml-0"
                   >
                     <LogOut className="w-3 h-3" />
                     <span>Sign Out</span>

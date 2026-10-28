@@ -6,9 +6,14 @@ import { ReviewsRollingSection } from './ReviewsRollingSection';
 interface FooterProps {
   onBackToTop: () => void;
   onNavigate?: (sectionId: string) => void;
+  showReviews?: boolean;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate: _onNavigate }) => {
+export const Footer: React.FC<FooterProps> = ({
+  onBackToTop,
+  onNavigate: _onNavigate,
+  showReviews = true,
+}) => {
   const [email, setEmail] = useState('');
   const [isSubscribed, setIsSubscribed] = useState(false);
 
@@ -23,9 +28,11 @@ export const Footer: React.FC<FooterProps> = ({ onBackToTop, onNavigate: _onNavi
   };
 
   return (
-    <footer className="relative bg-[#1F1C1A] text-[#FAF7F5] pt-4 pb-12 overflow-hidden border-t border-white/10">
-      {/* 1. ROLLING EFFECT REVIEWS WITH CARD FLIP & 3D ROTATION (Celestia-Inspired) */}
-      <ReviewsRollingSection />
+    <footer className={`relative bg-[#1F1C1A] text-[#FAF7F5] pb-12 overflow-hidden border-t border-white/10 ${
+      showReviews ? 'pt-4' : 'pt-10'
+    }`}>
+      {/* 1. ROLLING EFFECT REVIEWS WITH CARD FLIP & 3D ROTATION (Showcase Only) */}
+      {showReviews && <ReviewsRollingSection />}
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 md:px-12 pt-8">
 

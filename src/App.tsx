@@ -586,7 +586,7 @@ export const App: React.FC = () => {
         <Route
           path="/cart"
           element={
-            <div className="pt-20">
+            <div>
               <CartPage
                 items={collectionItems}
                 onUpdateQuantity={handleUpdateCollectionQuantity}
@@ -598,6 +598,7 @@ export const App: React.FC = () => {
                 userName={userSession?.name}
               />
               <Footer
+                showReviews={false}
                 onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 onNavigate={handleNavigate}
               />
@@ -611,23 +612,33 @@ export const App: React.FC = () => {
           element={<LoginPage />}
         />
 
-        {/* Dedicated Signup Page - Viewport-optimized standalone auth experience */}
+        {/* Dedicated Signup Page */}
         <Route
           path="/signup"
-          element={<SignupPage />}
+          element={
+            <div>
+              <SignupPage />
+              <Footer
+                showReviews={false}
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
         />
 
         {/* Dedicated VIP Account Hub */}
         <Route
           path="/account"
           element={
-            <div className="pt-20">
+            <div>
               <AccountPage
                 onOpenLogin={() => setIsLoginModalOpen(true)}
                 onOpenInventoryHud={() => setIsInventoryHudOpen(true)}
                 onReorderItems={handleReorderOrderItems}
               />
               <Footer
+                showReviews={false}
                 onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 onNavigate={handleNavigate}
               />
