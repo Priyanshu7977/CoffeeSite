@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight } from 'lucide-react';
 
 interface PageLoaderProps {
   onLoadingComplete: () => void;
@@ -59,7 +58,7 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ onLoadingComplete }) => 
         <div className="absolute inset-0 bg-radial-at-c from-transparent via-[#2D2926]/40 to-[#0D0B0A]/85 mix-blend-multiply z-10 pointer-events-none" />
       </div>
 
-      {/* 2. Centerpiece: Pure Luxury Brand Emblem (No progress bar & no 'Curating Terroir' words) */}
+      {/* 2. Centerpiece: Pure Luxury Brand Emblem */}
       <div className="relative z-20 flex flex-col items-center justify-center text-center px-4 pointer-events-none">
         {/* Ambient Warm Golden Glow */}
         <div className="relative flex items-center justify-center">
@@ -84,18 +83,6 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ onLoadingComplete }) => 
           </span>
         </div>
       </div>
-
-      {/* Subtle Skip Option (Bottom-Right) */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          handleFinish();
-        }}
-        className="absolute bottom-6 right-6 z-30 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-black/40 hover:bg-black/70 border border-white/15 backdrop-blur-md text-white/70 hover:text-white text-[10px] font-mono tracking-wider uppercase transition-all duration-300 cursor-pointer group active:scale-95"
-      >
-        <span>Skip Intro</span>
-        <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-0.5" />
-      </button>
     </div>
   );
 };
