@@ -42,18 +42,36 @@ const sanitizeEnv = (val: unknown, fallback: string): string => {
   return cleaned && cleaned !== 'your_firebase_api_key_here' ? cleaned : fallback;
 };
 
-// Read Firebase client environment variables with fallback to project defaults
-const rawProjectId = sanitizeEnv(import.meta.env.VITE_FIREBASE_PROJECT_ID, 'noir-roast');
-const rawApiKey = sanitizeEnv(import.meta.env.VITE_FIREBASE_API_KEY, 'AIzaSyAXGRMC1IDV0ZxzLIkBEOqoYpVI-HOopEY');
+// Official Firebase Web Configuration for Noir Roast
+const VALID_FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyAXGRMC1IDV0ZxzLIkBEOqoYpVI-HOopEY',
+  authDomain: 'noir-roast.firebaseapp.com',
+  projectId: 'noir-roast',
+  storageBucket: 'noir-roast.firebasestorage.app',
+  messagingSenderId: '1070830159382',
+  appId: '1:1070830159382:web:a0d635b1c1771b5f32d737',
+  measurementId: 'G-WE08B7BFL3',
+};
+
+// Protect against shifted, swapped, or misconfigured environment variables
+const envApiKey = sanitizeEnv(import.meta.env.VITE_FIREBASE_API_KEY, VALID_FIREBASE_CONFIG.apiKey);
+const rawApiKey = (envApiKey.startsWith('AIzaSy') && envApiKey.length > 30)
+  ? envApiKey
+  : VALID_FIREBASE_CONFIG.apiKey;
+
+const envAuthDomain = sanitizeEnv(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN, VALID_FIREBASE_CONFIG.authDomain);
+const rawAuthDomain = envAuthDomain.includes('.firebaseapp.com')
+  ? envAuthDomain
+  : VALID_FIREBASE_CONFIG.authDomain;
 
 const firebaseConfig = {
   apiKey: rawApiKey,
-  authDomain: sanitizeEnv(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN, `${rawProjectId}.firebaseapp.com`),
-  projectId: rawProjectId,
-  storageBucket: sanitizeEnv(import.meta.env.VITE_FIREBASE_STORAGE_BUCKET, `${rawProjectId}.firebasestorage.app`),
-  messagingSenderId: sanitizeEnv(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID, '1070830159382'),
-  appId: sanitizeEnv(import.meta.env.VITE_FIREBASE_APP_ID, '1:1070830159382:web:a0d635b1c1771b5f32d737'),
-  measurementId: sanitizeEnv(import.meta.env.VITE_FIREBASE_MEASUREMENT_ID, 'G-WE08B7BFL3'),
+  authDomain: rawAuthDomain,
+  projectId: VALID_FIREBASE_CONFIG.projectId,
+  storageBucket: VALID_FIREBASE_CONFIG.storageBucket,
+  messagingSenderId: VALID_FIREBASE_CONFIG.messagingSenderId,
+  appId: VALID_FIREBASE_CONFIG.appId,
+  measurementId: VALID_FIREBASE_CONFIG.measurementId,
 };
 
 /**
