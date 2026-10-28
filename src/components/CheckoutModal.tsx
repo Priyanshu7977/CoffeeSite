@@ -928,7 +928,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <div className="p-6 rounded-3xl bg-white border border-[#2D2926]/10 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
               {/* QR Image Display */}
               <div className="md:col-span-5 flex flex-col items-center text-center">
-                <div className="w-56 h-56 rounded-3xl overflow-hidden border-2 border-[#2D2926]/15 p-2 bg-[#FAF7F5] shadow-inner mb-3">
+                <div className={`w-56 h-56 rounded-3xl overflow-hidden border-2 border-[#2D2926]/15 p-2 shadow-inner mb-3 flex items-center justify-center ${activeQr.image.includes('paytm') ? 'bg-white' : 'bg-[#0E0E0E]'}`}>
                   <img
                     src={activeQr.image}
                     alt={activeQr.title}
@@ -936,7 +936,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   />
                 </div>
                 <span className="text-xs font-mono font-bold text-[#2D2926]">{activeQr.bankName} • {activeQr.title}</span>
-                <div className="mt-1 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 text-xs font-mono text-[#5E5854]">
+                <span className="text-[11px] font-mono text-[#8C827A] mt-0.5">{activeQr.accountHolder}</span>
+                <div className="mt-1.5 flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 text-xs font-mono text-[#5E5854]">
                   <span>{activeQr.vpa}</span>
                   <button
                     type="button"
@@ -960,9 +961,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     Transfer Exact Amount: {formattedTotal}
                   </h3>
                   <p className="text-xs text-[#5E5854] mt-1 leading-relaxed">
-                    1. Open Google Pay, PhonePe, Paytm, or your banking app.
+                    1. Open Google Pay, PhonePe, Paytm, or your UPI app.
                     <br />
-                    2. Scan the QR code or transfer to UPI ID: <strong>{activeQr.vpa}</strong>.
+                    2. Scan the QR code or transfer to UPI ID: <strong>{activeQr.vpa}</strong> ({activeQr.accountHolder}).
                     <br />
                     3. After payment, enter your 12-digit UPI Reference / UTR Number below.
                   </p>
