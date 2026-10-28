@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   ArrowLeft, 
   ShoppingBag, 
@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import { NOIR_PRODUCTS } from '../data/products';
 import { MagneticButton } from './MagneticButton';
 import { useInventory } from '../hooks/useInventory';
+import { gsap } from '../utils/animations';
 import type { Product } from '../types';
 import type { UserSession } from './LoginModal';
 
@@ -41,6 +42,94 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
 
   const { getStock } = useInventory();
+
+  // Animation Refs
+  const pageContainerRef = useRef<HTMLDivElement>(null);
+  const heroBadgeRef = useRef<HTMLDivElement>(null);
+  const heroTitleRef = useRef<HTMLHeadingElement>(null);
+  const heroDescRef = useRef<HTMLParagraphElement>(null);
+  const heroStatsRef = useRef<HTMLDivElement>(null);
+  const filterBarRef = useRef<HTMLDivElement>(null);
+  const gridContainerRef = useRef<HTMLDivElement>(null);
+
+  // GSAP Initial Landing Entrance Animation
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+      if (heroBadgeRef.current) {
+        tl.fromTo(
+          heroBadgeRef.current,
+          { opacity: 0, y: 22, scale: 0.9 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.65, delay: 0.1 }
+        );
+      }
+
+      if (heroTitleRef.current) {
+        tl.fromTo(
+          heroTitleRef.current,
+          { opacity: 0, y: 35 },
+          { opacity: 1, y: 0, duration: 0.8, ease: 'power4.out' },
+          '-=0.4'
+        );
+      }
+
+      if (heroDescRef.current) {
+        tl.fromTo(
+          heroDescRef.current,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.7 },
+          '-=0.5'
+        );
+      }
+
+      if (heroStatsRef.current) {
+        tl.fromTo(
+          heroStatsRef.current,
+          { opacity: 0, y: 20, scale: 0.94 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.65 },
+          '-=0.5'
+        );
+      }
+
+      if (filterBarRef.current) {
+        tl.fromTo(
+          filterBarRef.current,
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.6 },
+          '-=0.35'
+        );
+      }
+
+      if (gridContainerRef.current && gridContainerRef.current.children.length) {
+        tl.fromTo(
+          gridContainerRef.current.children,
+          { opacity: 0, y: 45, scale: 0.94 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.75,
+            stagger: 0.07,
+            ease: 'power3.out',
+          },
+          '-=0.3'
+        );
+      }
+    }, pageContainerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Smooth Stagger Cascade when filter or search changes
+  useEffect(() => {
+    if (!gridContainerRef.current || !gridContainerRef.current.children.length) return;
+    gsap.fromTo(
+      gridContainerRef.current.children,
+      { opacity: 0, y: 20, scale: 0.97 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.45, stagger: 0.04, ease: 'power2.out' }
+    );
+  }, [selectedRoastFilter, sortBy, searchQuery]);
 
   const handleQuickAdd = (product: Product, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -95,7 +184,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   }, [selectedRoastFilter, sortBy, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-24 relative overflow-hidden">
+    <div ref={pageContainerRef} className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-24 relative overflow-hidden">
       {/* Warm Ambient Glow Landing Accents */}
       <div className="absolute top-8 right-1/4 w-[420px] h-[420px] bg-[#C89658]/8 rounded-full blur-3xl pointer-events-none animate-pulseGlow" />
       <div className="absolute top-28 left-6 w-[360px] h-[360px] bg-[#F5DADF]/40 rounded-full blur-3xl pointer-events-none animate-floatSoft" />
@@ -141,22 +230,34 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       {/* Hero Collection Header */}
       <section className="relative px-4 sm:px-8 md:px-12 pt-10 sm:pt-12 md:pt-14 pb-8 sm:pb-10 md:pb-12 border-b border-[#2D2926]/10 bg-gradient-to-b from-white to-[#FAF7F5]">
         <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6 animate-heroFadeUp">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
             <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F5DADF] border border-[#2D2926]/10 text-[10px] sm:text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#2D2926] mb-4 sm:mb-5 shadow-2xs hover:scale-105 transition-transform duration-300">
+              <div 
+                ref={heroBadgeRef}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F5DADF] border border-[#2D2926]/10 text-[10px] sm:text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#2D2926] mb-4 sm:mb-5 shadow-2xs hover:scale-105 transition-transform duration-300"
+              >
                 <Sparkles className="h-3.5 w-3.5 text-[#E05A7E] animate-spin-slow" />
                 <span>12 SINGLE-ESTATE HARVESTS • 250G MICRO-TINS</span>
               </div>
-              <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[#2D2926] mb-3 sm:mb-4">
+              <h1 
+                ref={heroTitleRef}
+                className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[#2D2926] mb-3 sm:mb-4"
+              >
                 Single-Origin <span className="italic text-[#E05A7E]">Curations.</span>
               </h1>
-              <p className="font-sans text-sm sm:text-base text-[#5E5854] max-w-2xl leading-relaxed mb-4 sm:mb-6 font-normal">
+              <p 
+                ref={heroDescRef}
+                className="font-sans text-sm sm:text-base text-[#5E5854] max-w-2xl leading-relaxed mb-4 sm:mb-6 font-normal"
+              >
                 Shade-grown under native canopies in Chikmagalur, Coorg, Nilgiris, and Araku. Roast-profiled in small batches and nitrogen-sealed at peak aroma.
               </p>
             </div>
 
             {/* Quick Stats Pill */}
-            <div className="flex items-center gap-3 bg-white border border-[#2D2926]/10 rounded-2xl p-3 shadow-xs self-start md:self-auto hover:shadow-md transition-shadow duration-300 mb-2 md:mb-6">
+            <div 
+              ref={heroStatsRef}
+              className="flex items-center gap-3 bg-white border border-[#2D2926]/10 rounded-2xl p-3 shadow-xs self-start md:self-auto hover:shadow-md transition-shadow duration-300 mb-2 md:mb-6"
+            >
               <div>
                 <span className="text-[10px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Showing</span>
                 <span className="font-display text-sm sm:text-base font-bold text-[#2D2926]">
@@ -175,7 +276,10 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
           </div>
 
           {/* Filter & Search Bar */}
-          <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-[#2D2926]/10 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 animate-heroFadeUp [animation-delay:120ms]">
+          <div 
+            ref={filterBarRef}
+            className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-[#2D2926]/10 flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4"
+          >
             {/* Roast Level Filter Tabs */}
             <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1.5 lg:pb-0 scrollbar-none w-full lg:w-auto">
               {[
@@ -250,8 +354,8 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {filteredProducts.map((product, idx) => {
+          <div ref={gridContainerRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            {filteredProducts.map((product) => {
               const isJustAdded = addedProductId === product.id;
               const stock = getStock(product.id);
 
@@ -259,8 +363,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                 <div
                   key={product.id}
                   onClick={() => onDiscoverProduct(product)}
-                  style={{ animationDelay: `${Math.min(idx * 50, 450)}ms` }}
-                  className="group rounded-2xl sm:rounded-3xl bg-white border border-[#2D2926]/10 p-4 sm:p-4.5 shadow-[0_15px_40px_rgba(45,41,38,0.04)] hover:shadow-[0_22px_55px_rgba(45,41,38,0.13)] transition-all duration-400 flex flex-col justify-between cursor-pointer hover:-translate-y-1.5 animate-heroFadeUp"
+                  className="group rounded-2xl sm:rounded-3xl bg-white border border-[#2D2926]/10 p-4 sm:p-4.5 shadow-[0_15px_40px_rgba(45,41,38,0.04)] hover:shadow-[0_22px_55px_rgba(45,41,38,0.13)] transition-shadow duration-400 flex flex-col justify-between cursor-pointer hover:-translate-y-1.5"
                 >
                   <div>
                     {/* Visual Card Image */}

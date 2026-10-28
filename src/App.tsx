@@ -368,7 +368,7 @@ export const App: React.FC = () => {
         <Route
           path="/collection"
           element={
-            <div className="pt-20">
+            <div>
               <CollectionPage
                 onBackToHome={() => navigate('/')}
                 onDiscoverProduct={handleDiscoverProduct}
@@ -390,7 +390,7 @@ export const App: React.FC = () => {
         <Route
           path="/product/:id"
           element={
-            <div className="pt-20">
+            <div>
               <ProductDetailPage
                 onAddToCart={handleAddToCollection}
                 onOpenCart={() => setIsCollectionDrawerOpen(true)}
@@ -409,7 +409,7 @@ export const App: React.FC = () => {
         <Route
           path="/atlas"
           element={
-            <div className="pt-20">
+            <div>
               <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
@@ -424,7 +424,7 @@ export const App: React.FC = () => {
         <Route
           path="/estate-atlas"
           element={
-            <div className="pt-20">
+            <div>
               <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
@@ -439,7 +439,7 @@ export const App: React.FC = () => {
         <Route
           path="/terroir"
           element={
-            <div className="pt-20">
+            <div>
               <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
@@ -454,7 +454,7 @@ export const App: React.FC = () => {
         <Route
           path="/heritage"
           element={
-            <div className="pt-20">
+            <div>
               <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
@@ -469,7 +469,7 @@ export const App: React.FC = () => {
         <Route
           path="/story"
           element={
-            <div className="pt-20">
+            <div>
               <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
@@ -484,7 +484,7 @@ export const App: React.FC = () => {
         <Route
           path="/craft"
           element={
-            <div className="pt-20">
+            <div>
               <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
@@ -499,7 +499,7 @@ export const App: React.FC = () => {
         <Route
           path="/brew"
           element={
-            <div className="pt-20">
+            <div>
               <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
@@ -514,7 +514,7 @@ export const App: React.FC = () => {
         <Route
           path="/brewing"
           element={
-            <div className="pt-20">
+            <div>
               <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
@@ -529,7 +529,7 @@ export const App: React.FC = () => {
         <Route
           path="/reserve"
           element={
-            <div className="pt-20">
+            <div>
               <EstateAtlasPage
                 onDiscoverProduct={handleDiscoverProduct}
                 onAddToCart={handleAddToCollection}
@@ -546,7 +546,7 @@ export const App: React.FC = () => {
         <Route
           path="/about"
           element={
-            <div className="pt-20">
+            <div>
               <AboutUsPage />
               <Footer
                 onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -560,7 +560,7 @@ export const App: React.FC = () => {
         <Route
           path="/contact"
           element={
-            <div className="pt-20">
+            <div>
               <ContactPage />
               <Footer
                 onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -572,7 +572,7 @@ export const App: React.FC = () => {
         <Route
           path="/manifesto"
           element={
-            <div className="pt-20">
+            <div>
               <ContactPage />
               <Footer
                 onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -586,7 +586,7 @@ export const App: React.FC = () => {
         <Route
           path="/cart"
           element={
-            <div className="pt-20">
+            <div>
               <CartPage
                 items={collectionItems}
                 onUpdateQuantity={handleUpdateCollectionQuantity}
@@ -606,10 +606,19 @@ export const App: React.FC = () => {
           }
         />
 
-        {/* Dedicated Login Page - Viewport-optimized standalone auth experience */}
+        {/* Dedicated Login Page - Viewport-optimized standalone auth experience with Footer */}
         <Route
           path="/login"
-          element={<LoginPage />}
+          element={
+            <div>
+              <LoginPage />
+              <Footer
+                showReviews={false}
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
         />
 
         {/* Dedicated Signup Page */}
@@ -631,7 +640,7 @@ export const App: React.FC = () => {
         <Route
           path="/account"
           element={
-            <div className="pt-20">
+            <div>
               <AccountPage
                 onOpenLogin={() => setIsLoginModalOpen(true)}
                 onOpenInventoryHud={() => setIsInventoryHudOpen(true)}

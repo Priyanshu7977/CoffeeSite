@@ -141,30 +141,28 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ onLoadingComplete }) => 
           : 'opacity-100 scale-100'
       }`}
     >
-      {/* 1. Full-Bleed Cinematic Coffee Farm Living Landscape */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        {/* Layer 1: High-Altitude Western Ghats Coffee Farm Canopy with Drone Sweep Motion */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
-          <img
-            src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=2000&auto=format&fit=crop&q=90"
-            alt="Western Ghats Coffee Estate"
-            className="h-full w-full object-cover object-center filter brightness-90 contrast-105 scale-105 animate-[pulse_6s_ease-in-out_infinite] transition-transform duration-[8000ms] ease-out transform scale-110"
-            style={{
-              animation: 'panDrone 10s ease-in-out infinite alternate',
-            }}
-          />
-        </div>
+      {/* 1. Full-Bleed Authentic Specialty Coffee Video Living Background */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-[#0D0B0A]">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/assets/hero-roasting-drum.jpg"
+          className="h-full w-full object-cover object-center filter brightness-90 contrast-110 will-change-transform"
+          src="/assets/videos/coffee-process-sequence.mp4"
+        />
 
-        {/* Layer 2: Live Procedural Mountain Mist & Sunbeam Canvas */}
-        <canvas ref={canvasRef} className="absolute inset-0 z-10 pointer-events-none mix-blend-screen" />
+        {/* Layer 2: Live Procedural Mountain Mist & Golden Particles */}
+        <canvas ref={canvasRef} className="absolute inset-0 z-10 pointer-events-none mix-blend-screen opacity-70" />
 
-        {/* Layer 3: Warm Anamorphic Lens Flare & Luxury Coffee Vignette */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0B0A]/90 via-[#0D0B0A]/35 to-[#0D0B0A]/70" />
-        <div className="absolute inset-0 bg-radial-at-c from-transparent via-[#2D2926]/40 to-[#0D0B0A]/90 mix-blend-multiply" />
+        {/* Layer 3: Warm Anamorphic Espresso Vignette & Gradients */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0B0A] via-[#0D0B0A]/40 to-[#0D0B0A]/75 z-10 pointer-events-none" />
+        <div className="absolute inset-0 bg-radial-at-c from-transparent via-[#2D2926]/40 to-[#0D0B0A]/90 mix-blend-multiply z-10 pointer-events-none" />
       </div>
 
-      {/* 2. Minimalist Centerpiece: Pure Luxury Brand Logo & Circular Reveal (NO TEXT) */}
-      <div className="relative z-20 flex flex-col items-center justify-center">
+      {/* 2. Centerpiece: Pure Luxury Brand Logo & Circular Reveal */}
+      <div className="relative z-20 flex flex-col items-center justify-center text-center">
         <div className="relative flex items-center justify-center">
           {/* Ambient Warm Golden Glow */}
           <div className="absolute h-44 w-44 sm:h-52 sm:w-52 rounded-full bg-[#F5DADF]/25 filter blur-2xl animate-pulse" />
@@ -201,6 +199,22 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ onLoadingComplete }) => 
               N
             </span>
             <div className="h-[2.5px] w-4 bg-[#E05A7E] rounded-full mt-0.5" />
+          </div>
+        </div>
+
+        {/* Brand Typographic Identity (Eliminates generic cafe look) */}
+        <div className="mt-5 flex flex-col items-center">
+          <span className="font-display text-sm sm:text-base tracking-[0.28em] font-bold text-white uppercase drop-shadow-md">
+            NOIR DAKSHIN
+          </span>
+          <span className="text-[9px] sm:text-[10px] font-mono tracking-[0.22em] text-[#F5DADF] uppercase font-semibold mt-1">
+            ESTATE HARVEST • BABA BUDAN ROASTERY
+          </span>
+          <div className="mt-3 flex items-center gap-2 px-3 py-1 rounded-full bg-black/50 border border-white/10 backdrop-blur-md">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#E05A7E] animate-ping" />
+            <span className="text-[9px] font-mono tracking-widest text-[#FAF7F5]/85 uppercase">
+              Curating Terroir {progress}%
+            </span>
           </div>
         </div>
       </div>
