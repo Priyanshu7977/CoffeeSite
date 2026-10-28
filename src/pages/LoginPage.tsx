@@ -451,14 +451,14 @@ export const LoginPage: React.FC = () => {
                     setAuthMethod('email');
                     setErrorMessage('');
                   }}
-                  className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-1 sm:px-2 text-[10.5px] sm:text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                     authMethod === 'email'
                       ? 'bg-white text-[#2D2926] shadow-xs'
                       : 'text-[#8C827A] hover:text-[#2D2926]'
                   }`}
                 >
-                  <Mail className="w-3.5 h-3.5" />
-                  <span>Email & Password</span>
+                  <Mail className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">Email & Password</span>
                 </button>
                 <button
                   type="button"
@@ -466,14 +466,14 @@ export const LoginPage: React.FC = () => {
                     setAuthMethod('phone');
                     setErrorMessage('');
                   }}
-                  className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-1 sm:px-2 text-[10.5px] sm:text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                     authMethod === 'phone'
                       ? 'bg-white text-[#2D2926] shadow-xs'
                       : 'text-[#8C827A] hover:text-[#2D2926]'
                   }`}
                 >
-                  <Phone className="w-3.5 h-3.5" />
-                  <span>Mobile SMS OTP</span>
+                  <Phone className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">Mobile SMS OTP</span>
                 </button>
               </div>
 
@@ -574,7 +574,7 @@ export const LoginPage: React.FC = () => {
                             pattern="[0-9]*"
                             required
                             placeholder="79776 41125"
-                            className="w-full rounded-xl border border-[#2D2926]/15 bg-[#FAF7F5] py-1.5 pl-18 pr-3 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
+                            className="w-full rounded-xl border border-[#2D2926]/15 bg-[#FAF7F5] py-1.5 pl-[68px] pr-3 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
                           />
                         </div>
                         <p className="text-[9.5px] text-[#8C827A] mt-0.5 font-sans">

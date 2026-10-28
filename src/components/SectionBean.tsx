@@ -224,13 +224,13 @@ export const SectionBean: React.FC = () => {
               <div
                 role="tablist"
                 aria-label="Origin Factors"
-                className="flex items-center gap-1 mb-5 p-1 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 w-fit"
+                className="flex items-center gap-1 mb-5 p-1 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 w-full sm:w-fit overflow-x-auto scrollbar-none"
               >
                 <button
                   role="tab"
                   aria-selected={activeTab === 'altitude'}
                   onClick={() => handleTabClick('altitude')}
-                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all duration-200 cursor-pointer ${
+                  className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all duration-200 cursor-pointer whitespace-nowrap ${
                     activeTab === 'altitude'
                       ? 'bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm scale-[1.02]'
                       : 'text-[#5E5854] hover:text-[#2D2926]'
@@ -243,7 +243,7 @@ export const SectionBean: React.FC = () => {
                   role="tab"
                   aria-selected={activeTab === 'soil'}
                   onClick={() => handleTabClick('soil')}
-                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all duration-200 cursor-pointer ${
+                  className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all duration-200 cursor-pointer whitespace-nowrap ${
                     activeTab === 'soil'
                       ? 'bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm scale-[1.02]'
                       : 'text-[#5E5854] hover:text-[#2D2926]'
@@ -256,7 +256,7 @@ export const SectionBean: React.FC = () => {
                   role="tab"
                   aria-selected={activeTab === 'harvest'}
                   onClick={() => handleTabClick('harvest')}
-                  className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all duration-200 cursor-pointer ${
+                  className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all duration-200 cursor-pointer whitespace-nowrap ${
                     activeTab === 'harvest'
                       ? 'bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm scale-[1.02]'
                       : 'text-[#5E5854] hover:text-[#2D2926]'

@@ -17,6 +17,7 @@ import {
   AlertCircle,
   CheckCircle2,
   Sparkles,
+  Check,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { isValidEmail, isValidName, isValidPhone, sanitizeName, sanitizePhone } from '../utils/validation';
@@ -347,16 +348,30 @@ export const SignupPage: React.FC = () => {
               </div>
             )}
 
-            {/* Privilege Consent */}
-            <div className="flex items-start gap-2.5 pt-2">
-              <input
-                type="checkbox"
-                id="terms"
-                checked={acceptedTerms}
-                onChange={(e) => setAcceptedTerms(e.target.checked)}
-                className="mt-1 h-3.5 w-3.5 rounded border-[#2D2926]/20 text-[#2D2926] focus:ring-[#C89658] cursor-pointer"
-              />
-              <label htmlFor="terms" className="text-[11px] text-[#5E5854] cursor-pointer leading-tight">
+            {/* Privilege Consent - Mobile iOS/Android Touch-Optimized Custom Checkbox */}
+            <div
+              onClick={() => setAcceptedTerms(!acceptedTerms)}
+              className="flex items-start gap-3 pt-2 cursor-pointer select-none group min-h-[44px]"
+            >
+              <div className="relative flex items-center justify-center shrink-0 mt-0.5">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  className="sr-only"
+                />
+                <div
+                  className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-200 ${
+                    acceptedTerms
+                      ? 'bg-[#2D2926] border-[#2D2926] text-white shadow-xs'
+                      : 'bg-[#FAF7F5] border-[#2D2926]/25 group-hover:border-[#2D2926]'
+                  }`}
+                >
+                  {acceptedTerms && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                </div>
+              </div>
+              <label htmlFor="terms" className="text-xs text-[#5E5854] cursor-pointer leading-snug">
                 I agree to the roastery terms and wish to receive single-origin cupping releases and direct farmer updates.
               </label>
             </div>

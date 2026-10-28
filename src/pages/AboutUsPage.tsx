@@ -264,9 +264,10 @@ export const AboutUsPage: React.FC = () => {
 
           <button
             onClick={() => navigate('/contact')}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#2D2926] text-[#FAF7F5] text-xs font-bold hover:bg-black transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[#2D2926] text-[#FAF7F5] text-xs font-bold hover:bg-black transition-colors cursor-pointer"
           >
-            <span>Talk to Founders</span>
+            <span className="hidden sm:inline">Talk to Founders</span>
+            <span className="sm:hidden">Contact</span>
             <ArrowRight className="h-3 w-3 text-[#E05A7E]" />
           </button>
         </div>

@@ -563,7 +563,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   />
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="text-xs font-semibold text-[#5E5854] block mb-1">City</label>
                     <input

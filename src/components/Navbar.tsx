@@ -87,21 +87,21 @@ export const Navbar: React.FC<NavbarProps> = ({
         isVisible ? 'translate-y-0 opacity-100' : '-translate-y-24 opacity-0'
       }`}
     >
-      <div className="pointer-events-auto mx-auto max-w-5xl rounded-full border border-[#2D2926]/10 bg-white/92 px-4 sm:px-6 py-2.5 sm:py-3 shadow-[0_10px_35px_rgba(45,41,38,0.08)] backdrop-blur-xl flex items-center justify-between gap-3 sm:gap-6 text-[#2D2926]">
+      <div className="pointer-events-auto mx-auto max-w-5xl rounded-full border border-[#2D2926]/10 bg-white/92 px-3 sm:px-6 py-2 sm:py-3 shadow-[0_10px_35px_rgba(45,41,38,0.08)] backdrop-blur-xl flex items-center justify-between gap-2 sm:gap-6 text-[#2D2926]">
         {/* Brand Left */}
         <MagneticButton strength={0.3}>
           <button
             onClick={() => handleNavClick('/')}
-            className="group flex items-center gap-2.5 text-left focus:outline-none cursor-pointer shrink-0"
+            className="group flex items-center gap-2 sm:gap-2.5 text-left focus:outline-none cursor-pointer shrink-0"
           >
-            <div className="flex items-center justify-center h-7 w-7 rounded-full bg-[#2D2926] text-white group-hover:bg-[#E05A7E] transition-all duration-300 shadow-sm">
-              <span className="font-display text-xs font-bold tracking-tighter">N</span>
+            <div className="flex items-center justify-center h-6 w-6 sm:h-7 sm:w-7 rounded-full bg-[#2D2926] text-white group-hover:bg-[#E05A7E] transition-all duration-300 shadow-sm shrink-0">
+              <span className="font-display text-[11px] sm:text-xs font-bold tracking-tighter">N</span>
             </div>
             <div className="flex flex-col">
-              <span className="font-display text-xs sm:text-sm tracking-[0.22em] font-bold text-[#2D2926] uppercase transition-colors group-hover:text-[#E05A7E] leading-none">
+              <span className="font-display text-[11px] sm:text-sm tracking-[0.16em] sm:tracking-[0.22em] font-bold text-[#2D2926] uppercase transition-colors group-hover:text-[#E05A7E] leading-none">
                 NOIR DAKSHIN
               </span>
-              <span className="text-[8px] font-mono tracking-[0.16em] text-[#8C827A] uppercase leading-tight mt-0.5 font-semibold">
+              <span className="text-[7.5px] sm:text-[8px] font-mono tracking-[0.14em] sm:tracking-[0.16em] text-[#8C827A] uppercase leading-tight mt-0.5 font-semibold">
                 EST. 1998
               </span>
             </div>
@@ -135,12 +135,12 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           {/* Inventory HUD Trigger — ONLY VISIBLE TO OWNER AND IMS ENGINEER */}
           {(userSession?.role === 'ADMIN' || userSession?.role === 'IMS_ENGINEER') && (
             <button
               onClick={onOpenInventoryHud}
-              className="flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-50 px-2.5 sm:px-3 py-1.5 text-[11px] font-mono font-bold text-emerald-800 hover:bg-emerald-100 transition-colors shadow-2xs cursor-pointer animate-fadeIn"
+              className="flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-50 px-2 sm:px-3 py-1.5 text-[10px] sm:text-[11px] font-mono font-bold text-emerald-800 hover:bg-emerald-100 transition-colors shadow-2xs cursor-pointer animate-fadeIn"
               title="Open Authorized Real-Time Inventory Control HUD"
             >
               <Package className="h-3.5 w-3.5 text-emerald-600" />
@@ -158,7 +158,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   navigate('/login');
                 }
               }}
-              className={`flex items-center gap-1.5 rounded-full border px-3 sm:px-3.5 py-1.5 text-[11px] font-sans tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer ${
+              className={`flex items-center gap-1 sm:gap-1.5 rounded-full border px-2.5 sm:px-3.5 py-1.5 text-[10.5px] sm:text-[11px] font-sans tracking-[0.12em] sm:tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer ${
                 userSession?.isLoggedIn
                   ? 'border-[#E05A7E] bg-[#F5DADF] text-[#2D2926] font-bold'
                   : 'border-[#2D2926]/15 bg-[#FAF7F5] text-[#2D2926] hover:bg-[#F5DADF]/40'
@@ -167,7 +167,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {userSession?.isLoggedIn ? (
                 <>
                   <ShieldCheck className="h-3.5 w-3.5 text-[#2D2926]" />
-                  <span className="max-w-[70px] sm:max-w-[90px] truncate font-bold">
+                  <span className="max-w-[60px] sm:max-w-[90px] truncate font-bold">
                     {(!userSession.name || userSession.name.trim().toLowerCase() === 'patron')
                       ? 'USER'
                       : userSession.name.split(' ')[0]}
@@ -186,7 +186,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <MagneticButton strength={0.35}>
             <button
               onClick={onOpenCollection}
-              className={`flex items-center gap-1.5 rounded-full border px-3 sm:px-3.5 py-1.5 text-[11px] font-sans tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer ${
+              className={`flex items-center gap-1 sm:gap-1.5 rounded-full border px-2.5 sm:px-3.5 py-1.5 text-[10.5px] sm:text-[11px] font-sans tracking-[0.12em] sm:tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer ${
                 collectionCount > 0
                   ? 'border-[#2D2926]/15 bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm'
                   : 'border-[#2D2926]/15 bg-[#FAF7F5] text-[#2D2926] hover:bg-[#F5DADF]/40'

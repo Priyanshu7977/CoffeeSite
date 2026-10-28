@@ -25,6 +25,7 @@ import {
   Coffee,
   X,
   ChevronRight,
+  Check,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import type { CustomerOrder, OrderItemSnapshot } from '../types/payment';
@@ -252,16 +253,18 @@ export const AccountPage: React.FC<AccountPageProps> = ({
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-20">
       {/* Sub-Header (Safely positioned below global Navbar) */}
       <div className="pt-18 sm:pt-20 pb-3 sm:pb-3.5 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/70 backdrop-blur-md">
-        <div className="mx-auto max-w-5xl flex items-center justify-between">
+        <div className="mx-auto max-w-5xl flex items-center justify-between gap-2">
           <button
             onClick={() => navigate('/')}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/15 text-xs font-semibold hover:bg-[#F5DADF]/40 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/15 text-xs font-semibold hover:bg-[#F5DADF]/40 transition-colors cursor-pointer shrink-0"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Return to Experience</span>
+            <span className="hidden sm:inline">Return to Experience</span>
+            <span className="sm:hidden">Back</span>
           </button>
-          <div className="text-xs font-mono uppercase tracking-widest text-[#8C827A] font-semibold">
-            Member Cellar & Order Archives
+          <div className="text-xs font-mono uppercase tracking-wider text-[#8C827A] font-semibold text-right truncate">
+            <span className="hidden sm:inline">Member Cellar & Order Archives</span>
+            <span className="sm:hidden">Archives</span>
           </div>
         </div>
       </div>
@@ -360,20 +363,20 @@ export const AccountPage: React.FC<AccountPageProps> = ({
               </div>
             </div>
 
-            {/* Navigation Tabs */}
-            <div className="flex flex-wrap gap-2 border-b border-[#2D2926]/10 pb-2">
+            {/* Navigation Tabs (Smooth horizontally swipeable on mobile without wrapping clutter) */}
+            <div className="flex overflow-x-auto scrollbar-none gap-2 border-b border-[#2D2926]/10 pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap">
               {[
                 { id: 'overview', label: 'Overview', icon: User },
-                { id: 'orders', label: `Order History (${customerOrders.length})`, icon: Package },
-                { id: 'addresses', label: `Saved Addresses (${addresses.length})`, icon: MapPin },
-                { id: 'profile', label: 'Profile Details (Fill / Edit)', icon: Coffee },
+                { id: 'orders', label: `Orders (${customerOrders.length})`, icon: Package },
+                { id: 'addresses', label: `Addresses (${addresses.length})`, icon: MapPin },
+                { id: 'profile', label: 'Profile Details', icon: Coffee },
               ].map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2 rounded-2xl text-xs font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95 ${
                       activeTab === tab.id
                         ? 'bg-[#2D2926] text-white shadow-xs'
                         : 'bg-white text-[#5E5854] border border-[#2D2926]/10 hover:text-[#2D2926]'
@@ -1146,14 +1149,29 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="defaultAddr"
-                  checked={addrIsDefault}
-                  onChange={(e) => setAddrIsDefault(e.target.checked)}
-                  className="rounded border-[#2D2926]/20 text-[#2D2926] focus:ring-[#C89658] cursor-pointer"
-                />
+              {/* Default Destination Checkbox - Mobile Touch-Friendly */}
+              <div
+                onClick={() => setAddrIsDefault(!addrIsDefault)}
+                className="flex items-center gap-3 pt-1 cursor-pointer select-none group min-h-[44px]"
+              >
+                <div className="relative flex items-center justify-center shrink-0">
+                  <input
+                    type="checkbox"
+                    id="defaultAddr"
+                    checked={addrIsDefault}
+                    onChange={(e) => setAddrIsDefault(e.target.checked)}
+                    className="sr-only"
+                  />
+                  <div
+                    className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-200 ${
+                      addrIsDefault
+                        ? 'bg-[#2D2926] border-[#2D2926] text-white shadow-xs'
+                        : 'bg-[#FAF7F5] border-[#2D2926]/25 group-hover:border-[#2D2926]'
+                    }`}
+                  >
+                    {addrIsDefault && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                  </div>
+                </div>
                 <label htmlFor="defaultAddr" className="text-xs text-[#5E5854] cursor-pointer">
                   Set as default shipping destination
                 </label>

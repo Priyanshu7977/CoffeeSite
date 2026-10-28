@@ -45,6 +45,8 @@
     scroll-behavior: auto; /* Handled smoothly by Lenis */
     -webkit-text-size-adjust: 100%;
     touch-action: pan-y;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   body {
@@ -52,6 +54,7 @@
     color: #2D2926;
     font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow-x: hidden;
+    max-width: 100vw;
     margin: 0;
     padding: 0;
     -webkit-font-smoothing: antialiased;
@@ -60,10 +63,15 @@
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  /* Prevent iOS Safari 16px Auto-Zoom on form input focus */
+  /* Prevent iOS Safari 16px Auto-Zoom on text input focus while protecting checkboxes */
   @media screen and (max-width: 640px) {
-    input, select, textarea {
+    input:not([type="checkbox"]):not([type="radio"]), select, textarea {
       font-size: 16px !important;
+    }
+    input[type="checkbox"], input[type="radio"] {
+      font-size: initial !important;
+      min-width: 18px;
+      min-height: 18px;
     }
   }
 

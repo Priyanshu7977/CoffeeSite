@@ -83,12 +83,12 @@ export const Footer: React.FC<FooterProps> = ({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter email for fresh roast alerts"
+                  placeholder="Enter your email address"
                   className="w-full rounded-full bg-[#2D2926] border border-white/15 px-4 py-2.5 pr-24 text-xs text-white placeholder-[#FAF7F5]/40 focus:border-[#F5DADF] focus:outline-none font-sans"
                 />
                 <button
                   type="submit"
-                  className="absolute right-1 rounded-full bg-[#F5DADF] text-[#2D2926] px-4 py-1.5 text-xs font-sans font-bold uppercase hover:bg-white transition-all cursor-pointer shadow-sm"
+                  className="absolute right-1 rounded-full bg-[#F5DADF] text-[#2D2926] px-3.5 sm:px-4 py-1.5 text-[11px] sm:text-xs font-sans font-bold uppercase hover:bg-white transition-all cursor-pointer shadow-sm"
                 >
                   Subscribe
                 </button>
@@ -103,12 +103,12 @@ export const Footer: React.FC<FooterProps> = ({
         </div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#FAF7F5]/60">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] sm:text-xs text-[#FAF7F5]/60 text-center sm:text-left">
           <span>© 1998–2026 NOIR DAKSHIN COFFEE. ALL RIGHTS RESERVED.</span>
 
-          <div className="flex items-center gap-4">
-            <a href="mailto:priyanshubipin2006@gmail.com" className="flex items-center gap-1.5 hover:text-[#F5DADF] transition-colors">
-              <Mail className="h-3.5 w-3.5 text-[#E05A7E]" />
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 sm:gap-4">
+            <a href="mailto:priyanshubipin2006@gmail.com" className="flex items-center gap-1.5 hover:text-[#F5DADF] transition-colors break-all">
+              <Mail className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
               <span>priyanshubipin2006@gmail.com • +91 79776 41125</span>
             </a>
 
@@ -116,7 +116,7 @@ export const Footer: React.FC<FooterProps> = ({
               <button
                 onClick={onBackToTop}
                 aria-label="Back to top"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-[#2D2926] hover:border-[#F5DADF] text-[#F5DADF] transition-colors cursor-pointer"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-[#2D2926] hover:border-[#F5DADF] text-[#F5DADF] transition-colors cursor-pointer shrink-0"
               >
                 <ArrowUp className="h-3.5 w-3.5" />
               </button>

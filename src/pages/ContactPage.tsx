@@ -100,8 +100,9 @@ export const ContactPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs font-mono text-[#2D2926] font-bold">ROASTERY OPEN TODAY</span>
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <span className="text-xs font-mono text-[#2D2926] font-bold hidden sm:inline">ROASTERY OPEN TODAY</span>
+            <span className="text-xs font-mono text-[#2D2926] font-bold sm:hidden">OPEN TODAY</span>
           </div>
         </div>
       </div>

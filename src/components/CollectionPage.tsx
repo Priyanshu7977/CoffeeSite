@@ -219,9 +219,10 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
 
           {/* Right Status Badge (Global Navbar handles VIP & Cart) */}
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 text-[10px] sm:text-[11px] font-mono font-semibold text-[#5E5854]">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>12 SINGLE-ORIGIN LOTS</span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 text-[10px] sm:text-[11px] font-mono font-semibold text-[#5E5854]">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <span className="hidden min-[380px]:inline">12 SINGLE-ORIGIN LOTS</span>
+              <span className="min-[380px]:hidden">12 LOTS</span>
             </span>
           </div>
         </div>
@@ -234,10 +235,11 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
             <div>
               <div 
                 ref={heroBadgeRef}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F5DADF] border border-[#2D2926]/10 text-[10px] sm:text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#2D2926] mb-4 sm:mb-5 shadow-2xs hover:scale-105 transition-transform duration-300"
+                className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#F5DADF] border border-[#2D2926]/10 text-[9.5px] sm:text-xs font-mono font-bold uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[#2D2926] mb-4 sm:mb-5 shadow-2xs hover:scale-105 transition-transform duration-300 max-w-full"
               >
-                <Sparkles className="h-3.5 w-3.5 text-[#E05A7E] animate-spin-slow" />
-                <span>12 SINGLE-ESTATE HARVESTS • 250G MICRO-TINS</span>
+                <Sparkles className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
+                <span className="hidden sm:inline">12 SINGLE-ESTATE HARVESTS • 250G MICRO-TINS</span>
+                <span className="sm:hidden">12 SINGLE-ESTATE HARVESTS</span>
               </div>
               <h1 
                 ref={heroTitleRef}

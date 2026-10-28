@@ -150,17 +150,19 @@ export const CartPage: React.FC<CartPageProps> = ({
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-24">
       {/* Sub-Header (Safely positioned below global Navbar) */}
-      <div className="pt-24 sm:pt-28 pb-4 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/70 backdrop-blur-md">
-        <div className="mx-auto max-w-7xl flex items-center justify-between">
+      <div className="pt-20 sm:pt-24 pb-3 sm:pb-4 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/70 backdrop-blur-md">
+        <div className="mx-auto max-w-7xl flex items-center justify-between gap-2">
           <button
             onClick={() => navigate('/collection')}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/15 text-xs font-semibold hover:bg-neutral-200 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/15 text-xs font-semibold hover:bg-neutral-200 transition-colors shrink-0"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Continue Shopping</span>
+            <span className="hidden sm:inline">Continue Shopping</span>
+            <span className="sm:hidden">Shop</span>
           </button>
-          <div className="text-xs font-mono uppercase tracking-widest text-[#8C827A]">
-            Shopping Cart ({items.reduce((s, i) => s + i.quantity, 0)} Items)
+          <div className="text-xs font-mono uppercase tracking-wider text-[#8C827A] font-semibold text-right truncate">
+            <span className="hidden sm:inline">Shopping Cart ({items.reduce((s, i) => s + i.quantity, 0)} Items)</span>
+            <span className="sm:hidden">Cart ({items.reduce((s, i) => s + i.quantity, 0)})</span>
           </div>
         </div>
       </div>
@@ -258,7 +260,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                       </div>
 
                       {/* Controls and Price */}
-                      <div className="flex items-center justify-between sm:justify-end gap-6 pt-2 sm:pt-0">
+                      <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-6 pt-2 sm:pt-0">
                         {/* Quantity Counter */}
                         <div className="flex items-center border border-[#2D2926]/15 rounded-xl bg-[#FAF7F5] p-0.5">
                           <button
@@ -324,20 +326,22 @@ export const CartPage: React.FC<CartPageProps> = ({
 
                 {/* Recipient Configuration */}
                 <form onSubmit={handleSaveEmail} className="p-3.5 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-2 text-xs flex-1">
-                    <Mail className="h-4 w-4 text-[#E05A7E] shrink-0" />
-                    <span className="text-[#5E5854] font-medium whitespace-nowrap">Your Email:</span>
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 text-xs flex-1">
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <Mail className="h-4 w-4 text-[#E05A7E] shrink-0" />
+                      <span className="text-[#5E5854] font-medium whitespace-nowrap">Your Email:</span>
+                    </div>
                     <input
                       type="email"
-                      placeholder="Enter email to receive real automated messages"
+                      placeholder="Enter email for roast alerts"
                       value={recipientEmail}
                       onChange={(e) => setRecipientEmail(e.target.value)}
-                      className="px-3 py-1.5 rounded-xl border border-[#2D2926]/15 bg-white text-xs font-mono focus:outline-none focus:border-[#2D2926] flex-1 max-w-sm"
+                      className="w-full px-3 py-1.5 rounded-xl border border-[#2D2926]/15 bg-white text-xs font-mono focus:outline-none focus:border-[#2D2926] flex-1 max-w-sm"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="px-4 py-1.5 rounded-xl bg-[#2D2926] text-white text-xs font-bold hover:bg-black transition-colors shrink-0"
+                    className="px-4 py-2 sm:py-1.5 rounded-xl bg-[#2D2926] text-white text-xs font-bold hover:bg-black transition-colors shrink-0 cursor-pointer active:scale-95"
                   >
                     Save Email
                   </button>
@@ -478,7 +482,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                   <div className="flex gap-2">
                     <input
                       type="text"
-                      placeholder="Promo / Voucher Code"
+                      placeholder="Promo Code"
                       value={promoCode}
                       onChange={(e) => setPromoCode(e.target.value)}
                       className="flex-1 px-3.5 py-2.5 rounded-xl border border-[#2D2926]/15 text-xs uppercase font-mono focus:outline-none focus:border-[#2D2926]"

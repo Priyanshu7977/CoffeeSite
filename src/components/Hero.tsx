@@ -153,10 +153,11 @@ export const Hero: React.FC<HeroProps> = () => {
         {/* Eyebrow */}
         <div
           ref={eyebrowRef}
-          className="mb-2 sm:mb-3.5 inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-[#F5DADF] text-[#2D2926] text-[9px] sm:text-[10px] md:text-xs tracking-[0.22em] font-sans font-bold uppercase shadow-sm"
+          className="mb-2 sm:mb-3.5 inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-[#F5DADF] text-[#2D2926] text-[9px] sm:text-[10px] md:text-xs tracking-[0.16em] sm:tracking-[0.22em] font-sans font-bold uppercase shadow-sm max-w-full"
         >
-          <Sparkles className="h-3 w-3 text-[#E05A7E]" />
-          <span>NOIR DAKSHIN ROAST / BABA BUDAN ROASTERY EST. 1998</span>
+          <Sparkles className="h-3 w-3 text-[#E05A7E] shrink-0" />
+          <span className="hidden sm:inline">NOIR DAKSHIN ROAST / BABA BUDAN ROASTERY EST. 1998</span>
+          <span className="sm:hidden truncate">NOIR DAKSHIN • EST. 1998</span>
         </div>
 
         {/* Monumental Modern Headline in Space Grotesk */}
@@ -175,7 +176,7 @@ export const Hero: React.FC<HeroProps> = () => {
           </h1>
           <h1
             ref={titleLine3Ref}
-            className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-bold tracking-widest text-white uppercase drop-shadow-[0_0_35px_rgba(245,218,223,0.35)]"
+            className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.25rem] font-bold tracking-wider sm:tracking-widest text-white uppercase drop-shadow-[0_0_35px_rgba(245,218,223,0.35)]"
           >
             COMPROMISE.
           </h1>

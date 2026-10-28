@@ -262,17 +262,18 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] selection:bg-[#F5DADF] selection:text-[#2D2926]">
       {/* 1. Navigation Sub-Bar */}
-      <div className="border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md px-6 pt-18 sm:pt-20 pb-3">
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
+      <div className="border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md px-3 sm:px-6 pt-18 sm:pt-20 pb-3">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2">
           <button
             onClick={() => navigate('/')}
-            className="group flex items-center gap-2 text-xs font-sans font-bold tracking-widest uppercase text-[#5E5854] hover:text-[#2D2926] transition-colors cursor-pointer"
+            className="group flex items-center gap-1.5 text-xs font-sans font-bold tracking-wider sm:tracking-widest uppercase text-[#5E5854] hover:text-[#2D2926] transition-colors cursor-pointer shrink-0"
           >
-            <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            <span>Return to Overview</span>
+            <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 transition-transform group-hover:-translate-x-1" />
+            <span className="hidden sm:inline">Return to Overview</span>
+            <span className="sm:hidden">Overview</span>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="hidden min-[480px]:flex items-center gap-2">
             <span className="hidden sm:inline text-xs font-mono font-bold tracking-wider text-[#8C827A] uppercase">
               SOUTH INDIAN COFFEE & ORIGIN GUIDE
             </span>
@@ -282,10 +283,11 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
 
           <button
             onClick={() => navigate('/collection')}
-            className="flex items-center gap-1.5 rounded-full bg-[#2D2926] px-4 py-1.5 text-xs font-sans font-bold text-white shadow-sm hover:bg-[#E05A7E] transition-all cursor-pointer"
+            className="flex items-center gap-1.5 rounded-full bg-[#2D2926] px-3 sm:px-4 py-1.5 text-xs font-sans font-bold text-white shadow-sm hover:bg-[#E05A7E] transition-all cursor-pointer shrink-0"
           >
             <ShoppingBag className="h-3.5 w-3.5" />
-            <span>Shop All Coffees</span>
+            <span className="hidden sm:inline">Shop All Coffees</span>
+            <span className="sm:hidden">Shop</span>
           </button>
         </div>
       </div>

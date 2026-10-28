@@ -124,11 +124,11 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
       />
 
       {/* Modal Card */}
-      <div className="relative z-10 w-full max-w-lg rounded-3xl bg-white border border-[#2D2926]/10 p-6 sm:p-9 shadow-2xl text-[#2D2926]">
+      <div className="relative z-10 w-full max-w-lg rounded-3xl bg-white border border-[#2D2926]/10 p-5 sm:p-8 shadow-2xl text-[#2D2926]">
         {/* Close Button */}
         <button
           onClick={handleClose}
-          className="absolute top-6 right-6 flex h-8 w-8 items-center justify-center rounded-full border border-[#2D2926]/10 bg-[#FAF7F5] text-[#5E5854] hover:text-[#2D2926] transition-all cursor-pointer shadow-sm"
+          className="absolute top-4 sm:top-6 right-4 sm:right-6 flex h-8 w-8 items-center justify-center rounded-full border border-[#2D2926]/10 bg-[#FAF7F5] text-[#5E5854] hover:text-[#2D2926] transition-all cursor-pointer shadow-sm"
           aria-label="Close"
         >
           <X className="h-4 w-4" />

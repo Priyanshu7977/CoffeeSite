@@ -459,7 +459,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
         {/* 3. Companion Micro-Lots Carousel */}
         <section className="mt-20 pt-12 border-t border-[#2D2926]/10">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div>
               <h3 className="font-display font-bold text-xl sm:text-2xl text-[#2D2926]">
                 Explore Companion Micro-Lots
@@ -470,7 +470,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             </div>
             <Link
               to="/collection"
-              className="text-xs font-mono font-bold text-[#E05A7E] hover:underline"
+              className="text-xs font-mono font-bold text-[#E05A7E] hover:underline shrink-0"
             >
               View All 12 Micro-Lots →
             </Link>
@@ -507,8 +507,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         </section>
       </main>
 
-      {/* 4. Mobile Sticky Bottom Action Bar (Ensures seamless checkout on smartphones) */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#2D2926]/10 p-3 px-4 flex items-center justify-between gap-3 shadow-[0_-10px_25px_rgba(0,0,0,0.06)]">
+      {/* 4. Mobile Sticky Bottom Action Bar (Ensures seamless checkout on smartphones with iOS safe-area padding) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#2D2926]/10 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] px-4 flex items-center justify-between gap-3 shadow-[0_-10px_25px_rgba(0,0,0,0.06)]">
         <div className="flex items-center gap-2.5 min-w-0">
           <img
             src={product.image}
@@ -525,7 +525,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           type="button"
           onClick={handleAddToCart}
           disabled={!availability.available || availability.maxAddable <= 0}
-          className="px-5 py-2.5 rounded-full bg-[#2D2926] text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shrink-0 shadow-sm disabled:opacity-50 cursor-pointer active:scale-95"
+          className="px-4 sm:px-5 py-2.5 rounded-full bg-[#2D2926] text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shrink-0 shadow-sm disabled:opacity-50 cursor-pointer active:scale-95"
         >
           {justAdded ? (
             <>
