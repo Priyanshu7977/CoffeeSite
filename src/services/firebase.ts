@@ -30,16 +30,30 @@ import {
 } from 'firebase/firestore';
 import type { CustomerProfile } from '../types/auth';
 
+// Helper to sanitize environment variables and remove accidental quotes, whitespace, or prefixes
+const sanitizeEnv = (val: unknown, fallback: string): string => {
+  if (typeof val !== 'string') return fallback;
+  const cleaned = val
+    .trim()
+    .replace(/^["']|["']$/g, '')
+    .replace(/^[a-zA-Z0-9_]+:\s*["']?/, '')
+    .replace(/["']$/, '')
+    .trim();
+  return cleaned && cleaned !== 'your_firebase_api_key_here' ? cleaned : fallback;
+};
+
 // Read Firebase client environment variables with fallback to project defaults
-const rawProjectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || 'noir-roast';
+const rawProjectId = sanitizeEnv(import.meta.env.VITE_FIREBASE_PROJECT_ID, 'noir-roast');
+const rawApiKey = sanitizeEnv(import.meta.env.VITE_FIREBASE_API_KEY, 'AIzaSyAXGRMC1IDV0ZxzLIkBEOqoYpVI-HOopEY');
+
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyAXGRMC1IDV0ZxzLIkBEOqoYpVI-HOopEY',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || `${rawProjectId}.firebaseapp.com`,
+  apiKey: rawApiKey,
+  authDomain: sanitizeEnv(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN, `${rawProjectId}.firebaseapp.com`),
   projectId: rawProjectId,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || `${rawProjectId}.firebasestorage.app`,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '1070830159382',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:1070830159382:web:a0d635b1c1771b5f32d737',
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-WE08B7BFL3',
+  storageBucket: sanitizeEnv(import.meta.env.VITE_FIREBASE_STORAGE_BUCKET, `${rawProjectId}.firebasestorage.app`),
+  messagingSenderId: sanitizeEnv(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID, '1070830159382'),
+  appId: sanitizeEnv(import.meta.env.VITE_FIREBASE_APP_ID, '1:1070830159382:web:a0d635b1c1771b5f32d737'),
+  measurementId: sanitizeEnv(import.meta.env.VITE_FIREBASE_MEASUREMENT_ID, 'G-WE08B7BFL3'),
 };
 
 /**
@@ -397,6 +411,9 @@ export function formatFirebaseError(err: unknown): string {
   }
   if (message.includes('auth/auth-domain-config-required')) {
     return 'Firebase authDomain is required. Reloading configuration...';
+  }
+  if (message.includes('auth/api-key-not-valid')) {
+    return 'Firebase API key is being refreshed. Please reload the page.';
   }
   if (message.includes('auth/invalid-credential') || message.includes('auth/wrong-password') || message.includes('auth/user-not-found')) {
     return 'Invalid email or password. Please verify your credentials.';
