@@ -200,7 +200,9 @@ export const LoginPage: React.FC = () => {
       setConfirmationResult(confirmation);
       setOtpSent(true);
       setResendTimer(60);
-      setSuccessMessage(`One-time security code sent to +91 ${cleanPhone.slice(-10)}`);
+      setSuccessMessage(
+        `Code dispatched for +91 ${cleanPhone.slice(-10)}. If registered as Firebase test number, enter code 123456. Real SMS may take 1-2 mins on Indian telecom networks.`
+      );
     } catch (err: unknown) {
       setErrorMessage(formatFirebaseError(err));
     } finally {
@@ -613,6 +615,9 @@ export const LoginPage: React.FC = () => {
                             className="w-full rounded-xl border border-[#2D2926]/15 bg-[#FAF7F5] py-1.5 pl-8 pr-3 text-center font-mono tracking-widest text-sm text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
                           />
                         </div>
+                        <p className="text-[9px] text-[#8C827A] mt-0.5 font-sans">
+                          Firebase test number? Enter test code: <strong className="text-[#2D2926]">123456</strong>
+                        </p>
                       </div>
 
                       <button
