@@ -18,6 +18,10 @@ import {
   Coffee,
   KeyRound,
   X,
+  ArrowLeft,
+  Sparkles,
+  Award,
+  PackageCheck,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { isValidEmail, hasMaliciousContent, sanitizeDigitsOnly } from '../utils/validation';
@@ -267,33 +271,120 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pt-28 pb-20 px-4 sm:px-6 relative overflow-hidden flex items-center justify-center">
-      {/* Decorative Warm Ambient Gradients */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#C89658]/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-80 h-80 bg-[#E05A7E]/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pt-24 sm:pt-28 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden flex flex-col justify-center">
+      {/* Decorative Warm Ambient Accents */}
+      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#C89658]/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-[450px] h-[450px] bg-[#F5DADF]/50 rounded-full blur-3xl pointer-events-none" />
 
       {/* Recaptcha Container for Firebase Phone Verification */}
       <div id="recaptcha-container" />
 
-      <div className="relative z-10 w-full max-w-md mx-auto">
-        {/* Brand Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#2D2926]/10 bg-white/80 shadow-xs mb-3">
-            <Coffee className="w-3.5 h-3.5 text-[#C89658]" />
-            <span className="text-[10px] font-mono tracking-[0.2em] uppercase font-bold text-[#5E5854]">
-              Noir Dakshin Roasters
-            </span>
-          </div>
-          <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#2D2926]">
-            Welcome to the Cellar
-          </h1>
-          <p className="text-xs sm:text-sm text-[#5E5854] mt-1 font-sans">
-            Sign in to access your single-estate allocations and order tracking.
-          </p>
-        </div>
+      <div className="relative z-10 w-full max-w-5xl mx-auto my-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          
+          {/* Left Column: Atmospheric Brand & Cellar Membership Showcase (Visible on Desktop) */}
+          <div className="hidden lg:flex lg:col-span-6 flex-col justify-center space-y-6 pr-4">
+            <Link
+              to="/"
+              className="group inline-flex items-center gap-2 text-xs font-mono font-bold tracking-widest text-[#8C827A] hover:text-[#2D2926] uppercase transition-colors w-fit"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+              <span>Return to Boutique</span>
+            </Link>
 
-        {/* Card */}
-        <div className="rounded-3xl bg-white border border-[#2D2926]/10 p-6 sm:p-8 shadow-[0_15px_45px_rgba(45,41,38,0.06)] backdrop-blur-sm">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#2D2926]/10 bg-[#F5DADF]/60 text-xs font-mono font-bold tracking-widest text-[#2D2926] uppercase w-fit shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5 text-[#E05A7E]" />
+              <span>PRIVATE ROASTER'S CELLAR ACCESS</span>
+            </div>
+
+            <div>
+              <h1 className="font-display text-3xl sm:text-4xl text-[#2D2926] font-bold tracking-tight leading-[1.15]">
+                Single-Estate Micro-Lots. <br />
+                <span className="italic text-[#E05A7E]">Curated for Connoisseurs.</span>
+              </h1>
+              <p className="font-serif text-sm sm:text-base text-[#5E5854] leading-relaxed mt-3 max-w-lg">
+                Enter your private member cellar. Manage your numbered nitrogen-flushed tins, monitor fermentation batch dispatch, and schedule harvest releases directly from the Western Ghats.
+              </p>
+            </div>
+
+            {/* Member Privileges Micro-Cards */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/70 border border-[#2D2926]/10 shadow-2xs">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#2D2926] text-white">
+                  <Coffee className="w-4 h-4 text-[#C89658]" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-sans font-bold text-[#2D2926]">Exclusive Lot Allocation</h4>
+                  <p className="text-[11px] font-sans text-[#5E5854] leading-normal">
+                    Priority access to all 12 single-estate harvest micro-lots before public release.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/70 border border-[#2D2926]/10 shadow-2xs">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#2D2926] text-white">
+                  <Award className="w-4 h-4 text-[#E05A7E]" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-sans font-bold text-[#2D2926]">Calibrated Roast Profiles</h4>
+                  <p className="text-[11px] font-sans text-[#5E5854] leading-normal">
+                    Master roaster cupping radar parameters tailored to Davarah, Espresso & Pour-Over.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3.5 p-3.5 rounded-2xl bg-white/70 border border-[#2D2926]/10 shadow-2xs">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#2D2926] text-white">
+                  <PackageCheck className="w-4 h-4 text-emerald-500" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-sans font-bold text-[#2D2926]">Live Order Telemetry</h4>
+                  <p className="text-[11px] font-sans text-[#5E5854] leading-normal">
+                    Real-time status tracking from roastery degas resting to doorstep delivery.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Patron Quote */}
+            <div className="border-t border-[#2D2926]/10 pt-4 text-xs font-mono text-[#8C827A]">
+              <span className="text-[#2D2926] font-semibold">“The elevation profiling and cupping radar notes match what we taste in Bangalore's finest pour-overs.”</span>
+              <p className="text-[10px] text-[#8C827A] mt-1">— Verified Member • Batch 2026-NR</p>
+            </div>
+          </div>
+
+          {/* Right Column: Authentication Card */}
+          <div className="lg:col-span-6 w-full max-w-md mx-auto">
+            {/* Mobile Header (Hidden on Desktop) */}
+            <div className="lg:hidden text-center mb-6">
+              <Link
+                to="/"
+                className="group inline-flex items-center gap-2 text-xs font-mono font-bold tracking-widest text-[#8C827A] hover:text-[#2D2926] uppercase transition-colors mb-3"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+                <span>Return to Boutique</span>
+              </Link>
+              <h1 className="font-display text-2xl font-bold tracking-tight text-[#2D2926]">
+                Welcome to the Cellar
+              </h1>
+              <p className="text-xs text-[#5E5854] mt-1 font-sans">
+                Sign in to access your single-estate allocations and order tracking.
+              </p>
+            </div>
+
+            {/* Card */}
+            <div className="rounded-3xl bg-white border border-[#2D2926]/10 p-6 sm:p-8 shadow-[0_15px_45px_rgba(45,41,38,0.06)] backdrop-blur-sm">
+              <div className="hidden lg:block mb-6">
+                <span className="text-[10px] font-mono tracking-[0.2em] uppercase font-bold text-[#8C827A]">
+                  Patron Authentication
+                </span>
+                <h2 className="font-display text-2xl font-bold text-[#2D2926] mt-0.5">
+                  Sign In to Cellar
+                </h2>
+                <p className="text-xs text-[#5E5854] mt-0.5 font-sans">
+                  Enter your credentials or choose instant one-click login.
+                </p>
+              </div>
           {/* Feedback Alerts */}
           {errorMessage && (
             <div className="mb-5 flex items-start gap-2.5 rounded-2xl bg-rose-50 border border-rose-200 p-3 text-xs text-rose-800 animate-fadeIn">
@@ -571,14 +662,17 @@ export const LoginPage: React.FC = () => {
               </Link>
             </p>
           </div>
+          </div>
+
+          {/* Security Assurance Badge */}
+          <div className="mt-5 flex items-center justify-center gap-2 text-[11px] text-[#8C827A] font-mono">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>256-bit TLS Cryptographic Security • Est. 1998</span>
+          </div>
         </div>
 
-        {/* Security Assurance Badge */}
-        <div className="mt-6 flex items-center justify-center gap-2 text-[11px] text-[#8C827A] font-mono">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-          <span>256-bit TLS Cryptographic Security • Est. 1998</span>
-        </div>
       </div>
+    </div>
 
       {/* Forgot Password Modal */}
       {isForgotPasswordOpen && (
