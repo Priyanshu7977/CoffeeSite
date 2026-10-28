@@ -1,9 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Coffee, Sparkles, Droplet } from 'lucide-react';
+import { Coffee, Sparkles, Droplet, Clock } from 'lucide-react';
 import { gsap, ScrollTrigger } from '../utils/animations';
 import { NOIR_BREW_METHODS } from '../data/brewing';
 
-export const SectionBrewRitual: React.FC = () => {
+interface SectionBrewRitualProps {
+  onOpenBrewCalculator?: () => void;
+}
+
+export const SectionBrewRitual: React.FC<SectionBrewRitualProps> = ({
+  onOpenBrewCalculator,
+}) => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const [activeMethodIndex, setActiveMethodIndex] = useState<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -229,6 +235,18 @@ export const SectionBrewRitual: React.FC = () => {
                   </p>
                 </div>
               </div>
+
+              {/* Interactive Brew Calculator & Timer Trigger */}
+              {onOpenBrewCalculator && (
+                <button
+                  type="button"
+                  onClick={onOpenBrewCalculator}
+                  className="w-full py-2.5 sm:py-3 px-4 rounded-xl sm:rounded-2xl bg-[#2D2926] hover:bg-black text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition-all active:scale-95 cursor-pointer"
+                >
+                  <Clock className="h-4 w-4 text-[#F5DADF]" />
+                  <span>Launch Live Brew Ratio & Extraction Timer</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

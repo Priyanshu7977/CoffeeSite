@@ -25,7 +25,9 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
 
   // Calculate pricing in INR (₹)
   const subtotalNumeric = items.reduce((sum, item) => {
-    const raw = parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 950;
+    const raw = item.unitPriceNum !== undefined 
+      ? item.unitPriceNum 
+      : (parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 950);
     return sum + raw * item.quantity;
   }, 0);
 
@@ -74,7 +76,7 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
           <div className="flex-1 space-y-4 overflow-y-auto pr-1 my-2">
             {items.map((item) => (
               <div
-                key={`${item.product.id}-${item.grind}`}
+                key={`${item.product.id}-${item.grind}-${item.isSubscription ? item.subscriptionFrequency : 'one'}`}
                 className="flex gap-3.5 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 p-3.5 shadow-sm"
               >
                 {/* Product Image */}
@@ -100,14 +102,21 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
                       </button>
                     </div>
 
-                    <span className="text-[10px] font-mono text-[#E05A7E] block mt-0.5 font-bold">
-                      {item.grind}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                      <span className="text-[10px] font-mono text-[#E05A7E] font-bold">
+                        {item.grind}
+                      </span>
+                      {item.isSubscription && (
+                        <span className="text-[9px] font-mono bg-[#E05A7E] text-white px-1.5 py-0.2 rounded font-bold">
+                          Club ({item.subscriptionFrequency}) • -10%
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex justify-between items-center pt-2">
                     <span className="font-display text-sm text-[#2D2926] font-bold">
-                      {item.product.price}
+                      {item.unitPriceNum ? `₹${item.unitPriceNum.toLocaleString('en-IN')}` : item.product.price}
                     </span>
 
                     {/* Quantity Controls */}

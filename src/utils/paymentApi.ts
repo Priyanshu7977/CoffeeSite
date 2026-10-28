@@ -229,3 +229,20 @@ export async function adminVerifyUtr(
 
   return data.order;
 }
+
+/**
+ * Public Order Tracking: Fetches single order details by Order ID, Public Order Number, or Phone
+ */
+export async function fetchOrderDetails(orderIdOrNumber: string): Promise<CustomerOrder | null> {
+  try {
+    const res = await fetch(`${API_BASE}/api/orders/track?query=${encodeURIComponent(orderIdOrNumber)}`);
+    if (res.ok) {
+      const data = await res.json();
+      return data.order || null;
+    }
+  } catch (err) {
+    console.warn('Failed to fetch order details from backend:', err);
+  }
+  return null;
+}
+

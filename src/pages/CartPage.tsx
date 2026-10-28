@@ -68,7 +68,9 @@ export const CartPage: React.FC<CartPageProps> = ({
   }, [userEmail, recipientEmail]);
 
   const subtotal = items.reduce((sum, item) => {
-    const priceNum = parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 0;
+    const priceNum = item.unitPriceNum !== undefined
+      ? item.unitPriceNum
+      : (parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 0);
     return sum + priceNum * item.quantity;
   }, 0);
 
@@ -229,11 +231,13 @@ export const CartPage: React.FC<CartPageProps> = ({
               <div className="bg-white rounded-3xl border border-[#2D2926]/10 shadow-sm divide-y divide-[#2D2926]/10 overflow-hidden">
                 {items.map((item) => {
                   const available = getStock(item.product.id);
-                  const priceNum = parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 0;
+                  const priceNum = item.unitPriceNum !== undefined
+                    ? item.unitPriceNum
+                    : (parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 0);
                   const itemLineTotal = priceNum * item.quantity;
 
                   return (
-                    <div key={`${item.product.id}-${item.grind}`} className="p-5 sm:p-6 flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
+                    <div key={`${item.product.id}-${item.grind}-${item.isSubscription ? item.subscriptionFrequency : 'one'}`} className="p-5 sm:p-6 flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
                       <div className="flex gap-4 items-center">
                         <img
                           src={item.product.image}
@@ -250,8 +254,13 @@ export const CartPage: React.FC<CartPageProps> = ({
                           >
                             {item.product.name}
                           </Link>
-                          <div className="text-xs text-[#8C827A] mt-0.5">
-                            Grind: <span className="font-medium text-[#2D2926]">{item.grind}</span>
+                          <div className="text-xs text-[#8C827A] mt-0.5 flex flex-wrap items-center gap-1.5">
+                            <span>Grind: <span className="font-medium text-[#2D2926]">{item.grind}</span></span>
+                            {item.isSubscription && (
+                              <span className="text-[9px] font-mono bg-[#E05A7E] text-white px-1.5 py-0.2 rounded font-bold">
+                                Roaster's Club ({item.subscriptionFrequency}) • -10%
+                              </span>
+                            )}
                           </div>
                           <div className="text-xs text-[#8C827A]">
                             Vault Stock: <span className="font-mono font-bold text-[#2D2926]">{available} available</span>
@@ -287,7 +296,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                             ₹{itemLineTotal.toLocaleString('en-IN')}
                           </div>
                           <div className="text-[10px] text-[#8C827A] font-mono">
-                            {item.product.price} each
+                            ₹{priceNum.toLocaleString('en-IN')} each
                           </div>
                         </div>
 

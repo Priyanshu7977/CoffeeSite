@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -13,14 +13,26 @@ import {
   PackageCheck,
   Share2,
   Sparkles,
-  Truck
+  Truck,
+  Heart,
+  Star,
+  PenLine
 } from 'lucide-react';
 import { NOIR_PRODUCTS } from '../data/products';
 import { useInventory } from '../hooks/useInventory';
+import { useWishlist } from '../utils/wishlist';
+import { ReviewSubmissionModal } from '../components/ReviewSubmissionModal';
+import { CUSTOMER_REVIEWS, type CustomerReview } from '../components/ReviewsRollingSection';
 import type { Product } from '../types';
 
 interface ProductDetailPageProps {
-  onAddToCart: (product: Product, grind: string, quantity?: number) => void;
+  onAddToCart: (
+    product: Product, 
+    grind: string, 
+    quantity?: number, 
+    isSubscription?: boolean, 
+    subscriptionFrequency?: 'Every 2 Weeks' | 'Every 3 Weeks' | 'Every 4 Weeks'
+  ) => void;
   onOpenCart: () => void;
   cartCount: number;
   cartItems: Array<{ product: Product; quantity: number; grind: string }>;
@@ -43,12 +55,24 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getStock, getStockStatus, checkAvailability } = useInventory();
+  const { isWishlisted, toggle: toggleWishlist } = useWishlist();
 
   const product = NOIR_PRODUCTS.find((p) => p.id === id) || NOIR_PRODUCTS[0];
   const [selectedGrind, setSelectedGrind] = useState<string>('Whole Bean');
   const [quantity, setQuantity] = useState<number>(1);
+  const [purchaseMode, setPurchaseMode] = useState<'onetime' | 'subscription'>('onetime');
+  const [subscriptionFreq, setSubscriptionFreq] = useState<'Every 2 Weeks' | 'Every 3 Weeks' | 'Every 4 Weeks'>('Every 3 Weeks');
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [justAdded, setJustAdded] = useState<boolean>(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
+  const [customReviews, setCustomReviews] = useState<CustomerReview[]>(() => {
+    try {
+      const saved = localStorage.getItem('noir_custom_reviews_v1');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
 
   // Check inventory for this product
   const currentStock = getStock(product.id);
@@ -59,9 +83,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
   const availability = checkAvailability(product.id, inCartQty, quantity);
 
-  // Price calculations
-  const unitPrice = parseFloat(product.price.replace(/[^0-9.]/g, '')) || 0;
-  const totalPriceFormatted = '₹' + (unitPrice * quantity).toLocaleString('en-IN');
+  // Price calculations with 10% subscription discount
+  const rawUnitPrice = parseFloat(product.price.replace(/[^0-9.]/g, '')) || 0;
+  const discountMultiplier = purchaseMode === 'subscription' ? 0.9 : 1.0;
+  const effectiveUnitPrice = Math.round(rawUnitPrice * discountMultiplier);
+  const effectiveTotalPrice = effectiveUnitPrice * quantity;
+  const totalPriceFormatted = '₹' + effectiveTotalPrice.toLocaleString('en-IN');
 
   const handleQuantityChange = (delta: number) => {
     const next = quantity + delta;
@@ -72,7 +99,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
   const handleAddToCart = () => {
     if (!availability.available || availability.maxAddable <= 0) return;
-    onAddToCart(product, selectedGrind, quantity);
+    onAddToCart(
+      product, 
+      selectedGrind, 
+      quantity, 
+      purchaseMode === 'subscription', 
+      purchaseMode === 'subscription' ? subscriptionFreq : undefined
+    );
     setJustAdded(true);
     setTimeout(() => {
       setJustAdded(false);
@@ -87,7 +120,22 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     }
   };
 
+  const handleReviewSubmitted = (newReview: CustomerReview) => {
+    setCustomReviews((prev) => [newReview, ...prev]);
+  };
+
   const relatedProducts = NOIR_PRODUCTS.filter((p) => p.id !== product.id).slice(0, 3);
+
+  // Filter reviews relevant to this lot or product
+  const lotReviews = useMemo(() => {
+    const all = [...customReviews, ...CUSTOMER_REVIEWS];
+    const specific = all.filter((r) => 
+      (r.productId && r.productId === product.id) ||
+      (r.lot && r.lot.toLowerCase().includes(product.name.toLowerCase())) ||
+      (r.roastBatch && r.roastBatch.toLowerCase().includes(product.num.toLowerCase()))
+    );
+    return specific.length > 0 ? specific : all.slice(0, 3);
+  }, [customReviews, product]);
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-28 selection:bg-[#F5DADF] selection:text-[#2D2926]">
@@ -107,7 +155,22 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Wishlist Bookmark Button */}
+            <button
+              onClick={() => toggleWishlist(product.id)}
+              className={`p-2 rounded-full border transition-colors relative cursor-pointer active:scale-95 ${
+                isWishlisted(product.id)
+                  ? 'bg-rose-50 border-rose-300 text-rose-600'
+                  : 'border-[#2D2926]/15 hover:bg-neutral-100 text-[#2D2926]'
+              }`}
+              title={isWishlisted(product.id) ? 'Saved in Cellar Wishlist' : 'Save Micro-Lot to Wishlist'}
+              aria-label="Wishlist"
+            >
+              <Heart className={`h-4 w-4 ${isWishlisted(product.id) ? 'fill-rose-500 text-rose-500' : ''}`} />
+            </button>
+
+            {/* Share Micro-Lot Button */}
             <button
               onClick={handleShare}
               className="p-2 rounded-full border border-[#2D2926]/15 hover:bg-neutral-100 text-[#2D2926] transition-colors relative cursor-pointer active:scale-95"
@@ -120,6 +183,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 </span>
               )}
             </button>
+
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 text-xs font-mono font-medium text-[#5E5854]">
               <span className={`h-2 w-2 rounded-full ${stockStatus === 'OUT_OF_STOCK' ? 'bg-amber-500' : 'bg-emerald-500 animate-pulse'}`} />
               <span className="hidden sm:inline font-semibold">
@@ -132,6 +196,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           </div>
         </div>
       </div>
+
 
       {/* 2. Main Product Container */}
       <main className="mx-auto max-w-7xl px-4 sm:px-8 pt-8">
@@ -370,18 +435,78 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 </div>
               )}
 
+              {/* Purchase Mode Toggle: One-Time Allocation vs Roaster's Club Subscription */}
+              <div className="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10">
+                <button
+                  type="button"
+                  onClick={() => setPurchaseMode('onetime')}
+                  className={`py-2 px-3 rounded-xl text-xs font-sans font-bold transition-all text-center cursor-pointer ${
+                    purchaseMode === 'onetime'
+                      ? 'bg-white text-[#2D2926] shadow-sm'
+                      : 'text-[#8C827A] hover:text-[#2D2926]'
+                  }`}
+                >
+                  <span>One-Time Allocation</span>
+                  <span className="block text-[10px] font-mono text-[#8C827A] font-normal">₹{rawUnitPrice.toLocaleString('en-IN')} / tin</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPurchaseMode('subscription')}
+                  className={`py-2 px-3 rounded-xl text-xs font-sans font-bold transition-all text-center cursor-pointer relative ${
+                    purchaseMode === 'subscription'
+                      ? 'bg-[#2D2926] text-white shadow-sm'
+                      : 'text-[#8C827A] hover:text-[#2D2926]'
+                  }`}
+                >
+                  <span className="inline-flex items-center gap-1">
+                    <span>Roaster's Club</span>
+                    <span className="bg-[#E05A7E] text-white text-[9px] font-mono px-1 py-0.2 rounded font-bold">-10%</span>
+                  </span>
+                  <span className={`block text-[10px] font-mono font-normal ${purchaseMode === 'subscription' ? 'text-[#F5DADF]' : 'text-[#8C827A]'}`}>
+                    ₹{Math.round(rawUnitPrice * 0.9).toLocaleString('en-IN')} / tin
+                  </span>
+                </button>
+              </div>
+
+              {/* Frequency Selector (Visible only when Roaster's Club is chosen) */}
+              {purchaseMode === 'subscription' && (
+                <div className="p-3 rounded-2xl bg-[#F5DADF]/35 border border-[#E05A7E]/25 space-y-2 animate-fadeIn">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="font-bold text-[#2D2926]">Auto-Dispatch Frequency:</span>
+                    <span className="text-[10px] font-mono text-[#E05A7E] font-bold">Pause or Cancel Anytime</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {(['Every 2 Weeks', 'Every 3 Weeks', 'Every 4 Weeks'] as const).map((freq) => (
+                      <button
+                        key={freq}
+                        type="button"
+                        onClick={() => setSubscriptionFreq(freq)}
+                        className={`py-1.5 px-2 rounded-xl text-[10.5px] font-mono font-bold transition-all text-center cursor-pointer ${
+                          subscriptionFreq === freq
+                            ? 'bg-[#2D2926] text-white shadow-xs'
+                            : 'bg-white/80 text-[#5E5854] hover:bg-white border border-[#2D2926]/10'
+                        }`}
+                      >
+                        {freq}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Quantity & Order Subtotal Row */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#2D2926]/10">
                 <div>
                   <span className="text-[10px] font-mono uppercase tracking-wider text-[#8C827A] block font-bold">
-                    Numbered Tin Allocation
+                    {purchaseMode === 'subscription' ? "Roaster's Club Subtotal" : 'Numbered Tin Allocation'}
                   </span>
                   <div className="flex items-baseline gap-2 mt-0.5">
                     <span className="font-display text-2xl font-bold text-[#2D2926]">
                       {totalPriceFormatted}
                     </span>
                     <span className="text-xs text-[#8C827A] font-mono">
-                      ({quantity} × {product.price})
+                      ({quantity} × ₹{effectiveUnitPrice.toLocaleString('en-IN')})
                     </span>
                   </div>
                 </div>
@@ -457,8 +582,94 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           </div>
         </div>
 
-        {/* 3. Companion Micro-Lots Carousel */}
-        <section className="mt-20 pt-12 border-t border-[#2D2926]/10">
+        {/* 3. Patron Cupping Reviews & Sensory Tasting Section */}
+        <section className="mt-16 pt-12 border-t border-[#2D2926]/10">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-[#2D2926]/10 text-xs font-mono font-bold text-[#2D2926] uppercase tracking-wider mb-2 shadow-2xs">
+                <Sparkles className="h-3.5 w-3.5 text-[#E05A7E]" />
+                <span>CUPPING LOGS • {lotReviews.length} CERTIFIED REVIEWS</span>
+              </div>
+              <h3 className="font-display font-bold text-2xl sm:text-3xl text-[#2D2926]">
+                Sensory Notes & Patron Reviews
+              </h3>
+              <p className="text-xs text-[#8C827A] mt-1">
+                Tasting evaluations for Lot #{product.num} ({product.name} • {product.origin})
+              </p>
+            </div>
+
+            <button
+              onClick={() => setIsReviewModalOpen(true)}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#2D2926] hover:bg-black text-white text-xs font-mono font-bold tracking-wider uppercase transition-all shadow-md active:scale-95 cursor-pointer shrink-0"
+            >
+              <PenLine className="h-3.5 w-3.5 text-[#F5DADF]" />
+              <span>Review this Lot</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {lotReviews.map((rev, idx) => (
+              <div
+                key={`${rev.id}-${idx}`}
+                className="p-5 rounded-2xl bg-white border border-[#2D2926]/10 shadow-sm flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2.5">
+                      <img
+                        src={rev.avatar}
+                        alt={rev.name}
+                        className="h-9 w-9 rounded-full object-cover border border-[#2D2926]/15"
+                      />
+                      <div className="min-w-0">
+                        <h4 className="font-display font-bold text-xs text-[#2D2926] truncate">{rev.name}</h4>
+                        <p className="text-[10px] text-[#8C827A] truncate max-w-[130px]">{rev.role}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-0.5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-3 w-3 ${
+                            i < rev.rating
+                              ? 'fill-[#C89658] text-[#C89658]'
+                              : 'text-neutral-300'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-[#5E5854] italic leading-relaxed mb-4">
+                    “{rev.quote}”
+                  </p>
+                </div>
+
+                <div className="pt-3 border-t border-[#2D2926]/10 space-y-2">
+                  <div className="flex flex-wrap gap-1">
+                    {rev.notes.slice(0, 3).map((note, nIdx) => (
+                      <span
+                        key={nIdx}
+                        className="px-2 py-0.5 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 text-[9.5px] font-mono text-[#5E5854]"
+                      >
+                        {note}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="text-[10px] font-mono text-[#8C827A] flex items-center justify-between">
+                    <span className="truncate">{rev.brewMethod}</span>
+                    <span className="text-emerald-600 font-bold flex items-center gap-0.5 shrink-0">
+                      <Check className="h-3 w-3" /> Verified
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 4. Companion Micro-Lots Carousel */}
+        <section className="mt-16 pt-12 border-t border-[#2D2926]/10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div>
               <h3 className="font-display font-bold text-xl sm:text-2xl text-[#2D2926]">
@@ -540,6 +751,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           )}
         </button>
       </div>
+
+      {/* Review Submission Modal */}
+      <ReviewSubmissionModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        defaultProductId={product.id}
+        onReviewSubmitted={handleReviewSubmitted}
+      />
     </div>
   );
 };

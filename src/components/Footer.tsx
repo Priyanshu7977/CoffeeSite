@@ -52,16 +52,26 @@ export const Footer: React.FC<FooterProps> = ({
             </div>
           </div>
 
-          {/* Col 2: Navigation */}
+          {/* Col 2: Navigation & Track Order */}
           <div className="md:col-span-3 space-y-2">
             <span className="text-xs font-sans tracking-widest text-[#F5DADF] uppercase font-bold block mb-2">
-              Quick Links
+              Quick Links & Tracking
             </span>
             <ul className="space-y-1.5 text-xs font-sans text-[#FAF7F5]/75">
               <li><a href="/collection" className="hover:text-[#F5DADF] transition-colors">Coffee Collection</a></li>
-              <li><a href="/atlas" className="hover:text-[#F5DADF] transition-colors">Coffee & Taste Guide</a></li>
+              <li><a href="/track" className="text-[#F5DADF] font-bold hover:underline flex items-center gap-1.5"><span>Live Order Tracking</span><span className="text-[9px] font-mono bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded">NEW</span></a></li>
+              <li><a href="/atlas" className="hover:text-[#F5DADF] transition-colors">Coffee & Origin Guide</a></li>
               <li><a href="/about" className="hover:text-[#F5DADF] transition-colors">About Us</a></li>
               <li><a href="/contact" className="hover:text-[#F5DADF] transition-colors">Contact & Roastery Map</a></li>
+              <li className="pt-2 text-[11px] text-[#FAF7F5]/50 flex flex-wrap gap-x-2 gap-y-1">
+                <a href="/shipping" className="hover:text-[#F5DADF] underline">Shipping</a>
+                <span>•</span>
+                <a href="/refund" className="hover:text-[#F5DADF] underline">Returns</a>
+                <span>•</span>
+                <a href="/terms" className="hover:text-[#F5DADF] underline">Terms</a>
+                <span>•</span>
+                <a href="/privacy" className="hover:text-[#F5DADF] underline">Privacy</a>
+              </li>
             </ul>
           </div>
 

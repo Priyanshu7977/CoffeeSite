@@ -5,8 +5,10 @@ import {
   RotateCw, 
   Quote, 
   Coffee, 
-  MapPin
+  MapPin,
+  PenLine
 } from 'lucide-react';
+import { ReviewSubmissionModal } from './ReviewSubmissionModal';
 
 export interface CustomerReview {
   id: string;
@@ -23,7 +25,10 @@ export interface CustomerReview {
   notes: string[];
   brewMethod: string;
   roastBatch: string;
+  productId?: string;
+  productName?: string;
 }
+
 
 export const CUSTOMER_REVIEWS: CustomerReview[] = [
   {
@@ -465,13 +470,28 @@ const FlipReviewCard: React.FC<ReviewCardProps> = ({
 export const ReviewsRollingSection: React.FC = () => {
   const [flippedCardId, setFlippedCardId] = useState<string | null>(null);
   const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
+  const [customReviews, setCustomReviews] = useState<CustomerReview[]>(() => {
+    try {
+      const saved = localStorage.getItem('noir_custom_reviews_v1');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const trackRef = useRef<HTMLDivElement>(null);
 
+  // Combine custom patron reviews with curate reviews
+  const allReviews = [...customReviews, ...CUSTOMER_REVIEWS];
   // Duplicate for seamless infinite rolling marquee
-  const rollingReviews = [...CUSTOMER_REVIEWS, ...CUSTOMER_REVIEWS];
+  const rollingReviews = [...allReviews, ...allReviews];
 
   const handleToggleFlip = (id: string) => {
     setFlippedCardId((prev) => (prev === id ? null : id));
+  };
+
+  const handleReviewSubmitted = (newReview: CustomerReview) => {
+    setCustomReviews((prev) => [newReview, ...prev]);
   };
 
   return (
@@ -482,18 +502,28 @@ export const ReviewsRollingSection: React.FC = () => {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-12 mb-6">
         {/* Top Header */}
-        <div className="border-b border-white/10 pb-6 text-center sm:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono font-bold text-[#F5DADF] uppercase tracking-wider mb-2.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>LIVE CUSTOMER REVIEWS • 12 VERIFIED EXPERIENCES</span>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/10 pb-6 text-center sm:text-left">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono font-bold text-[#F5DADF] uppercase tracking-wider mb-2.5">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>LIVE CUSTOMER REVIEWS • {allReviews.length} VERIFIED EXPERIENCES</span>
+            </div>
+
+            <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
+              What Our <span className="italic text-[#F5DADF] font-medium">Customers Say.</span>
+            </h2>
+            <p className="text-xs sm:text-sm text-[#FAF7F5]/70 mt-1 max-w-lg">
+              Unfiltered feedback from certified Q-Graders, cafe baristas, and filter kaapi devotees across India.
+            </p>
           </div>
 
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
-            What Our <span className="italic text-[#F5DADF] font-medium">Customers Say.</span>
-          </h2>
-          <p className="text-xs sm:text-sm text-[#FAF7F5]/70 mt-1 max-w-lg">
-            Unfiltered feedback from certified Q-Graders, cafe baristas, and filter kaapi devotees across India.
-          </p>
+          <button
+            onClick={() => setIsReviewModalOpen(true)}
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-[#E05A7E] hover:bg-[#c9496b] text-white text-xs font-mono font-bold tracking-wider uppercase shadow-md transition-all cursor-pointer self-center sm:self-auto active:scale-95 shrink-0"
+          >
+            <PenLine className="h-3.5 w-3.5" />
+            <span>Write a Review</span>
+          </button>
         </div>
       </div>
 
@@ -528,6 +558,13 @@ export const ReviewsRollingSection: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Review Submission Modal */}
+      <ReviewSubmissionModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        onReviewSubmitted={handleReviewSubmitted}
+      />
     </section>
   );
 };

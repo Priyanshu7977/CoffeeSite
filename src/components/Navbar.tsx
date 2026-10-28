@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingBag, User, ShieldCheck, Package } from 'lucide-react';
+import { Menu, X, ShoppingBag, User, ShieldCheck, Package, Volume2, VolumeX, Coffee } from 'lucide-react';
 import { MagneticButton } from './MagneticButton';
+import { noirAudio } from '../utils/audio';
 import type { UserSession } from './LoginModal';
 
 interface NavbarProps {
@@ -9,6 +10,7 @@ interface NavbarProps {
   onOpenCollection: () => void;
   onOpenLogin: () => void;
   onOpenInventoryHud: () => void;
+  onOpenBrewCalculator?: () => void;
   userSession: UserSession | null;
   collectionCount: number;
 }
@@ -18,13 +20,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenCollection,
   onOpenLogin: _onOpenLogin,
   onOpenInventoryHud,
+  onOpenBrewCalculator,
   userSession,
   collectionCount,
 }) => {
   const [isVisible, setIsVisible] = useState<boolean>(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [isAudioPlaying, setIsAudioPlaying] = useState<boolean>(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const handleToggleAudio = () => {
+    const playing = noirAudio.toggle();
+    setIsAudioPlaying(playing);
+  };
 
   // Always ensure header is visible on page navigation
   useEffect(() => {
@@ -109,17 +118,18 @@ export const Navbar: React.FC<NavbarProps> = ({
         </MagneticButton>
 
         {/* Center Multi-Page Navigation Links */}
-        <nav className="hidden items-center gap-5 lg:gap-6 md:flex shrink-0">
+        <nav className="hidden items-center gap-4 lg:gap-6 md:flex shrink-0">
           {[
             { label: 'COLLECTION', path: '/collection' },
             { label: 'COFFEE GUIDE', path: '/atlas' },
+            { label: 'TRACK ORDER', path: '/track' },
             { label: 'ABOUT US', path: '/about' },
             { label: 'CONTACT', path: '/contact' },
           ].map((item) => (
             <MagneticButton key={item.label} strength={0.25}>
               <button
                 onClick={() => handleNavClick(item.path)}
-                className={`group relative font-sans text-xs tracking-[0.2em] font-semibold transition-colors py-1 cursor-pointer ${
+                className={`group relative font-sans text-xs tracking-[0.18em] lg:tracking-[0.2em] font-semibold transition-colors py-1 cursor-pointer ${
                   location.pathname === item.path ? 'text-[#E05A7E]' : 'text-[#5E5854] hover:text-[#2D2926]'
                 }`}
               >
@@ -136,6 +146,47 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right Actions */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          {/* Ambient Soundscape Toggle */}
+          <MagneticButton strength={0.25}>
+            <button
+              onClick={handleToggleAudio}
+              className={`flex items-center gap-1 sm:gap-1.5 rounded-full border px-2 sm:px-3 py-1.5 text-[10px] sm:text-[11px] font-mono transition-all duration-300 cursor-pointer ${
+                isAudioPlaying
+                  ? 'border-[#E05A7E] bg-[#F5DADF] text-[#2D2926] font-bold shadow-xs'
+                  : 'border-[#2D2926]/15 bg-[#FAF7F5] text-[#5E5854] hover:text-[#2D2926]'
+              }`}
+              title={isAudioPlaying ? 'Mute Roastery Soundscape' : 'Play Roastery Ambient Soundscape (Vinyl Crackle & Steam)'}
+              aria-label="Toggle ambient sound"
+            >
+              {isAudioPlaying ? (
+                <>
+                  <Volume2 className="h-3.5 w-3.5 text-[#E05A7E] animate-pulse" />
+                  <span className="hidden xl:inline text-[9.5px]">SOUND ON</span>
+                </>
+              ) : (
+                <>
+                  <VolumeX className="h-3.5 w-3.5 text-[#8C827A]" />
+                  <span className="hidden xl:inline text-[9.5px]">SOUND</span>
+                </>
+              )}
+            </button>
+          </MagneticButton>
+
+          {/* Brew Lab Trigger */}
+          {onOpenBrewCalculator && (
+            <MagneticButton strength={0.25}>
+              <button
+                onClick={onOpenBrewCalculator}
+                className="flex items-center gap-1 sm:gap-1.5 rounded-full border border-[#2D2926]/15 bg-[#FAF7F5] hover:bg-[#F5DADF]/50 px-2 sm:px-3 py-1.5 text-[10px] sm:text-[11px] font-mono text-[#5E5854] hover:text-[#2D2926] transition-all cursor-pointer"
+                title="Launch Noir Brew Lab (Ratio Calculator & Live Timer)"
+                aria-label="Brew Lab"
+              >
+                <Coffee className="h-3.5 w-3.5 text-[#E05A7E]" />
+                <span className="hidden xl:inline text-[9.5px] font-bold">BREW LAB</span>
+              </button>
+            </MagneticButton>
+          )}
+
           {/* Inventory HUD Trigger — ONLY VISIBLE TO OWNER AND IMS ENGINEER */}
           {(userSession?.role === 'ADMIN' || userSession?.role === 'IMS_ENGINEER') && (
             <button
@@ -216,6 +267,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               { label: 'HOME', path: '/' },
               { label: 'SHOP COFFEE', path: '/collection' },
               { label: 'COFFEE GUIDE', path: '/atlas' },
+              { label: 'TRACK MY ORDER', path: '/track' },
               { label: 'ABOUT US', path: '/about' },
               { label: 'CONTACT US', path: '/contact' },
               { label: 'SHOPPING CART', path: '/cart' },
@@ -233,6 +285,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             ))}
 
             <div className="pt-2 flex flex-col gap-2">
+              {onOpenBrewCalculator && (
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    onOpenBrewCalculator();
+                  }}
+                  className="w-full py-2.5 rounded-xl border border-[#2D2926]/15 bg-[#FAF7F5] text-xs font-bold text-[#2D2926] flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+                >
+                  <Coffee className="h-3.5 w-3.5 text-[#E05A7E]" />
+                  <span>Launch Brew Lab & Live Timer</span>
+                </button>
+              )}
+
               {(userSession?.role === 'ADMIN' || userSession?.role === 'IMS_ENGINEER') && (
                 <button
                   onClick={() => {

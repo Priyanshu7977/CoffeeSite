@@ -14,8 +14,10 @@ import {
   Clock,
   Sparkles,
   User,
+  Printer,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { InvoiceModal } from './InvoiceModal';
 import {
   sanitizeName,
   sanitizePhone,
@@ -90,6 +92,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   // Status & Confirmation tracking
   const [confirmedOrder, setConfirmedOrder] = useState<CustomerOrder | null>(null);
+  const [isInvoiceOpen, setIsInvoiceOpen] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [copiedVpa, setCopiedVpa] = useState<boolean>(false);
@@ -135,7 +138,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   // Authoritative item pricing calculation in UI
   const subtotalNumeric = items.reduce((sum, item) => {
-    const raw = parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 2400;
+    const raw = item.unitPriceNum !== undefined
+      ? item.unitPriceNum
+      : (parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 2400);
     return sum + raw * item.quantity;
   }, 0);
 
@@ -652,13 +657,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
                 <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1">
                   {items.map((it) => (
-                    <div key={`${it.product.id}-${it.grind}`} className="flex justify-between items-start text-xs pb-2 border-b border-[#2D2926]/5">
+                    <div key={`${it.product.id}-${it.grind}-${it.isSubscription ? it.subscriptionFrequency : 'one'}`} className="flex justify-between items-start text-xs pb-2 border-b border-[#2D2926]/5">
                       <div>
                         <div className="font-bold text-[#2D2926]">{it.product.name}</div>
                         <div className="text-[11px] text-[#8C827A] font-mono">{it.grind}</div>
+                        {it.isSubscription && (
+                          <span className="text-[9px] font-mono bg-[#E05A7E] text-white px-1.5 py-0.2 rounded font-bold">
+                            Roaster's Club ({it.subscriptionFrequency}) • -10%
+                          </span>
+                        )}
                         <div className="text-[11px] text-[#5E5854]">Qty: {it.quantity}</div>
                       </div>
-                      <div className="font-mono font-bold text-[#2D2926]">{it.product.price}</div>
+                      <div className="font-mono font-bold text-[#2D2926]">
+                        {it.unitPriceNum ? `₹${it.unitPriceNum.toLocaleString('en-IN')}` : it.product.price}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1124,15 +1136,46 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
               </div>
             </div>
 
+            {/* Action Buttons: Tax Invoice & Live Order Tracking */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsInvoiceOpen(true)}
+                className="py-3.5 px-4 rounded-2xl bg-white border border-[#2D2926]/20 text-[#2D2926] font-display font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#FAF7F5] transition-all cursor-pointer shadow-xs active:scale-95"
+              >
+                <Printer className="h-4 w-4 text-[#E05A7E]" />
+                <span>Print Official Tax Invoice</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  navigate(`/track?order=${confirmedOrder.orderNumber}`);
+                }}
+                className="py-3.5 px-4 rounded-2xl bg-[#E05A7E] text-white font-display font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#c94567] transition-all cursor-pointer shadow-md active:scale-95"
+              >
+                <Truck className="h-4 w-4" />
+                <span>Track Roastery Dispatch</span>
+              </button>
+            </div>
+
             <button
               onClick={onClose}
-              className="w-full py-4 rounded-full bg-[#2D2926] text-white font-display font-bold text-sm hover:bg-black transition-all shadow-md cursor-pointer"
+              className="w-full py-3.5 rounded-full bg-[#2D2926] text-white font-display font-bold text-xs uppercase tracking-wider hover:bg-black transition-all shadow-sm cursor-pointer"
             >
-              Close & Return to Roastery
+              Close & Return to Boutique
             </button>
           </div>
         )}
       </div>
+
+      {/* Official Tax Invoice Print Modal */}
+      <InvoiceModal
+        isOpen={isInvoiceOpen}
+        onClose={() => setIsInvoiceOpen(false)}
+        order={confirmedOrder}
+      />
     </div>
   );
 };

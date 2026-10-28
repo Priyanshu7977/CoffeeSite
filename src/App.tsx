@@ -32,6 +32,11 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { EstateAtlasPage } from './pages/EstateAtlasPage';
 import { AboutUsPage } from './pages/AboutUsPage';
 import { ContactPage } from './pages/ContactPage';
+import { ManifestoPage } from './pages/ManifestoPage';
+import { OrderTrackingPage } from './pages/OrderTrackingPage';
+import { LegalPage } from './pages/LegalPage';
+import { InvoiceModal } from './components/InvoiceModal';
+import { BrewCalculatorModal } from './components/BrewCalculatorModal';
 import { CartPage } from './pages/CartPage';
 import { AccountPage } from './pages/AccountPage';
 import { LoginPage } from './pages/LoginPage';
@@ -42,6 +47,7 @@ import { NOIR_PRODUCTS } from './data/products';
 import { inventorySystem } from './utils/inventorySystem';
 import { recordCartActivity } from './utils/emailAutomationSystem';
 import type { ReserveBatch, Product, CollectionItem } from './types';
+import type { CustomerOrder } from './types/payment';
 import type { AutomatedEmail } from './utils/emailService';
 
 // Scroll to top automatically on route transitions
@@ -72,6 +78,8 @@ export const App: React.FC = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [isInventoryHudOpen, setIsInventoryHudOpen] = useState<boolean>(false);
   const [activeDispatchedEmail, setActiveDispatchedEmail] = useState<AutomatedEmail | null>(null);
+  const [activeInvoiceOrder, setActiveInvoiceOrder] = useState<CustomerOrder | null>(null);
+  const [isBrewCalculatorOpen, setIsBrewCalculatorOpen] = useState<boolean>(false);
 
   // User Auth & Session from global AuthContext
   const { userSession } = useAuth();
@@ -93,7 +101,9 @@ export const App: React.FC = () => {
       console.warn('Cart persistence failed', e);
     }
     const subtotal = collectionItems.reduce((sum, item) => {
-      const priceNum = parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 0;
+      const priceNum = item.unitPriceNum !== undefined
+        ? item.unitPriceNum
+        : (parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 0);
       return sum + priceNum * item.quantity;
     }, 0);
     recordCartActivity(
@@ -178,10 +188,21 @@ export const App: React.FC = () => {
     setActiveDetailProduct(null);
   };
 
-  const handleAddToCollection = (product: Product, grind: string = 'Whole Bean', quantity: number = 1) => {
+  const handleAddToCollection = (
+    product: Product, 
+    grind: string = 'Whole Bean', 
+    quantity: number = 1,
+    isSubscription: boolean = false,
+    subscriptionFrequency?: 'Every 2 Weeks' | 'Every 3 Weeks' | 'Every 4 Weeks'
+  ) => {
     // Inventory Bounds Validation
     const available = inventorySystem.getStock(product.id);
-    const existing = collectionItems.find((item) => item.product.id === product.id && item.grind === grind);
+    const existing = collectionItems.find(
+      (item) => item.product.id === product.id && 
+                item.grind === grind &&
+                Boolean(item.isSubscription) === Boolean(isSubscription) &&
+                item.subscriptionFrequency === subscriptionFrequency
+    );
     const currentQty = existing ? existing.quantity : 0;
 
     if (currentQty + quantity > available) {
@@ -189,11 +210,22 @@ export const App: React.FC = () => {
       return;
     }
 
+    const rawPrice = parseFloat(product.price.replace(/[^0-9.]/g, '')) || 0;
+    const unitPriceNum = isSubscription ? Math.round(rawPrice * 0.9) : rawPrice;
+
     setCollectionItems((prev) => {
-      const match = prev.find((item) => item.product.id === product.id && item.grind === grind);
+      const match = prev.find(
+        (item) => item.product.id === product.id && 
+                  item.grind === grind &&
+                  Boolean(item.isSubscription) === Boolean(isSubscription) &&
+                  item.subscriptionFrequency === subscriptionFrequency
+      );
       if (match) {
         return prev.map((item) =>
-          item.product.id === product.id && item.grind === grind
+          item.product.id === product.id && 
+          item.grind === grind &&
+          Boolean(item.isSubscription) === Boolean(isSubscription) &&
+          item.subscriptionFrequency === subscriptionFrequency
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
@@ -204,6 +236,9 @@ export const App: React.FC = () => {
           product,
           quantity,
           grind,
+          isSubscription,
+          subscriptionFrequency,
+          unitPriceNum,
           certificateId: `NR-ARCHIVE-${Math.floor(1000 + Math.random() * 9000)}`,
         },
       ];
@@ -289,6 +324,7 @@ export const App: React.FC = () => {
         onOpenCollection={() => setIsCollectionDrawerOpen(true)}
         onOpenLogin={() => setIsLoginModalOpen(true)}
         onOpenInventoryHud={() => setIsInventoryHudOpen(true)}
+        onOpenBrewCalculator={() => setIsBrewCalculatorOpen(true)}
         userSession={userSession}
         collectionCount={totalCollectionCount}
       />
@@ -349,7 +385,7 @@ export const App: React.FC = () => {
               {/* 06. South Indian Kaapi Ritual */}
               <div data-cursor="view" className="relative">
                 <LightLeak position="bottom-left" intensity="subtle" />
-                <SectionBrewRitual />
+                <SectionBrewRitual onOpenBrewCalculator={() => setIsBrewCalculatorOpen(true)} />
               </div>
 
               {/* 07. The Noir Manifesto */}
@@ -573,7 +609,7 @@ export const App: React.FC = () => {
           path="/manifesto"
           element={
             <div>
-              <ContactPage />
+              <ManifestoPage />
               <Footer
                 onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 onNavigate={handleNavigate}
@@ -655,6 +691,101 @@ export const App: React.FC = () => {
           }
         />
 
+        {/* Dedicated Live Order Tracking Portal */}
+        <Route
+          path="/track"
+          element={
+            <div>
+              <OrderTrackingPage onOpenInvoice={(ord) => setActiveInvoiceOrder(ord)} />
+              <Footer
+                showReviews={false}
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/track-order"
+          element={
+            <div>
+              <OrderTrackingPage onOpenInvoice={(ord) => setActiveInvoiceOrder(ord)} />
+              <Footer
+                showReviews={false}
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+
+        {/* Legal & Compliance Hub */}
+        <Route
+          path="/terms"
+          element={
+            <div>
+              <LegalPage initialTab="terms" />
+              <Footer
+                showReviews={false}
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/privacy"
+          element={
+            <div>
+              <LegalPage initialTab="privacy" />
+              <Footer
+                showReviews={false}
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/shipping"
+          element={
+            <div>
+              <LegalPage initialTab="shipping" />
+              <Footer
+                showReviews={false}
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/refund"
+          element={
+            <div>
+              <LegalPage initialTab="refund" />
+              <Footer
+                showReviews={false}
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+        <Route
+          path="/cancellation"
+          element={
+            <div>
+              <LegalPage initialTab="refund" />
+              <Footer
+                showReviews={false}
+                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                onNavigate={handleNavigate}
+              />
+            </div>
+          }
+        />
+
         {/* Branded 404 Not Found Page */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
@@ -718,6 +849,19 @@ export const App: React.FC = () => {
         email={activeDispatchedEmail}
         onClose={() => setActiveDispatchedEmail(null)}
         onNavigateToCart={() => navigate('/cart')}
+      />
+
+      {/* 8. Official Tax Invoice Print Modal */}
+      <InvoiceModal
+        isOpen={Boolean(activeInvoiceOrder)}
+        onClose={() => setActiveInvoiceOrder(null)}
+        order={activeInvoiceOrder}
+      />
+
+      {/* 9. Interactive Brew Ratio & Live Extraction Timer */}
+      <BrewCalculatorModal
+        isOpen={isBrewCalculatorOpen}
+        onClose={() => setIsBrewCalculatorOpen(false)}
       />
     </div>
   );
