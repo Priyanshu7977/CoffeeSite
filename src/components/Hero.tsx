@@ -1,10 +1,54 @@
-import React, { useEffect, useRef } from 'react';
-import { Sparkles, Compass } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Sparkles, Compass, Mountain, Coffee, Flame, Film } from 'lucide-react';
 import { gsap } from '../utils/animations';
 
 interface HeroProps {
   onExplore?: () => void;
 }
+
+interface HeroVisualMode {
+  id: 'plantation' | 'brass_kaapi' | 'roasting_drum' | 'video';
+  label: string;
+  badgeText: string;
+  icon: React.ComponentType<{ className?: string }>;
+  type: 'image' | 'video';
+  src: string;
+}
+
+const HERO_MODES: HeroVisualMode[] = [
+  {
+    id: 'plantation',
+    label: 'Estate Terroir',
+    badgeText: 'Altitude: 1,900M ASL • Baba Budan Giri Range',
+    icon: Mountain,
+    type: 'image',
+    src: '/assets/hero-estate-plantation.jpg',
+  },
+  {
+    id: 'brass_kaapi',
+    label: 'Brass Filter Kaapi',
+    badgeText: 'Davarah Extraction • 85:15 Peaberry Blend',
+    icon: Coffee,
+    type: 'image',
+    src: '/assets/hero-brass-kaapi.jpg',
+  },
+  {
+    id: 'roasting_drum',
+    label: 'Cast-Iron Roast',
+    badgeText: 'Slow Cast-Iron Convection • Batch 0984',
+    icon: Flame,
+    type: 'image',
+    src: '/assets/hero-roasting-drum.jpg',
+  },
+  {
+    id: 'video',
+    label: 'Cinema Reel',
+    badgeText: 'Roastery Aroma Telemetry • Est. 1998',
+    icon: Film,
+    type: 'video',
+    src: '/assets/videos/coffee-manifesto-smoke.mp4',
+  },
+];
 
 export const Hero: React.FC<HeroProps> = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -18,15 +62,28 @@ export const Hero: React.FC<HeroProps> = () => {
   const subtitleRef = useRef<HTMLParagraphElement | null>(null);
   const badgeRef = useRef<HTMLDivElement | null>(null);
 
+  const [currentModeIndex, setCurrentModeIndex] = useState<number>(0);
+  const [isAutoCycling, setIsAutoCycling] = useState<boolean>(true);
+
+  // Auto-cycle through the curated estate visuals every 7.5 seconds
+  useEffect(() => {
+    if (!isAutoCycling) return;
+    const interval = setInterval(() => {
+      setCurrentModeIndex((prev) => (prev + 1) % HERO_MODES.length);
+    }, 7500);
+    return () => clearInterval(interval);
+  }, [isAutoCycling]);
+
   useEffect(() => {
     const section = sectionRef.current;
-    const video = videoRef.current;
+    const container = containerRef.current;
     const textContainer = textContainerRef.current;
 
-    if (!section || !video || !textContainer) return;
+    if (!section || !container || !textContainer) return;
 
-    // Ensure video plays smoothly
-    video.play().catch(() => {});
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
 
     const ctx = gsap.context(() => {
       // 1. Initial Page Load Typography Entrance
@@ -34,8 +91,8 @@ export const Hero: React.FC<HeroProps> = () => {
 
       introTl
         .fromTo(
-          video,
-          { scale: 1.15, opacity: 0 },
+          container,
+          { scale: 1.12, opacity: 0 },
           { scale: 1.0, opacity: 1, duration: 1.6, ease: 'power2.out' }
         )
         .fromTo(
@@ -63,10 +120,10 @@ export const Hero: React.FC<HeroProps> = () => {
           '-=0.5'
         );
 
-      // 2. Smooth, non-pinning cinematic parallax scroll (no jumping or scroll hijacking)
-      gsap.to(video, {
+      // 2. Smooth, non-pinning cinematic parallax scroll
+      gsap.to(container, {
         yPercent: 12,
-        scale: 1.08,
+        scale: 1.06,
         filter: 'blur(2px) brightness(0.8) contrast(115%)',
         ease: 'none',
         scrollTrigger: {
@@ -118,30 +175,58 @@ export const Hero: React.FC<HeroProps> = () => {
       ref={sectionRef}
       className="relative h-[100dvh] min-h-[100dvh] w-full overflow-hidden bg-[#1F1C1A] flex flex-col items-center justify-center pt-20 sm:pt-24 pb-8 sm:pb-10"
     >
-      {/* Background Full-Screen Real Macro Coffee Brewing Video */}
+      {/* Dynamic Background Showcase: Plantation Estate, Brass Davarah, Cast-Iron Drum & Smoke */}
       <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden bg-[#1F1C1A]">
-        <video
-          ref={videoRef}
-          src="/assets/videos/coffee-hero.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="h-full w-full object-cover object-center will-change-transform opacity-100 filter brightness-95 contrast(110%)"
-        />
+        {HERO_MODES.map((mode, idx) => {
+          const isActive = idx === currentModeIndex;
+          if (mode.type === 'video') {
+            return (
+              <video
+                key={mode.id}
+                ref={videoRef}
+                src={mode.src}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-1000 will-change-transform filter brightness-90 contrast-110 ${
+                  isActive ? 'opacity-100 z-1' : 'opacity-0 z-0 pointer-events-none'
+                }`}
+              />
+            );
+          }
+          return (
+            <div
+              key={mode.id}
+              className={`absolute inset-0 transition-opacity duration-1000 will-change-transform overflow-hidden ${
+                isActive ? 'opacity-100 z-1' : 'opacity-0 z-0 pointer-events-none'
+              }`}
+            >
+              <img
+                src={mode.src}
+                alt={mode.label}
+                className={`h-full w-full object-cover object-center filter brightness-95 contrast-105 transition-transform duration-[12000ms] ease-out will-change-transform ${
+                  isActive ? 'scale-110' : 'scale-100'
+                }`}
+              />
+            </div>
+          );
+        })}
+
         {/* Cinematic Overlays: Warm Espresso Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1F1C1A] via-transparent to-[#1F1C1A]/65 pointer-events-none" />
-        <div className="absolute inset-0 bg-[#1F1C1A]/35 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1F1C1A] via-transparent to-[#1F1C1A]/70 pointer-events-none z-2" />
+        <div className="absolute inset-0 bg-[#1F1C1A]/35 pointer-events-none z-2" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.05)_0%,rgba(31,28,26,0.65)_100%)] pointer-events-none z-2" />
       </div>
 
-      {/* Floating Heritage Badge - Top Right */}
+      {/* Floating Heritage Badge - Dynamic with Active Mode */}
       <div
         ref={badgeRef}
-        className="absolute top-20 sm:top-22 lg:top-24 right-5 sm:right-8 z-20 hidden lg:flex items-center gap-2 rounded-full border border-[#2D2926]/10 bg-white/90 px-3 py-1 backdrop-blur-md shadow-md text-[#2D2926]"
+        className="absolute top-20 sm:top-22 lg:top-24 right-5 sm:right-8 z-20 hidden lg:flex items-center gap-2 rounded-full border border-white/15 bg-black/45 backdrop-blur-md px-3.5 py-1.5 shadow-lg text-white"
       >
-        <Compass className="h-3 w-3 text-[#E05A7E] animate-spin-slow" />
-        <span className="text-[8.5px] sm:text-[9.5px] tracking-[0.2em] text-[#2D2926] font-sans uppercase font-bold">
-          Altitude: 1,900M ASL • Baba Budan Giri
+        <Compass className="h-3.5 w-3.5 text-[#E05A7E] animate-spin-slow shrink-0" />
+        <span className="text-[9px] sm:text-[10px] tracking-[0.2em] text-[#FAF7F5] font-sans uppercase font-bold transition-all duration-300">
+          {HERO_MODES[currentModeIndex].badgeText}
         </span>
       </div>
 
@@ -189,13 +274,38 @@ export const Hero: React.FC<HeroProps> = () => {
           Shade-Grown Western Ghats Terroir. Slow Cast-Iron Convection.
         </p>
 
-        {/* Ambient Pill */}
-        <div className="mt-2 sm:mt-3 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 text-[9px] sm:text-[10px] md:text-[11px] font-sans tracking-[0.18em] text-[#F5DADF]/85 uppercase font-medium">
+        {/* Ambient Telemetry Pills */}
+        <div className="mt-2 sm:mt-2.5 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 text-[9px] sm:text-[10px] md:text-[11px] font-sans tracking-[0.18em] text-[#F5DADF]/85 uppercase font-medium">
           <span>Batch No. 0984-DAKSHIN</span>
           <span>•</span>
           <span>Chikmagalur 1,900M</span>
           <span>•</span>
           <span>Malabar Monsooned</span>
+        </div>
+
+        {/* Interactive Experience Switcher */}
+        <div className="mt-4 sm:mt-5 flex items-center justify-center gap-1.5 sm:gap-2.5 z-20 flex-wrap px-2">
+          {HERO_MODES.map((mode, idx) => {
+            const Icon = mode.icon;
+            const isSelected = idx === currentModeIndex;
+            return (
+              <button
+                key={mode.id}
+                onClick={() => {
+                  setCurrentModeIndex(idx);
+                  setIsAutoCycling(false);
+                }}
+                className={`group flex items-center gap-1.5 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[9px] sm:text-[10.5px] font-sans font-bold tracking-wider transition-all duration-300 cursor-pointer backdrop-blur-md ${
+                  isSelected
+                    ? 'bg-white text-[#2D2926] shadow-lg scale-105 border border-white'
+                    : 'bg-black/40 text-white/80 hover:text-white hover:bg-black/60 border border-white/10'
+                }`}
+              >
+                <Icon className={`w-3 h-3 transition-colors ${isSelected ? 'text-[#E05A7E]' : 'text-white/60 group-hover:text-white'}`} />
+                <span>{mode.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>
