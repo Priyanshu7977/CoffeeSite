@@ -95,10 +95,14 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   }, [selectedRoastFilter, sortBy, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-24">
+    <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-24 relative overflow-hidden">
+      {/* Warm Ambient Glow Landing Accents */}
+      <div className="absolute top-8 right-1/4 w-[420px] h-[420px] bg-[#C89658]/8 rounded-full blur-3xl pointer-events-none animate-pulseGlow" />
+      <div className="absolute top-28 left-6 w-[360px] h-[360px] bg-[#F5DADF]/40 rounded-full blur-3xl pointer-events-none animate-floatSoft" />
+
       {/* Sub-Header (Safely positioned below global Navbar) */}
-      <div className="pt-24 sm:pt-28 pb-3.5 px-3 sm:px-8 border-b border-[#2D2926]/10 bg-white/70 backdrop-blur-md">
-        <div className="mx-auto max-w-7xl flex items-center justify-between gap-2 sm:gap-4">
+      <div className="pt-18 sm:pt-20 pb-3 px-3 sm:px-8 border-b border-[#2D2926]/10 bg-white/75 backdrop-blur-md">
+        <div className="mx-auto max-w-7xl flex items-center justify-between gap-2 sm:gap-4 animate-fadeIn">
           <div className="flex items-center gap-2 sm:gap-4">
             <MagneticButton strength={0.3}>
               <button
@@ -137,10 +141,10 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       {/* Hero Collection Header */}
       <section className="relative px-4 sm:px-8 md:px-12 pt-4 sm:pt-6 pb-4 sm:pb-5 border-b border-[#2D2926]/10 bg-[#FAF7F5]">
         <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 sm:gap-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 sm:gap-4 animate-heroFadeUp">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#F5DADF] border border-[#2D2926]/10 text-[10px] sm:text-xs font-sans font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#2D2926] mb-1.5">
-                <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#E05A7E]" />
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#F5DADF] border border-[#2D2926]/10 text-[10px] sm:text-xs font-sans font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#2D2926] mb-1.5 shadow-2xs hover:scale-105 transition-transform duration-300">
+                <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#E05A7E] animate-spin-slow" />
                 <span>12 SINGLE-ESTATE HARVESTS • 250G MICRO-TINS</span>
               </div>
               <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#2D2926]">
@@ -152,7 +156,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
             </div>
 
             {/* Quick Stats Pill */}
-            <div className="flex items-center gap-2.5 bg-white border border-[#2D2926]/10 rounded-xl sm:rounded-2xl p-2 sm:p-2.5 shadow-sm self-start md:self-auto">
+            <div className="flex items-center gap-2.5 bg-white border border-[#2D2926]/10 rounded-xl sm:rounded-2xl p-2 sm:p-2.5 shadow-sm self-start md:self-auto hover:shadow-md transition-shadow duration-300">
               <div>
                 <span className="text-[9px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Showing</span>
                 <span className="font-display text-sm sm:text-base font-bold text-[#2D2926]">
@@ -162,13 +166,16 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
               <div className="h-6 w-[1px] bg-[#2D2926]/10" />
               <div>
                 <span className="text-[9px] font-mono uppercase tracking-widest text-[#8C827A] block font-bold">Dispatch</span>
-                <span className="font-display text-xs sm:text-sm font-bold text-[#E05A7E]">Free Across India</span>
+                <span className="font-display text-xs sm:text-sm font-bold text-[#E05A7E] flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#E05A7E] animate-ping" />
+                  Free Across India
+                </span>
               </div>
             </div>
           </div>
 
           {/* Filter & Search Bar */}
-          <div className="mt-4 pt-3 sm:pt-4 border-t border-[#2D2926]/10 flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 sm:gap-3">
+          <div className="mt-4 pt-3 sm:pt-4 border-t border-[#2D2926]/10 flex flex-col lg:flex-row lg:items-center justify-between gap-2.5 sm:gap-3 animate-heroFadeUp [animation-delay:120ms]">
             {/* Roast Level Filter Tabs */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 lg:pb-0 scrollbar-none w-full lg:w-auto">
               {[
@@ -244,7 +251,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            {filteredProducts.map((product) => {
+            {filteredProducts.map((product, idx) => {
               const isJustAdded = addedProductId === product.id;
               const stock = getStock(product.id);
 
@@ -252,7 +259,8 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                 <div
                   key={product.id}
                   onClick={() => onDiscoverProduct(product)}
-                  className="group rounded-2xl sm:rounded-3xl bg-white border border-[#2D2926]/10 p-4 sm:p-4.5 shadow-[0_15px_40px_rgba(45,41,38,0.04)] hover:shadow-[0_20px_50px_rgba(45,41,38,0.12)] transition-all duration-300 flex flex-col justify-between cursor-pointer hover:-translate-y-1"
+                  style={{ animationDelay: `${Math.min(idx * 50, 450)}ms` }}
+                  className="group rounded-2xl sm:rounded-3xl bg-white border border-[#2D2926]/10 p-4 sm:p-4.5 shadow-[0_15px_40px_rgba(45,41,38,0.04)] hover:shadow-[0_22px_55px_rgba(45,41,38,0.13)] transition-all duration-400 flex flex-col justify-between cursor-pointer hover:-translate-y-1.5 animate-heroFadeUp"
                 >
                   <div>
                     {/* Visual Card Image */}
