@@ -436,8 +436,8 @@ export function formatFirebaseError(err: unknown): string {
   if (message.includes('auth/invalid-credential') || message.includes('auth/wrong-password') || message.includes('auth/user-not-found')) {
     return 'Invalid email or password. Please verify your credentials.';
   }
-  if (message.includes('auth/operation-not-allowed') || message.includes('region enabled')) {
-    return 'SMS delivery for India (+91) is not yet enabled in Firebase Console. Go to Authentication > Settings > SMS region policy and allow India (+91), or add your number under Phone numbers for testing.';
+  if (message.includes('auth/operation-not-allowed') || message.includes('region enabled') || message.includes('SMS unable to be sent')) {
+    return 'SMS delivery for India (+91) requires enabling in Firebase Console. Go to Authentication > Settings > SMS region policy and allow India (+91), or add +91 7977641125 under Phone numbers for testing (code: 123456).';
   }
   if (message.includes('auth/email-already-in-use')) {
     return 'An account already exists with this email address. Please log in.';

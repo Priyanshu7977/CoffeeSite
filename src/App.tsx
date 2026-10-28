@@ -605,32 +605,16 @@ export const App: React.FC = () => {
           }
         />
 
-        {/* Dedicated Login Page */}
+        {/* Dedicated Login Page - Viewport-optimized standalone auth experience */}
         <Route
           path="/login"
-          element={
-            <div className="pt-20">
-              <LoginPage />
-              <Footer
-                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                onNavigate={handleNavigate}
-              />
-            </div>
-          }
+          element={<LoginPage />}
         />
 
-        {/* Dedicated Signup Page */}
+        {/* Dedicated Signup Page - Viewport-optimized standalone auth experience */}
         <Route
           path="/signup"
-          element={
-            <div className="pt-20">
-              <SignupPage />
-              <Footer
-                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                onNavigate={handleNavigate}
-              />
-            </div>
-          }
+          element={<SignupPage />}
         />
 
         {/* Dedicated VIP Account Hub */}
