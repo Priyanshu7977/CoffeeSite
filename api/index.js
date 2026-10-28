@@ -1056,12 +1056,12 @@ var inventorySystem = new InventoryManager();
 // src/utils/validation.ts
 var hasMaliciousContent = (value) => {
   if (!value || typeof value !== "string") return false;
-  const maliciousPattern = /<[^>]*>?|javascript:|data:|vbscript:|on\w+\s*=|script|iframe|embed|object|__proto__|constructor\s*\(|prototype\b/i;
+  const maliciousPattern = /[<>]|<[^>]*>?|javascript:|data:|vbscript:|on\w+\s*=|script|iframe|embed|object|__proto__|constructor\s*\(|prototype\b/i;
   return maliciousPattern.test(value);
 };
 var stripDangerousMarkup = (value) => {
   if (!value || typeof value !== "string") return "";
-  return value.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "").replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "").replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, "").replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "").replace(/<[^>]*>?/gm, "").replace(/javascript:/gi, "").replace(/data:/gi, "").replace(/vbscript:/gi, "").replace(/on\w+\s*=/gi, "");
+  return value.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "").replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "").replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, "").replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "").replace(/<[^>]*>?/gm, "").replace(/[<>]/g, "").replace(/javascript:/gi, "").replace(/data:/gi, "").replace(/vbscript:/gi, "").replace(/on\w+\s*=/gi, "");
 };
 var isValidName = (value) => {
   if (!value || value.trim().length < 2) return false;

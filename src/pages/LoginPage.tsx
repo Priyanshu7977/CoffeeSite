@@ -20,7 +20,7 @@ import {
   X,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { isValidEmail } from '../utils/validation';
+import { isValidEmail, hasMaliciousContent, sanitizeDigitsOnly } from '../utils/validation';
 import type { ConfirmationResult } from 'firebase/auth';
 import { formatFirebaseError } from '../services/firebase';
 
@@ -77,11 +77,59 @@ export const LoginPage: React.FC = () => {
     return () => clearInterval(timer);
   }, [resendTimer]);
 
+  // Input Change Handlers with Strict XSS / Script / Iframe Blocking & Numbers-Only Phone
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (hasMaliciousContent(raw) || /[<>]/.test(raw)) {
+      setErrorMessage('Security Alert: Script tags, iframes, and HTML markup (< >) are strictly prohibited.');
+    } else {
+      setErrorMessage('');
+    }
+    setEmail(raw.replace(/[<>]/g, '').trim());
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (hasMaliciousContent(raw) || /[<>]/.test(raw)) {
+      setErrorMessage('Security Alert: Script tags, iframes, and HTML markup (< >) are strictly prohibited.');
+    } else {
+      setErrorMessage('');
+    }
+    setPassword(raw.replace(/[<>]/g, ''));
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (hasMaliciousContent(raw) || /[<>]/.test(raw)) {
+      setErrorMessage('Security Alert: Script tags, iframes, and HTML markup (< >) are strictly prohibited.');
+    } else {
+      setErrorMessage('');
+    }
+    // Strictly numbers only, max 10 digits
+    const digitsOnly = sanitizeDigitsOnly(raw);
+    setPhone(digitsOnly);
+  };
+
+  const handleResetEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    if (hasMaliciousContent(raw) || /[<>]/.test(raw)) {
+      setResetError('Security Alert: Script tags, iframes, and HTML markup (< >) are strictly prohibited.');
+    } else {
+      setResetError('');
+    }
+    setResetEmail(raw.replace(/[<>]/g, '').trim());
+  };
+
   // 1. Handle Email/Password Login
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
     setSuccessMessage('');
+
+    if (hasMaliciousContent(email) || hasMaliciousContent(password) || /[<>]/.test(email) || /[<>]/.test(password)) {
+      setErrorMessage('Security Alert: Script tags, iframes, and HTML markup (< >) are strictly prohibited.');
+      return;
+    }
 
     if (!isValidEmail(email)) {
       setErrorMessage('Please enter a valid registered email address.');
@@ -132,9 +180,14 @@ export const LoginPage: React.FC = () => {
     setErrorMessage('');
     setSuccessMessage('');
 
-    const cleanPhone = phone.replace(/[^0-9]/g, '');
-    if (cleanPhone.length < 10) {
-      setErrorMessage('Please enter a valid 10-digit mobile number.');
+    if (hasMaliciousContent(phone) || /[<>]/.test(phone)) {
+      setErrorMessage('Security Alert: Script tags, iframes, and HTML markup (< >) are strictly prohibited.');
+      return;
+    }
+
+    const cleanPhone = sanitizeDigitsOnly(phone);
+    if (cleanPhone.length !== 10) {
+      setErrorMessage('Please enter a valid 10-digit mobile number (numbers only).');
       return;
     }
 
@@ -188,6 +241,11 @@ export const LoginPage: React.FC = () => {
     e.preventDefault();
     setResetError('');
     setResetSuccess('');
+
+    if (hasMaliciousContent(resetEmail) || /[<>]/.test(resetEmail)) {
+      setResetError('Security Alert: Script tags, iframes, and HTML markup (< >) are strictly prohibited.');
+      return;
+    }
 
     if (!isValidEmail(resetEmail)) {
       setResetError('Please enter a valid registered email address.');
@@ -336,7 +394,7 @@ export const LoginPage: React.FC = () => {
                   <input
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleEmailChange}
                     required
                     placeholder="patron@noirkaapi.in"
                     className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-10 pr-3.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
@@ -365,7 +423,7 @@ export const LoginPage: React.FC = () => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                     required
                     placeholder="••••••••"
                     className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-10 pr-10 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
@@ -415,7 +473,10 @@ export const LoginPage: React.FC = () => {
                       <input
                         type="tel"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        onChange={handlePhoneChange}
+                        maxLength={10}
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                         required
                         placeholder="98765 43210"
                         className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-22 pr-3.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
@@ -562,7 +623,7 @@ export const LoginPage: React.FC = () => {
                 <input
                   type="email"
                   value={resetEmail}
-                  onChange={(e) => setResetEmail(e.target.value)}
+                  onChange={handleResetEmailChange}
                   required
                   placeholder="your.email@noirkaapi.in"
                   className="w-full rounded-xl border border-[#2D2926]/15 bg-[#FAF7F5] p-2.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none"

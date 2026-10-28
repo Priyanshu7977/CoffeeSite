@@ -8,8 +8,16 @@
  */
 export const hasMaliciousContent = (value: unknown): boolean => {
   if (!value || typeof value !== 'string') return false;
-  const maliciousPattern = /<[^>]*>?|javascript:|data:|vbscript:|on\w+\s*=|script|iframe|embed|object|__proto__|constructor\s*\(|prototype\b/i;
+  const maliciousPattern = /[<>]|<[^>]*>?|javascript:|data:|vbscript:|on\w+\s*=|script|iframe|embed|object|__proto__|constructor\s*\(|prototype\b/i;
   return maliciousPattern.test(value);
+};
+
+/**
+ * Sanitizes phone numbers to strictly numeric digits only (0-9), max 10 digits
+ */
+export const sanitizeDigitsOnly = (value: string): string => {
+  if (!value || typeof value !== 'string') return '';
+  return value.replace(/\D/g, '').slice(0, 10);
 };
 
 /**
@@ -23,6 +31,7 @@ export const stripDangerousMarkup = (value: unknown): string => {
     .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '')
     .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, '')
     .replace(/<[^>]*>?/gm, '')
+    .replace(/[<>]/g, '')
     .replace(/javascript:/gi, '')
     .replace(/data:/gi, '')
     .replace(/vbscript:/gi, '')

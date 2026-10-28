@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { X, Lock, User, Mail, Phone, ArrowRight, AlertCircle, Eye, EyeOff, Sparkles } from 'lucide-react';
 import {
   sanitizeName,
-  sanitizePhone,
+  sanitizeDigitsOnly,
   isValidEmail,
   isValidName,
   isValidPhone,
   hasMaliciousContent,
-  stripDangerousMarkup,
 } from '../utils/validation';
 import type { AutomatedEmail } from '../utils/emailService';
 import type { UserSession } from '../types/auth';
@@ -58,42 +57,44 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    if (hasMaliciousContent(raw)) {
-      setErrorMessage('Security Alert: Script tags and iframes are strictly prohibited.');
-      return;
+    if (hasMaliciousContent(raw) || /[<>]/.test(raw)) {
+      setErrorMessage('Security Alert: Script tags, iframes, and HTML markup (< >) are strictly prohibited.');
+    } else {
+      setErrorMessage('');
     }
-    setErrorMessage('');
     setFullName(sanitizeName(raw));
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    if (hasMaliciousContent(raw)) {
-      setErrorMessage('Security Alert: HTML or script tags are not allowed in email.');
-      return;
+    if (hasMaliciousContent(raw) || /[<>]/.test(raw)) {
+      setErrorMessage('Security Alert: Script tags, iframes, and HTML markup (< >) are strictly prohibited.');
+    } else {
+      setErrorMessage('');
     }
-    setErrorMessage('');
-    setEmail(stripDangerousMarkup(raw).trim());
+    setEmail(raw.replace(/[<>]/g, '').trim());
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    if (hasMaliciousContent(raw)) {
-      setErrorMessage('Security Alert: HTML or script tags are not allowed.');
-      return;
+    if (hasMaliciousContent(raw) || /[<>]/.test(raw)) {
+      setErrorMessage('Security Alert: Script tags, iframes, and HTML markup (< >) are strictly prohibited.');
+    } else {
+      setErrorMessage('');
     }
-    setErrorMessage('');
-    setPhone(sanitizePhone(raw));
+    // Strictly numbers only, max 10 digits
+    const digitsOnly = sanitizeDigitsOnly(raw);
+    setPhone(digitsOnly);
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    if (hasMaliciousContent(raw)) {
-      setErrorMessage('Security Alert: HTML or script tags are not allowed.');
-      return;
+    if (hasMaliciousContent(raw) || /[<>]/.test(raw)) {
+      setErrorMessage('Security Alert: Script tags, iframes, and HTML markup (< >) are strictly prohibited.');
+    } else {
+      setErrorMessage('');
     }
-    setErrorMessage('');
-    setPassword(stripDangerousMarkup(raw));
+    setPassword(raw.replace(/[<>]/g, ''));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -298,6 +299,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   type="tel"
                   value={phone}
                   onChange={handlePhoneChange}
+                  maxLength={10}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   required
                   placeholder="98765 43210"
                   className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-10 pr-3.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
