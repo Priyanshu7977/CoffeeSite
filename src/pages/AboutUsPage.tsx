@@ -246,8 +246,8 @@ export const AboutUsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] selection:bg-[#E05A7E] selection:text-white pb-28">
-      {/* 1. Sticky Navigation Header */}
-      <header className="sticky top-0 z-40 bg-white/95 border-b border-[#2D2926]/10 px-4 sm:px-8 py-3.5 backdrop-blur-xl">
+      {/* 1. Sub-Header (Safely positioned below global Navbar) */}
+      <div className="pt-24 sm:pt-28 pb-4 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/70 backdrop-blur-md">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -270,7 +270,7 @@ export const AboutUsPage: React.FC = () => {
             <ArrowRight className="h-3 w-3 text-[#E05A7E]" />
           </button>
         </div>
-      </header>
+      </div>
 
       {/* 2. Hero Section: The College Dorm Room Origin */}
       <section className="relative px-4 sm:px-8 pt-12 pb-16 overflow-hidden border-b border-[#2D2926]/10">

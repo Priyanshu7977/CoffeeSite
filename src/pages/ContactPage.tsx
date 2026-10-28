@@ -83,8 +83,8 @@ export const ContactPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] selection:bg-[#E05A7E] selection:text-white pb-32">
-      {/* 1. Sticky Navigation Header */}
-      <header className="sticky top-0 z-40 bg-white/95 border-b border-[#2D2926]/10 px-4 sm:px-8 py-3.5 backdrop-blur-xl">
+      {/* 1. Sub-Header (Safely positioned below global Navbar) */}
+      <div className="pt-24 sm:pt-28 pb-4 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/70 backdrop-blur-md">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -104,7 +104,7 @@ export const ContactPage: React.FC = () => {
             <span className="text-xs font-mono text-[#2D2926] font-bold">ROASTERY OPEN TODAY</span>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* 2. Hero Section */}
       <section className="px-4 sm:px-8 pt-12 pb-10 border-b border-[#2D2926]/10">

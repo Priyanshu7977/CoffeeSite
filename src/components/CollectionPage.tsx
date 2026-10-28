@@ -96,8 +96,8 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-24">
-      {/* Top Fixed Collection Navigation Bar */}
-      <header className="sticky top-0 z-40 bg-white/95 border-b border-[#2D2926]/10 px-3 sm:px-8 py-2.5 sm:py-3.5 backdrop-blur-xl">
+      {/* Sub-Header (Safely positioned below global Navbar) */}
+      <div className="pt-24 sm:pt-28 pb-3.5 px-3 sm:px-8 border-b border-[#2D2926]/10 bg-white/70 backdrop-blur-md">
         <div className="mx-auto max-w-7xl flex items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-2 sm:gap-4">
             <MagneticButton strength={0.3}>
@@ -132,7 +132,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
             </span>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Hero Collection Header */}
       <section className="relative px-4 sm:px-8 md:px-12 pt-4 sm:pt-6 pb-4 sm:pb-5 border-b border-[#2D2926]/10 bg-[#FAF7F5]">

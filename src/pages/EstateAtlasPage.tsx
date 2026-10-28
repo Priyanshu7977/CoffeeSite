@@ -261,8 +261,8 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] selection:bg-[#F5DADF] selection:text-[#2D2926]">
-      {/* 1. Sticky Navigation Sub-Bar */}
-      <div className="sticky top-16 z-30 border-b border-[#2D2926]/10 bg-white/92 backdrop-blur-md px-6 py-3.5 transition-all">
+      {/* 1. Navigation Sub-Bar */}
+      <div className="border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md px-6 pt-24 sm:pt-28 pb-4">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <button
             onClick={() => navigate('/')}

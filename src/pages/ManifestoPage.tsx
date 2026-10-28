@@ -8,8 +8,8 @@ export const ManifestoPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-24">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-40 bg-white/95 border-b border-[#2D2926]/10 px-4 sm:px-8 py-3.5 backdrop-blur-xl">
+      {/* Sub-Header (Safely positioned below global Navbar) */}
+      <div className="pt-24 sm:pt-28 pb-4 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/70 backdrop-blur-md">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
           <button
             onClick={() => navigate('/')}
@@ -22,7 +22,7 @@ export const ManifestoPage: React.FC = () => {
             The Terroir Manifesto • Est. 1998
           </div>
         </div>
-      </header>
+      </div>
 
       <main className="mx-auto max-w-7xl px-4 sm:px-8 pt-10">
         <div className="text-center max-w-3xl mx-auto mb-12">

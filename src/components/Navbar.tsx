@@ -26,13 +26,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Always ensure header is visible on page navigation
   useEffect(() => {
-    let lastScrollY = window.scrollY;
+    setIsVisible(true);
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY || window.pageYOffset || 0;
     let ticking = false;
 
     const handleScroll = () => {
       const currentScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
 
+      // Always show header at or near top of the page (first 80px) or when mobile menu is open
       if (currentScrollY <= 80 || isMobileMenuOpen) {
         setIsVisible(true);
         lastScrollY = currentScrollY;
@@ -41,7 +48,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       }
 
       const diff = currentScrollY - lastScrollY;
-      if (Math.abs(diff) > 8) {
+      // When scrolling down, hide; when scrolling up, show immediately
+      if (Math.abs(diff) > 6) {
         setIsVisible(diff < 0);
         lastScrollY = currentScrollY;
       }
@@ -58,7 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [isMobileMenuOpen]);
+  }, [isMobileMenuOpen, location.pathname]);
 
   // Handle in-page anchors vs route navigation
   const handleNavClick = (path: string, anchor?: string) => {
