@@ -282,7 +282,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                 value={email}
                 onChange={handleEmailChange}
                 required
-                placeholder="patron@noirkaapi.in"
+                placeholder="user@noirkaapi.in"
                 className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-10 pr-3.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
               />
             </div>

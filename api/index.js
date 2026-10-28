@@ -1759,10 +1759,27 @@ apiRouter.post("/auth/update-profile", (req, res) => {
     if (fullName && isValidName(fullName)) updates.fullName = fullName.trim();
     if (phone && isValidPhone(phone)) updates.phone = phone.trim();
     if (preferences && typeof preferences === "object") updates.preferences = preferences;
-    const updated = UsersStore.updateUser(email, updates);
+    let updated = UsersStore.updateUser(email, updates);
     if (!updated) {
-      res.status(404).json({ success: false, error: "Customer profile not found." });
-      return;
+      const memberId = `NR-2026-${Math.floor(1e3 + Math.random() * 9e3)}`;
+      const newProfile = {
+        uid: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+        memberId,
+        fullName: updates.fullName || "User",
+        email: email.trim().toLowerCase(),
+        phone: updates.phone || (email.includes("@phone") ? email.split("@")[0] : ""),
+        role: "CUSTOMER",
+        authProvider: "phone",
+        savedAddresses: [],
+        preferences: updates.preferences || {
+          favoriteGrind: "Whole Bean",
+          newsletter: true,
+          cuppingAlerts: true
+        },
+        createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+        updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      };
+      updated = UsersStore.saveUser(newProfile);
     }
     res.json({ success: true, profile: updated });
   } catch (err) {
@@ -1780,7 +1797,7 @@ apiRouter.post("/auth/address", (req, res) => {
     const newAddr = {
       id: address.id || `addr_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
       label: address.label || "Delivery Address",
-      fullName: address.fullName || "Patron",
+      fullName: address.fullName || "Customer",
       phone: address.phone || "",
       street: address.street || address.address || "",
       city: address.city || "Bengaluru",
@@ -1788,10 +1805,27 @@ apiRouter.post("/auth/address", (req, res) => {
       country: address.country || "India",
       isDefault: Boolean(address.isDefault)
     };
-    const updated = UsersStore.addAddress(email, newAddr);
+    let updated = UsersStore.addAddress(email, newAddr);
     if (!updated) {
-      res.status(404).json({ success: false, error: "Customer profile not found." });
-      return;
+      const memberId = `NR-2026-${Math.floor(1e3 + Math.random() * 9e3)}`;
+      const newProfile = {
+        uid: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+        memberId,
+        fullName: newAddr.fullName || "Customer",
+        email: email.trim().toLowerCase(),
+        phone: newAddr.phone || (email.includes("@phone") ? email.split("@")[0] : ""),
+        role: "CUSTOMER",
+        authProvider: "phone",
+        savedAddresses: [newAddr],
+        preferences: {
+          favoriteGrind: "Whole Bean",
+          newsletter: true,
+          cuppingAlerts: true
+        },
+        createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+        updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+      };
+      updated = UsersStore.saveUser(newProfile);
     }
     res.json({ success: true, message: "Address saved.", profile: updated });
   } catch (err) {

@@ -15,6 +15,7 @@ import {
   setupRecaptchaVerifier,
   sendPhoneOtpCode,
   confirmPhoneOtp,
+  updateFirebaseProfile,
   logoutFirebase,
 } from '../services/firebase';
 import {
@@ -306,10 +307,14 @@ export const AuthProvider: React.FC<{ children: ReactNode; onEmailDispatched?: (
     try {
       const { user, profile: fbProfile } = await confirmPhoneOtp(confirmationResult, code);
 
+      const fallbackEmail =
+        user.email ||
+        (user.phoneNumber ? `${user.phoneNumber.replace(/\+/g, '')}@phone.noirkaapi.in` : '');
+
       const syncRes = await syncCustomerSession({
         uid: user.uid,
-        email: user.email || `${user.phoneNumber}@phone.noirkaapi.in`,
-        fullName: user.displayName || fbProfile.fullName,
+        email: fallbackEmail,
+        fullName: user.displayName || fbProfile.fullName || 'User',
         phone: user.phoneNumber || fbProfile.phone,
         authProvider: 'phone',
       });
@@ -318,9 +323,9 @@ export const AuthProvider: React.FC<{ children: ReactNode; onEmailDispatched?: (
         saveSession(syncRes.session, syncRes.profile);
       } else {
         const session: UserSession = {
-          name: fbProfile.fullName,
-          email: fbProfile.email,
-          phone: fbProfile.phone,
+          name: fbProfile.fullName || 'User',
+          email: fbProfile.email || fallbackEmail,
+          phone: fbProfile.phone || user.phoneNumber || '',
           memberId: fbProfile.memberId,
           isLoggedIn: true,
           role: fbProfile.role,
@@ -354,18 +359,81 @@ export const AuthProvider: React.FC<{ children: ReactNode; onEmailDispatched?: (
     phone?: string;
     preferences?: Record<string, unknown>;
   }): Promise<void> => {
-    if (!userSession?.email) return;
+    const accountEmail =
+      userSession?.email ||
+      (userSession?.phone ? `${userSession.phone.replace(/\+/g, '')}@phone.noirkaapi.in` : '');
 
-    const res = await updateCustomerProfile(userSession.email, updates);
-    if (res.success && res.profile) {
+    // 1. Sync to Firebase Firestore if profile UID exists
+    if (isFirebaseActive && profile?.uid) {
+      try {
+        await updateFirebaseProfile(profile.uid, {
+          fullName: updates.fullName,
+          phone: updates.phone,
+          preferences: updates.preferences
+            ? { ...profile.preferences, ...updates.preferences }
+            : profile.preferences,
+        });
+      } catch (err) {
+        console.warn('Firebase profile sync error:', err);
+      }
+    }
+
+    // 2. Sync to Backend if email available
+    if (accountEmail) {
+      try {
+        const res = await updateCustomerProfile(accountEmail, updates);
+        if (res.success && res.profile) {
+          const updatedSession: UserSession = {
+            ...userSession!,
+            name: res.profile.fullName,
+            phone: res.profile.phone,
+          };
+          saveSession(updatedSession, res.profile);
+          return;
+        }
+      } catch (err) {
+        console.warn('Backend profile update note:', err);
+      }
+    }
+
+    // 3. Always apply changes to active session and profile in state/localStorage
+    if (userSession) {
+      const baseProfile: CustomerProfile = profile || {
+        uid: `usr_${Date.now()}`,
+        memberId: userSession.memberId,
+        fullName: updates.fullName || userSession.name,
+        email: accountEmail || userSession.email,
+        phone: updates.phone || userSession.phone,
+        role: userSession.role || 'CUSTOMER',
+        authProvider: 'phone',
+        savedAddresses: userSession.savedAddresses || [],
+        preferences: {
+          favoriteGrind: 'Whole Bean',
+          newsletter: true,
+          cuppingAlerts: true,
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      const updatedProfile: CustomerProfile = {
+        ...baseProfile,
+        fullName: updates.fullName || baseProfile.fullName,
+        email: accountEmail || baseProfile.email,
+        phone: updates.phone || baseProfile.phone,
+        preferences: updates.preferences
+          ? { ...baseProfile.preferences, ...updates.preferences }
+          : baseProfile.preferences,
+        updatedAt: new Date().toISOString(),
+      };
+
       const updatedSession: UserSession = {
         ...userSession,
-        name: res.profile.fullName,
-        phone: res.profile.phone,
+        name: updates.fullName || userSession.name,
+        phone: updates.phone || userSession.phone,
       };
-      saveSession(updatedSession, res.profile);
-    } else {
-      throw new Error(res.error || 'Failed to update profile.');
+
+      saveSession(updatedSession, updatedProfile);
     }
   };
 
@@ -373,17 +441,74 @@ export const AuthProvider: React.FC<{ children: ReactNode; onEmailDispatched?: (
    * Add Saved Address
    */
   const addSavedAddress = async (address: Partial<SavedAddress>): Promise<void> => {
-    if (!userSession?.email) return;
+    const accountEmail =
+      userSession?.email ||
+      (userSession?.phone ? `${userSession.phone.replace(/\+/g, '')}@phone.noirkaapi.in` : '');
 
-    const res = await saveCustomerAddress(userSession.email, address);
-    if (res.success && res.profile) {
+    if (accountEmail) {
+      try {
+        const res = await saveCustomerAddress(accountEmail, address);
+        if (res.success && res.profile) {
+          const updatedSession: UserSession = {
+            ...userSession!,
+            savedAddresses: res.profile.savedAddresses,
+          };
+          saveSession(updatedSession, res.profile);
+          return;
+        }
+      } catch (err) {
+        console.warn('Backend saveCustomerAddress error:', err);
+      }
+    }
+
+    // Local fallback
+    if (userSession) {
+      const newAddr: SavedAddress = {
+        id: `addr_${Date.now()}`,
+        label: address.label || 'Home',
+        fullName: address.fullName || userSession.name || 'Customer',
+        phone: address.phone || userSession.phone || '',
+        street: address.street || '',
+        city: address.city || '',
+        postalCode: address.postalCode || '',
+        country: address.country || 'India',
+        isDefault: Boolean(address.isDefault),
+      };
+      const currentAddresses = profile?.savedAddresses || userSession.savedAddresses || [];
+      if (newAddr.isDefault) {
+        currentAddresses.forEach((a) => (a.isDefault = false));
+      }
+      const updatedAddresses = [...currentAddresses, newAddr];
+
+      const baseProfile: CustomerProfile = profile || {
+        uid: `usr_${Date.now()}`,
+        memberId: userSession.memberId,
+        fullName: userSession.name,
+        email: accountEmail || userSession.email,
+        phone: userSession.phone,
+        role: userSession.role || 'CUSTOMER',
+        authProvider: 'phone',
+        savedAddresses: currentAddresses,
+        preferences: {
+          favoriteGrind: 'Whole Bean',
+          newsletter: true,
+          cuppingAlerts: true,
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      const updatedProfile: CustomerProfile = {
+        ...baseProfile,
+        savedAddresses: updatedAddresses,
+        updatedAt: new Date().toISOString(),
+      };
+
       const updatedSession: UserSession = {
         ...userSession,
-        savedAddresses: res.profile.savedAddresses,
+        savedAddresses: updatedAddresses,
       };
-      saveSession(updatedSession, res.profile);
-    } else {
-      throw new Error(res.error || 'Failed to save address.');
+      saveSession(updatedSession, updatedProfile);
     }
   };
 
@@ -391,17 +516,60 @@ export const AuthProvider: React.FC<{ children: ReactNode; onEmailDispatched?: (
    * Remove Saved Address
    */
   const removeSavedAddress = async (addressId: string): Promise<void> => {
-    if (!userSession?.email) return;
+    const accountEmail =
+      userSession?.email ||
+      (userSession?.phone ? `${userSession.phone.replace(/\+/g, '')}@phone.noirkaapi.in` : '');
 
-    const res = await deleteCustomerAddress(userSession.email, addressId);
-    if (res.success && res.profile) {
+    if (accountEmail) {
+      try {
+        const res = await deleteCustomerAddress(accountEmail, addressId);
+        if (res.success && res.profile) {
+          const updatedSession: UserSession = {
+            ...userSession!,
+            savedAddresses: res.profile.savedAddresses,
+          };
+          saveSession(updatedSession, res.profile);
+          return;
+        }
+      } catch (err) {
+        console.warn('Backend deleteCustomerAddress error:', err);
+      }
+    }
+
+    // Local fallback
+    if (userSession) {
+      const currentAddresses = profile?.savedAddresses || userSession.savedAddresses || [];
+      const updatedAddresses = currentAddresses.filter((a) => a.id !== addressId);
+
+      const baseProfile: CustomerProfile = profile || {
+        uid: `usr_${Date.now()}`,
+        memberId: userSession.memberId,
+        fullName: userSession.name,
+        email: accountEmail || userSession.email,
+        phone: userSession.phone,
+        role: userSession.role || 'CUSTOMER',
+        authProvider: 'phone',
+        savedAddresses: currentAddresses,
+        preferences: {
+          favoriteGrind: 'Whole Bean',
+          newsletter: true,
+          cuppingAlerts: true,
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      const updatedProfile: CustomerProfile = {
+        ...baseProfile,
+        savedAddresses: updatedAddresses,
+        updatedAt: new Date().toISOString(),
+      };
+
       const updatedSession: UserSession = {
         ...userSession,
-        savedAddresses: res.profile.savedAddresses,
+        savedAddresses: updatedAddresses,
       };
-      saveSession(updatedSession, res.profile);
-    } else {
-      throw new Error(res.error || 'Failed to remove address.');
+      saveSession(updatedSession, updatedProfile);
     }
   };
 

@@ -111,7 +111,11 @@ export const AccountPage: React.FC<AccountPageProps> = ({
   useEffect(() => {
     loadOrders();
     if (userSession) {
-      setEditName(userSession.name || '');
+      const isPlaceholder =
+        !userSession.name ||
+        userSession.name.trim().toLowerCase() === 'patron' ||
+        userSession.name.trim().toLowerCase() === 'user';
+      setEditName(isPlaceholder ? '' : userSession.name);
       setEditPhone(userSession.phone || '');
       setEditGrind(profile?.preferences?.favoriteGrind || 'Whole Bean');
     }
@@ -196,7 +200,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
     try {
       await addSavedAddress({
         label: addrLabel,
-        fullName: addrName || userSession?.name || 'Patron',
+        fullName: addrName || userSession?.name || 'Customer',
         phone: addrPhone || userSession?.phone || '',
         street: addrStreet.trim(),
         city: addrCity.trim(),
@@ -305,7 +309,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                         NOIR DAKSHIN
                       </span>
                       <span className="px-2.5 py-0.5 rounded-full bg-[#C89658] text-[#2D2926] text-[10px] font-bold uppercase tracking-widest">
-                        {userSession.role || 'ESTATE PATRON'}
+                        {userSession.role || 'CUSTOMER'}
                       </span>
                     </div>
                     <p className="text-[11px] text-[#A69C94] font-mono mt-0.5">
@@ -315,13 +319,25 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                   <Award className="h-8 w-8 text-[#C89658]" />
                 </div>
 
-                <div className="my-2">
-                  <div className="text-[10px] font-mono text-[#A69C94] uppercase tracking-widest">
-                    Registered Cellar Patron
+                <div className="my-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] font-mono text-[#A69C94] uppercase tracking-widest">
+                      Account Profile
+                    </div>
+                    <div className="text-xl sm:text-2xl font-display font-bold tracking-tight text-[#FAF7F5] mt-0.5">
+                      {(!userSession.name || userSession.name.trim().toLowerCase() === 'patron') ? 'User' : userSession.name}
+                    </div>
                   </div>
-                  <div className="text-xl sm:text-2xl font-display font-bold tracking-tight text-[#FAF7F5] mt-0.5">
-                    {userSession.name}
-                  </div>
+                  <button
+                    onClick={() => {
+                      setActiveTab('profile');
+                      setIsEditingProfile(true);
+                    }}
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#C89658] text-[#2D2926] hover:bg-[#d8a86a] transition-all text-xs font-bold cursor-pointer self-start sm:self-auto shadow-sm"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" />
+                    <span>Fill / Edit Profile</span>
+                  </button>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3">
@@ -350,7 +366,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                 { id: 'overview', label: 'Overview', icon: User },
                 { id: 'orders', label: `Order History (${customerOrders.length})`, icon: Package },
                 { id: 'addresses', label: `Saved Addresses (${addresses.length})`, icon: MapPin },
-                { id: 'profile', label: 'Profile & Roasting Preferences', icon: Coffee },
+                { id: 'profile', label: 'Profile Details (Fill / Edit)', icon: Coffee },
               ].map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -373,6 +389,35 @@ export const AccountPage: React.FC<AccountPageProps> = ({
             {/* TAB 1: OVERVIEW */}
             {activeTab === 'overview' && (
               <div className="space-y-6">
+                {(!userSession.name ||
+                  userSession.name.trim().toLowerCase() === 'patron' ||
+                  userSession.name.trim().toLowerCase() === 'user') && (
+                  <div className="p-4 sm:p-5 rounded-3xl bg-[#FAF7F5] border border-[#C89658]/40 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-10 h-10 rounded-2xl bg-[#2D2926] text-[#C89658] flex items-center justify-center shrink-0">
+                        <User className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-display font-bold text-sm sm:text-base text-[#2D2926]">
+                          Complete Your User Profile
+                        </h4>
+                        <p className="text-xs text-[#5E5854] mt-0.5">
+                          You are currently logged in with a default ID. Fill in your full name and brewing preferences to personalize your orders.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setActiveTab('profile');
+                        setIsEditingProfile(true);
+                      }}
+                      className="px-5 py-2.5 rounded-full bg-[#2D2926] text-white hover:bg-[#C89658] transition-colors text-xs font-bold cursor-pointer shrink-0 self-start sm:self-auto shadow-sm"
+                    >
+                      Fill Profile Details
+                    </button>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="p-5 rounded-3xl bg-white border border-[#2D2926]/10 shadow-xs">
                     <span className="text-[10px] font-mono text-[#8C827A] uppercase tracking-wider block mb-1">
@@ -396,7 +441,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
 
                   <div className="p-5 rounded-3xl bg-white border border-[#2D2926]/10 shadow-xs">
                     <span className="text-[10px] font-mono text-[#8C827A] uppercase tracking-wider block mb-1">
-                      Cellar Privilege Tier
+                      Member Privilege Tier
                     </span>
                     <span className="text-base font-display font-bold text-[#C89658] flex items-center gap-1">
                       <ShieldCheck className="w-4 h-4" /> Priority Roaster Access
@@ -716,20 +761,26 @@ export const AccountPage: React.FC<AccountPageProps> = ({
             {/* TAB 4: PROFILE & PREFERENCES */}
             {activeTab === 'profile' && (
               <div className="p-6 rounded-3xl bg-white border border-[#2D2926]/10 shadow-xs space-y-6">
-                <div className="flex items-center justify-between border-b border-[#2D2926]/10 pb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2D2926]/10 pb-4">
                   <div>
-                    <h3 className="font-display font-bold text-lg text-[#2D2926]">Member Profile Details</h3>
+                    <h3 className="font-display font-bold text-lg text-[#2D2926]">User Profile Details</h3>
                     <p className="text-xs text-[#5E5854]">
-                      Edit your contact details and default grind preferences for freshly roasted bags.
+                      Fill in or update your contact details and default grind preferences for freshly roasted bags.
                     </p>
                   </div>
                   {!isEditingProfile && (
                     <button
                       onClick={() => setIsEditingProfile(true)}
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/15 text-xs font-bold text-[#2D2926] hover:bg-[#F5DADF]/40 cursor-pointer"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-[#2D2926] text-white hover:bg-[#C89658] text-xs font-bold transition-colors cursor-pointer self-start sm:self-auto"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
-                      <span>Edit Details</span>
+                      <span>
+                        {!userSession.name ||
+                        userSession.name.trim().toLowerCase() === 'patron' ||
+                        userSession.name.trim().toLowerCase() === 'user'
+                          ? 'Fill Profile Details'
+                          : 'Edit Details'}
+                      </span>
                     </button>
                   )}
                 </div>
@@ -749,8 +800,9 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                       <input
                         type="text"
                         value={editName}
-                        onChange={(e) => setEditName(sanitizeName(e.target.value))}
+                        onChange={(e) => setEditName(e.target.value.replace(/[^A-Za-z\s]/g, ''))}
                         required
+                        placeholder="Enter your full name (e.g. Priyanshu Singh)"
                         className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] p-2.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none"
                       />
                     </div>
@@ -763,6 +815,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                         type="tel"
                         value={editPhone}
                         onChange={(e) => setEditPhone(sanitizePhone(e.target.value))}
+                        placeholder="10-digit mobile number"
                         className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] p-2.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none"
                       />
                     </div>
@@ -776,7 +829,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                         onChange={(e) => setEditGrind(e.target.value)}
                         className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] p-2.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none cursor-pointer"
                       >
-                        <option value="Whole Bean">Whole Bean (Roasted Cellar Fresh)</option>
+                        <option value="Whole Bean">Whole Bean (Roasted Fresh)</option>
                         <option value="Filter Fine (Brass Davarah)">South Indian Brass Filter Kaapi</option>
                         <option value="Medium Grind (V60 & Kalita)">V60 / Pour Over Medium</option>
                         <option value="Coarse Grind (French Press)">French Press Coarse</option>
@@ -802,23 +855,46 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                     </div>
                   </form>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                    <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2">
-                      <div className="text-[10px] font-mono uppercase text-[#8C827A]">Customer Name</div>
-                      <div className="text-sm font-bold text-[#2D2926]">{userSession.name}</div>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2">
-                      <div className="text-[10px] font-mono uppercase text-[#8C827A]">Registered Email</div>
-                      <div className="text-sm font-bold text-[#2D2926]">{userSession.email}</div>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2">
-                      <div className="text-[10px] font-mono uppercase text-[#8C827A]">Mobile Phone</div>
-                      <div className="text-sm font-bold text-[#2D2926]">{userSession.phone || 'None recorded'}</div>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2">
-                      <div className="text-[10px] font-mono uppercase text-[#8C827A]">Default Grind Choice</div>
-                      <div className="text-sm font-bold text-[#C89658]">
-                        {profile?.preferences?.favoriteGrind || 'Whole Bean (Roasted Cellar Fresh)'}
+                  <div className="space-y-4">
+                    {(!userSession.name ||
+                      userSession.name.trim().toLowerCase() === 'patron' ||
+                      userSession.name.trim().toLowerCase() === 'user') && (
+                      <div className="p-4 rounded-2xl bg-[#C89658]/10 border border-[#C89658]/30 text-[#2D2926] text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <span>
+                          <strong>Profile Incomplete:</strong> Your profile name is currently set to default 'User'. Click <strong>Fill Profile Details</strong> to set your name.
+                        </span>
+                        <button
+                          onClick={() => setIsEditingProfile(true)}
+                          className="px-3.5 py-1.5 rounded-xl bg-[#2D2926] text-white text-xs font-bold hover:bg-[#C89658] cursor-pointer shrink-0 self-start sm:self-auto"
+                        >
+                          Fill Now
+                        </button>
+                      </div>
+                    )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                      <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2">
+                        <div className="text-[10px] font-mono uppercase text-[#8C827A]">Customer Name</div>
+                        <div className="text-sm font-bold text-[#2D2926]">
+                          {!userSession.name ||
+                          userSession.name.trim().toLowerCase() === 'patron' ||
+                          userSession.name.trim().toLowerCase() === 'user'
+                            ? 'User (Not filled yet)'
+                            : userSession.name}
+                        </div>
+                      </div>
+                      <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2">
+                        <div className="text-[10px] font-mono uppercase text-[#8C827A]">Registered Account</div>
+                        <div className="text-sm font-bold text-[#2D2926]">{userSession.email}</div>
+                      </div>
+                      <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2">
+                        <div className="text-[10px] font-mono uppercase text-[#8C827A]">Mobile Phone</div>
+                        <div className="text-sm font-bold text-[#2D2926]">{userSession.phone || 'None recorded'}</div>
+                      </div>
+                      <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2">
+                        <div className="text-[10px] font-mono uppercase text-[#8C827A]">Default Grind Choice</div>
+                        <div className="text-sm font-bold text-[#C89658]">
+                          {profile?.preferences?.favoriteGrind || 'Whole Bean (Roasted Fresh)'}
+                        </div>
                       </div>
                     </div>
                   </div>

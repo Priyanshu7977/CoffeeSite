@@ -375,7 +375,7 @@ export const LoginPage: React.FC = () => {
               <div className="hidden lg:block mb-2.5">
                 <div className="flex items-center justify-between">
                   <span className="text-[9px] font-mono tracking-[0.2em] uppercase font-bold text-[#8C827A]">
-                    Patron Authentication
+                    Account Login
                   </span>
                   <span className="text-[9px] font-mono font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
                     256-Bit TLS
@@ -491,7 +491,7 @@ export const LoginPage: React.FC = () => {
                         value={email}
                         onChange={handleEmailChange}
                         required
-                        placeholder="patron@noirkaapi.in"
+                        placeholder="user@noirkaapi.in"
                         className="w-full rounded-xl border border-[#2D2926]/15 bg-[#FAF7F5] py-1.5 pl-8 pr-3 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
                       />
                     </div>

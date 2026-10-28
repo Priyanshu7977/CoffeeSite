@@ -346,7 +346,7 @@ export async function confirmPhoneOtp(
     profile = {
       uid: user.uid,
       memberId,
-      fullName: user.displayName || 'Patron',
+      fullName: user.displayName || 'User',
       email: user.email || '',
       phone: user.phoneNumber || '',
       role: 'CUSTOMER',

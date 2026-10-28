@@ -168,7 +168,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <>
                   <ShieldCheck className="h-3.5 w-3.5 text-[#2D2926]" />
                   <span className="max-w-[70px] sm:max-w-[90px] truncate font-bold">
-                    {userSession.name.split(' ')[0]}
+                    {(!userSession.name || userSession.name.trim().toLowerCase() === 'patron')
+                      ? 'USER'
+                      : userSession.name.split(' ')[0]}
                   </span>
                 </>
               ) : (
