@@ -30,15 +30,16 @@ import {
 } from 'firebase/firestore';
 import type { CustomerProfile } from '../types/auth';
 
-// Read Firebase client environment variables
+// Read Firebase client environment variables with fallback to project defaults
+const rawProjectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || 'noir-roast';
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || '',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyAXGRMC1IDV0ZxzLIkBEOqoYpVI-HOopEY',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || `${rawProjectId}.firebaseapp.com`,
+  projectId: rawProjectId,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || `${rawProjectId}.firebasestorage.app`,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '1070830159382',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:1070830159382:web:a0d635b1c1771b5f32d737',
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-WE08B7BFL3',
 };
 
 /**
@@ -378,3 +379,31 @@ export function onFirebaseAuthStateChange(callback: (user: User | null) => void)
   }
   return onAuthStateChanged(authInstance, callback);
 }
+
+/**
+ * Format raw Firebase errors into clear user-friendly messages
+ */
+export function formatFirebaseError(err: unknown): string {
+  if (!err) return 'An unexpected authentication error occurred.';
+  const message = err instanceof Error ? err.message : String(err);
+  if (message.includes('auth/unauthorized-domain')) {
+    return 'This domain is not authorized in Firebase Console. Please add coffee-site-ivory.vercel.app under Firebase Authentication > Settings > Authorized Domains.';
+  }
+  if (message.includes('auth/popup-closed-by-user')) {
+    return 'Google sign-in popup was closed before completing.';
+  }
+  if (message.includes('auth/cancelled-popup-request')) {
+    return 'Another sign-in attempt is already in progress.';
+  }
+  if (message.includes('auth/auth-domain-config-required')) {
+    return 'Firebase authDomain is required. Reloading configuration...';
+  }
+  if (message.includes('auth/invalid-credential') || message.includes('auth/wrong-password') || message.includes('auth/user-not-found')) {
+    return 'Invalid email or password. Please verify your credentials.';
+  }
+  if (message.includes('auth/email-already-in-use')) {
+    return 'An account already exists with this email address. Please log in.';
+  }
+  return message;
+}
+

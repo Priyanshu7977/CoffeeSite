@@ -13,6 +13,7 @@ import {
 import type { AutomatedEmail } from '../utils/emailService';
 import type { UserSession } from '../types/auth';
 import { useAuth } from '../context/AuthContext';
+import { formatFirebaseError } from '../services/firebase';
 
 export type { UserSession };
 
@@ -163,7 +164,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       if (userSession) onLoginSuccess(userSession);
       onClose();
     } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : 'Google sign-in could not be completed.');
+      setErrorMessage(formatFirebaseError(err));
     } finally {
       setIsProcessing(false);
     }

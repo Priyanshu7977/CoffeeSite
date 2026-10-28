@@ -22,6 +22,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { isValidEmail } from '../utils/validation';
 import type { ConfirmationResult } from 'firebase/auth';
+import { formatFirebaseError } from '../services/firebase';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -119,8 +120,7 @@ export const LoginPage: React.FC = () => {
         navigate(redirectPath);
       }, 500);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Google sign-in could not be completed.';
-      setErrorMessage(msg);
+      setErrorMessage(formatFirebaseError(err));
     } finally {
       setIsLoading(false);
     }
