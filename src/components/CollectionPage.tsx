@@ -197,7 +197,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       <div className="absolute top-28 left-6 w-[360px] h-[360px] bg-[#F5DADF]/40 rounded-full blur-3xl pointer-events-none animate-floatSoft" />
 
       {/* Sub-Header (Safely positioned below global Navbar) */}
-      <div className="pt-18 sm:pt-20 pb-3 px-3 sm:px-8 border-b border-[#2D2926]/10 bg-white/75 backdrop-blur-md">
+      <div className="pt-[max(calc(env(safe-area-inset-top)+5.25rem),6.5rem)] sm:pt-28 md:pt-32 pb-3.5 sm:pb-4 px-3 sm:px-8 border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md">
         <div className="mx-auto max-w-7xl flex items-center justify-between gap-2 sm:gap-4 animate-fadeIn">
           <div className="flex items-center gap-2 sm:gap-4">
             <MagneticButton strength={0.3}>

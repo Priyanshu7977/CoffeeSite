@@ -187,7 +187,7 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onOpenInvo
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-28 selection:bg-[#F5DADF] selection:text-[#2D2926]">
       {/* Sub-Header */}
-      <div className="pt-18 sm:pt-20 pb-3 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/70 backdrop-blur-md">
+      <div className="pt-[max(calc(env(safe-area-inset-top)+5.25rem),6.5rem)] sm:pt-28 md:pt-32 pb-3.5 sm:pb-4 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md">
         <div className="mx-auto max-w-6xl flex items-center justify-between gap-3">
           <button
             onClick={() => navigate('/')}
@@ -207,59 +207,113 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onOpenInvo
 
           <Link
             to="/collection"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#2D2926] text-white text-xs font-bold hover:bg-black transition-colors"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#2D2926] text-white text-xs font-bold hover:bg-[#E05A7E] transition-colors"
           >
             <span>Explore Roasts</span>
           </Link>
         </div>
       </div>
 
-      <main className="mx-auto max-w-4xl px-4 sm:px-8 pt-10">
-        {/* Search Header */}
-        <div className="text-center max-w-2xl mx-auto mb-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F5DADF] text-[#2D2926] text-xs font-mono font-bold uppercase tracking-widest mb-3 shadow-2xs">
+      {/* 1. Immersive Hero Section */}
+      <section className="relative overflow-hidden border-b border-[#2D2926]/10 bg-gradient-to-b from-white via-[#FAF7F5] to-white pt-10 sm:pt-14 pb-12 sm:pb-16 px-4 sm:px-6 md:px-8">
+        <div className="mx-auto max-w-4xl text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F5DADF]/80 border border-[#2D2926]/10 text-[#2D2926] text-xs font-mono font-bold uppercase tracking-wider mb-5 shadow-2xs">
             <Truck className="h-3.5 w-3.5 text-[#E05A7E]" />
-            <span>EXPRESS DOMESTIC LOGISTICS • BLUE DART & DELHIVERY</span>
+            <span>LIVE DISPATCH TELEMETRY • BLUE DART & AIR FREIGHT</span>
           </div>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-[#2D2926]">
+
+          <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#2D2926] leading-[1.15] mb-3">
             Track Your Fresh <span className="italic text-[#E05A7E]">Roast Dispatch.</span>
           </h1>
-          <p className="font-sans text-xs sm:text-sm text-[#5E5854] mt-2">
-            Monitor real-time status from single-estate drum convection to express air courier handover.
+
+          <p className="font-sans text-xs sm:text-sm md:text-base text-[#5E5854] max-w-2xl mx-auto leading-relaxed mb-8">
+            Inspect micro-lot roasting timestamps, nitrogen-flushed tin sealing telemetry, and express air courier handovers directly from our Indiranagar roastery lab.
           </p>
 
-          {/* Search Box */}
-          <form onSubmit={handleSearch} className="mt-6 flex flex-col sm:flex-row gap-2 max-w-lg mx-auto">
-            <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8C827A]" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Enter Order # (e.g. ND-92418) or Phone"
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white border border-[#2D2926]/15 text-xs text-[#2D2926] placeholder-[#8C827A] focus:border-[#2D2926] focus:outline-none shadow-xs font-mono font-bold uppercase"
-              />
+          {/* Elevated Tracking Search Form */}
+          <div className="max-w-xl mx-auto bg-white p-2.5 sm:p-3 rounded-3xl border border-[#2D2926]/10 shadow-[0_10px_30px_rgba(45,41,38,0.06)]">
+            <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8C827A]" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Enter Order # (e.g. ND-92418) or Phone"
+                  className="w-full pl-10 pr-4 py-3 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 text-xs text-[#2D2926] placeholder-[#8C827A] focus:bg-white focus:border-[#2D2926] focus:outline-none transition-all font-mono font-bold uppercase"
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="px-6 py-3 rounded-2xl bg-[#2D2926] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#E05A7E] transition-all shadow-md cursor-pointer disabled:opacity-50 shrink-0"
+              >
+                {isLoading ? 'Locating...' : 'Track Roast'}
+              </button>
+            </form>
+
+            {/* Quick Demo Helper */}
+            <div className="mt-2.5 pt-2 border-t border-[#2D2926]/5 flex flex-wrap items-center justify-center gap-2 text-[11px] text-[#8C827A]">
+              <span>Looking for a test order?</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('ND-92418');
+                  setSearchedOrder(sampleOrder);
+                  setErrorMessage('');
+                }}
+                className="inline-flex items-center gap-1 font-mono font-bold text-[#E05A7E] hover:underline cursor-pointer bg-[#F5DADF]/40 px-2.5 py-0.5 rounded-full"
+              >
+                Load Demo #ND-92418
+              </button>
             </div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="px-6 py-3 rounded-2xl bg-[#2D2926] text-white text-xs font-bold uppercase tracking-wider hover:bg-black transition-all shadow-md cursor-pointer disabled:opacity-50 shrink-0"
-            >
-              {isLoading ? 'Locating...' : 'Track Roast'}
-            </button>
-          </form>
+          </div>
 
           {errorMessage && (
-            <div className="mt-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center justify-center gap-2 text-left">
+            <div className="mt-4 max-w-xl mx-auto p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center justify-center gap-2 text-left">
               <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
               <span>{errorMessage}</span>
             </div>
           )}
-        </div>
 
+          {/* Key Roast Logistics Guarantees Strip */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto mt-8 pt-6 border-t border-[#2D2926]/10 text-left">
+            <div className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
+              <div className="h-9 w-9 rounded-xl bg-[#F5DADF] flex items-center justify-center shrink-0">
+                <Coffee className="h-4 w-4 text-[#E05A7E]" />
+              </div>
+              <div>
+                <span className="font-display font-bold text-xs text-[#2D2926] block">24h Drum Convection</span>
+                <span className="text-[10.5px] text-[#8C827A] font-sans">Roasted fresh upon lot reservation</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
+              <div className="h-9 w-9 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+                <ShieldCheck className="h-4 w-4 text-emerald-700" />
+              </div>
+              <div>
+                <span className="font-display font-bold text-xs text-[#2D2926] block">Nitrogen Tin Flush</span>
+                <span className="text-[10.5px] text-[#8C827A] font-sans">Zero residual oxygen spoilage</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
+              <div className="h-9 w-9 rounded-xl bg-[#2D2926] flex items-center justify-center shrink-0">
+                <Truck className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <span className="font-display font-bold text-xs text-[#2D2926] block">Express Air Logistics</span>
+                <span className="text-[10.5px] text-[#8C827A] font-sans">Blue Dart & Delhivery Air</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Main Live Tracking Workspace */}
+      <main className="mx-auto max-w-5xl px-4 sm:px-6 md:px-8 py-8 sm:py-10">
         {/* Demo Notice Banner */}
         {isDemo && (
-          <div className="mb-6 p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between gap-3">
+          <div className="mb-6 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 shrink-0 text-amber-700" />
               <span>

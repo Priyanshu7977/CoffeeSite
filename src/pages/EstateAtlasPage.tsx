@@ -262,7 +262,7 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] selection:bg-[#F5DADF] selection:text-[#2D2926]">
       {/* 1. Navigation Sub-Bar */}
-      <div className="border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md px-3 sm:px-6 pt-18 sm:pt-20 pb-3">
+      <div className="border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md px-3 sm:px-6 pt-[max(calc(env(safe-area-inset-top)+5.25rem),6.5rem)] sm:pt-28 md:pt-32 pb-3.5 sm:pb-4">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-2">
           <button
             onClick={() => navigate('/')}
@@ -273,11 +273,11 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
             <span className="sm:hidden">Overview</span>
           </button>
 
-          <div className="hidden min-[480px]:flex items-center gap-2">
+          <div className="flex items-center gap-2">
             <span className="hidden sm:inline text-xs font-mono font-bold tracking-wider text-[#8C827A] uppercase">
               SOUTH INDIAN COFFEE & ORIGIN GUIDE
             </span>
-            <span className="h-1.5 w-1.5 rounded-full bg-[#E05A7E]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#E05A7E] hidden sm:inline" />
             <span className="font-mono text-xs font-bold text-[#E05A7E]">COFFEE GUIDE</span>
           </div>
 
@@ -303,14 +303,14 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       )}
 
       {/* 2. Hero Section: Clean & Friendly */}
-      <section ref={heroRef} className="relative overflow-hidden border-b border-[#2D2926]/10 bg-gradient-to-b from-white to-[#FAF7F5] pt-14 pb-16 px-6 md:px-12">
+      <section ref={heroRef} className="relative overflow-hidden border-b border-[#2D2926]/10 bg-gradient-to-b from-white to-[#FAF7F5] pt-10 sm:pt-14 pb-14 sm:pb-16 px-4 sm:px-8 md:px-12">
         <div className="mx-auto max-w-5xl text-center">
           <div ref={heroBadgeRef} className="inline-flex items-center gap-2 rounded-full border border-[#2D2926]/10 bg-[#F5DADF]/60 px-4 py-1.5 text-xs font-mono font-bold tracking-widest text-[#2D2926] uppercase mb-6 shadow-2xs">
             <Compass className="h-3.5 w-3.5 text-[#E05A7E]" />
             <span>COFFEE ORIGINS • TASTING NOTES • BREWING GUIDE</span>
           </div>
 
-          <h1 ref={heroTitleRef} className="font-display text-4xl sm:text-5xl md:text-6xl text-[#2D2926] font-bold tracking-tight leading-[1.12] mb-6">
+          <h1 ref={heroTitleRef} className="font-display text-3xl sm:text-5xl md:text-6xl text-[#2D2926] font-bold tracking-tight leading-[1.14] mb-6">
             The South Indian <br />
             <span className="italic text-[#E05A7E]">Estate & Terroir Atlas.</span>
           </h1>
