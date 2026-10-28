@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { InvoiceModal } from './InvoiceModal';
+import { OrderTrackingModal } from './OrderTrackingModal';
 import {
   sanitizeName,
   sanitizePhone,
@@ -93,6 +94,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   // Status & Confirmation tracking
   const [confirmedOrder, setConfirmedOrder] = useState<CustomerOrder | null>(null);
   const [isInvoiceOpen, setIsInvoiceOpen] = useState<boolean>(false);
+  const [isTrackingOpen, setIsTrackingOpen] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [copiedVpa, setCopiedVpa] = useState<boolean>(false);
@@ -1149,10 +1151,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
               <button
                 type="button"
-                onClick={() => {
-                  onClose();
-                  navigate(`/track?order=${confirmedOrder.orderNumber}`);
-                }}
+                onClick={() => setIsTrackingOpen(true)}
                 className="py-3.5 px-4 rounded-2xl bg-[#E05A7E] text-white font-display font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-[#c94567] transition-all cursor-pointer shadow-md active:scale-95"
               >
                 <Truck className="h-4 w-4" />
@@ -1175,6 +1174,17 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
         isOpen={isInvoiceOpen}
         onClose={() => setIsInvoiceOpen(false)}
         order={confirmedOrder}
+      />
+
+      {/* Live Roastery Dispatch Tracking Modal */}
+      <OrderTrackingModal
+        isOpen={isTrackingOpen}
+        onClose={() => setIsTrackingOpen(false)}
+        order={confirmedOrder}
+        onOpenInvoice={() => {
+          setIsTrackingOpen(false);
+          setIsInvoiceOpen(true);
+        }}
       />
     </div>
   );

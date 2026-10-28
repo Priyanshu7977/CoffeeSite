@@ -5,7 +5,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   ArrowLeft,
   User,
@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { InvoiceModal } from '../components/InvoiceModal';
+import { OrderTrackingModal } from '../components/OrderTrackingModal';
 import { useWishlist } from '../utils/wishlist';
 import { NOIR_PRODUCTS } from '../data/products';
 import type { CustomerOrder, OrderItemSnapshot } from '../types/payment';
@@ -49,6 +50,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
   onReorderItems,
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { wishlist, toggle: toggleWishlist } = useWishlist();
   const {
     userSession,
@@ -67,6 +69,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
   const [isLoadingOrders, setIsLoadingOrders] = useState<boolean>(false);
   const [orderFilter, setOrderFilter] = useState<'all' | 'active' | 'delivered'>('all');
   const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState<CustomerOrder | null>(null);
+  const [selectedTrackingOrder, setSelectedTrackingOrder] = useState<CustomerOrder | null>(null);
 
   // Admin Desk State
   const [adminOrders, setAdminOrders] = useState<CustomerOrder[]>([]);
@@ -128,6 +131,25 @@ export const AccountPage: React.FC<AccountPageProps> = ({
       setEditGrind(profile?.preferences?.favoriteGrind || 'Whole Bean');
     }
   }, [userSession, profile]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab');
+    if (tabParam === 'orders' || tabParam === 'saved' || tabParam === 'profile' || tabParam === 'addresses') {
+      setActiveTab(tabParam);
+    }
+    const trackParam = params.get('track') || params.get('order');
+    if (trackParam && customerOrders.length > 0) {
+      const match = customerOrders.find(
+        (o) =>
+          o.orderNumber.toLowerCase() === trackParam.toLowerCase() ||
+          o.id.toLowerCase() === trackParam.toLowerCase()
+      );
+      if (match) {
+        setSelectedTrackingOrder(match);
+      }
+    }
+  }, [location.search, customerOrders]);
 
   // Admin UTR Verification
   const handleAdminVerifyUtr = async (orderId: string, isApproved: boolean) => {
@@ -494,6 +516,28 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                         <strong>Fulfillment:</strong> {customerOrders[0].fulfillmentStatus.toUpperCase()}
                       </p>
                     </div>
+
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#2D2926]/10">
+                      <div className="font-mono text-xs font-bold text-[#2D2926]">
+                        Status: <span className="text-emerald-700 capitalize">{customerOrders[0].fulfillmentStatus}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setSelectedInvoiceOrder(customerOrders[0])}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FAF7F5] border border-[#2D2926]/15 text-[#2D2926] text-[11px] font-semibold hover:bg-neutral-100 transition-colors shadow-2xs cursor-pointer"
+                        >
+                          <Printer className="w-3.5 h-3.5 text-[#E05A7E]" />
+                          <span>Invoice</span>
+                        </button>
+                        <button
+                          onClick={() => setSelectedTrackingOrder(customerOrders[0])}
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#2D2926] text-white text-[11px] font-semibold hover:bg-[#E05A7E] transition-colors cursor-pointer shadow-xs active:scale-95"
+                        >
+                          <Truck className="w-3.5 h-3.5 text-[#F5DADF]" />
+                          <span>Track Roast Dispatch</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -681,8 +725,8 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                             </button>
 
                             <button
-                              onClick={() => navigate(`/track?order=${ord.orderNumber}`)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#2D2926]/15 text-[#2D2926] text-[11px] font-semibold hover:bg-[#FAF7F5] transition-colors cursor-pointer shadow-2xs"
+                              onClick={() => setSelectedTrackingOrder(ord)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#2D2926]/15 text-[#2D2926] text-[11px] font-semibold hover:bg-[#FAF7F5] transition-colors cursor-pointer shadow-2xs active:scale-95"
                               title="Track Roastery Dispatch Telemetry"
                             >
                               <Truck className="w-3.5 h-3.5 text-emerald-600" />
@@ -1343,6 +1387,17 @@ export const AccountPage: React.FC<AccountPageProps> = ({
         isOpen={Boolean(selectedInvoiceOrder)}
         onClose={() => setSelectedInvoiceOrder(null)}
         order={selectedInvoiceOrder}
+      />
+
+      {/* Live Roastery Dispatch Tracking Modal */}
+      <OrderTrackingModal
+        isOpen={Boolean(selectedTrackingOrder)}
+        onClose={() => setSelectedTrackingOrder(null)}
+        order={selectedTrackingOrder}
+        onOpenInvoice={(ord) => {
+          setSelectedTrackingOrder(null);
+          setSelectedInvoiceOrder(ord);
+        }}
       />
     </div>
   );

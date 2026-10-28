@@ -115,7 +115,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           {[
             { label: 'COLLECTION', path: '/collection' },
             { label: 'COFFEE GUIDE', path: '/atlas' },
-            { label: 'TRACK ORDER', path: '/track' },
             { label: 'ABOUT US', path: '/about' },
             { label: 'CONTACT', path: '/contact' },
           ].map((item) => (
@@ -219,7 +218,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               { label: 'HOME', path: '/' },
               { label: 'SHOP COFFEE', path: '/collection' },
               { label: 'COFFEE GUIDE', path: '/atlas' },
-              { label: 'TRACK MY ORDER', path: '/track' },
               { label: 'ABOUT US', path: '/about' },
               { label: 'CONTACT US', path: '/contact' },
               { label: 'SHOPPING CART', path: '/cart' },

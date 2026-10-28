@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useLenis } from './hooks/useLenis';
 import { PageLoader } from './components/PageLoader';
 import { CustomCursor } from './components/CustomCursor';
@@ -691,31 +691,39 @@ export const App: React.FC = () => {
           }
         />
 
-        {/* Dedicated Live Order Tracking Portal */}
+        {/* Live Order Tracking: Redirect logged-in patrons directly to their Account cellar */}
         <Route
           path="/track"
           element={
-            <div>
-              <OrderTrackingPage onOpenInvoice={(ord) => setActiveInvoiceOrder(ord)} />
-              <Footer
-                showReviews={false}
-                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                onNavigate={handleNavigate}
-              />
-            </div>
+            userSession?.isLoggedIn ? (
+              <Navigate to="/account?tab=orders" replace />
+            ) : (
+              <div>
+                <OrderTrackingPage onOpenInvoice={(ord) => setActiveInvoiceOrder(ord)} />
+                <Footer
+                  showReviews={false}
+                  onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  onNavigate={handleNavigate}
+                />
+              </div>
+            )
           }
         />
         <Route
           path="/track-order"
           element={
-            <div>
-              <OrderTrackingPage onOpenInvoice={(ord) => setActiveInvoiceOrder(ord)} />
-              <Footer
-                showReviews={false}
-                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                onNavigate={handleNavigate}
-              />
-            </div>
+            userSession?.isLoggedIn ? (
+              <Navigate to="/account?tab=orders" replace />
+            ) : (
+              <div>
+                <OrderTrackingPage onOpenInvoice={(ord) => setActiveInvoiceOrder(ord)} />
+                <Footer
+                  showReviews={false}
+                  onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  onNavigate={handleNavigate}
+                />
+              </div>
+            )
           }
         />
 
