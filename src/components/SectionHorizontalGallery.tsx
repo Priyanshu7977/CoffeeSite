@@ -159,18 +159,18 @@ export const SectionHorizontalGallery: React.FC = () => {
       className="relative h-screen w-full bg-[#FAF7F5] text-[#2D2926] overflow-hidden border-t border-[#2D2926]/10"
     >
       {/* Top Floating Magazine Header */}
-      <div className="absolute top-4 sm:top-6 left-6 md:left-12 right-6 md:right-12 z-40 flex items-center justify-between pointer-events-auto border-b border-[#2D2926]/10 pb-3">
-        <div className="text-xs tracking-[0.25em] text-[#2D2926] font-sans font-bold uppercase flex items-center gap-2">
-          <Sparkles className="h-3.5 w-3.5 text-[#E05A7E]" />
+      <div className="absolute top-3 sm:top-6 left-4 sm:left-6 md:left-12 right-4 sm:right-6 md:right-12 z-40 flex items-center justify-between pointer-events-auto border-b border-[#2D2926]/10 pb-2.5 sm:pb-3 gap-2">
+        <div className="text-[11px] sm:text-xs tracking-[0.2em] sm:tracking-[0.25em] text-[#2D2926] font-sans font-bold uppercase flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <Sparkles className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
           <span>05 / CINEMATIC ARCHIVE</span>
         </div>
 
-        <div className="flex items-center gap-1.5 rounded-full bg-white/90 border border-[#2D2926]/10 p-1 backdrop-blur-md shadow-sm">
+        <div className="flex items-center gap-1 sm:gap-1.5 rounded-full bg-white/90 border border-[#2D2926]/10 p-0.5 sm:p-1 backdrop-blur-md shadow-sm shrink-0">
           {slides.map((s, idx) => (
             <button
               key={s.id}
               onClick={() => goToSlide(idx)}
-              className={`px-3 py-1 rounded-full text-xs font-mono transition-all cursor-pointer ${
+              className={`px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-mono transition-all cursor-pointer ${
                 activeSlideIndex === idx
                   ? 'bg-[#F5DADF] text-[#2D2926] font-bold shadow-sm'
                   : 'text-[#8C827A] hover:text-[#2D2926]'
@@ -193,7 +193,7 @@ export const SectionHorizontalGallery: React.FC = () => {
               ref={(el) => {
                 slidesRef.current[idx] = el;
               }}
-              className="absolute inset-0 h-full w-full flex items-center justify-center p-6 sm:p-12 lg:p-16 overflow-hidden select-none will-change-transform bg-[#FAF7F5]"
+              className="absolute inset-0 h-full w-full flex items-center justify-center p-4 sm:p-12 lg:p-16 overflow-hidden select-none will-change-transform bg-[#FAF7F5]"
             >
               {/* Background Photography */}
               <div className="absolute inset-0 z-0 overflow-hidden">
@@ -206,51 +206,51 @@ export const SectionHorizontalGallery: React.FC = () => {
               </div>
 
               {/* Spread Magazine Content Grid */}
-              <div className="relative z-10 mx-auto max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center py-10 lg:py-0">
+              <div className="relative z-10 mx-auto max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 lg:gap-16 items-center py-6 sm:py-10 lg:py-0">
                 {/* Left: Headline & Quote */}
                 <div className="lg:col-span-7 flex flex-col justify-center">
-                  <span className="text-xs tracking-[0.3em] font-sans uppercase text-[#E05A7E] font-bold mb-3">
+                  <span className="text-[10px] sm:text-xs tracking-[0.25em] sm:tracking-[0.3em] font-sans uppercase text-[#E05A7E] font-bold mb-1.5 sm:mb-3">
                     {slide.tag}
                   </span>
 
                   {/* Headline */}
-                  <h2 className="font-display text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#2D2926] uppercase leading-tight mb-4">
+                  <h2 className="font-display text-2xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#2D2926] uppercase leading-tight mb-2 sm:mb-4">
                     {slide.title}
                   </h2>
 
                   {/* Quote */}
-                  <p className="font-serif text-lg sm:text-2xl text-[#5E5854] leading-relaxed max-w-xl font-medium">
+                  <p className="font-serif text-xs sm:text-2xl text-[#5E5854] leading-relaxed max-w-xl font-medium line-clamp-2 sm:line-clamp-none">
                     “{slide.quote}”
                   </p>
                 </div>
 
                 {/* Right: Editorial Metadata Card */}
                 <div className="lg:col-span-5 flex flex-col justify-center">
-                  <div className="rounded-3xl bg-white border border-[#2D2926]/10 p-6 sm:p-8 shadow-[0_20px_50px_rgba(45,41,38,0.06)] space-y-4">
-                    <div className="flex items-center justify-between border-b border-[#2D2926]/10 pb-3">
-                      <div className="flex items-center gap-2">
-                        <Icon className="h-4 w-4 text-[#E05A7E]" />
-                        <span className="text-xs font-sans tracking-widest text-[#2D2926] uppercase font-bold">
+                  <div className="rounded-2xl sm:rounded-3xl bg-white/95 border border-[#2D2926]/10 p-3.5 sm:p-8 shadow-[0_20px_50px_rgba(45,41,38,0.06)] space-y-2 sm:space-y-4">
+                    <div className="flex items-center justify-between border-b border-[#2D2926]/10 pb-2 sm:pb-3">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        <Icon className="h-3.5 sm:h-4 w-3.5 sm:w-4 text-[#E05A7E]" />
+                        <span className="text-[10px] sm:text-xs font-sans tracking-widest text-[#2D2926] uppercase font-bold">
                           Terroir Focus
                         </span>
                       </div>
-                      <span className="font-mono text-sm font-bold text-[#2D2926]">
+                      <span className="font-mono text-xs sm:text-sm font-bold text-[#2D2926]">
                         0{idx + 1}
                       </span>
                     </div>
 
                     <div>
-                      <span className="text-[10px] font-sans tracking-widest text-[#8C827A] uppercase block mb-1">
+                      <span className="text-[9px] sm:text-[10px] font-sans tracking-widest text-[#8C827A] uppercase block mb-0.5 sm:mb-1">
                         Location & Climate
                       </span>
-                      <span className="font-display text-sm sm:text-base text-[#2D2926] font-bold">
+                      <span className="font-display text-xs sm:text-base text-[#2D2926] font-bold">
                         {slide.location}
                       </span>
                     </div>
 
-                    <div className="pt-3 border-t border-[#2D2926]/10 flex items-center justify-between text-xs text-[#8C827A]">
-                      <div className="flex items-center gap-1.5">
-                        <Compass className="h-3.5 w-3.5 text-[#2D2926]" />
+                    <div className="pt-2 sm:pt-3 border-t border-[#2D2926]/10 flex items-center justify-between text-[10px] sm:text-xs text-[#8C827A]">
+                      <div className="flex items-center gap-1 sm:gap-1.5">
+                        <Compass className="h-3 sm:h-3.5 w-3 sm:w-3.5 text-[#2D2926]" />
                         <span>Estate Story</span>
                       </div>
                       <span className="font-mono text-[#2D2926]">Spread 0{idx + 1} of 04</span>
@@ -260,9 +260,9 @@ export const SectionHorizontalGallery: React.FC = () => {
               </div>
 
               {/* Bottom Marker */}
-              <div className="absolute bottom-4 sm:bottom-6 left-6 md:left-12 right-6 md:right-12 flex items-center justify-between border-t border-[#2D2926]/10 pt-3 text-xs text-[#8C827A]">
-                <span>NOIR DAKSHIN • COFFEE JOURNAL</span>
-                <span className="font-mono text-[#2D2926] font-bold">{slide.title}</span>
+              <div className="absolute bottom-3 sm:bottom-6 left-4 sm:left-6 md:left-12 right-4 sm:right-6 md:right-12 flex items-center justify-between border-t border-[#2D2926]/10 pt-2 sm:pt-3 text-[10px] sm:text-xs text-[#8C827A]">
+                <span className="truncate">NOIR DAKSHIN • COFFEE JOURNAL</span>
+                <span className="font-mono text-[#2D2926] font-bold truncate max-w-[120px] sm:max-w-none shrink-0">{slide.title}</span>
               </div>
             </div>
           );

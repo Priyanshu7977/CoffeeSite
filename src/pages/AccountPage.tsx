@@ -1344,8 +1344,8 @@ export const AccountPage: React.FC<AccountPageProps> = ({
               </div>
 
               {/* Default Destination Checkbox - Mobile Touch-Friendly */}
-              <div
-                onClick={() => setAddrIsDefault(!addrIsDefault)}
+              <label
+                htmlFor="defaultAddr"
                 className="flex items-center gap-3 pt-1 cursor-pointer select-none group min-h-[44px]"
               >
                 <div className="relative flex items-center justify-center shrink-0">
@@ -1366,10 +1366,10 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                     {addrIsDefault && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                   </div>
                 </div>
-                <label htmlFor="defaultAddr" className="text-xs text-[#5E5854] cursor-pointer">
+                <span className="text-xs text-[#5E5854] cursor-pointer">
                   Set as default shipping destination
-                </label>
-              </div>
+                </span>
+              </label>
 
               <button
                 type="submit"

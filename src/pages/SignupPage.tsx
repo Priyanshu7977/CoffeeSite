@@ -349,8 +349,8 @@ export const SignupPage: React.FC = () => {
             )}
 
             {/* Privilege Consent - Mobile iOS/Android Touch-Optimized Custom Checkbox */}
-            <div
-              onClick={() => setAcceptedTerms(!acceptedTerms)}
+            <label
+              htmlFor="terms"
               className="flex items-start gap-3 pt-2 cursor-pointer select-none group min-h-[44px]"
             >
               <div className="relative flex items-center justify-center shrink-0 mt-0.5">
@@ -371,10 +371,10 @@ export const SignupPage: React.FC = () => {
                   {acceptedTerms && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                 </div>
               </div>
-              <label htmlFor="terms" className="text-xs text-[#5E5854] cursor-pointer leading-snug">
+              <span className="text-xs text-[#5E5854] cursor-pointer leading-snug">
                 I agree to the roastery terms and wish to receive single-origin cupping releases and direct farmer updates.
-              </label>
-            </div>
+              </span>
+            </label>
 
             {/* Submit Button */}
             <button

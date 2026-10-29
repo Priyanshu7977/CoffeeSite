@@ -198,10 +198,11 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onOpenInvo
             <span className="sm:hidden">Back</span>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 truncate">
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-            <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#2D2926]">
-              REAL-TIME ROASTERY DISPATCH TELEMETRY
+            <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#2D2926] truncate">
+              <span className="hidden sm:inline">REAL-TIME ROASTERY DISPATCH TELEMETRY</span>
+              <span className="sm:hidden">DISPATCH TELEMETRY</span>
             </span>
           </div>
 
@@ -217,9 +218,9 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onOpenInvo
       {/* 1. Immersive Hero Section */}
       <section className="relative overflow-hidden border-b border-[#2D2926]/10 bg-gradient-to-b from-white via-[#FAF7F5] to-white pt-10 sm:pt-14 pb-12 sm:pb-16 px-4 sm:px-6 md:px-8">
         <div className="mx-auto max-w-4xl text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F5DADF]/80 border border-[#2D2926]/10 text-[#2D2926] text-xs font-mono font-bold uppercase tracking-wider mb-5 shadow-2xs">
-            <Truck className="h-3.5 w-3.5 text-[#E05A7E]" />
-            <span>LIVE DISPATCH TELEMETRY • BLUE DART & AIR FREIGHT</span>
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-[#F5DADF]/80 border border-[#2D2926]/10 text-[#2D2926] text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider mb-5 shadow-2xs max-w-full">
+            <Truck className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
+            <span className="truncate">LIVE DISPATCH TELEMETRY • BLUE DART & AIR FREIGHT</span>
           </div>
 
           <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#2D2926] leading-[1.15] mb-3">

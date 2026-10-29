@@ -100,7 +100,7 @@ export const SectionBrewRitual: React.FC<SectionBrewRitualProps> = ({
           </div>
 
           {/* 5 Brew Method Selector Buttons */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center justify-center gap-1 sm:gap-1.5 p-1 sm:p-1.5 rounded-2xl sm:rounded-full bg-white/95 border border-[#2D2926]/10 shadow-sm w-full md:w-auto overflow-hidden">
+          <div className="flex items-center gap-1 sm:gap-1.5 p-1 sm:p-1.5 rounded-full bg-white/95 border border-[#2D2926]/10 shadow-sm w-full md:w-auto overflow-x-auto scrollbar-none px-1.5">
             {NOIR_BREW_METHODS.map((method, idx) => {
               const isSelected = activeMethodIndex === idx;
               const cleanLabel =
@@ -118,7 +118,7 @@ export const SectionBrewRitual: React.FC<SectionBrewRitualProps> = ({
                 <button
                   key={method.id}
                   onClick={() => handleMethodClick(idx)}
-                  className={`flex-1 sm:flex-initial px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-full font-sans text-xs font-bold tracking-wide transition-all duration-200 cursor-pointer text-center flex items-center justify-center whitespace-nowrap ${
+                  className={`shrink-0 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full font-sans text-xs font-bold tracking-wide transition-all duration-200 cursor-pointer text-center flex items-center justify-center whitespace-nowrap ${
                     isSelected
                       ? 'bg-[#F5DADF] border border-[#2D2926]/15 text-[#2D2926] shadow-sm scale-[1.02]'
                       : 'text-[#5E5854] hover:text-[#2D2926] hover:bg-neutral-50'

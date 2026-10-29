@@ -185,24 +185,36 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
         className="relative z-10 mx-auto max-w-6xl w-full px-5 sm:px-8 md:px-12 flex flex-col justify-between h-full min-h-[92vh] lg:h-[86vh] py-4 sm:py-6"
       >
         {/* Top Header & Number Navigation */}
-        <div className="flex items-center justify-between border-b border-[#2D2926]/10 pb-2.5 sm:pb-3 gap-2 shrink-0">
-          <div className="text-[11px] sm:text-xs tracking-[0.25em] text-[#2D2926] font-sans font-bold uppercase flex items-center gap-1.5 sm:gap-2">
-            <Sparkles className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
-            <span>04 / THE COLLECTION</span>
-          </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#2D2926]/10 pb-2.5 sm:pb-3 gap-2 shrink-0">
+          <div className="flex items-center justify-between w-full sm:w-auto">
+            <div className="text-[11px] sm:text-xs tracking-[0.2em] sm:tracking-[0.25em] text-[#2D2926] font-sans font-bold uppercase flex items-center gap-1.5 sm:gap-2">
+              <Sparkles className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
+              <span>04 / THE COLLECTION</span>
+            </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
             {onOpenCollectionPage && (
               <button
                 onClick={onOpenCollectionPage}
-                className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-white border border-[#2D2926]/15 text-[10px] sm:text-xs font-sans font-bold text-[#2D2926] hover:bg-[#F5DADF] transition-all cursor-pointer shadow-sm whitespace-nowrap active:scale-95"
+                className="sm:hidden flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-[#2D2926]/15 text-[10px] font-sans font-bold text-[#2D2926] hover:bg-[#F5DADF] transition-all cursor-pointer shadow-sm active:scale-95"
+              >
+                <span>Shop All</span>
+                <ArrowRight className="h-2.5 w-2.5 text-[#E05A7E]" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3 w-full sm:w-auto">
+            {onOpenCollectionPage && (
+              <button
+                onClick={onOpenCollectionPage}
+                className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-[#2D2926]/15 text-xs font-sans font-bold text-[#2D2926] hover:bg-[#F5DADF] transition-all cursor-pointer shadow-sm whitespace-nowrap active:scale-95"
               >
                 <span>Shop All 12 Coffees</span>
                 <ArrowRight className="h-3 w-3 text-[#E05A7E]" />
               </button>
             )}
 
-            <div className="flex items-center gap-1 sm:gap-1.5 py-0.5">
+            <div className="flex items-center gap-1 sm:gap-1.5 py-0.5 ml-auto sm:ml-0">
               {featuredProducts.map((p, idx) => (
                 <button
                   key={p.id}
@@ -232,7 +244,7 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
             >
               {/* Left Column: Product Visual */}
               <div className="lg:col-span-6 flex justify-center">
-                <div className="relative aspect-[4/3] sm:aspect-[4/5] max-h-[28vh] sm:max-h-[38vh] lg:max-h-[48vh] w-full max-w-[280px] sm:max-w-sm overflow-hidden rounded-2xl sm:rounded-3xl border border-[#2D2926]/10 shadow-[0_15px_40px_rgba(45,41,38,0.06)] bg-white group">
+                <div className="relative aspect-[4/3] sm:aspect-[4/5] max-h-[22vh] sm:max-h-[38vh] lg:max-h-[48vh] w-full max-w-[240px] sm:max-w-sm overflow-hidden rounded-2xl sm:rounded-3xl border border-[#2D2926]/10 shadow-[0_15px_40px_rgba(45,41,38,0.06)] bg-white group">
                   <img
                     src={product.image}
                     alt={product.name}

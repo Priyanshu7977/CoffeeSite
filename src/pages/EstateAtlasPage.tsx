@@ -305,9 +305,9 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       {/* 2. Hero Section: Clean & Friendly */}
       <section ref={heroRef} className="relative overflow-hidden border-b border-[#2D2926]/10 bg-gradient-to-b from-white to-[#FAF7F5] pt-10 sm:pt-14 pb-14 sm:pb-16 px-4 sm:px-8 md:px-12">
         <div className="mx-auto max-w-5xl text-center">
-          <div ref={heroBadgeRef} className="inline-flex items-center gap-2 rounded-full border border-[#2D2926]/10 bg-[#F5DADF]/60 px-4 py-1.5 text-xs font-mono font-bold tracking-widest text-[#2D2926] uppercase mb-6 shadow-2xs">
-            <Compass className="h-3.5 w-3.5 text-[#E05A7E]" />
-            <span>COFFEE ORIGINS • TASTING NOTES • BREWING GUIDE</span>
+          <div ref={heroBadgeRef} className="inline-flex items-center gap-2 rounded-full border border-[#2D2926]/10 bg-[#F5DADF]/60 px-3 sm:px-4 py-1.5 text-[10px] sm:text-xs font-mono font-bold tracking-wider sm:tracking-widest text-[#2D2926] uppercase mb-6 shadow-2xs max-w-full">
+            <Compass className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
+            <span className="truncate">COFFEE ORIGINS • TASTING NOTES • BREWING GUIDE</span>
           </div>
 
           <h1 ref={heroTitleRef} className="font-display text-3xl sm:text-5xl md:text-6xl text-[#2D2926] font-bold tracking-tight leading-[1.14] mb-6">

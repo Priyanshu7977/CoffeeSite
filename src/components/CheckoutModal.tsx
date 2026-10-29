@@ -419,7 +419,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       />
 
       {/* Main Dialog Modal */}
-      <div className="relative z-10 w-full max-w-4xl rounded-3xl bg-[#FAF7F5] border border-[#2D2926]/10 p-6 sm:p-8 shadow-2xl text-[#2D2926] max-h-[92vh] overflow-y-auto">
+      <div className="relative z-10 w-full max-w-4xl rounded-2xl sm:rounded-3xl bg-[#FAF7F5] border border-[#2D2926]/10 p-4 sm:p-8 shadow-2xl text-[#2D2926] max-h-[92vh] overflow-y-auto">
         {/* Top Header */}
         <div className="flex items-center justify-between border-b border-[#2D2926]/10 pb-4 mb-6">
           <div className="flex items-center gap-3">

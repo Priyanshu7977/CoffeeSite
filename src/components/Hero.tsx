@@ -191,12 +191,12 @@ export const Hero: React.FC<HeroProps> = () => {
         </p>
 
         {/* Ambient Pill */}
-        <div className="mt-2 sm:mt-3 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2.5 text-[9px] sm:text-[10px] md:text-[11px] font-sans tracking-[0.18em] text-[#F5DADF]/85 uppercase font-medium">
-          <span>Batch No. 0984-DAKSHIN</span>
-          <span>•</span>
-          <span>Chikmagalur 1,900M</span>
-          <span>•</span>
-          <span>Malabar Monsooned</span>
+        <div className="mt-2 sm:mt-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[9px] sm:text-[10px] md:text-[11px] font-sans tracking-[0.14em] sm:tracking-[0.18em] text-[#F5DADF]/85 uppercase font-medium">
+          <span className="whitespace-nowrap">Batch No. 0984-DAKSHIN</span>
+          <span className="hidden sm:inline">•</span>
+          <span className="whitespace-nowrap">Chikmagalur 1,900M</span>
+          <span className="hidden sm:inline">•</span>
+          <span className="whitespace-nowrap">Malabar Monsooned</span>
         </div>
       </div>
     </section>

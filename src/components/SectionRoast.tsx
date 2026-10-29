@@ -229,14 +229,14 @@ export const SectionRoast: React.FC = () => {
       {/* Section Content Container */}
       <div className="relative z-20 mx-auto max-w-6xl w-full px-6 md:px-12 flex flex-col justify-between min-h-[70vh] lg:min-h-[76vh] py-4 sm:py-6">
         {/* Top Header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-3">
-          <div className="text-xs tracking-[0.25em] text-[#F5DADF] font-sans font-bold uppercase flex items-center gap-2">
-            <Sparkles className="h-3.5 w-3.5 text-[#E05A7E]" />
-            <span>02 / THE ROAST • CAST IRON</span>
+        <div className="flex items-center justify-between border-b border-white/10 pb-3 gap-2">
+          <div className="text-[11px] sm:text-xs tracking-[0.2em] sm:tracking-[0.25em] text-[#F5DADF] font-sans font-bold uppercase flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <Sparkles className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
+            <span>02 / THE ROAST<span className="hidden sm:inline"> • CAST IRON</span></span>
           </div>
-          <div className="flex items-center gap-2 text-xs font-mono text-[#FAF7F5]/80">
-            <Flame className="h-3.5 w-3.5 text-[#E05A7E]" />
-            <span>{current.temp} • {current.name.toUpperCase()}</span>
+          <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-mono text-[#FAF7F5]/80 truncate">
+            <Flame className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
+            <span className="truncate">{current.temp} <span className="hidden sm:inline">• {current.name.toUpperCase()}</span></span>
           </div>
         </div>
 
@@ -316,9 +316,9 @@ export const SectionRoast: React.FC = () => {
         </div>
 
         {/* Bottom Marker */}
-        <div className="flex items-center justify-between border-t border-white/10 pt-2 text-xs text-[#FAF7F5]/60">
-          <span>Cast-Iron Convection Roastery • Chikmagalur</span>
-          <span className="font-mono text-[#F5DADF] font-bold">STAGE 0{activeStage + 1} OF 04</span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-t border-white/10 pt-2 gap-1 text-xs text-[#FAF7F5]/60">
+          <span className="text-[11px] sm:text-xs truncate">Cast-Iron Convection Roastery<span className="hidden sm:inline"> • Chikmagalur</span></span>
+          <span className="font-mono text-[#F5DADF] font-bold text-[10px] sm:text-xs self-end sm:self-auto shrink-0">STAGE 0{activeStage + 1} OF 04</span>
         </div>
       </div>
     </section>

@@ -175,14 +175,14 @@ export const SectionPour: React.FC = () => {
     >
       <div className="relative z-10 mx-auto max-w-6xl w-full px-5 sm:px-8 md:px-12 flex flex-col justify-between min-h-[70vh] lg:min-h-[75vh] py-3 sm:py-5">
         {/* Top Header */}
-        <div className="flex items-center justify-between border-b border-[#2D2926]/10 pb-2.5">
-          <div className="text-[11px] sm:text-xs tracking-[0.25em] text-[#2D2926] font-sans font-bold uppercase flex items-center gap-2">
-            <Sparkles className="h-3.5 w-3.5 text-[#E05A7E]" />
-            <span>03 / EXTRACTION & SENSORY</span>
+        <div className="flex items-center justify-between border-b border-[#2D2926]/10 pb-2.5 gap-2">
+          <div className="text-[11px] sm:text-xs tracking-[0.2em] sm:tracking-[0.25em] text-[#2D2926] font-sans font-bold uppercase flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <Sparkles className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
+            <span>03 / EXTRACTION<span className="hidden sm:inline"> & SENSORY</span></span>
           </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-white border border-[#2D2926]/10 px-2.5 py-1 text-[11px] sm:text-xs text-[#2D2926] shadow-sm">
-            <Award className="h-3.5 w-3.5 text-[#E05A7E]" />
-            <span className="font-mono font-bold text-[#2D2926]">94.5 SCA CUPPING SCORE</span>
+          <div className="flex items-center gap-1.5 rounded-full bg-white border border-[#2D2926]/10 px-2 sm:px-2.5 py-0.5 sm:py-1 text-[10px] sm:text-xs text-[#2D2926] shadow-sm shrink-0">
+            <Award className="h-3 sm:h-3.5 w-3 sm:w-3.5 text-[#E05A7E]" />
+            <span className="font-mono font-bold text-[#2D2926]">94.5 SCA<span className="hidden sm:inline"> CUPPING SCORE</span></span>
           </div>
         </div>
 
@@ -283,9 +283,9 @@ export const SectionPour: React.FC = () => {
         </div>
 
         {/* Bottom Marker */}
-        <div className="flex items-center justify-between border-t border-[#2D2926]/10 pt-2.5 sm:pt-3 text-[11px] sm:text-xs text-[#8C827A]">
-          <span>Traditional Brass Davarah & 9-Bar Extraction</span>
-          <span className="font-mono text-[#2D2926] font-bold">BENGALURU ROASTERY GUIDE</span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-t border-[#2D2926]/10 pt-2.5 sm:pt-3 gap-1 text-[10.5px] sm:text-xs text-[#8C827A]">
+          <span className="truncate">Traditional Brass Davarah & 9-Bar Extraction</span>
+          <span className="font-mono text-[#2D2926] font-bold self-end sm:self-auto shrink-0">BENGALURU ROASTERY GUIDE</span>
         </div>
       </div>
     </section>

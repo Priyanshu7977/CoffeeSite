@@ -113,20 +113,20 @@ export const SectionManifesto: React.FC = () => {
 
               {/* 3 Pillars */}
               <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 pt-2.5 sm:pt-3 border-t border-white/10">
-                <div className="rounded-xl bg-white/5 border border-white/10 p-1.5 sm:p-2.5 flex flex-col justify-between">
-                  <Flame className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#E05A7E] mb-1" />
-                  <span className="font-display text-[10px] sm:text-sm text-white block font-bold leading-tight">100% Cast Iron</span>
-                  <span className="text-[8px] sm:text-[9px] font-sans text-[#FAF7F5]/60 uppercase font-semibold leading-tight block mt-0.5">Slow Convection</span>
+                <div className="rounded-xl bg-white/5 border border-white/10 p-1.5 sm:p-2.5 flex flex-col justify-between min-w-0">
+                  <Flame className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#E05A7E] mb-1 shrink-0" />
+                  <span className="font-display text-[9.5px] sm:text-sm text-white block font-bold leading-tight truncate">100% Cast Iron</span>
+                  <span className="text-[7.5px] sm:text-[9px] font-sans text-[#FAF7F5]/60 uppercase font-semibold leading-tight block mt-0.5 truncate">Slow Convection</span>
                 </div>
-                <div className="rounded-xl bg-white/5 border border-white/10 p-1.5 sm:p-2.5 flex flex-col justify-between">
-                  <Shield className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#E05A7E] mb-1" />
-                  <span className="font-display text-[10px] sm:text-sm text-white block font-bold leading-tight">+350% Direct</span>
-                  <span className="text-[8px] sm:text-[9px] font-sans text-[#FAF7F5]/60 uppercase font-semibold leading-tight block mt-0.5">Estate Premium</span>
+                <div className="rounded-xl bg-white/5 border border-white/10 p-1.5 sm:p-2.5 flex flex-col justify-between min-w-0">
+                  <Shield className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#E05A7E] mb-1 shrink-0" />
+                  <span className="font-display text-[9.5px] sm:text-sm text-white block font-bold leading-tight truncate">+350% Direct</span>
+                  <span className="text-[7.5px] sm:text-[9px] font-sans text-[#FAF7F5]/60 uppercase font-semibold leading-tight block mt-0.5 truncate">Estate Premium</span>
                 </div>
-                <div className="rounded-xl bg-white/5 border border-white/10 p-1.5 sm:p-2.5 flex flex-col justify-between">
-                  <Award className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#E05A7E] mb-1" />
-                  <span className="font-display text-[10px] sm:text-sm text-white block font-bold leading-tight">85 Tins Max</span>
-                  <span className="text-[8px] sm:text-[9px] font-sans text-[#FAF7F5]/60 uppercase font-semibold leading-tight block mt-0.5">Numbered Lots</span>
+                <div className="rounded-xl bg-white/5 border border-white/10 p-1.5 sm:p-2.5 flex flex-col justify-between min-w-0">
+                  <Award className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#E05A7E] mb-1 shrink-0" />
+                  <span className="font-display text-[9.5px] sm:text-sm text-white block font-bold leading-tight truncate">85 Tins Max</span>
+                  <span className="text-[7.5px] sm:text-[9px] font-sans text-[#FAF7F5]/60 uppercase font-semibold leading-tight block mt-0.5 truncate">Numbered Lots</span>
                 </div>
               </div>
             </div>

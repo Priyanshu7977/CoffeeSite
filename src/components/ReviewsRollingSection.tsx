@@ -293,7 +293,7 @@ const FlipReviewCard: React.FC<ReviewCardProps> = ({
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`group w-[320px] sm:w-[360px] h-[340px] shrink-0 transition-transform duration-500 ease-out perspective-1200 cursor-pointer select-none ${tiltClass} hover:rotate-0 hover:scale-[1.03] hover:z-20`}
+      className={`group w-[280px] min-[380px]:w-[320px] sm:w-[360px] h-[330px] sm:h-[340px] shrink-0 transition-transform duration-500 ease-out perspective-1200 cursor-pointer select-none ${tiltClass} hover:rotate-0 hover:scale-[1.03] hover:z-20`}
       onClick={() => onToggleFlip(review.id)}
       role="button"
       tabIndex={0}

@@ -42,7 +42,7 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
       />
 
       {/* Slide-over Drawer Panel */}
-      <div className="relative z-10 h-full w-full max-w-md bg-white border-l border-[#2D2926]/10 p-6 sm:p-8 flex flex-col justify-between text-[#2D2926] shadow-2xl overflow-y-auto animate-fadeIn">
+      <div className="relative z-10 h-full w-full max-w-md bg-white border-l border-[#2D2926]/10 p-5 sm:p-8 pt-[max(env(safe-area-inset-top),1.25rem)] pb-[max(env(safe-area-inset-bottom),1.25rem)] flex flex-col justify-between text-[#2D2926] shadow-2xl overflow-y-auto animate-fadeIn">
         {/* Drawer Header */}
         <div className="flex items-center justify-between border-b border-[#2D2926]/10 pb-4 mb-5">
           <div className="flex items-center gap-2">
