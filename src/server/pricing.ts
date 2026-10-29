@@ -22,9 +22,11 @@ NOIR_PRODUCTS.forEach((prod) => {
 
 // Authoritative Discount Promo Codes
 export const VALID_DISCOUNT_PROMOS: Record<string, number> = {
-  NOIRVIP10: 10, // 10% Off 48h Cart Urgency Promo
-  NOIR10: 10,    // 10% Off Welcome Promo
-  VIP10: 10,     // 10% Off Member Privilege Promo
+  NOIRVIP10: 10,  // 10% Off 48h Cart Urgency Promo
+  NOIR10: 10,     // 10% Off Welcome Promo
+  VIP10: 10,      // 10% Off Member Privilege Promo
+  COFFEE20: 20,   // 20% Off Connoisseur Promo
+  FIRSTROAST: 10, // 10% Off First Roast Promo
 };
 
 export interface IncomingOrderItem {

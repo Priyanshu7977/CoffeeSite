@@ -81,7 +81,7 @@ export const LegalPage: React.FC<LegalPageProps> = ({ initialTab = 'terms' }) =>
             Policies, Terms & <span className="italic text-[#E05A7E]">Guarantees.</span>
           </h1>
           <p className="font-sans text-xs sm:text-sm text-[#5E5854] mt-2.5 leading-relaxed">
-            All single-estate micro-lots roasted by NOIR DAKSHIN COFFEE are backed by unbending consumer rights, 
+            All single-estate micro-lots roasted by NOIR ROAST COFFEE are backed by unbending consumer rights, 
             256-bit encrypted transactions, and certified food safety compliance under Indian E-Commerce Regulations.
           </p>
         </div>
@@ -131,7 +131,7 @@ export const LegalPage: React.FC<LegalPageProps> = ({ initialTab = 'terms' }) =>
               <section className="space-y-3">
                 <h3 className="font-display font-bold text-base text-[#2D2926]">1. Nature of the Roastery Boutique</h3>
                 <p>
-                  NOIR DAKSHIN COFFEE operates an artisanal single-estate specialty coffee roasting house based in Bengaluru, Karnataka. By browsing this boutique, creating an account, or placing a coffee order, you agree to comply with and be bound by these terms.
+                  NOIR ROAST COFFEE operates an artisanal single-estate specialty coffee roasting house based in Bengaluru, Karnataka. By browsing this boutique, creating an account, or placing a coffee order, you agree to comply with and be bound by these terms.
                 </p>
               </section>
 
@@ -152,7 +152,7 @@ export const LegalPage: React.FC<LegalPageProps> = ({ initialTab = 'terms' }) =>
               <section className="space-y-3">
                 <h3 className="font-display font-bold text-base text-[#2D2926]">4. Governing Jurisdiction</h3>
                 <p>
-                  Any dispute, claim, or controversy arising out of your purchases with NOIR DAKSHIN COFFEE shall be governed by the laws of the Republic of India and subject to the exclusive jurisdiction of the courts of Bengaluru, Karnataka.
+                  Any dispute, claim, or controversy arising out of your purchases with NOIR ROAST COFFEE shall be governed by the laws of the Republic of India and subject to the exclusive jurisdiction of the courts of Bengaluru, Karnataka.
                 </p>
               </section>
             </div>

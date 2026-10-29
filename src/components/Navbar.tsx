@@ -15,7 +15,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  onOpenReserve: _onOpenReserve,
+  onOpenReserve,
   onOpenCollection,
   onOpenLogin: _onOpenLogin,
   onOpenInventoryHud,
@@ -101,7 +101,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div className="flex flex-col">
               <span className="font-display text-[11px] sm:text-sm tracking-[0.16em] sm:tracking-[0.22em] font-bold text-[#2D2926] uppercase transition-colors group-hover:text-[#E05A7E] leading-none">
-                NOIR DAKSHIN
+                NOIR ROAST
               </span>
               <span className="text-[7.5px] sm:text-[8px] font-mono tracking-[0.14em] sm:tracking-[0.16em] text-[#8C827A] uppercase leading-tight mt-0.5 font-semibold">
                 EST. 1998
@@ -114,21 +114,28 @@ export const Navbar: React.FC<NavbarProps> = ({
         <nav className="hidden items-center gap-4 lg:gap-6 md:flex shrink-0">
           {[
             { label: 'COLLECTION', path: '/collection' },
+            { label: 'RESERVE', action: onOpenReserve },
             { label: 'COFFEE GUIDE', path: '/atlas' },
             { label: 'ABOUT US', path: '/about' },
             { label: 'CONTACT', path: '/contact' },
           ].map((item) => (
             <MagneticButton key={item.label} strength={0.25}>
               <button
-                onClick={() => handleNavClick(item.path)}
+                onClick={() => {
+                  if (item.action) {
+                    item.action();
+                  } else if (item.path) {
+                    handleNavClick(item.path);
+                  }
+                }}
                 className={`group relative font-sans text-xs tracking-[0.18em] lg:tracking-[0.2em] font-semibold transition-colors py-1 cursor-pointer ${
-                  location.pathname === item.path ? 'text-[#E05A7E]' : 'text-[#5E5854] hover:text-[#2D2926]'
+                  item.path && location.pathname === item.path ? 'text-[#E05A7E]' : 'text-[#5E5854] hover:text-[#2D2926]'
                 }`}
               >
                 <span className="relative z-10">{item.label}</span>
                 <span
                   className={`absolute bottom-0 left-0 h-[1.5px] bg-[#E05A7E] transition-all duration-300 ${
-                    location.pathname === item.path ? 'w-full' : 'w-0 group-hover:w-full'
+                    item.path && location.pathname === item.path ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}
                 />
               </button>
@@ -217,6 +224,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             {[
               { label: 'HOME', path: '/' },
               { label: 'SHOP COFFEE', path: '/collection' },
+              {
+                label: 'RESERVE ALLOCATION',
+                action: () => {
+                  setIsMobileMenuOpen(false);
+                  onOpenReserve?.();
+                },
+              },
               { label: 'COFFEE GUIDE', path: '/atlas' },
               { label: 'ABOUT US', path: '/about' },
               { label: 'CONTACT US', path: '/contact' },
@@ -225,9 +239,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             ].map((item) => (
               <button
                 key={item.label}
-                onClick={() => handleNavClick(item.path)}
+                onClick={() => {
+                  if (item.action) {
+                    item.action();
+                  } else if (item.path) {
+                    handleNavClick(item.path);
+                  }
+                }}
                 className={`text-left font-display text-sm tracking-[0.18em] py-1 cursor-pointer border-b border-[#2D2926]/5 pb-2 font-semibold ${
-                  location.pathname === item.path ? 'text-[#E05A7E]' : 'text-[#2D2926] hover:text-[#E05A7E]'
+                  item.path && location.pathname === item.path ? 'text-[#E05A7E]' : 'text-[#2D2926] hover:text-[#E05A7E]'
                 }`}
               >
                 {item.label}

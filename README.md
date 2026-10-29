@@ -1,4 +1,4 @@
-# ☕ NOIR DAKSHIN COFFEE ROASTERS
+# ☕ NOIR ROAST COFFEE
 
 [![Live Demo](https://img.shields.io/badge/Demo-Live%20on%20Vercel-E05A7E?style=for-the-badge&logo=vercel&logoColor=white)](https://coffee-site-ivory.vercel.app/)
 [![React 19](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
@@ -6,7 +6,7 @@
 [![Vite](https://img.shields.io/badge/Vite-8.2-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.3-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Razorpay](https://img.shields.io/badge/Razorpay-Verified%20Payments-0C2340?style=for-the-badge&logo=razorpay&logoColor=white)](https://razorpay.com/)
-[![Vitest](https://img.shields.io/badge/Tests-46%2F46%20Passing-success?style=for-the-badge&logo=vitest&logoColor=white)](https://vitest.dev/)
+[![Vitest](https://img.shields.io/badge/Tests-60%2F60%20Passing-success?style=for-the-badge&logo=vitest&logoColor=white)](https://vitest.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 > **Artisanal Single-Estate Specialty Coffee E-Commerce Platform from the Western Ghats of India.**  
@@ -44,7 +44,7 @@
 
 ## ☕ Overview & Brand Story
 
-**NOIR Dakshin Coffee Roasters** was founded in a hostel room and a 200 sq.ft garage studio in Indiranagar, Bengaluru. Rather than accepting ancient roasting dogmas, the roastery applies thermodynamics, convective heat transfer sensors, and optical Brix refractometry to highlight the terroir of Southern India's Western Ghats.
+**NOIR ROAST COFFEE** was founded in a hostel room and a 200 sq.ft garage studio in Indiranagar, Bengaluru. Rather than accepting ancient roasting dogmas, the roastery applies thermodynamics, convective heat transfer sensors, and optical Brix refractometry to highlight the terroir of Southern India's Western Ghats.
 
 From high-elevation shade-grown Arabicas in Baba Budan Giri (the historic birthplace of Indian coffee) to oak-barrel-aged Canephora in Wayanad, each micro-lot is sourced directly from generational farm partners and packaged into vacuum-sealed numbered tins.
 
@@ -343,7 +343,7 @@ VITE_FIREBASE_APP_ID=your_app_id
 
 ## 🧪 Testing & Quality Assurance
 
-The project includes 46 unit, integration, and security tests built with [Vitest](https://vitest.dev/):
+The project includes 60 unit, integration, and security tests built with [Vitest](https://vitest.dev/):
 
 ```bash
 npm test
@@ -352,15 +352,16 @@ npm test
 ### Test Suite Coverage
 
 ```text
-✓ src/__tests__/authentication.test.ts      (9 tests)  - Register, Login, Duplicate Prevention, Token Security
-✓ src/__tests__/penetrationSecurity.test.ts (11 tests) - Tampering, SQLi/XSS Sanitization, HMAC Bypass Defense
 ✓ src/__tests__/inventorySystem.test.ts     (10 tests) - RBAC permissions, Atomic Rollback, Stock Invariants
+✓ src/__tests__/penetrationSecurity.test.ts (11 tests) - Tampering, SQLi/XSS Sanitization, HMAC Bypass Defense
+✓ src/__tests__/authentication.test.ts      (9 tests)  - Register, Login, Duplicate Prevention, Token Security
 ✓ src/__tests__/orderIntegration.test.ts    (1 test)   - End-to-end checkout flow & order tracking
 ✓ src/__tests__/emailAutomation.test.ts     (6 tests)  - 1h, 24h, 48h re-engagement automation cycles
 ✓ src/__tests__/razorpayPayment.test.ts     (9 tests)  - Order creation, signature check, webhook validation
+✓ src/__tests__/productionReadiness.test.ts (14 tests) - Variant Line Isolation, Scrypt Security, Micro-Lot Allocs, Integer Paise
 
-Test Files:  6 passed (6)
-Tests:       46 passed (46)
+Test Files:  7 passed (7)
+Tests:       60 passed (60)
 ```
 
 ---

@@ -76,7 +76,7 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
           <div className="flex-1 space-y-4 overflow-y-auto pr-1 my-2">
             {items.map((item) => (
               <div
-                key={`${item.product.id}-${item.grind}-${item.isSubscription ? item.subscriptionFrequency : 'one'}`}
+                key={item.id || `${item.product.id}-${item.grind}-${item.isSubscription ? item.subscriptionFrequency : 'one'}`}
                 className="flex gap-3.5 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 p-3.5 shadow-sm"
               >
                 {/* Product Image */}
@@ -94,7 +94,7 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
                         {item.product.name}
                       </h4>
                       <button
-                        onClick={() => onRemoveItem(item.product.id)}
+                        onClick={() => onRemoveItem(item.id || item.product.id)}
                         className="text-[#8C827A] hover:text-red-500 transition-colors p-0.5 cursor-pointer"
                         aria-label="Remove item"
                       >
@@ -122,7 +122,7 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
                     {/* Quantity Controls */}
                     <div className="flex items-center rounded-lg border border-[#2D2926]/15 bg-white">
                       <button
-                        onClick={() => onUpdateQuantity(item.product.id, -1)}
+                        onClick={() => onUpdateQuantity(item.id || item.product.id, -1)}
                         className="px-2 py-0.5 text-xs text-[#5E5854] hover:text-[#2D2926] font-mono font-bold cursor-pointer"
                       >
                         -
@@ -131,7 +131,7 @@ export const CollectionDrawer: React.FC<CollectionDrawerProps> = ({
                         {item.quantity}
                       </span>
                       <button
-                        onClick={() => onUpdateQuantity(item.product.id, 1)}
+                        onClick={() => onUpdateQuantity(item.id || item.product.id, 1)}
                         className="px-2 py-0.5 text-xs text-[#5E5854] hover:text-[#2D2926] font-mono font-bold cursor-pointer"
                       >
                         +

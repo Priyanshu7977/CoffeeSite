@@ -77,10 +77,11 @@ export interface BrewMethod {
 }
 
 export interface CollectionItem {
+  id?: string;
   product: Product;
   quantity: number;
   grind: string;
-  certificateId: string;
+  certificateId?: string;
   isSubscription?: boolean;
   subscriptionFrequency?: 'Every 2 Weeks' | 'Every 3 Weeks' | 'Every 4 Weeks';
   unitPriceNum?: number;

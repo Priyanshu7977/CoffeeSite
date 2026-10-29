@@ -18,17 +18,43 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ onLoadingComplete }) => 
     }, 500);
   };
 
-  // Play single video immediately on mount and transition to home page after exactly 3 seconds
+  // Real readiness detection with prefers-reduced-motion check
   useEffect(() => {
+    // 1. Immediately complete if user prefers reduced motion
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      onLoadingComplete();
+      return;
+    }
+
     if (videoRef.current) {
       videoRef.current.play().catch(() => {});
     }
 
-    const timer = setTimeout(() => {
-      handleFinish();
-    }, 3000);
+    const checkReadiness = () => {
+      if (document.readyState === 'complete') {
+        // Document and assets ready
+        handleFinish();
+      } else {
+        window.addEventListener('load', handleFinish, { once: true });
+      }
+    };
 
-    return () => clearTimeout(timer);
+    // If fonts API available, wait until fonts loaded
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(checkReadiness).catch(checkReadiness);
+    } else {
+      checkReadiness();
+    }
+
+    // Safety fallback ceiling so customer is never blocked
+    const fallbackTimer = setTimeout(() => {
+      handleFinish();
+    }, 2500);
+
+    return () => {
+      window.removeEventListener('load', handleFinish);
+      clearTimeout(fallbackTimer);
+    };
   }, []);
 
   return (
@@ -76,7 +102,7 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ onLoadingComplete }) => 
         {/* Clean Typographic Identity */}
         <div className="mt-4 flex flex-col items-center">
           <span className="font-display text-sm sm:text-base tracking-[0.28em] font-bold text-white uppercase drop-shadow-md">
-            NOIR DAKSHIN
+            NOIR ROAST
           </span>
           <span className="text-[9px] sm:text-[10px] font-mono tracking-[0.22em] text-[#F5DADF] uppercase font-semibold mt-1">
             ESTATE HARVEST • BABA BUDAN ROASTERY

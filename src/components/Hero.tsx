@@ -123,6 +123,8 @@ export const Hero: React.FC<HeroProps> = () => {
         <video
           ref={videoRef}
           src="/assets/videos/coffee-hero.mp4"
+          poster="/assets/hero-aperture-reveal.jpg"
+          preload="metadata"
           autoPlay
           muted
           loop
@@ -156,8 +158,8 @@ export const Hero: React.FC<HeroProps> = () => {
           className="mb-2 sm:mb-3.5 inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-[#F5DADF] text-[#2D2926] text-[9px] sm:text-[10px] md:text-xs tracking-[0.16em] sm:tracking-[0.22em] font-sans font-bold uppercase shadow-sm max-w-full"
         >
           <Sparkles className="h-3 w-3 text-[#E05A7E] shrink-0" />
-          <span className="hidden sm:inline">NOIR DAKSHIN ROAST / BABA BUDAN ROASTERY EST. 1998</span>
-          <span className="sm:hidden truncate">NOIR DAKSHIN • EST. 1998</span>
+          <span className="hidden sm:inline">NOIR ROAST / BABA BUDAN ROASTERY EST. 1998</span>
+          <span className="sm:hidden truncate">NOIR ROAST • EST. 1998</span>
         </div>
 
         {/* Monumental Modern Headline in Space Grotesk */}

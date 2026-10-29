@@ -91,7 +91,7 @@ export async function getPaymentConfig(): Promise<PaymentConfigResponse> {
   return {
     keyId: fallbackKey,
     currency: 'INR',
-    merchantName: 'NOIR DAKSHIN COFFEE',
+    merchantName: 'NOIR ROAST',
     customQrOptions: CUSTOM_UPI_QR_OPTIONS,
   };
 }

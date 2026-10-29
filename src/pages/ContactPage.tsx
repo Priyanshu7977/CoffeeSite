@@ -309,7 +309,7 @@ export const ContactPage: React.FC = () => {
                 </span>
                 <h3 className="font-display text-2xl font-bold mb-1">Priyanshu Singh</h3>
                 <p className="text-xs text-[#FAF7F5]/70 mb-6">
-                  Founder & Head Roaster • Noir Dakshin Coffee
+                  Founder & Head Roaster • Noir Roast Coffee
                 </p>
 
                 <div className="space-y-4 text-xs">

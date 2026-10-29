@@ -261,7 +261,7 @@ export const SectionHorizontalGallery: React.FC = () => {
 
               {/* Bottom Marker */}
               <div className="absolute bottom-3 sm:bottom-6 left-4 sm:left-6 md:left-12 right-4 sm:right-6 md:right-12 flex items-center justify-between border-t border-[#2D2926]/10 pt-2 sm:pt-3 text-[10px] sm:text-xs text-[#8C827A]">
-                <span className="truncate">NOIR DAKSHIN • COFFEE JOURNAL</span>
+                <span className="truncate">NOIR ROAST • COFFEE JOURNAL</span>
                 <span className="font-mono text-[#2D2926] font-bold truncate max-w-[120px] sm:max-w-none shrink-0">{slide.title}</span>
               </div>
             </div>

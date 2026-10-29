@@ -262,8 +262,12 @@ var VALID_DISCOUNT_PROMOS = {
   // 10% Off 48h Cart Urgency Promo
   NOIR10: 10,
   // 10% Off Welcome Promo
-  VIP10: 10
+  VIP10: 10,
   // 10% Off Member Privilege Promo
+  COFFEE20: 20,
+  // 20% Off Connoisseur Promo
+  FIRSTROAST: 10
+  // 10% Off First Roast Promo
 };
 function calculateAuthoritativeValuation(incomingItems, discountCode) {
   if (!incomingItems || !Array.isArray(incomingItems) || incomingItems.length === 0) {
@@ -541,6 +545,52 @@ var OrdersStore = class {
 import fs2 from "node:fs";
 import path2 from "node:path";
 import os2 from "node:os";
+
+// src/server/authSecurity.ts
+import crypto from "node:crypto";
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const derivedKey = crypto.scryptSync(password, salt, 64);
+  return {
+    salt,
+    hash: derivedKey.toString("hex")
+  };
+}
+function verifyPassword(password, salt, storedHash) {
+  try {
+    const derivedKey = crypto.scryptSync(password, salt, 64);
+    const storedBuffer = Buffer.from(storedHash, "hex");
+    if (derivedKey.length !== storedBuffer.length) {
+      return false;
+    }
+    return crypto.timingSafeEqual(derivedKey, storedBuffer);
+  } catch {
+    return false;
+  }
+}
+function generateSessionToken() {
+  return crypto.randomBytes(32).toString("hex");
+}
+var rateLimitRegistry = /* @__PURE__ */ new Map();
+function checkRateLimit(key, maxAttempts = 5, windowMs = 15 * 60 * 1e3) {
+  const now = Date.now();
+  const entry = rateLimitRegistry.get(key);
+  if (!entry || entry.resetAt <= now) {
+    rateLimitRegistry.set(key, { attempts: 1, resetAt: now + windowMs });
+    return { allowed: true, remainingAttempts: maxAttempts - 1 };
+  }
+  if (entry.attempts >= maxAttempts) {
+    const retryAfterSeconds = Math.ceil((entry.resetAt - now) / 1e3);
+    return { allowed: false, remainingAttempts: 0, retryAfterSeconds };
+  }
+  entry.attempts += 1;
+  return { allowed: true, remainingAttempts: maxAttempts - entry.attempts };
+}
+function resetRateLimit(key) {
+  rateLimitRegistry.delete(key);
+}
+
+// src/server/usersStore.ts
 function getUsersFilePath() {
   try {
     const localDir = path2.resolve(process.cwd(), "data");
@@ -549,7 +599,7 @@ function getUsersFilePath() {
     }
     return path2.join(localDir, "users.json");
   } catch {
-    const tmpDir = path2.join(os2.tmpdir(), "noir-dakshin-orders");
+    const tmpDir = path2.join(os2.tmpdir(), "noir-roast-data");
     try {
       if (!fs2.existsSync(tmpDir)) {
         fs2.mkdirSync(tmpDir, { recursive: true });
@@ -560,6 +610,7 @@ function getUsersFilePath() {
   }
 }
 var usersCache = /* @__PURE__ */ new Map();
+var sessionsCache = /* @__PURE__ */ new Map();
 function loadUsersFromDisk() {
   try {
     const filePath = getUsersFilePath();
@@ -568,7 +619,14 @@ function loadUsersFromDisk() {
       if (raw.trim()) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
-          usersCache = new Map(parsed.map((u) => [u.email.toLowerCase(), u]));
+          usersCache = new Map(
+            parsed.map((entry) => {
+              if ("uid" in entry && !("profile" in entry)) {
+                return [entry.email.toLowerCase(), { profile: entry }];
+              }
+              return [entry.profile.email.toLowerCase(), entry];
+            })
+          );
         }
       }
     }
@@ -588,9 +646,16 @@ function persistUsersToDisk() {
 loadUsersFromDisk();
 var UsersStore = class {
   /**
-   * Retrieves a user by their email address
+   * Retrieves a customer profile by email (never exposes password hashes)
    */
   static getUserByEmail(email) {
+    const record = usersCache.get(email.toLowerCase().trim());
+    return record ? record.profile : void 0;
+  }
+  /**
+   * Internal retrieval with cryptographic password credentials
+   */
+  static getUserRecord(email) {
     return usersCache.get(email.toLowerCase().trim());
   }
   /**
@@ -598,36 +663,49 @@ var UsersStore = class {
    */
   static getUserById(identifier) {
     const clean = identifier.trim().toLowerCase();
-    for (const user of usersCache.values()) {
-      if (user.uid.toLowerCase() === clean || user.memberId.toLowerCase() === clean || user.email.toLowerCase() === clean) {
-        return user;
+    for (const record of usersCache.values()) {
+      const u = record.profile;
+      if (u.uid.toLowerCase() === clean || u.memberId.toLowerCase() === clean || u.email.toLowerCase() === clean) {
+        return u;
       }
     }
     return void 0;
   }
   /**
-   * Saves or registers a new customer profile
+   * Saves or registers a new customer profile with optional password salt and hash
+   */
+  static saveUserWithCredentials(profile, passwordSalt, passwordHash) {
+    profile.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
+    const record = {
+      profile,
+      passwordSalt,
+      passwordHash
+    };
+    usersCache.set(profile.email.toLowerCase().trim(), record);
+    persistUsersToDisk();
+    return profile;
+  }
+  /**
+   * Legacy wrapper for saveUser
    */
   static saveUser(user) {
-    user.updatedAt = (/* @__PURE__ */ new Date()).toISOString();
-    usersCache.set(user.email.toLowerCase().trim(), user);
-    persistUsersToDisk();
-    return user;
+    return this.saveUserWithCredentials(user);
   }
   /**
    * Updates an existing profile
    */
   static updateUser(email, updates) {
-    const existing = this.getUserByEmail(email);
-    if (!existing) return void 0;
-    const updated = {
-      ...existing,
+    const existingRecord = usersCache.get(email.toLowerCase().trim());
+    if (!existingRecord) return void 0;
+    const updatedProfile = {
+      ...existingRecord.profile,
       ...updates,
       updatedAt: (/* @__PURE__ */ new Date()).toISOString()
     };
-    usersCache.set(email.toLowerCase().trim(), updated);
+    existingRecord.profile = updatedProfile;
+    usersCache.set(email.toLowerCase().trim(), existingRecord);
     persistUsersToDisk();
-    return updated;
+    return updatedProfile;
   }
   /**
    * Adds a delivery address to the customer's profile
@@ -669,15 +747,252 @@ var UsersStore = class {
     return this.updateUser(email, { savedAddresses: updated });
   }
   /**
+   * Session Management: Creates a secure token session (valid for 7 days)
+   */
+  static createSession(profile) {
+    const token = generateSessionToken();
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1e3).toISOString();
+    const session = {
+      token,
+      email: profile.email,
+      userId: profile.uid,
+      role: profile.role,
+      name: profile.fullName,
+      createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+      expiresAt
+    };
+    sessionsCache.set(token, session);
+    return session;
+  }
+  /**
+   * Validates an active session token
+   */
+  static getSession(token) {
+    if (!token) return null;
+    const session = sessionsCache.get(token);
+    if (!session) return null;
+    if (new Date(session.expiresAt).getTime() <= Date.now()) {
+      sessionsCache.delete(token);
+      return null;
+    }
+    return session;
+  }
+  /**
+   * Revokes a session token (Logout)
+   */
+  static revokeSession(token) {
+    if (token) {
+      sessionsCache.delete(token);
+    }
+  }
+  /**
    * Returns all users (for diagnostics / admin)
    */
   static getAllUsers() {
-    return Array.from(usersCache.values());
+    return Array.from(usersCache.values()).map((r) => r.profile);
+  }
+};
+
+// src/server/reservationsStore.ts
+import fs3 from "node:fs";
+import path3 from "node:path";
+import os3 from "node:os";
+var BATCH_CAPACITIES = {
+  "batch-01": { totalAllocations: 85, name: "BABA BUDAN OBSIDIAN" },
+  "batch-02": { totalAllocations: 60, name: "MALABAR MONSOONED CASK" },
+  "batch-03": { totalAllocations: 75, name: "SHEVAROY ELEVATION 1600" },
+  "batch-04": { totalAllocations: 50, name: "WAYANAD WILD ROBUSTA" }
+};
+function getReservationsFilePath() {
+  try {
+    const localDir = path3.resolve(process.cwd(), "data");
+    if (!fs3.existsSync(localDir)) {
+      fs3.mkdirSync(localDir, { recursive: true });
+    }
+    return path3.join(localDir, "reservations.json");
+  } catch {
+    const tmpDir = path3.join(os3.tmpdir(), "noir-roast-data");
+    try {
+      if (!fs3.existsSync(tmpDir)) {
+        fs3.mkdirSync(tmpDir, { recursive: true });
+      }
+    } catch {
+    }
+    return path3.join(tmpDir, "reservations.json");
+  }
+}
+var reservationsCache = /* @__PURE__ */ new Map();
+function loadReservationsFromDisk() {
+  try {
+    const filePath = getReservationsFilePath();
+    if (fs3.existsSync(filePath)) {
+      const raw = fs3.readFileSync(filePath, "utf-8");
+      if (raw.trim()) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          reservationsCache = new Map(parsed.map((r) => [r.id, r]));
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Reservations storage read notice (in-memory active):", err);
+  }
+}
+function persistReservationsToDisk() {
+  try {
+    const filePath = getReservationsFilePath();
+    const list = Array.from(reservationsCache.values());
+    fs3.writeFileSync(filePath, JSON.stringify(list, null, 2), "utf-8");
+  } catch (err) {
+    console.warn("Reservations persistence notice (in-memory active):", err);
+  }
+}
+loadReservationsFromDisk();
+var ReservationsStore = class {
+  static getRemainingAllocations(batchId) {
+    const batch = BATCH_CAPACITIES[batchId] || { totalAllocations: 85, name: "BABA BUDAN OBSIDIAN" };
+    let reserved = 0;
+    for (const res of reservationsCache.values()) {
+      if (res.batchId === batchId && res.status === "confirmed") {
+        reserved += res.quantity;
+      }
+    }
+    return Math.max(0, batch.totalAllocations - reserved);
+  }
+  static createReservation(data) {
+    const batch = BATCH_CAPACITIES[data.batchId] || {
+      totalAllocations: 85,
+      name: data.batchId.toUpperCase()
+    };
+    const remaining = this.getRemainingAllocations(data.batchId);
+    const safeQty = Math.max(1, Math.min(10, Math.floor(data.quantity)));
+    const status = remaining >= safeQty ? "confirmed" : "waitlist";
+    const cleanBatch = data.batchId.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+    const id = `res_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+    const certificateId = `NR-RES-2026-${cleanBatch}-${Math.floor(1e3 + Math.random() * 9e3)}`;
+    const reservation = {
+      id,
+      certificateId,
+      batchId: data.batchId,
+      batchName: batch.name,
+      fullName: data.fullName.trim(),
+      email: data.email.trim().toLowerCase(),
+      quantity: safeQty,
+      grind: data.grind,
+      status,
+      createdAt: (/* @__PURE__ */ new Date()).toISOString(),
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    reservationsCache.set(id, reservation);
+    persistReservationsToDisk();
+    return {
+      success: true,
+      reservation
+    };
+  }
+  static getReservationById(id) {
+    return reservationsCache.get(id) || null;
+  }
+  static getReservationsByEmail(email) {
+    const clean = email.trim().toLowerCase();
+    const results = [];
+    for (const res of reservationsCache.values()) {
+      if (res.email === clean) {
+        results.push(res);
+      }
+    }
+    return results;
+  }
+};
+
+// src/server/newsletterStore.ts
+import fs4 from "node:fs";
+import path4 from "node:path";
+import os4 from "node:os";
+function getSubscribersFilePath() {
+  try {
+    const localDir = path4.resolve(process.cwd(), "data");
+    if (!fs4.existsSync(localDir)) {
+      fs4.mkdirSync(localDir, { recursive: true });
+    }
+    return path4.join(localDir, "subscribers.json");
+  } catch {
+    const tmpDir = path4.join(os4.tmpdir(), "noir-roast-data");
+    try {
+      if (!fs4.existsSync(tmpDir)) {
+        fs4.mkdirSync(tmpDir, { recursive: true });
+      }
+    } catch {
+    }
+    return path4.join(tmpDir, "subscribers.json");
+  }
+}
+var subscribersCache = /* @__PURE__ */ new Map();
+function loadSubscribersFromDisk() {
+  try {
+    const filePath = getSubscribersFilePath();
+    if (fs4.existsSync(filePath)) {
+      const raw = fs4.readFileSync(filePath, "utf-8");
+      if (raw.trim()) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          subscribersCache = new Map(parsed.map((s) => [s.email.toLowerCase(), s]));
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Subscribers storage read notice (in-memory active):", err);
+  }
+}
+function persistSubscribersToDisk() {
+  try {
+    const filePath = getSubscribersFilePath();
+    const list = Array.from(subscribersCache.values());
+    fs4.writeFileSync(filePath, JSON.stringify(list, null, 2), "utf-8");
+  } catch (err) {
+    console.warn("Subscribers persistence notice (in-memory active):", err);
+  }
+}
+loadSubscribersFromDisk();
+var NewsletterStore = class {
+  static isSubscribed(email) {
+    const clean = email.trim().toLowerCase();
+    const existing = subscribersCache.get(clean);
+    return Boolean(existing && existing.status === "active");
+  }
+  static subscribe(email, source = "footer") {
+    const clean = email.trim().toLowerCase();
+    const existing = subscribersCache.get(clean);
+    if (existing && existing.status === "active") {
+      return { success: true, alreadySubscribed: true };
+    }
+    const subscriber = {
+      email: clean,
+      source,
+      subscribedAt: (/* @__PURE__ */ new Date()).toISOString(),
+      status: "active"
+    };
+    subscribersCache.set(clean, subscriber);
+    persistSubscribersToDisk();
+    return { success: true, alreadySubscribed: false };
+  }
+  static unsubscribe(email) {
+    const clean = email.trim().toLowerCase();
+    const existing = subscribersCache.get(clean);
+    if (existing) {
+      existing.status = "unsubscribed";
+      persistSubscribersToDisk();
+      return true;
+    }
+    return false;
+  }
+  static getAllSubscribers() {
+    return Array.from(subscribersCache.values());
   }
 };
 
 // src/server/razorpayClient.ts
-import crypto from "node:crypto";
+import crypto2 from "node:crypto";
 import Razorpay from "razorpay";
 function getRazorpayCredentials() {
   const keyId = process.env.RAZORPAY_KEY_ID || "";
@@ -725,13 +1040,13 @@ function verifyPaymentSignature(razorpayOrderId, razorpayPaymentId, razorpaySign
   const { keySecret } = getRazorpayCredentials();
   if (!keySecret) return false;
   const payload = `${razorpayOrderId}|${razorpayPaymentId}`;
-  const expectedSignature = crypto.createHmac("sha256", keySecret).update(payload).digest("hex");
+  const expectedSignature = crypto2.createHmac("sha256", keySecret).update(payload).digest("hex");
   const expectedBuf = Buffer.from(expectedSignature, "utf-8");
   const actualBuf = Buffer.from(razorpaySignature, "utf-8");
   if (expectedBuf.length !== actualBuf.length) {
     return false;
   }
-  return crypto.timingSafeEqual(expectedBuf, actualBuf);
+  return crypto2.timingSafeEqual(expectedBuf, actualBuf);
 }
 function verifyWebhookSignature(rawBody, signature, secretOverride) {
   if (!rawBody || !signature) return false;
@@ -740,13 +1055,13 @@ function verifyWebhookSignature(rawBody, signature, secretOverride) {
   if (!secret) return false;
   try {
     const rawString = Buffer.isBuffer(rawBody) ? rawBody.toString("utf-8") : rawBody;
-    const expectedSignature = crypto.createHmac("sha256", secret).update(rawString).digest("hex");
+    const expectedSignature = crypto2.createHmac("sha256", secret).update(rawString).digest("hex");
     const expectedBuf = Buffer.from(expectedSignature, "utf-8");
     const actualBuf = Buffer.from(signature, "utf-8");
     if (expectedBuf.length !== actualBuf.length) {
       return false;
     }
-    return crypto.timingSafeEqual(expectedBuf, actualBuf);
+    return crypto2.timingSafeEqual(expectedBuf, actualBuf);
   } catch {
     return false;
   }
@@ -1113,7 +1428,7 @@ apiRouter.get("/", (_req, res) => {
   const { keyId } = getRazorpayCredentials();
   res.json({
     status: "ok",
-    service: "Noir Dakshin Coffee Payment Gateway",
+    service: "Noir Roast Coffee Payment Gateway",
     razorpayConfigured: Boolean(keyId),
     timestamp: (/* @__PURE__ */ new Date()).toISOString()
   });
@@ -1122,7 +1437,7 @@ apiRouter.get("/health", (_req, res) => {
   const { keyId } = getRazorpayCredentials();
   res.json({
     status: "ok",
-    service: "Noir Dakshin Coffee Payment Gateway",
+    service: "Noir Roast Coffee Payment Gateway",
     razorpayConfigured: Boolean(keyId),
     timestamp: (/* @__PURE__ */ new Date()).toISOString()
   });
@@ -1132,7 +1447,7 @@ apiRouter.get("/payment/config", (_req, res) => {
   res.json({
     keyId: keyId || process.env.VITE_RAZORPAY_KEY_ID || "",
     currency: "INR",
-    merchantName: "NOIR DAKSHIN COFFEE",
+    merchantName: "NOIR ROAST COFFEE",
     customQrOptions: CUSTOM_UPI_QR_OPTIONS
   });
 });
@@ -1517,6 +1832,14 @@ apiRouter.post("/admin/verify-utr", (req, res) => {
 apiRouter.post("/auth/register", (req, res) => {
   try {
     const { fullName, email, phone, password } = req.body;
+    const rateCheck = checkRateLimit(`reg_${req.ip || "ip"}`);
+    if (!rateCheck.allowed) {
+      res.status(429).json({
+        success: false,
+        error: `Too many registration attempts. Please try again in ${rateCheck.retryAfterSeconds} seconds.`
+      });
+      return;
+    }
     if (!fullName || !isValidName(fullName)) {
       res.status(400).json({ success: false, error: "Valid full name (alphabets only, min 2 chars) is required." });
       return;
@@ -1541,6 +1864,7 @@ apiRouter.post("/auth/register", (req, res) => {
       });
       return;
     }
+    const { salt, hash } = hashPassword(password);
     const memberId = `NR-2026-${Math.floor(1e3 + Math.random() * 9e3)}`;
     const newProfile = {
       uid: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
@@ -1559,10 +1883,11 @@ apiRouter.post("/auth/register", (req, res) => {
       createdAt: (/* @__PURE__ */ new Date()).toISOString(),
       updatedAt: (/* @__PURE__ */ new Date()).toISOString()
     };
-    const saved = UsersStore.saveUser(newProfile);
+    const saved = UsersStore.saveUserWithCredentials(newProfile, salt, hash);
+    const session = UsersStore.createSession(saved);
     res.status(201).json({
       success: true,
-      message: "Account created successfully. Welcome to Noir Dakshin Coffee.",
+      message: "Account created successfully. Welcome to Noir Roast Coffee.",
       profile: saved,
       session: {
         name: saved.fullName,
@@ -1571,7 +1896,8 @@ apiRouter.post("/auth/register", (req, res) => {
         memberId: saved.memberId,
         isLoggedIn: true,
         role: saved.role,
-        savedAddresses: saved.savedAddresses
+        savedAddresses: saved.savedAddresses,
+        token: session.token
       }
     });
   } catch (err) {
@@ -1591,10 +1917,19 @@ apiRouter.post("/auth/login", (req, res) => {
       return;
     }
     const cleanEmail = email.trim().toLowerCase();
+    const rateCheck = checkRateLimit(`login_${cleanEmail}`);
+    if (!rateCheck.allowed) {
+      res.status(429).json({
+        success: false,
+        error: `Too many failed sign-in attempts. Please try again in ${rateCheck.retryAfterSeconds} seconds.`
+      });
+      return;
+    }
     const imsAccount = AUTHORIZED_IMS_ACCOUNTS.find(
       (a) => a.email.toLowerCase() === cleanEmail && a.password === password
     );
     if (imsAccount) {
+      resetRateLimit(`login_${cleanEmail}`);
       const imsProfile = {
         uid: `ims_${imsAccount.role.toLowerCase()}`,
         memberId: imsAccount.role === "ADMIN" ? "NOIR-OWNER-01" : "NOIR-ENG-02",
@@ -1624,6 +1959,7 @@ apiRouter.post("/auth/login", (req, res) => {
         createdAt: "1998-01-01T00:00:00.000Z",
         updatedAt: (/* @__PURE__ */ new Date()).toISOString()
       };
+      const session2 = UsersStore.createSession(imsProfile);
       res.json({
         success: true,
         message: "IMS Master Roaster authenticated.",
@@ -1635,36 +1971,111 @@ apiRouter.post("/auth/login", (req, res) => {
           memberId: imsProfile.memberId,
           isLoggedIn: true,
           role: imsProfile.role,
-          savedAddresses: imsProfile.savedAddresses
+          savedAddresses: imsProfile.savedAddresses,
+          token: session2.token
         }
       });
       return;
     }
-    const existing = UsersStore.getUserByEmail(cleanEmail);
-    if (!existing) {
+    const record = UsersStore.getUserRecord(cleanEmail);
+    if (!record) {
       res.status(401).json({
         success: false,
-        error: "No account found with this email. Please create an account to proceed."
+        error: "Invalid email or password. Please verify your credentials and try again."
       });
       return;
     }
+    if (record.passwordSalt && record.passwordHash) {
+      const isMatch = verifyPassword(password, record.passwordSalt, record.passwordHash);
+      if (!isMatch) {
+        res.status(401).json({
+          success: false,
+          error: "Invalid email or password. Please verify your credentials and try again."
+        });
+        return;
+      }
+    }
+    resetRateLimit(`login_${cleanEmail}`);
+    const session = UsersStore.createSession(record.profile);
     res.json({
       success: true,
       message: "Signed in successfully.",
-      profile: existing,
+      profile: record.profile,
       session: {
-        name: existing.fullName,
-        email: existing.email,
-        phone: existing.phone,
-        memberId: existing.memberId,
+        name: record.profile.fullName,
+        email: record.profile.email,
+        phone: record.profile.phone,
+        memberId: record.profile.memberId,
         isLoggedIn: true,
-        role: existing.role,
-        savedAddresses: existing.savedAddresses
+        role: record.profile.role,
+        savedAddresses: record.profile.savedAddresses,
+        token: session.token
       }
     });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ success: false, error: "Login service encountered an error." });
+  }
+});
+apiRouter.post("/auth/logout", (req, res) => {
+  const token = req.headers.authorization?.replace(/^Bearer\s+/i, "") || req.body?.token;
+  if (token) {
+    UsersStore.revokeSession(token);
+  }
+  res.json({ success: true, message: "Logged out successfully." });
+});
+apiRouter.post("/reservations", (req, res) => {
+  try {
+    const { batchId, fullName, email, grind, quantity } = req.body;
+    if (!fullName || !isValidName(fullName)) {
+      res.status(400).json({ success: false, error: "Valid patron name (alphabets only) is required." });
+      return;
+    }
+    if (!email || !isValidEmail(email)) {
+      res.status(400).json({ success: false, error: "Valid email address is required." });
+      return;
+    }
+    const result = ReservationsStore.createReservation({
+      batchId: batchId || "batch-01",
+      fullName,
+      email,
+      grind: grind || "whole",
+      quantity: Number(quantity) || 1
+    });
+    res.json(result);
+  } catch (err) {
+    console.error("Reservation error:", err);
+    res.status(500).json({ success: false, error: "Failed to process allocation reservation." });
+  }
+});
+apiRouter.get("/reservations/remaining/:batchId", (req, res) => {
+  const batchId = String(req.params.batchId || "batch-01");
+  const remaining = ReservationsStore.getRemainingAllocations(batchId);
+  res.json({ success: true, batchId, remaining });
+});
+apiRouter.post("/newsletter/subscribe", (req, res) => {
+  try {
+    const { email, source } = req.body;
+    if (!email || !isValidEmail(email)) {
+      res.status(400).json({ success: false, error: "Please enter a valid email address." });
+      return;
+    }
+    const result = NewsletterStore.subscribe(email, source || "footer");
+    if (result.alreadySubscribed) {
+      res.json({
+        success: true,
+        alreadySubscribed: true,
+        message: "You are already subscribed to Noir Roast roastery dispatches."
+      });
+      return;
+    }
+    res.status(201).json({
+      success: true,
+      message: "Subscribed! Welcome to Noir Roast roastery dispatches."
+    });
+  } catch (err) {
+    console.error("Newsletter subscription error:", err);
+    res.status(500).json({ success: false, error: "Failed to complete newsletter subscription." });
   }
 });
 apiRouter.post("/auth/sync", (req, res) => {

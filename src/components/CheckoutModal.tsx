@@ -250,13 +250,13 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           throw new Error('Razorpay order initialization failed on server.');
         }
 
-        const gatewayKey = orderRes.keyId || import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_TsqAJmo20ycL7d';
+        const gatewayKey = orderRes.keyId || (import.meta.env.VITE_RAZORPAY_KEY_ID as string) || '';
 
         await openRazorpayCheckout({
           key: gatewayKey,
           amount: orderRes.amount || totalNumeric * 100,
           currency: orderRes.currency || 'INR',
-          name: 'NOIR DAKSHIN COFFEE',
+          name: 'NOIR ROAST COFFEE',
           description: `Order #${orderRes.orderNumber} • Fresh Roasted Micro-Lots`,
           image: '/favicon.svg',
           order_id: orderRes.razorpayOrderId,

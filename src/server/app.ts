@@ -10,6 +10,14 @@ import dotenv from 'dotenv';
 import { calculateAuthoritativeValuation } from './pricing';
 import { OrdersStore } from './ordersStore';
 import { UsersStore } from './usersStore';
+import { ReservationsStore } from './reservationsStore';
+import { NewsletterStore } from './newsletterStore';
+import {
+  hashPassword,
+  verifyPassword,
+  checkRateLimit,
+  resetRateLimit,
+} from './authSecurity';
 import {
   getRazorpayCredentials,
   createRazorpayOrder,
@@ -59,7 +67,7 @@ apiRouter.get('/', (_req: Request, res: Response) => {
   const { keyId } = getRazorpayCredentials();
   res.json({
     status: 'ok',
-    service: 'Noir Dakshin Coffee Payment Gateway',
+    service: 'Noir Roast Coffee Payment Gateway',
     razorpayConfigured: Boolean(keyId),
     timestamp: new Date().toISOString(),
   });
@@ -72,7 +80,7 @@ apiRouter.get('/health', (_req: Request, res: Response) => {
   const { keyId } = getRazorpayCredentials();
   res.json({
     status: 'ok',
-    service: 'Noir Dakshin Coffee Payment Gateway',
+    service: 'Noir Roast Coffee Payment Gateway',
     razorpayConfigured: Boolean(keyId),
     timestamp: new Date().toISOString(),
   });
@@ -87,7 +95,7 @@ apiRouter.get('/payment/config', (_req: Request, res: Response) => {
   res.json({
     keyId: keyId || process.env.VITE_RAZORPAY_KEY_ID || '',
     currency: 'INR',
-    merchantName: 'NOIR DAKSHIN COFFEE',
+    merchantName: 'NOIR ROAST COFFEE',
     customQrOptions: CUSTOM_UPI_QR_OPTIONS,
   });
 });
@@ -591,11 +599,20 @@ apiRouter.post('/admin/verify-utr', (req: Request, res: Response): void => {
 
 /**
  * 11. Customer Registration
- * Validates details, checks duplicates, generates unique Member ID, and stores profile
+ * Validates details, checks duplicates, securely hashes password using scrypt, and stores profile.
  */
 apiRouter.post('/auth/register', (req: Request, res: Response): void => {
   try {
     const { fullName, email, phone, password } = req.body;
+
+    const rateCheck = checkRateLimit(`reg_${req.ip || 'ip'}`);
+    if (!rateCheck.allowed) {
+      res.status(429).json({
+        success: false,
+        error: `Too many registration attempts. Please try again in ${rateCheck.retryAfterSeconds} seconds.`,
+      });
+      return;
+    }
 
     if (!fullName || !isValidName(fullName)) {
       res.status(400).json({ success: false, error: 'Valid full name (alphabets only, min 2 chars) is required.' });
@@ -624,6 +641,7 @@ apiRouter.post('/auth/register', (req: Request, res: Response): void => {
       return;
     }
 
+    const { salt, hash } = hashPassword(password);
     const memberId = `NR-2026-${Math.floor(1000 + Math.random() * 9000)}`;
     const newProfile: CustomerProfile = {
       uid: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
@@ -643,11 +661,12 @@ apiRouter.post('/auth/register', (req: Request, res: Response): void => {
       updatedAt: new Date().toISOString(),
     };
 
-    const saved = UsersStore.saveUser(newProfile);
+    const saved = UsersStore.saveUserWithCredentials(newProfile, salt, hash);
+    const session = UsersStore.createSession(saved);
 
     res.status(201).json({
       success: true,
-      message: 'Account created successfully. Welcome to Noir Dakshin Coffee.',
+      message: 'Account created successfully. Welcome to Noir Roast Coffee.',
       profile: saved,
       session: {
         name: saved.fullName,
@@ -657,6 +676,7 @@ apiRouter.post('/auth/register', (req: Request, res: Response): void => {
         isLoggedIn: true,
         role: saved.role,
         savedAddresses: saved.savedAddresses,
+        token: session.token,
       },
     });
   } catch (err: unknown) {
@@ -667,7 +687,7 @@ apiRouter.post('/auth/register', (req: Request, res: Response): void => {
 
 /**
  * 12. Customer Login
- * Checks IMS roles or stored customer profiles
+ * Checks IMS roles or stored customer profiles with scrypt password verification.
  */
 apiRouter.post('/auth/login', (req: Request, res: Response): void => {
   try {
@@ -684,12 +704,23 @@ apiRouter.post('/auth/login', (req: Request, res: Response): void => {
 
     const cleanEmail = email.trim().toLowerCase();
 
+    // Brute-force rate limiting protection
+    const rateCheck = checkRateLimit(`login_${cleanEmail}`);
+    if (!rateCheck.allowed) {
+      res.status(429).json({
+        success: false,
+        error: `Too many failed sign-in attempts. Please try again in ${rateCheck.retryAfterSeconds} seconds.`,
+      });
+      return;
+    }
+
     // Check IMS accounts first
     const imsAccount = AUTHORIZED_IMS_ACCOUNTS.find(
       (a) => a.email.toLowerCase() === cleanEmail && a.password === password
     );
 
     if (imsAccount) {
+      resetRateLimit(`login_${cleanEmail}`);
       const imsProfile: CustomerProfile = {
         uid: `ims_${imsAccount.role.toLowerCase()}`,
         memberId: imsAccount.role === 'ADMIN' ? 'NOIR-OWNER-01' : 'NOIR-ENG-02',
@@ -720,6 +751,8 @@ apiRouter.post('/auth/login', (req: Request, res: Response): void => {
         updatedAt: new Date().toISOString(),
       };
 
+      const session = UsersStore.createSession(imsProfile);
+
       res.json({
         success: true,
         message: 'IMS Master Roaster authenticated.',
@@ -732,38 +765,138 @@ apiRouter.post('/auth/login', (req: Request, res: Response): void => {
           isLoggedIn: true,
           role: imsProfile.role,
           savedAddresses: imsProfile.savedAddresses,
+          token: session.token,
         },
       });
       return;
     }
 
-    // Check registered customer accounts
-    const existing = UsersStore.getUserByEmail(cleanEmail);
-    if (!existing) {
+    // Check registered customer accounts with scrypt verification
+    const record = UsersStore.getUserRecord(cleanEmail);
+    if (!record) {
       res.status(401).json({
         success: false,
-        error: 'No account found with this email. Please create an account to proceed.',
+        error: 'Invalid email or password. Please verify your credentials and try again.',
       });
       return;
     }
 
+    // If customer has salt & hash, verify cryptographically
+    if (record.passwordSalt && record.passwordHash) {
+      const isMatch = verifyPassword(password, record.passwordSalt, record.passwordHash);
+      if (!isMatch) {
+        res.status(401).json({
+          success: false,
+          error: 'Invalid email or password. Please verify your credentials and try again.',
+        });
+        return;
+      }
+    }
+
+    resetRateLimit(`login_${cleanEmail}`);
+    const session = UsersStore.createSession(record.profile);
+
     res.json({
       success: true,
       message: 'Signed in successfully.',
-      profile: existing,
+      profile: record.profile,
       session: {
-        name: existing.fullName,
-        email: existing.email,
-        phone: existing.phone,
-        memberId: existing.memberId,
+        name: record.profile.fullName,
+        email: record.profile.email,
+        phone: record.profile.phone,
+        memberId: record.profile.memberId,
         isLoggedIn: true,
-        role: existing.role,
-        savedAddresses: existing.savedAddresses,
+        role: record.profile.role,
+        savedAddresses: record.profile.savedAddresses,
+        token: session.token,
       },
     });
   } catch (err: unknown) {
     console.error('Login error:', err);
     res.status(500).json({ success: false, error: 'Login service encountered an error.' });
+  }
+});
+
+/**
+ * 12B. Customer Logout
+ * Revokes the session token.
+ */
+apiRouter.post('/auth/logout', (req: Request, res: Response): void => {
+  const token = req.headers.authorization?.replace(/^Bearer\s+/i, '') || req.body?.token;
+  if (token) {
+    UsersStore.revokeSession(token);
+  }
+  res.json({ success: true, message: 'Logged out successfully.' });
+});
+
+/**
+ * 12C. Micro-Lot Allocation Reservations
+ * Saves reservation to persistent database and returns genuine allocation certificate.
+ */
+apiRouter.post('/reservations', (req: Request, res: Response): void => {
+  try {
+    const { batchId, fullName, email, grind, quantity } = req.body;
+
+    if (!fullName || !isValidName(fullName)) {
+      res.status(400).json({ success: false, error: 'Valid patron name (alphabets only) is required.' });
+      return;
+    }
+    if (!email || !isValidEmail(email)) {
+      res.status(400).json({ success: false, error: 'Valid email address is required.' });
+      return;
+    }
+
+    const result = ReservationsStore.createReservation({
+      batchId: batchId || 'batch-01',
+      fullName,
+      email,
+      grind: grind || 'whole',
+      quantity: Number(quantity) || 1,
+    });
+
+    res.json(result);
+  } catch (err: unknown) {
+    console.error('Reservation error:', err);
+    res.status(500).json({ success: false, error: 'Failed to process allocation reservation.' });
+  }
+});
+
+apiRouter.get('/reservations/remaining/:batchId', (req: Request, res: Response): void => {
+  const batchId = String(req.params.batchId || 'batch-01');
+  const remaining = ReservationsStore.getRemainingAllocations(batchId);
+  res.json({ success: true, batchId, remaining });
+});
+
+/**
+ * 12D. Newsletter Subscription
+ * Validates, records subscriber persistently, and handles duplicates truthfully.
+ */
+apiRouter.post('/newsletter/subscribe', (req: Request, res: Response): void => {
+  try {
+    const { email, source } = req.body;
+
+    if (!email || !isValidEmail(email)) {
+      res.status(400).json({ success: false, error: 'Please enter a valid email address.' });
+      return;
+    }
+
+    const result = NewsletterStore.subscribe(email, source || 'footer');
+    if (result.alreadySubscribed) {
+      res.json({
+        success: true,
+        alreadySubscribed: true,
+        message: 'You are already subscribed to Noir Roast roastery dispatches.',
+      });
+      return;
+    }
+
+    res.status(201).json({
+      success: true,
+      message: 'Subscribed! Welcome to Noir Roast roastery dispatches.',
+    });
+  } catch (err: unknown) {
+    console.error('Newsletter subscription error:', err);
+    res.status(500).json({ success: false, error: 'Failed to complete newsletter subscription.' });
   }
 });
 

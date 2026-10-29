@@ -86,7 +86,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
                   <span className="font-display text-sm font-bold">N</span>
                 </div>
                 <h1 className="font-display font-bold text-xl sm:text-2xl tracking-wider text-[#2D2926]">
-                  NOIR DAKSHIN COFFEE
+                  NOIR ROAST COFFEE
                 </h1>
               </div>
               <p className="text-xs text-[#5E5854] max-w-sm leading-relaxed">
@@ -243,7 +243,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({
             <div className="text-right">
               <span className="text-[10px] font-mono uppercase text-[#8C827A] block font-bold">Authorized Signatory</span>
               <span className="font-display font-bold text-sm text-[#2D2926]">Priyanshu Singh</span>
-              <span className="text-[10px] text-[#8C827A] block">Head Roaster • Noir Dakshin Coffee</span>
+              <span className="text-[10px] text-[#8C827A] block">Head Roaster • Noir Roast Coffee</span>
             </div>
           </div>
         </div>

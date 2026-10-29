@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { useLenis } from './hooks/useLenis';
 import { PageLoader } from './components/PageLoader';
@@ -84,11 +84,45 @@ export const App: React.FC = () => {
   // User Auth & Session from global AuthContext
   const { userSession } = useAuth();
 
-  // Collection Cart State with LocalStorage Persistence
+  // Helper to generate a stable, collision-free unique line item identifier
+  const generateLineItemId = (
+    productId: string,
+    grind: string,
+    isSubscription?: boolean,
+    frequency?: string
+  ): string => {
+    return `${productId}::${grind}::${isSubscription ? frequency || 'standard' : 'single'}`;
+  };
+
+  // Collection Cart State with Validated LocalStorage Persistence
   const [collectionItems, setCollectionItems] = useState<CollectionItem[]>(() => {
     try {
       const saved = localStorage.getItem('noir_collection_cart_v1');
-      return saved ? JSON.parse(saved) : [];
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .filter(
+          (item) =>
+            item &&
+            item.product &&
+            typeof item.product.id === 'string' &&
+            NOIR_PRODUCTS.some((p) => p.id === item.product.id)
+        )
+        .map((item) => {
+          const grind = item.grind || 'Whole Bean';
+          const lineId =
+            item.id ||
+            generateLineItemId(item.product.id, grind, item.isSubscription, item.subscriptionFrequency);
+          const stock = inventorySystem.getStock(item.product.id);
+          const safeQty = Math.max(1, Math.min(stock > 0 ? stock : 1, Math.floor(Number(item.quantity) || 1)));
+          return {
+            ...item,
+            id: lineId,
+            grind,
+            quantity: safeQty,
+          };
+        });
     } catch {
       return [];
     }
@@ -101,9 +135,10 @@ export const App: React.FC = () => {
       console.warn('Cart persistence failed', e);
     }
     const subtotal = collectionItems.reduce((sum, item) => {
-      const priceNum = item.unitPriceNum !== undefined
-        ? item.unitPriceNum
-        : (parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 0);
+      const priceNum =
+        item.unitPriceNum !== undefined
+          ? item.unitPriceNum
+          : parseFloat(item.product.price.replace(/[^0-9.]/g, '')) || 0;
       return sum + priceNum * item.quantity;
     }, 0);
     recordCartActivity(
@@ -113,51 +148,6 @@ export const App: React.FC = () => {
       userSession?.name
     );
   }, [collectionItems, userSession]);
-
-  // 5-Second Cumulative Scroll Trigger for VIP Pass Prompt (only on Home page)
-  const hasTriggeredScrollPopup = useRef<boolean>(false);
-  const scrollTimerRef = useRef<number>(0);
-
-  useEffect(() => {
-    if (userSession?.isLoggedIn || sessionStorage.getItem('noir_login_dismissed') === 'true') {
-      return;
-    }
-
-    let isScrolling = false;
-    let scrollTimeout: ReturnType<typeof setTimeout>;
-
-    const handleScroll = () => {
-      if (hasTriggeredScrollPopup.current || location.pathname !== '/') return;
-
-      if (!isScrolling) {
-        isScrolling = true;
-      }
-
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        isScrolling = false;
-      }, 200);
-    };
-
-    const interval = setInterval(() => {
-      if (isScrolling && !hasTriggeredScrollPopup.current && location.pathname === '/') {
-        scrollTimerRef.current += 1;
-        if (scrollTimerRef.current >= 5) {
-          hasTriggeredScrollPopup.current = true;
-          sessionStorage.setItem('noir_login_dismissed', 'true');
-          setIsLoginModalOpen(true);
-        }
-      }
-    }, 1000);
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      clearInterval(interval);
-      clearTimeout(scrollTimeout);
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [userSession, location.pathname]);
 
   const handleNavigate = (targetId: string) => {
     if (location.pathname !== '/') {
@@ -197,12 +187,13 @@ export const App: React.FC = () => {
   ) => {
     // Inventory Bounds Validation
     const available = inventorySystem.getStock(product.id);
-    const existing = collectionItems.find(
-      (item) => item.product.id === product.id && 
-                item.grind === grind &&
-                Boolean(item.isSubscription) === Boolean(isSubscription) &&
-                item.subscriptionFrequency === subscriptionFrequency
-    );
+    if (available <= 0) {
+      alert(`Inventory Alert: "${product.name}" is currently sold out.`);
+      return;
+    }
+
+    const lineItemId = generateLineItemId(product.id, grind, isSubscription, subscriptionFrequency);
+    const existing = collectionItems.find((item) => item.id === lineItemId);
     const currentQty = existing ? existing.quantity : 0;
 
     if (currentQty + quantity > available) {
@@ -214,27 +205,22 @@ export const App: React.FC = () => {
     const unitPriceNum = isSubscription ? Math.round(rawPrice * 0.9) : rawPrice;
 
     setCollectionItems((prev) => {
-      const match = prev.find(
-        (item) => item.product.id === product.id && 
-                  item.grind === grind &&
-                  Boolean(item.isSubscription) === Boolean(isSubscription) &&
-                  item.subscriptionFrequency === subscriptionFrequency
-      );
-      if (match) {
-        return prev.map((item) =>
-          item.product.id === product.id && 
-          item.grind === grind &&
-          Boolean(item.isSubscription) === Boolean(isSubscription) &&
-          item.subscriptionFrequency === subscriptionFrequency
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
+      const matchIndex = prev.findIndex((item) => item.id === lineItemId);
+      if (matchIndex > -1) {
+        return prev.map((item, idx) => {
+          if (idx === matchIndex) {
+            const nextQty = Math.min(available, item.quantity + quantity);
+            return { ...item, quantity: nextQty };
+          }
+          return item;
+        });
       }
       return [
         ...prev,
         {
+          id: lineItemId,
           product,
-          quantity,
+          quantity: Math.min(available, quantity),
           grind,
           isSubscription,
           subscriptionFrequency,
@@ -246,17 +232,25 @@ export const App: React.FC = () => {
     setIsCollectionDrawerOpen(true);
   };
 
-  const handleRemoveCollectionItem = (productId: string) => {
-    setCollectionItems((prev) => prev.filter((item) => item.product.id !== productId));
+  const handleRemoveCollectionItem = (lineItemIdOrProductId: string) => {
+    setCollectionItems((prev) =>
+      prev.filter(
+        (item) => item.id !== lineItemIdOrProductId && item.product.id !== lineItemIdOrProductId
+      )
+    );
   };
 
-  const handleUpdateCollectionQuantity = (productId: string, delta: number) => {
-    const available = inventorySystem.getStock(productId);
-
+  const handleUpdateCollectionQuantity = (lineItemIdOrProductId: string, delta: number) => {
     setCollectionItems((prev) =>
       prev
         .map((item) => {
-          if (item.product.id === productId) {
+          const isTarget =
+            item.id === lineItemIdOrProductId ||
+            (item.product.id === lineItemIdOrProductId &&
+              prev.filter((p) => p.product.id === lineItemIdOrProductId).length === 1);
+
+          if (isTarget) {
+            const available = inventorySystem.getStock(item.product.id);
             const newQty = item.quantity + delta;
             if (newQty > available) {
               alert(`Inventory Alert: Max available stock is ${available} units.`);

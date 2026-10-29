@@ -16,16 +16,35 @@ export const Footer: React.FC<FooterProps> = ({
   showReviews = true,
 }) => {
   const [email, setEmail] = useState('');
-  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [subscriptionMessage, setSubscriptionMessage] = useState<string | null>(null);
+  const [subscriptionError, setSubscriptionError] = useState<string | null>(null);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    setIsSubscribed(true);
-    setTimeout(() => {
+    setIsSubmitting(true);
+    setSubscriptionMessage(null);
+    setSubscriptionError(null);
+
+    try {
+      const res = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'footer' }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Subscription failed. Please check your email.');
+      }
+      setSubscriptionMessage(data.message || 'Subscribed! Welcome to Noir Roast roastery dispatches.');
       setEmail('');
-      setIsSubscribed(false);
-    }, 4000);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error subscribing to newsletter.';
+      setSubscriptionError(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -42,7 +61,7 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Col 1: Brand */}
           <div className="md:col-span-5 space-y-3">
             <h3 className="font-display text-xl tracking-[0.25em] font-bold text-white uppercase">
-              NOIR DAKSHIN
+              NOIR ROAST
             </h3>
             <p className="font-sans text-xs text-[#FAF7F5]/75 leading-relaxed max-w-sm">
               Dedicated to shade-grown Western Ghats terroir, traditional brass alchemy, and slow cast-iron drum convection.
@@ -99,14 +118,20 @@ export const Footer: React.FC<FooterProps> = ({
                 />
                 <button
                   type="submit"
-                  className="absolute right-1 rounded-full bg-[#F5DADF] text-[#2D2926] px-3.5 sm:px-4 py-1.5 text-[11px] sm:text-xs font-sans font-bold uppercase hover:bg-white transition-all cursor-pointer shadow-sm"
+                  disabled={isSubmitting}
+                  className="absolute right-1 rounded-full bg-[#F5DADF] text-[#2D2926] px-3.5 sm:px-4 py-1.5 text-[11px] sm:text-xs font-sans font-bold uppercase hover:bg-white disabled:opacity-50 transition-all cursor-pointer shadow-sm"
                 >
-                  Subscribe
+                  {isSubmitting ? '...' : 'Subscribe'}
                 </button>
               </div>
-              {isSubscribed && (
+              {subscriptionMessage && (
                 <span className="text-[11px] text-[#F5DADF] flex items-center gap-1 mt-1.5 font-bold">
-                  <Check className="h-3 w-3" /> Subscription confirmed.
+                  <Check className="h-3 w-3 text-emerald-400" /> {subscriptionMessage}
+                </span>
+              )}
+              {subscriptionError && (
+                <span className="text-[11px] text-rose-300 flex items-center gap-1 mt-1.5 font-medium">
+                  {subscriptionError}
                 </span>
               )}
             </form>
@@ -115,7 +140,7 @@ export const Footer: React.FC<FooterProps> = ({
 
         {/* Bottom Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] sm:text-xs text-[#FAF7F5]/60 text-center sm:text-left">
-          <span>© 1998–2026 NOIR DAKSHIN COFFEE. ALL RIGHTS RESERVED.</span>
+          <span>© 1998–2026 NOIR ROAST COFFEE. ALL RIGHTS RESERVED.</span>
 
           <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 sm:gap-4">
             <a href="mailto:priyanshubipin2006@gmail.com" className="flex items-center gap-1.5 hover:text-[#F5DADF] transition-colors break-all">

@@ -153,7 +153,7 @@ export const SignupPage: React.FC = () => {
             Create Your Coffee Account
           </h1>
           <p className="text-xs sm:text-sm text-[#5E5854] mt-1 font-sans">
-            Join the Noir Dakshin collective for priority micro-lot allocations & express delivery.
+            Join the Noir Roast collective for priority micro-lot allocations & express delivery.
           </p>
         </div>
 

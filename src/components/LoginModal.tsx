@@ -380,7 +380,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               </>
             ) : (
               <>
-                New to Noir Dakshin? <span className="font-bold text-[#C89658]">Become a Member</span>
+                New to Noir Roast? <span className="font-bold text-[#C89658]">Become a Member</span>
               </>
             )}
           </button>

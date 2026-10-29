@@ -1,5 +1,6 @@
 /**
- * Authoritative Customer Profile & Address Storage for Noir Dakshin Coffee
+ * Authoritative Customer Profile, Security Credentials & Session Registry
+ * Manages scrypt password hashes, sessions, addresses, and customer profiles.
  * Serverless-safe with os.tmpdir() fallback and in-memory cache.
  */
 
@@ -7,6 +8,23 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import type { CustomerProfile, SavedAddress } from '../types/auth';
+import { generateSessionToken } from './authSecurity';
+
+export interface UserRecord {
+  profile: CustomerProfile;
+  passwordSalt?: string;
+  passwordHash?: string;
+}
+
+export interface ActiveSession {
+  token: string;
+  email: string;
+  userId: string;
+  role: string;
+  name: string;
+  createdAt: string;
+  expiresAt: string;
+}
 
 function getUsersFilePath(): string {
   try {
@@ -16,7 +34,7 @@ function getUsersFilePath(): string {
     }
     return path.join(localDir, 'users.json');
   } catch {
-    const tmpDir = path.join(os.tmpdir(), 'noir-dakshin-orders');
+    const tmpDir = path.join(os.tmpdir(), 'noir-roast-data');
     try {
       if (!fs.existsSync(tmpDir)) {
         fs.mkdirSync(tmpDir, { recursive: true });
@@ -28,8 +46,10 @@ function getUsersFilePath(): string {
   }
 }
 
-// In-Memory Fast Cache & Primary Record
-let usersCache: Map<string, CustomerProfile> = new Map();
+// In-Memory Fast Cache of users with credentials
+let usersCache: Map<string, UserRecord> = new Map();
+// Active sessions registry (token -> ActiveSession)
+const sessionsCache: Map<string, ActiveSession> = new Map();
 
 function loadUsersFromDisk(): void {
   try {
@@ -37,9 +57,17 @@ function loadUsersFromDisk(): void {
     if (fs.existsSync(filePath)) {
       const raw = fs.readFileSync(filePath, 'utf-8');
       if (raw.trim()) {
-        const parsed: CustomerProfile[] = JSON.parse(raw);
+        const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
-          usersCache = new Map(parsed.map((u) => [u.email.toLowerCase(), u]));
+          usersCache = new Map(
+            parsed.map((entry) => {
+              // Backward compatibility if file had raw CustomerProfile
+              if ('uid' in entry && !('profile' in entry)) {
+                return [entry.email.toLowerCase(), { profile: entry }];
+              }
+              return [entry.profile.email.toLowerCase(), entry];
+            })
+          );
         }
       }
     }
@@ -58,14 +86,21 @@ function persistUsersToDisk(): void {
   }
 }
 
-// Initial safe load
 loadUsersFromDisk();
 
 export class UsersStore {
   /**
-   * Retrieves a user by their email address
+   * Retrieves a customer profile by email (never exposes password hashes)
    */
   public static getUserByEmail(email: string): CustomerProfile | undefined {
+    const record = usersCache.get(email.toLowerCase().trim());
+    return record ? record.profile : undefined;
+  }
+
+  /**
+   * Internal retrieval with cryptographic password credentials
+   */
+  public static getUserRecord(email: string): UserRecord | undefined {
     return usersCache.get(email.toLowerCase().trim());
   }
 
@@ -74,26 +109,43 @@ export class UsersStore {
    */
   public static getUserById(identifier: string): CustomerProfile | undefined {
     const clean = identifier.trim().toLowerCase();
-    for (const user of usersCache.values()) {
+    for (const record of usersCache.values()) {
+      const u = record.profile;
       if (
-        user.uid.toLowerCase() === clean ||
-        user.memberId.toLowerCase() === clean ||
-        user.email.toLowerCase() === clean
+        u.uid.toLowerCase() === clean ||
+        u.memberId.toLowerCase() === clean ||
+        u.email.toLowerCase() === clean
       ) {
-        return user;
+        return u;
       }
     }
     return undefined;
   }
 
   /**
-   * Saves or registers a new customer profile
+   * Saves or registers a new customer profile with optional password salt and hash
+   */
+  public static saveUserWithCredentials(
+    profile: CustomerProfile,
+    passwordSalt?: string,
+    passwordHash?: string
+  ): CustomerProfile {
+    profile.updatedAt = new Date().toISOString();
+    const record: UserRecord = {
+      profile,
+      passwordSalt,
+      passwordHash,
+    };
+    usersCache.set(profile.email.toLowerCase().trim(), record);
+    persistUsersToDisk();
+    return profile;
+  }
+
+  /**
+   * Legacy wrapper for saveUser
    */
   public static saveUser(user: CustomerProfile): CustomerProfile {
-    user.updatedAt = new Date().toISOString();
-    usersCache.set(user.email.toLowerCase().trim(), user);
-    persistUsersToDisk();
-    return user;
+    return this.saveUserWithCredentials(user);
   }
 
   /**
@@ -103,18 +155,19 @@ export class UsersStore {
     email: string,
     updates: Partial<CustomerProfile>
   ): CustomerProfile | undefined {
-    const existing = this.getUserByEmail(email);
-    if (!existing) return undefined;
+    const existingRecord = usersCache.get(email.toLowerCase().trim());
+    if (!existingRecord) return undefined;
 
-    const updated: CustomerProfile = {
-      ...existing,
+    const updatedProfile: CustomerProfile = {
+      ...existingRecord.profile,
       ...updates,
       updatedAt: new Date().toISOString(),
     };
 
-    usersCache.set(email.toLowerCase().trim(), updated);
+    existingRecord.profile = updatedProfile;
+    usersCache.set(email.toLowerCase().trim(), existingRecord);
     persistUsersToDisk();
-    return updated;
+    return updatedProfile;
   }
 
   /**
@@ -126,7 +179,6 @@ export class UsersStore {
 
     const currentAddresses = user.savedAddresses || [];
 
-    // If marked as default, clear isDefault on existing addresses
     if (address.isDefault) {
       currentAddresses.forEach((a) => (a.isDefault = false));
     } else if (currentAddresses.length === 0) {
@@ -168,9 +220,51 @@ export class UsersStore {
   }
 
   /**
+   * Session Management: Creates a secure token session (valid for 7 days)
+   */
+  public static createSession(profile: CustomerProfile): ActiveSession {
+    const token = generateSessionToken();
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const session: ActiveSession = {
+      token,
+      email: profile.email,
+      userId: profile.uid,
+      role: profile.role,
+      name: profile.fullName,
+      createdAt: new Date().toISOString(),
+      expiresAt,
+    };
+    sessionsCache.set(token, session);
+    return session;
+  }
+
+  /**
+   * Validates an active session token
+   */
+  public static getSession(token: string): ActiveSession | null {
+    if (!token) return null;
+    const session = sessionsCache.get(token);
+    if (!session) return null;
+    if (new Date(session.expiresAt).getTime() <= Date.now()) {
+      sessionsCache.delete(token);
+      return null;
+    }
+    return session;
+  }
+
+  /**
+   * Revokes a session token (Logout)
+   */
+  public static revokeSession(token: string): void {
+    if (token) {
+      sessionsCache.delete(token);
+    }
+  }
+
+  /**
    * Returns all users (for diagnostics / admin)
    */
   public static getAllUsers(): CustomerProfile[] {
-    return Array.from(usersCache.values());
+    return Array.from(usersCache.values()).map((r) => r.profile);
   }
 }

@@ -89,7 +89,7 @@ const sendLiveEmailDispatch = async (payload: {
         Total_Amount_Settled: payload.total || 'N/A',
         Dispatch_Address: payload.address || 'N/A',
         Roastery_Message: payload.message,
-        Roastery_Heritage: 'NOIR DAKSHIN COFFEE ROASTERS • CHIKMAGALUR & BENGALURU',
+        Roastery_Heritage: 'NOIR ROAST COFFEE ROASTERS • CHIKMAGALUR & BENGALURU',
       }),
     });
   } catch (err) {
@@ -116,7 +116,7 @@ export const dispatchOrderConfirmationEmail = (
     id: `EMAIL-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
     to: recipientEmail,
     recipientName,
-    subject: `Order Confirmation #${orderNumber} • NOIR DAKSHIN COFFEE`,
+    subject: `Order Confirmation #${orderNumber} • NOIR ROAST COFFEE`,
     previewText: `Your order of ${items.length} fresh-roasted coffee item(s) is confirmed.`,
     type: 'order_confirmation',
     timestamp: new Date().toISOString(),
@@ -151,7 +151,7 @@ export const dispatchOrderConfirmationEmail = (
     total: totalAmount,
     itemsList: itemsText,
     address: shippingAddress,
-    message: `Thank you for your order with NOIR DAKSHIN COFFEE. Your order #${orderNumber} has been received and scheduled for fresh roasting and shipment from Chikmagalur.`,
+    message: `Thank you for your order with NOIR ROAST COFFEE. Your order #${orderNumber} has been received and scheduled for fresh roasting and shipment from Chikmagalur.`,
   });
 
   return email;
@@ -170,7 +170,7 @@ export const dispatchVIPWelcomeEmail = (
     id: `EMAIL-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
     to: recipientEmail,
     recipientName,
-    subject: `Welcome to Noir Dakshin Coffee • Customer #${membershipId}`,
+    subject: `Welcome to Noir Roast Coffee • Customer #${membershipId}`,
     previewText: `Your customer account has been created for fresh roasts and exclusive orders.`,
     type: 'vip_welcome',
     timestamp: new Date().toISOString(),
@@ -193,7 +193,7 @@ export const dispatchVIPWelcomeEmail = (
     toEmail: recipientEmail,
     subject: email.subject,
     recipientName,
-    message: `Welcome to Noir Dakshin Coffee. Customer ID: #${membershipId}. You now have priority access to our fresh seasonal roasts.`,
+    message: `Welcome to Noir Roast Coffee. Customer ID: #${membershipId}. You now have priority access to our fresh seasonal roasts.`,
   });
 
   return email;
@@ -217,7 +217,7 @@ export const dispatch1HourCartReminderEmail = (
     id: `EMAIL-1HR-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
     to: recipientEmail,
     recipientName,
-    subject: `You left fresh coffee in your cart • Noir Dakshin Coffee`,
+    subject: `You left fresh coffee in your cart • Noir Roast Coffee`,
     previewText: `Your shade-grown Western Ghats harvest beans are currently reserved in your bag.`,
     type: 'abandoned_cart_1h',
     timestamp: new Date().toISOString(),
@@ -270,7 +270,7 @@ export const dispatch24HourSocialProofEmail = (
     id: `EMAIL-24HR-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
     to: recipientEmail,
     recipientName,
-    subject: `What coffee lovers say about ${firstItem} • Noir Dakshin`,
+    subject: `What coffee lovers say about ${firstItem} • Noir Roast`,
     previewText: `Read verified customer feedback from Q-Graders and home baristas across India.`,
     type: 'feedback_social_proof_24h',
     timestamp: new Date().toISOString(),

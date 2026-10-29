@@ -52,8 +52,32 @@ export const SectionManifesto: React.FC = () => {
       );
     }, sectionRef);
 
+    // Video lazy playback observer
+    let observer: IntersectionObserver | null = null;
+    const videoEl = videoRef.current;
+    if (videoEl && 'IntersectionObserver' in window) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              videoEl.play().catch(() => {});
+            } else {
+              videoEl.pause();
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+      if (sectionRef.current) {
+        observer.observe(sectionRef.current);
+      }
+    }
+
     return () => {
       ctx.revert();
+      if (observer) {
+        observer.disconnect();
+      }
     };
   }, []);
 
@@ -69,7 +93,8 @@ export const SectionManifesto: React.FC = () => {
         <video
           ref={videoRef}
           src="/assets/videos/coffee-manifesto-smoke.mp4"
-          autoPlay
+          poster="/assets/smoke-overlay.jpg"
+          preload="none"
           muted
           loop
           playsInline
@@ -105,7 +130,7 @@ export const SectionManifesto: React.FC = () => {
             {/* Glassmorphic Supporting Copy */}
             <div className="rounded-2xl sm:rounded-3xl bg-[#2D2926]/85 border border-white/15 p-4 sm:p-5 backdrop-blur-xl shadow-2xl space-y-2.5 sm:space-y-3">
               <p className="font-sans text-xs sm:text-sm leading-relaxed text-[#FAF7F5]/90 font-normal">
-                In an industry driven by automated speed, NOIR DAKSHIN stands for deliberate friction. In 1670, Sufi mystic Baba Budan brought seven sacred seeds to the misty Chandragiri hills of Chikmagalur.
+                In an industry driven by automated speed, NOIR ROAST stands for deliberate friction. In 1670, Sufi mystic Baba Budan brought seven sacred seeds to the misty Chandragiri hills of Chikmagalur.
               </p>
               <p className="font-sans text-xs sm:text-sm leading-relaxed text-[#FAF7F5]/75 font-normal">
                 We honor this lineage—roasting exclusively in small cast-iron drums by hand, by sound, and by aroma. Every lot is shade-grown beneath silver oaks and cardamom canopies in the Western Ghats, paid at +350% above Fair Trade minimums, and released in numbered batches to those who understand that great coffee takes time.
@@ -137,7 +162,7 @@ export const SectionManifesto: React.FC = () => {
             <div className="relative w-full aspect-[4/5] max-h-[38vh] sm:max-h-[44vh] max-w-xs sm:max-w-sm rounded-2xl sm:rounded-3xl overflow-hidden border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.5)] bg-black/40 group">
               <img
                 src="/assets/roast-drum.jpg"
-                alt="NOIR DAKSHIN Drum Roastery"
+                alt="NOIR ROAST Drum Roastery"
                 className="h-full w-full object-cover object-center filter brightness-100 transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />

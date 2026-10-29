@@ -48,7 +48,29 @@ export const AtmosphericCanvas: React.FC = () => {
       });
     }
 
+    // 1. Respect prefers-reduced-motion
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    let isRunning = true;
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        isRunning = false;
+        cancelAnimationFrame(animId);
+      } else {
+        if (!isRunning) {
+          isRunning = true;
+          animId = requestAnimationFrame(render);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
     const render = () => {
+      if (!isRunning) return;
       ctx.clearRect(0, 0, width, height);
 
       for (let i = 0; i < particles.length; i++) {
@@ -77,6 +99,7 @@ export const AtmosphericCanvas: React.FC = () => {
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       cancelAnimationFrame(animId);
     };
   }, []);

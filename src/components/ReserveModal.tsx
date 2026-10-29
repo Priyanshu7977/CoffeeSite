@@ -21,6 +21,8 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
   const [email, setEmail] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [reservationStatus, setReservationStatus] = useState<'confirmed' | 'waitlist'>('confirmed');
   const [certificateId, setCertificateId] = useState<string>('');
 
   // Reset inputs whenever modal opens
@@ -30,6 +32,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
       setEmail('');
       setErrorMessage('');
       setIsSubmitted(false);
+      setIsSubmitting(false);
       setQuantity(1);
     }
   }, [isOpen]);
@@ -81,7 +84,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
     setEmail(stripDangerousMarkup(raw).trim());
   };
 
-  const handleOrder = (e: React.FormEvent) => {
+  const handleOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
 
@@ -94,19 +97,47 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
       return;
     }
 
-    const cert = `NR-${Math.floor(1000 + Math.random() * 9000)}-${defaultBatch.id.toUpperCase()}`;
-    setCertificateId(cert);
-    setIsSubmitted(true);
+    setIsSubmitting(true);
 
     try {
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#F5DADF', '#E05A7E', '#2D2926', '#FFFFFF'],
+      const res = await fetch('/api/reservations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          batchId: defaultBatch.id,
+          fullName,
+          email,
+          grind,
+          quantity,
+        }),
       });
-    } catch {
-      // Ignored
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to record reservation request.');
+      }
+
+      setCertificateId(data.reservation.certificateId);
+      setReservationStatus(data.reservation.status);
+      setIsSubmitted(true);
+
+      if (data.reservation.status === 'confirmed') {
+        try {
+          confetti({
+            particleCount: 80,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#F5DADF', '#E05A7E', '#2D2926', '#FFFFFF'],
+          });
+        } catch {
+          // Ignored
+        }
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error submitting allocation request.';
+      setErrorMessage(msg);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -142,15 +173,17 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
             </div>
 
             <span className="text-xs font-mono tracking-[0.25em] uppercase text-[#E05A7E] mb-1 font-bold">
-              RESERVATION CONFIRMED
+              {reservationStatus === 'confirmed' ? 'RESERVATION CONFIRMED' : 'WAITLIST ALLOCATION LOGGED'}
             </span>
 
             <h3 className="font-display text-2xl sm:text-3xl text-[#2D2926] font-bold mb-2">
-              Certificate Granted.
+              {reservationStatus === 'confirmed' ? 'Certificate Granted.' : 'Waitlist Position Reserved.'}
             </h3>
 
             <p className="font-sans text-xs sm:text-sm text-[#5E5854] max-w-sm font-normal mb-6">
-              Your reservation for <strong>{quantity}x {defaultBatch.name}</strong> has been registered in our Chikmagalur cast-iron roasting ledger.
+              {reservationStatus === 'confirmed'
+                ? `Your reservation for ${quantity}x ${defaultBatch.name} has been authoritatively registered in our roasting ledger.`
+                : `Your allocation request for ${quantity}x ${defaultBatch.name} has been placed on the priority cellar waitlist.`}
             </p>
 
             <div className="w-full rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 p-5 text-left mb-6 space-y-2 text-xs">
@@ -288,7 +321,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
                     name="noir_reserve_email"
                     value={email}
                     onChange={handleEmailChange}
-                    placeholder="collector@noirdakshin.com"
+                    placeholder="collector@noirroast.com"
                     className="w-full rounded-xl bg-[#FAF7F5] border border-[#2D2926]/15 px-3.5 py-2 text-xs text-[#2D2926] placeholder-[#8C827A] focus:border-[#2D2926] focus:outline-none font-sans"
                   />
                 </div>
@@ -297,9 +330,10 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
               {/* Submit */}
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-full bg-[#2D2926] text-white font-sans text-xs font-bold tracking-[0.2em] uppercase transition-all shadow-md hover:bg-[#1F1C1A] hover:scale-105 cursor-pointer"
+                disabled={isSubmitting}
+                className="w-full py-3.5 rounded-full bg-[#2D2926] text-white font-sans text-xs font-bold tracking-[0.2em] uppercase transition-all shadow-md hover:bg-[#1F1C1A] disabled:opacity-50 cursor-pointer"
               >
-                Confirm Order Request
+                {isSubmitting ? 'Registering Allocation...' : 'Confirm Order Request'}
               </button>
             </form>
           </div>

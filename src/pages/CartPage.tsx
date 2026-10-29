@@ -237,7 +237,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                   const itemLineTotal = priceNum * item.quantity;
 
                   return (
-                    <div key={`${item.product.id}-${item.grind}-${item.isSubscription ? item.subscriptionFrequency : 'one'}`} className="p-5 sm:p-6 flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
+                    <div key={item.id || `${item.product.id}-${item.grind}-${item.isSubscription ? item.subscriptionFrequency : 'one'}`} className="p-5 sm:p-6 flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
                       <div className="flex gap-4 items-center">
                         <img
                           src={item.product.image}
@@ -273,7 +273,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                         {/* Quantity Counter */}
                         <div className="flex items-center border border-[#2D2926]/15 rounded-xl bg-[#FAF7F5] p-0.5">
                           <button
-                            onClick={() => onUpdateQuantity(item.product.id, -1)}
+                            onClick={() => onUpdateQuantity(item.id || item.product.id, -1)}
                             className="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-neutral-200 transition-colors text-xs"
                           >
                             <Minus className="h-3 w-3" />
@@ -282,7 +282,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => onUpdateQuantity(item.product.id, 1)}
+                            onClick={() => onUpdateQuantity(item.id || item.product.id, 1)}
                             disabled={item.quantity >= available}
                             className="h-8 w-8 rounded-lg flex items-center justify-center hover:bg-neutral-200 disabled:opacity-30 transition-colors text-xs"
                           >
@@ -302,7 +302,7 @@ export const CartPage: React.FC<CartPageProps> = ({
 
                         {/* Remove */}
                         <button
-                          onClick={() => onRemoveItem(item.product.id)}
+                          onClick={() => onRemoveItem(item.id || item.product.id)}
                           className="p-2 text-[#8C827A] hover:text-rose-600 transition-colors"
                           title="Remove item"
                         >

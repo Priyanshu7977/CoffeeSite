@@ -306,7 +306,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
               <Coffee className="h-8 w-8" />
             </div>
             <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#2D2926]">
-              NOIR DAKSHIN CELLAR
+              NOIR ROAST CELLAR
             </h2>
             <p className="mt-2 text-xs sm:text-sm text-[#8C827A] max-w-md mx-auto leading-relaxed">
               Sign in to view your orders, past roast allocations, saved delivery destinations, and member privileges.
@@ -338,7 +338,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-display font-bold text-xl sm:text-2xl tracking-wider text-[#FAF7F5]">
-                        NOIR DAKSHIN
+                        NOIR ROAST
                       </span>
                       <span className="px-2.5 py-0.5 rounded-full bg-[#C89658] text-[#2D2926] text-[10px] font-bold uppercase tracking-widest">
                         {userSession.role || 'CUSTOMER'}

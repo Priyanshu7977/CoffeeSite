@@ -130,7 +130,7 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({
         <div className="rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 p-3 mb-4 space-y-1 text-xs text-[#5E5854]">
           <div className="flex justify-between flex-wrap gap-1">
             <span className="text-[#8C827A]">From:</span>
-            <span className="font-mono text-[#2D2926] font-bold">concierge@noirdakshin.com (NOIR DAKSHIN)</span>
+            <span className="font-mono text-[#2D2926] font-bold">concierge@noirroast.com (NOIR ROAST)</span>
           </div>
           <div className="flex justify-between flex-wrap gap-1">
             <span className="text-[#8C827A]">To:</span>
@@ -147,7 +147,7 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({
           {/* Brand Watermark */}
           <div className="text-center pb-3 border-b border-[#2D2926]/10">
             <h2 className="font-display text-xl font-bold tracking-[0.25em] text-[#2D2926] uppercase">
-              NOIR DAKSHIN
+              NOIR ROAST
             </h2>
             <span className="text-[8px] font-mono text-[#E05A7E] uppercase tracking-widest block mt-0.5 font-bold">
               CHIKMAGALUR & BENGALURU • EST. 1998
@@ -161,7 +161,7 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({
             {email.type === 'abandoned_cart_1h' && (
               <>
                 <p>
-                  We noticed you visited <strong>Noir Dakshin</strong> and put together a fresh coffee selection in your cart.
+                  We noticed you visited <strong>Noir Roast</strong> and put together a fresh coffee selection in your cart.
                 </p>
                 <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-amber-900 text-xs space-y-1">
                   <div className="font-bold flex items-center gap-1.5 text-amber-950">
@@ -367,7 +367,7 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({
             {email.type === 'vip_welcome' && (
               <>
                 <p>
-                  Welcome to <strong>Noir Dakshin Coffee</strong>. You now have priority access to our fresh seasonal roasts.
+                  Welcome to <strong>Noir Roast Coffee</strong>. You now have priority access to our fresh seasonal roasts.
                 </p>
                 <div className="rounded-xl bg-white border border-[#2D2926]/10 p-3.5 text-center space-y-1">
                   <span className="text-[10px] font-sans tracking-widest text-[#E05A7E] uppercase block font-bold">
@@ -388,7 +388,7 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({
           <div className="pt-3 border-t border-[#2D2926]/10 flex items-center justify-between text-[10px] font-mono text-[#8C827A]">
             <div className="flex items-center gap-1">
               <Shield className="h-3 w-3 text-[#E05A7E]" />
-              <span>NOIR DAKSHIN COFFEE</span>
+              <span>NOIR ROAST COFFEE</span>
             </div>
             <span>ROASTERY AUTOMATION SYSTEM</span>
           </div>

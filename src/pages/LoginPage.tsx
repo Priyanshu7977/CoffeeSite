@@ -660,7 +660,7 @@ export const LoginPage: React.FC = () => {
               {/* Footer Navigation */}
               <div className="mt-2.5 pt-2 border-t border-[#2D2926]/10 text-center">
                 <p className="text-[11px] text-[#5E5854]">
-                  New to Noir Dakshin?{' '}
+                  New to Noir Roast?{' '}
                   <Link
                     to={`/signup${location.search}`}
                     className="font-bold text-[#C89658] hover:text-[#2D2926] underline transition-colors"
