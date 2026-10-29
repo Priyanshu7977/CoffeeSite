@@ -124,7 +124,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
       />
 
       {/* Modal Card */}
-      <div className="relative z-10 w-full max-w-lg rounded-3xl bg-white border border-[#2D2926]/10 p-5 sm:p-8 shadow-2xl text-[#2D2926]">
+      <div className="relative z-10 w-full max-w-lg max-h-[92vh] overflow-y-auto rounded-2xl sm:rounded-3xl bg-white border border-[#2D2926]/10 p-5 sm:p-8 shadow-2xl text-[#2D2926]">
         {/* Close Button */}
         <button
           onClick={handleClose}
@@ -288,7 +288,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
                     name="noir_reserve_email"
                     value={email}
                     onChange={handleEmailChange}
-                    placeholder="collector@noirroast.com"
+                    placeholder="collector@noirdakshin.com"
                     className="w-full rounded-xl bg-[#FAF7F5] border border-[#2D2926]/15 px-3.5 py-2 text-xs text-[#2D2926] placeholder-[#8C827A] focus:border-[#2D2926] focus:outline-none font-sans"
                   />
                 </div>

@@ -50,7 +50,7 @@ export const ProductDetailOverlay: React.FC<ProductDetailOverlayProps> = ({
       />
 
       {/* Modal Box */}
-      <div className="relative z-10 w-full max-w-4xl rounded-3xl bg-white border border-[#2D2926]/10 p-6 sm:p-10 shadow-2xl text-[#2D2926] overflow-hidden">
+      <div className="relative z-10 w-full max-w-4xl max-h-[92vh] overflow-y-auto rounded-2xl sm:rounded-3xl bg-white border border-[#2D2926]/10 p-5 sm:p-10 shadow-2xl text-[#2D2926]">
         {/* Close Button */}
         <button
           onClick={onClose}

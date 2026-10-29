@@ -130,7 +130,7 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({
         <div className="rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 p-3 mb-4 space-y-1 text-xs text-[#5E5854]">
           <div className="flex justify-between flex-wrap gap-1">
             <span className="text-[#8C827A]">From:</span>
-            <span className="font-mono text-[#2D2926] font-bold">contact@noirroast.com (NOIR DAKSHIN)</span>
+            <span className="font-mono text-[#2D2926] font-bold">concierge@noirdakshin.com (NOIR DAKSHIN)</span>
           </div>
           <div className="flex justify-between flex-wrap gap-1">
             <span className="text-[#8C827A]">To:</span>

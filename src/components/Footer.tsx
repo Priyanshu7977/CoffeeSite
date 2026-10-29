@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowUp, Compass, Mail, Check } from 'lucide-react';
 import { MagneticButton } from './MagneticButton';
 import { ReviewsRollingSection } from './ReviewsRollingSection';
@@ -58,19 +59,19 @@ export const Footer: React.FC<FooterProps> = ({
               Quick Links & Tracking
             </span>
             <ul className="space-y-1.5 text-xs font-sans text-[#FAF7F5]/75">
-              <li><a href="/collection" className="hover:text-[#F5DADF] transition-colors">Coffee Collection</a></li>
-              <li><a href="/track" className="text-[#F5DADF] font-bold hover:underline flex items-center gap-1.5"><span>Live Order Tracking</span><span className="text-[9px] font-mono bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded">NEW</span></a></li>
-              <li><a href="/atlas" className="hover:text-[#F5DADF] transition-colors">Coffee & Origin Guide</a></li>
-              <li><a href="/about" className="hover:text-[#F5DADF] transition-colors">About Us</a></li>
-              <li><a href="/contact" className="hover:text-[#F5DADF] transition-colors">Contact & Roastery Map</a></li>
+              <li><Link to="/collection" className="hover:text-[#F5DADF] transition-colors">Coffee Collection</Link></li>
+              <li><Link to="/track" className="text-[#F5DADF] font-bold hover:underline flex items-center gap-1.5"><span>Live Order Tracking</span><span className="text-[9px] font-mono bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded">NEW</span></Link></li>
+              <li><Link to="/atlas" className="hover:text-[#F5DADF] transition-colors">Coffee & Origin Guide</Link></li>
+              <li><Link to="/about" className="hover:text-[#F5DADF] transition-colors">About Us</Link></li>
+              <li><Link to="/contact" className="hover:text-[#F5DADF] transition-colors">Contact & Roastery Map</Link></li>
               <li className="pt-2 text-[11px] text-[#FAF7F5]/50 flex flex-wrap gap-x-2 gap-y-1">
-                <a href="/shipping" className="hover:text-[#F5DADF] underline">Shipping</a>
+                <Link to="/shipping" className="hover:text-[#F5DADF] underline">Shipping</Link>
                 <span>•</span>
-                <a href="/refund" className="hover:text-[#F5DADF] underline">Returns</a>
+                <Link to="/refund" className="hover:text-[#F5DADF] underline">Returns</Link>
                 <span>•</span>
-                <a href="/terms" className="hover:text-[#F5DADF] underline">Terms</a>
+                <Link to="/terms" className="hover:text-[#F5DADF] underline">Terms</Link>
                 <span>•</span>
-                <a href="/privacy" className="hover:text-[#F5DADF] underline">Privacy</a>
+                <Link to="/privacy" className="hover:text-[#F5DADF] underline">Privacy</Link>
               </li>
             </ul>
           </div>

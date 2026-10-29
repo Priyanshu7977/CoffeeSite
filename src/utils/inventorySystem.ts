@@ -35,13 +35,13 @@ const IMS_SESSION_KEY = 'noir_ims_auth_session_v1';
 // Authorized Admin & IMS Engineer Credentials
 export const AUTHORIZED_IMS_ACCOUNTS = [
   {
-    email: 'admin@noirroast.com',
+    email: 'admin@noirdakshin.com',
     password: 'Noir@Admin2026',
     name: 'Master Roaster Administrator',
     role: 'ADMIN' as const,
   },
   {
-    email: 'ims.engineer@noirroast.com',
+    email: 'ims.engineer@noirdakshin.com',
     password: 'Noir@Engine2026',
     name: 'Lead IMS Systems Engineer',
     role: 'IMS_ENGINEER' as const,

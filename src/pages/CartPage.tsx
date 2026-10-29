@@ -93,7 +93,7 @@ export const CartPage: React.FC<CartPageProps> = ({
   };
 
   const handleTriggerAutomation = (step: '1h' | '24h' | '48h') => {
-    const targetEmail = recipientEmail.trim() || userEmail || 'customer@noirroast.com';
+    const targetEmail = recipientEmail.trim() || userEmail || 'customer@noirdakshin.com';
     const targetName = userName || 'Coffee Lover';
 
     const dispatched = triggerAutomationStep(

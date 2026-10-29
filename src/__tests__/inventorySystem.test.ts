@@ -12,10 +12,10 @@ describe('Inventory Management System — Unit, RBAC Security & Chaos Invariants
   beforeEach(() => {
     inventorySystem._internalResetForTests();
 
-    const adminAuth = authenticateIMS('admin@noirroast.com', 'Noir@Admin2026');
+    const adminAuth = authenticateIMS('admin@noirdakshin.com', 'Noir@Admin2026');
     adminSession = adminAuth.session!;
 
-    const engAuth = authenticateIMS('ims.engineer@noirroast.com', 'Noir@Engine2026');
+    const engAuth = authenticateIMS('ims.engineer@noirdakshin.com', 'Noir@Engine2026');
     engineerSession = engAuth.session!;
   });
 
@@ -116,12 +116,12 @@ describe('Inventory Management System — Unit, RBAC Security & Chaos Invariants
     expect(invalidAuth.error).toContain('Access Denied');
 
     // Valid Admin credentials succeed
-    const adminAuth = authenticateIMS('admin@noirroast.com', 'Noir@Admin2026');
+    const adminAuth = authenticateIMS('admin@noirdakshin.com', 'Noir@Admin2026');
     expect(adminAuth.success).toBe(true);
     expect(adminAuth.session?.role).toBe('ADMIN');
 
     // Valid IMS Engineer credentials succeed
-    const engAuth = authenticateIMS('ims.engineer@noirroast.com', 'Noir@Engine2026');
+    const engAuth = authenticateIMS('ims.engineer@noirdakshin.com', 'Noir@Engine2026');
     expect(engAuth.success).toBe(true);
     expect(engAuth.session?.role).toBe('IMS_ENGINEER');
   });

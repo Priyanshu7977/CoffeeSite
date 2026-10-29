@@ -72,7 +72,7 @@ export const recordCartActivity = (
   }
 
   const current = getAutomationState();
-  const nextEmail = email || current.customerEmail || 'patron@noirroast.com';
+  const nextEmail = email || current.customerEmail || 'patron@noirdakshin.com';
   const nextName = name || current.customerName || 'Coffee Lover';
 
   saveAutomationState({
@@ -97,7 +97,7 @@ export const triggerAutomationStep = (
   nameOverride?: string
 ): AutomatedEmail => {
   const state = getAutomationState();
-  const targetEmail = emailOverride || state.customerEmail || 'patron@noirroast.com';
+  const targetEmail = emailOverride || state.customerEmail || 'patron@noirdakshin.com';
   const targetName = nameOverride || state.customerName || 'Coffee Lover';
 
   let dispatched: AutomatedEmail;
