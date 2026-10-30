@@ -571,31 +571,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6">
               <form id="checkout-details-form" onSubmit={handleProceedToPayment} className="lg:col-span-7 space-y-3">
                 <div className="space-y-2.5">
-                  {userSession?.isLoggedIn && (
-                    <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 mb-1">
-                      <div className="flex items-center gap-2">
-                        <div className="h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                          <CheckCircle2 className="w-3 h-3" />
-                        </div>
-                        <div>
-                          <span className="font-semibold block text-xs">
-                            {userSession.email?.includes('@phone.noirkaapi.in') || userSession.email?.includes('@phone.noircafe.in') ? (
-                              <>Logged in via Mobile: <strong className="font-mono">{userSession.phone || 'Verified'}</strong></>
-                            ) : (
-                              <>Logged in as <strong>{userSession.name}</strong> ({userSession.email})</>
-                            )}
-                          </span>
-                          <span className="text-[10px] text-emerald-700/80 font-mono">
-                            VIP Roaster Member ID: {userSession.memberId}
-                          </span>
-                        </div>
-                      </div>
-                      <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full shrink-0">
-                        VIP Roaster
-                      </span>
-                    </div>
-                  )}
-
                   <span className="text-[10px] font-mono uppercase tracking-widest text-[#E05A7E] font-bold block">
                     1. Recipient & Contact Information
                   </span>
