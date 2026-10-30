@@ -274,8 +274,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         <Breadcrumbs items={breadcrumbs} className="mb-4" />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
-          {/* ================= LEFT COLUMN: Visuals ================= */}
-          <div className="lg:col-span-5 lg:sticky lg:top-28 self-start">
+          {/* ================= LEFT COLUMN: Visuals, Trust Craft & Sensory Cupping ================= */}
+          <div className="lg:col-span-5 space-y-4 self-start">
             {/* Product Image Frame */}
             <div className="relative aspect-[4/3] sm:aspect-[16/11] lg:aspect-square w-full rounded-3xl overflow-hidden bg-neutral-900 border border-[#2D2926]/10 shadow-xl group">
               <img
@@ -315,6 +315,68 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                     <Check className="h-3 w-3" /> In Stock ({currentStock} Units)
                   </span>
                 )}
+              </div>
+            </div>
+
+            {/* Delivery & Roastery Craft Trust Cards */}
+            <div className="grid grid-cols-2 gap-3 pt-1 text-xs text-[#5E5854]">
+              <div className="flex items-center gap-2 p-3 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
+                <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                <span className="text-[11px] font-medium">Small 12kg convection drum roasted</span>
+              </div>
+              <div className="flex items-center gap-2 p-3 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
+                <PackageCheck className="h-4 w-4 text-[#E05A7E] shrink-0" />
+                <span className="text-[11px] font-medium">Signed Single-Estate Certificate</span>
+              </div>
+            </div>
+
+            {/* Sensory Radar Cupping Metrics */}
+            <div className="p-5 rounded-2xl bg-white border border-[#2D2926]/10 space-y-3 shadow-xs">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-mono uppercase tracking-wider text-[#8C827A] font-bold">
+                  Sensory Cupping Radar
+                </h4>
+                <span className="text-[10px] font-mono text-emerald-700 font-semibold flex items-center gap-1">
+                  <Sparkles className="h-3 w-3" /> Q-Grader Calibrated
+                </span>
+              </div>
+              <div className="space-y-2.5">
+                <div>
+                  <div className="flex justify-between text-xs font-medium text-[#2D2926] mb-1">
+                    <span>Acidity (Crispness & Fruit Luster)</span>
+                    <span className="font-mono">{product.acidity}/100</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-[#FAF7F5] overflow-hidden">
+                    <div
+                      className="h-full bg-[#E05A7E] rounded-full transition-all duration-700"
+                      style={{ width: `${product.acidity}%` }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs font-medium text-[#2D2926] mb-1">
+                    <span>Body (Syrup & Velvet Mouthfeel)</span>
+                    <span className="font-mono">{product.body}/100</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-[#FAF7F5] overflow-hidden">
+                    <div
+                      className="h-full bg-[#2D2926] rounded-full transition-all duration-700"
+                      style={{ width: `${product.body}%` }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs font-medium text-[#2D2926] mb-1">
+                    <span>Sweetness (Natural Sucrose & Honey)</span>
+                    <span className="font-mono">{product.sweetness}/100</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-[#FAF7F5] overflow-hidden">
+                    <div
+                      className="h-full bg-[#c89658] rounded-full transition-all duration-700"
+                      style={{ width: `${product.sweetness}%` }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -575,68 +637,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 <span className="font-mono text-[#E05A7E]">
                   Grind: {selectedGrind}
                 </span>
-              </div>
-            </div>
-
-            {/* Delivery & Roastery Craft Trust Cards */}
-            <div className="grid grid-cols-2 gap-3 pt-1 text-xs text-[#5E5854]">
-              <div className="flex items-center gap-2 p-3 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
-                <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
-                <span className="text-[11px] font-medium">Small 12kg convection drum roasted</span>
-              </div>
-              <div className="flex items-center gap-2 p-3 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
-                <PackageCheck className="h-4 w-4 text-[#E05A7E] shrink-0" />
-                <span className="text-[11px] font-medium">Signed Single-Estate Certificate</span>
-              </div>
-            </div>
-
-            {/* Sensory Radar Cupping Metrics */}
-            <div className="p-5 rounded-2xl bg-white border border-[#2D2926]/10 space-y-3 shadow-xs">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-mono uppercase tracking-wider text-[#8C827A] font-bold">
-                  Sensory Cupping Radar
-                </h4>
-                <span className="text-[10px] font-mono text-emerald-700 font-semibold flex items-center gap-1">
-                  <Sparkles className="h-3 w-3" /> Q-Grader Calibrated
-                </span>
-              </div>
-              <div className="space-y-2.5">
-                <div>
-                  <div className="flex justify-between text-xs font-medium text-[#2D2926] mb-1">
-                    <span>Acidity (Crispness & Fruit Luster)</span>
-                    <span className="font-mono">{product.acidity}/100</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-[#FAF7F5] overflow-hidden">
-                    <div
-                      className="h-full bg-[#E05A7E] rounded-full transition-all duration-700"
-                      style={{ width: `${product.acidity}%` }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-xs font-medium text-[#2D2926] mb-1">
-                    <span>Body (Syrup & Velvet Mouthfeel)</span>
-                    <span className="font-mono">{product.body}/100</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-[#FAF7F5] overflow-hidden">
-                    <div
-                      className="h-full bg-[#2D2926] rounded-full transition-all duration-700"
-                      style={{ width: `${product.body}%` }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-xs font-medium text-[#2D2926] mb-1">
-                    <span>Sweetness (Natural Sucrose & Honey)</span>
-                    <span className="font-mono">{product.sweetness}/100</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-[#FAF7F5] overflow-hidden">
-                    <div
-                      className="h-full bg-[#c89658] rounded-full transition-all duration-700"
-                      style={{ width: `${product.sweetness}%` }}
-                    />
-                  </div>
-                </div>
               </div>
             </div>
           </div>
