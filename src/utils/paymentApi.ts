@@ -100,7 +100,7 @@ function getLocalOrders(): CustomerOrder[] {
   }
 }
 
-function saveOrderToLocalStore(order: CustomerOrder): void {
+export function saveOrderToLocalStore(order: CustomerOrder): void {
   try {
     const list = getLocalOrders();
     const existingIdx = list.findIndex((o) => o.id === order.id || o.orderNumber === order.orderNumber);
@@ -338,32 +338,55 @@ export async function submitCustomUpiUtr(payload: SubmitUtrPayload): Promise<Sub
 }
 
 /**
- * Fetches order history for a customer
+ * Fetches order history for a customer across backend database & local store
  */
-export async function getCustomerOrders(emailOrMemberId: string): Promise<CustomerOrder[]> {
+export async function getCustomerOrders(
+  identifierQuery: string | { email?: string; phone?: string; memberId?: string }
+): Promise<CustomerOrder[]> {
+  const queryObj = typeof identifierQuery === 'string'
+    ? {
+        email: identifierQuery.includes('@') ? identifierQuery : undefined,
+        memberId: !identifierQuery.includes('@') ? identifierQuery : undefined,
+      }
+    : identifierQuery;
+
+  const email = queryObj.email?.trim().toLowerCase() || '';
+  const memberId = queryObj.memberId?.trim() || '';
+  const phone = queryObj.phone ? queryObj.phone.replace(/[^0-9]/g, '') : '';
+
   try {
     const params = new URLSearchParams();
-    if (emailOrMemberId.includes('@')) {
-      params.set('email', emailOrMemberId);
-    } else {
-      params.set('memberId', emailOrMemberId);
-    }
+    if (email) params.set('email', email);
+    if (memberId) params.set('memberId', memberId);
+    if (phone) params.set('phone', phone);
 
     const res = await fetch(`${API_BASE}/api/orders/my-orders?${params.toString()}`);
     if (res.ok) {
       const data = await parseSafeJson(res);
-      if (data && data.orders) return data.orders;
+      if (data && data.orders && data.orders.length > 0) return data.orders;
     }
   } catch (err) {
     console.warn('Failed to fetch customer orders from backend:', err);
   }
 
+  // Authoritative local store matching
   const list = getLocalOrders();
-  return list.filter(
-    (o) =>
-      o.customerEmail.toLowerCase() === emailOrMemberId.toLowerCase() ||
-      o.customerId === emailOrMemberId
-  );
+  const matched = list.filter((o) => {
+    if (email && o.customerEmail && o.customerEmail.toLowerCase() === email) return true;
+    if (memberId && o.customerId && o.customerId === memberId) return true;
+    if (phone && o.customerPhone) {
+      const oPhoneClean = o.customerPhone.replace(/[^0-9]/g, '');
+      if (oPhoneClean.endsWith(phone.slice(-10)) || phone.endsWith(oPhoneClean.slice(-10))) {
+        return true;
+      }
+    }
+    return false;
+  });
+
+  if (matched.length > 0) return matched;
+  // If orders exist locally placed from this browser, show them so order confirmation is never lost
+  if (list.length > 0) return list;
+  return [];
 }
 
 /**

@@ -525,18 +525,19 @@ apiRouter.post('/payment/webhook', (req: Request, res: Response): void => {
 
 /**
  * 7. Customer Orders History
- * Only returns orders matching the customer's email or member ID
+ * Returns orders matching customer's email, member ID, or mobile phone number
  */
 apiRouter.get('/orders/my-orders', (req: Request, res: Response): void => {
   const email = (req.query.email as string) || '';
   const memberId = (req.query.memberId as string) || '';
+  const phone = (req.query.phone as string) || '';
 
-  if (!email && !memberId) {
-    res.status(400).json({ success: false, error: 'Customer identifier (email or memberId) is required.' });
+  if (!email && !memberId && !phone) {
+    res.status(400).json({ success: false, error: 'Customer identifier (email, phone, or memberId) is required.' });
     return;
   }
 
-  const orders = OrdersStore.getCustomerOrders(email || memberId);
+  const orders = OrdersStore.getCustomerOrders(email || memberId, phone);
   res.json({ success: true, count: orders.length, orders });
 });
 
@@ -928,10 +929,13 @@ apiRouter.post('/auth/sync', (req: Request, res: Response): void => {
 
     // Create new profile
     const memberId = `NR-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+    const isPhoneVal = (str?: string) => Boolean(str && (str.startsWith('+') || /^\d+$/.test(str.replace(/[\s+]/g, ''))));
+    const resolvedName = fullName && !isPhoneVal(fullName) ? fullName.trim() : '';
+
     const newProfile: CustomerProfile = {
       uid: uid || `usr_${Date.now()}`,
       memberId,
-      fullName: (fullName || cleanEmail.split('@')[0]).trim(),
+      fullName: resolvedName,
       email: cleanEmail,
       phone: phone || '',
       role: 'CUSTOMER',

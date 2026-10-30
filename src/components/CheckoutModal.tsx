@@ -41,6 +41,7 @@ import {
   verifyPaymentSignatureOnServer,
   submitCustomUpiUtr,
   getPaymentConfig,
+  saveOrderToLocalStore,
 } from '../utils/paymentApi';
 import { openRazorpayCheckout } from '../utils/razorpayLoader';
 import {
@@ -473,6 +474,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       `₹${order.pricing.finalTotal.toLocaleString('en-IN')}`,
       fullShipping
     );
+
+    // Save order authoritative snapshot to local store and notify other views
+    saveOrderToLocalStore(order);
+    try {
+      window.dispatchEvent(new CustomEvent('noir_order_placed', { detail: order }));
+    } catch {
+      // Event fallback
+    }
     // Note: Do not trigger onEmailDispatched here to ensure the real native Order Confirmed receipt is displayed without a faux email popup modal overlay.
 
     // Stop abandoned cart automation

@@ -13,13 +13,11 @@ import {
   Share2,
   Sparkles,
   Truck,
-  Heart,
   Star,
   PenLine
 } from 'lucide-react';
 import { NOIR_PRODUCTS } from '../data/products';
 import { useInventory } from '../hooks/useInventory';
-import { useWishlist } from '../utils/wishlist';
 import { ReviewSubmissionModal } from '../components/ReviewSubmissionModal';
 import { CUSTOMER_REVIEWS, type CustomerReview } from '../components/ReviewsRollingSection';
 import { SeoHead } from '../components/SeoHead';
@@ -56,7 +54,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { getStock, getStockStatus, checkAvailability } = useInventory();
-  const { isWishlisted, toggle: toggleWishlist } = useWishlist();
 
   const product = NOIR_PRODUCTS.find((p) => p.id === id) || NOIR_PRODUCTS[0];
   const [selectedGrind, setSelectedGrind] = useState<string>('Whole Bean');
@@ -227,20 +224,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
           </div>
 
           <div className="flex items-center gap-2 sm:gap-2.5">
-            {/* Wishlist Bookmark Button */}
-            <button
-              onClick={() => toggleWishlist(product.id)}
-              className={`p-2 rounded-full border transition-colors relative cursor-pointer active:scale-95 ${
-                isWishlisted(product.id)
-                  ? 'bg-rose-50 border-rose-300 text-rose-600'
-                  : 'border-[#2D2926]/15 hover:bg-neutral-100 text-[#2D2926]'
-              }`}
-              title={isWishlisted(product.id) ? 'Saved in Cellar Wishlist' : 'Save Micro-Lot to Wishlist'}
-              aria-label="Wishlist"
-            >
-              <Heart className={`h-4 w-4 ${isWishlisted(product.id) ? 'fill-rose-500 text-rose-500' : ''}`} />
-            </button>
-
             {/* Share Micro-Lot Button */}
             <button
               onClick={handleShare}

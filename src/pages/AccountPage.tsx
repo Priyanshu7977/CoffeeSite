@@ -27,13 +27,10 @@ import {
   ChevronRight,
   Check,
   Printer,
-  Heart,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { InvoiceModal } from '../components/InvoiceModal';
 import { OrderTrackingModal } from '../components/OrderTrackingModal';
-import { useWishlist } from '../utils/wishlist';
-import { NOIR_PRODUCTS } from '../data/products';
 import type { CustomerOrder, OrderItemSnapshot } from '../types/payment';
 import { getCustomerOrders, getAdminOrders, adminVerifyUtr } from '../utils/paymentApi';
 import { isValidName, sanitizeName, sanitizePhone } from '../utils/validation';
@@ -52,7 +49,6 @@ export const AccountPage: React.FC<AccountPageProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { wishlist, toggle: toggleWishlist } = useWishlist();
   const {
     userSession,
     profile,
@@ -63,7 +59,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
   } = useAuth();
 
   // Active Tab
-  const [activeTab, setActiveTab] = useState<'overview' | 'orders' | 'profile' | 'addresses' | 'saved'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'orders' | 'profile' | 'addresses'>('overview');
 
   // Orders State
   const [customerOrders, setCustomerOrders] = useState<CustomerOrder[]>([]);
@@ -78,11 +74,12 @@ export const AccountPage: React.FC<AccountPageProps> = ({
   const [adminActionLoading, setAdminActionLoading] = useState<string | null>(null);
   const [adminSuccessMsg, setAdminSuccessMsg] = useState<string | null>(null);
 
-  // Profile Edit State
+  // Profile Edit State (Personal Details)
   const [isEditingProfile, setIsEditingProfile] = useState<boolean>(false);
   const [editName, setEditName] = useState<string>('');
   const [editPhone, setEditPhone] = useState<string>('');
-  const [editGrind, setEditGrind] = useState<string>('Whole Bean');
+  const [editEmail, setEditEmail] = useState<string>('');
+  const [editCity, setEditCity] = useState<string>('');
   const [profileSaving, setProfileSaving] = useState<boolean>(false);
   const [profileMsg, setProfileMsg] = useState<string>('');
 
@@ -100,13 +97,17 @@ export const AccountPage: React.FC<AccountPageProps> = ({
 
   const isAdmin = userSession?.role === 'ADMIN' || userSession?.role === 'IMS_ENGINEER';
 
-  // Load customer orders
+  // Load customer orders across database & local session store
   const loadOrders = async () => {
     if (!userSession || !userSession.isLoggedIn) return;
 
     setIsLoadingOrders(true);
     try {
-      const orders = await getCustomerOrders(userSession.email || userSession.memberId);
+      const orders = await getCustomerOrders({
+        email: userSession.email,
+        phone: userSession.phone,
+        memberId: userSession.memberId,
+      });
       setCustomerOrders(orders);
 
       if (isAdmin) {
@@ -123,20 +124,41 @@ export const AccountPage: React.FC<AccountPageProps> = ({
   useEffect(() => {
     loadOrders();
     if (userSession) {
+      const rawName = userSession.name?.trim() || '';
+      const isPhoneName = rawName.startsWith('+') || /^\d+$/.test(rawName.replace(/[\s+]/g, ''));
       const isPlaceholder =
-        !userSession.name ||
-        userSession.name.trim().toLowerCase() === 'patron' ||
-        userSession.name.trim().toLowerCase() === 'user';
-      setEditName(isPlaceholder ? '' : userSession.name);
-      setEditPhone(userSession.phone || '');
-      setEditGrind(profile?.preferences?.favoriteGrind || 'Whole Bean');
+        !rawName ||
+        isPhoneName ||
+        rawName.toLowerCase() === 'patron' ||
+        rawName.toLowerCase() === 'user' ||
+        rawName.toLowerCase() === 'customer';
+      setEditName(isPlaceholder ? '' : rawName);
+      setEditPhone(userSession.phone || (isPhoneName ? rawName : ''));
+
+      const rawEmail = userSession.email || '';
+      const isSynthetic = rawEmail.includes('@phone.noirkaapi.in') || rawEmail.includes('@phone.noircafe.in');
+      setEditEmail(isSynthetic ? '' : rawEmail);
+      setEditCity((profile?.preferences as any)?.city || '');
     }
   }, [userSession, profile]);
+
+  // Real-time listener: re-sync orders whenever an order is completed anywhere on the site
+  useEffect(() => {
+    const handleOrderSync = () => {
+      loadOrders();
+    };
+    window.addEventListener('noir_order_placed', handleOrderSync);
+    window.addEventListener('storage', handleOrderSync);
+    return () => {
+      window.removeEventListener('noir_order_placed', handleOrderSync);
+      window.removeEventListener('storage', handleOrderSync);
+    };
+  }, [userSession]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const tabParam = params.get('tab');
-    if (tabParam === 'orders' || tabParam === 'saved' || tabParam === 'profile' || tabParam === 'addresses') {
+    if (tabParam === 'orders' || tabParam === 'profile' || tabParam === 'addresses') {
       setActiveTab(tabParam);
     }
     const trackParam = params.get('track') || params.get('order');
@@ -185,8 +207,8 @@ export const AccountPage: React.FC<AccountPageProps> = ({
     e.preventDefault();
     setProfileMsg('');
 
-    if (!isValidName(editName)) {
-      setProfileMsg('Please enter a valid full name.');
+    if (editName.trim() && !isValidName(editName)) {
+      setProfileMsg('Please enter a valid full name (alphabets only).');
       return;
     }
 
@@ -195,12 +217,13 @@ export const AccountPage: React.FC<AccountPageProps> = ({
       await updateProfileData({
         fullName: editName.trim(),
         phone: editPhone.trim(),
+        email: editEmail.trim() || undefined,
         preferences: {
-          favoriteGrind: editGrind,
+          city: editCity.trim(),
         },
       });
       setIsEditingProfile(false);
-      setProfileMsg('Profile updated successfully.');
+      setProfileMsg('Personal profile details saved successfully.');
       setTimeout(() => setProfileMsg(''), 3000);
     } catch (err: unknown) {
       setProfileMsg(err instanceof Error ? err.message : 'Failed to update profile.');
@@ -404,9 +427,8 @@ export const AccountPage: React.FC<AccountPageProps> = ({
               {[
                 { id: 'overview', label: 'Overview', icon: User },
                 { id: 'orders', label: `Orders (${customerOrders.length})`, icon: Package },
-                { id: 'saved', label: `Saved Lots (${wishlist.length})`, icon: Heart },
                 { id: 'addresses', label: `Addresses (${addresses.length})`, icon: MapPin },
-                { id: 'profile', label: 'Profile Details', icon: Coffee },
+                { id: 'profile', label: 'Profile Details', icon: User },
               ].map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -756,130 +778,6 @@ export const AccountPage: React.FC<AccountPageProps> = ({
               </div>
             )}
 
-            {/* TAB: SAVED MICRO-LOTS */}
-            {activeTab === 'saved' && (
-              <div className="p-6 rounded-3xl bg-white border border-[#2D2926]/10 shadow-xs space-y-5 animate-fadeIn">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2D2926]/10 pb-4">
-                  <div>
-                    <h3 className="font-display font-bold text-lg text-[#2D2926]">Saved Micro-Lots</h3>
-                    <p className="text-xs text-[#5E5854]">
-                      Your private bookmark ledger of rare harvest lots from Baba Budangiri and Chikmagalur.
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => navigate('/collection')}
-                    className="px-4 py-2 rounded-full border border-[#2D2926]/15 hover:bg-[#FAF7F5] text-xs font-bold text-[#2D2926] transition-colors self-start sm:self-auto cursor-pointer"
-                  >
-                    Explore All 12 Micro-Lots →
-                  </button>
-                </div>
-
-                {wishlist.length === 0 ? (
-                  <div className="py-16 text-center space-y-3">
-                    <div className="h-14 w-14 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-500 mx-auto">
-                      <Heart className="h-6 w-6" />
-                    </div>
-                    <h4 className="font-display font-bold text-base text-[#2D2926]">No Saved Lots Yet</h4>
-                    <p className="text-xs text-[#5E5854] max-w-sm mx-auto">
-                      Bookmark your favorite roasts on the collection or product pages by tapping the heart icon to easily access them here.
-                    </p>
-                    <button
-                      onClick={() => navigate('/collection')}
-                      className="px-5 py-2.5 rounded-full bg-[#2D2926] hover:bg-black text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-sm active:scale-95"
-                    >
-                      Browse Micro-Lots
-                    </button>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {NOIR_PRODUCTS.filter((p) => wishlist.includes(p.id)).map((item) => (
-                      <div
-                        key={item.id}
-                        className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 shadow-2xs flex flex-col justify-between"
-                      >
-                        <div>
-                          <div className="relative aspect-[16/10] rounded-xl overflow-hidden bg-neutral-900 mb-3 border border-[#2D2926]/10">
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="h-full w-full object-cover"
-                            />
-                            <div className="absolute top-2 left-2 rounded-full bg-[#F5DADF] px-2 py-0.5 text-[9px] font-mono font-bold text-[#2D2926]">
-                              {item.roastLevel}
-                            </div>
-                            <button
-                              onClick={() => toggleWishlist(item.id)}
-                              className="absolute top-2 right-2 h-7 w-7 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-rose-600 hover:scale-105 transition-all shadow-xs cursor-pointer"
-                              title="Remove from saved"
-                            >
-                              <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500" />
-                            </button>
-                          </div>
-
-                          <div className="font-mono text-[10px] text-[#E05A7E] font-bold">
-                            LOT #{item.num} • {item.origin}
-                          </div>
-                          <h4 className="font-display font-bold text-sm text-[#2D2926] truncate mt-0.5">
-                            {item.name}
-                          </h4>
-                          <p className="text-[11px] text-[#5E5854] line-clamp-2 mt-1">
-                            {item.description}
-                          </p>
-
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {item.notes.slice(0, 3).map((note) => (
-                              <span
-                                key={note}
-                                className="px-2 py-0.5 rounded-full bg-white border border-[#2D2926]/10 text-[9px] font-mono text-[#5E5854]"
-                              >
-                                {note}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="pt-3 mt-3 border-t border-[#2D2926]/10 flex items-center justify-between">
-                          <span className="font-display text-sm font-bold text-[#2D2926]">
-                            {item.price}
-                          </span>
-
-                          <div className="flex items-center gap-1.5">
-                            <button
-                              onClick={() => navigate(`/product/${item.id}`)}
-                              className="px-3 py-1.5 rounded-full bg-white border border-[#2D2926]/15 hover:bg-neutral-100 text-xs font-bold text-[#2D2926] transition-colors cursor-pointer"
-                            >
-                              Details
-                            </button>
-                            <button
-                              onClick={() => {
-                                if (onReorderItems) {
-                                  const priceNum = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
-                                  onReorderItems([{
-                                    productId: item.id,
-                                    name: item.name,
-                                    origin: item.origin,
-                                    grind: 'Whole Bean',
-                                    quantity: 1,
-                                    unitPrice: priceNum,
-                                    lineTotal: priceNum,
-                                  }]);
-                                } else {
-                                  navigate(`/product/${item.id}`);
-                                }
-                              }}
-                              className="px-3 py-1.5 rounded-full bg-[#2D2926] hover:bg-black text-xs font-bold text-white transition-colors cursor-pointer shadow-xs active:scale-95"
-                            >
-                              Order Tin
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
             {/* TAB 3: SAVED ADDRESSES */}
             {activeTab === 'addresses' && (
               <div className="p-6 rounded-3xl bg-white border border-[#2D2926]/10 shadow-xs space-y-5">
@@ -969,7 +867,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                   <div>
                     <h3 className="font-display font-bold text-lg text-[#2D2926]">User Profile Details</h3>
                     <p className="text-xs text-[#5E5854]">
-                      Fill in or update your contact details and default grind preferences for freshly roasted bags.
+                      Fill in or update your personal contact details and delivery location.
                     </p>
                   </div>
                   {!isEditingProfile && (
@@ -981,7 +879,9 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                       <span>
                         {!userSession.name ||
                         userSession.name.trim().toLowerCase() === 'patron' ||
-                        userSession.name.trim().toLowerCase() === 'user'
+                        userSession.name.trim().toLowerCase() === 'user' ||
+                        userSession.name.startsWith('+') ||
+                        /^\d+$/.test(userSession.name.replace(/[\s+]/g, ''))
                           ? 'Fill Profile Details'
                           : 'Edit Details'}
                       </span>
@@ -1005,7 +905,6 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                         type="text"
                         value={editName}
                         onChange={(e) => setEditName(e.target.value.replace(/[^A-Za-z\s]/g, ''))}
-                        required
                         placeholder=""
                         className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] p-2.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none"
                       />
@@ -1026,19 +925,28 @@ export const AccountPage: React.FC<AccountPageProps> = ({
 
                     <div>
                       <label className="block text-[11px] font-mono font-bold text-[#5E5854] uppercase mb-1">
-                        Favorite Brewing Method / Grind
+                        Email Address
                       </label>
-                      <select
-                        value={editGrind}
-                        onChange={(e) => setEditGrind(e.target.value)}
-                        className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] p-2.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none cursor-pointer"
-                      >
-                        <option value="Whole Bean">Whole Bean (Roasted Fresh)</option>
-                        <option value="Filter Fine (Brass Davarah)">South Indian Brass Filter Kaapi</option>
-                        <option value="Medium Grind (V60 & Kalita)">V60 / Pour Over Medium</option>
-                        <option value="Coarse Grind (French Press)">French Press Coarse</option>
-                        <option value="Fine Grind (9-Bar Espresso)">9-Bar Espresso Fine</option>
-                      </select>
+                      <input
+                        type="email"
+                        value={editEmail}
+                        onChange={(e) => setEditEmail(e.target.value)}
+                        placeholder=""
+                        className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] p-2.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-mono font-bold text-[#5E5854] uppercase mb-1">
+                        City / Region
+                      </label>
+                      <input
+                        type="text"
+                        value={editCity}
+                        onChange={(e) => setEditCity(e.target.value)}
+                        placeholder=""
+                        className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] p-2.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none"
+                      />
                     </div>
 
                     <div className="flex items-center gap-2 pt-2">
@@ -1062,10 +970,12 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                   <div className="space-y-4">
                     {(!userSession.name ||
                       userSession.name.trim().toLowerCase() === 'patron' ||
-                      userSession.name.trim().toLowerCase() === 'user') && (
+                      userSession.name.trim().toLowerCase() === 'user' ||
+                      userSession.name.startsWith('+') ||
+                      /^\d+$/.test(userSession.name.replace(/[\s+]/g, ''))) && (
                       <div className="p-4 rounded-2xl bg-[#C89658]/10 border border-[#C89658]/30 text-[#2D2926] text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <span>
-                          <strong>Profile Incomplete:</strong> Your profile name is currently set to default 'User'. Click <strong>Fill Profile Details</strong> to set your name.
+                          <strong>Profile Details:</strong> Complete your personal details to personalize your coffee drops and invoices.
                         </span>
                         <button
                           onClick={() => setIsEditingProfile(true)}
@@ -1081,23 +991,32 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                         <div className="text-sm font-bold text-[#2D2926]">
                           {!userSession.name ||
                           userSession.name.trim().toLowerCase() === 'patron' ||
-                          userSession.name.trim().toLowerCase() === 'user'
-                            ? 'User (Not filled yet)'
+                          userSession.name.trim().toLowerCase() === 'user' ||
+                          userSession.name.startsWith('+') ||
+                          /^\d+$/.test(userSession.name.replace(/[\s+]/g, ''))
+                            ? 'Not filled yet'
                             : userSession.name}
                         </div>
                       </div>
                       <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2">
-                        <div className="text-[10px] font-mono uppercase text-[#8C827A]">Registered Account</div>
-                        <div className="text-sm font-bold text-[#2D2926]">{userSession.email}</div>
+                        <div className="text-[10px] font-mono uppercase text-[#8C827A]">Email Address</div>
+                        <div className="text-sm font-bold text-[#2D2926]">
+                          {!userSession.email || userSession.email.includes('@phone.')
+                            ? 'Not filled yet'
+                            : userSession.email}
+                        </div>
                       </div>
                       <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2">
                         <div className="text-[10px] font-mono uppercase text-[#8C827A]">Mobile Phone</div>
-                        <div className="text-sm font-bold text-[#2D2926]">{userSession.phone || 'None recorded'}</div>
+                        <div className="text-sm font-bold text-[#2D2926]">
+                          {userSession.phone ||
+                          (userSession.name?.startsWith('+') ? userSession.name : 'Not filled yet')}
+                        </div>
                       </div>
                       <div className="p-4 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2">
-                        <div className="text-[10px] font-mono uppercase text-[#8C827A]">Default Grind Choice</div>
-                        <div className="text-sm font-bold text-[#C89658]">
-                          {profile?.preferences?.favoriteGrind || 'Whole Bean (Roasted Fresh)'}
+                        <div className="text-[10px] font-mono uppercase text-[#8C827A]">Delivery City / Region</div>
+                        <div className="text-sm font-bold text-[#2D2926]">
+                          {(profile?.preferences as any)?.city || editCity || 'Not filled yet'}
                         </div>
                       </div>
                     </div>

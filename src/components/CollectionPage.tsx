@@ -7,14 +7,12 @@ import {
   Check, 
   SlidersHorizontal,
   Compass,
-  Coffee,
-  Heart
+  Coffee
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { NOIR_PRODUCTS } from '../data/products';
 import { MagneticButton } from './MagneticButton';
 import { useInventory } from '../hooks/useInventory';
-import { useWishlist } from '../utils/wishlist';
 import { gsap } from '../utils/animations';
 import { SeoHead } from './SeoHead';
 import { Breadcrumbs } from './Breadcrumbs';
@@ -47,7 +45,6 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
 
   const { getStock } = useInventory();
-  const { isWishlisted, toggle: toggleWishlist, wishlist } = useWishlist();
 
 
   // Animation Refs
@@ -153,9 +150,6 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   const filteredProducts = useMemo(() => {
     return NOIR_PRODUCTS.filter((product) => {
       // Roast filter
-      if (selectedRoastFilter === 'saved' && !wishlist.includes(product.id)) {
-        return false;
-      }
       if (selectedRoastFilter === 'light' && !product.roastLevel.toLowerCase().includes('light')) {
         return false;
       }
@@ -192,7 +186,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       if (sortBy === 'rating') return (b.body + b.sweetness) - (a.body + a.sweetness);
       return 0; // featured natural order
     });
-  }, [selectedRoastFilter, sortBy, searchQuery, wishlist]);
+  }, [selectedRoastFilter, sortBy, searchQuery]);
 
   const breadcrumbs = useMemo(() => [
     { name: 'Reserve Collection', url: '/collection' }
@@ -325,7 +319,6 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
             <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1.5 lg:pb-0 scrollbar-none w-full lg:w-auto">
               {[
                 { id: 'all', label: 'All 12 Lots' },
-                { id: 'saved', label: `Saved (${wishlist.length})` },
                 { id: 'light', label: 'Light Roast' },
                 { id: 'medium', label: 'Medium Roast' },
                 { id: 'dark', label: 'Dark Roast' },
@@ -423,23 +416,6 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                       <div className="absolute top-2.5 left-2.5 rounded-full bg-[#F5DADF] px-2.5 py-0.5 border border-[#2D2926]/10 text-[9px] sm:text-[10px] font-mono text-[#2D2926] font-bold shadow-sm">
                         {product.roastLevel}
                       </div>
-
-                      {/* Wishlist Heart Toggle */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleWishlist(product.id);
-                        }}
-                        className={`absolute top-2.5 right-2.5 z-10 flex h-7 w-7 items-center justify-center rounded-full border transition-all cursor-pointer shadow-sm active:scale-90 ${
-                          isWishlisted(product.id)
-                            ? 'bg-rose-50 border-rose-300 text-rose-600'
-                            : 'bg-white/90 backdrop-blur-md border-[#2D2926]/15 text-[#8C827A] hover:text-[#2D2926]'
-                        }`}
-                        title={isWishlisted(product.id) ? 'Remove from Saved Micro-Lots' : 'Save Micro-Lot'}
-                        aria-label="Save to wishlist"
-                      >
-                        <Heart className={`h-3.5 w-3.5 ${isWishlisted(product.id) ? 'fill-rose-500 text-rose-500' : ''}`} />
-                      </button>
 
                       {/* Badge Pill */}
                       <div className="absolute bottom-2.5 left-2.5 rounded-full bg-[#2D2926]/90 backdrop-blur-md text-white px-2 py-0.5 text-[8px] sm:text-[9px] font-sans font-bold uppercase tracking-wider">

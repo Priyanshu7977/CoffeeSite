@@ -507,16 +507,19 @@ var OrdersStore = class {
   }
   /**
    * Retrieves all orders belonging to a customer
-   * STRICT ACCESS CONTROL: Customers only see their own email or memberId orders
+   * STRICT ACCESS CONTROL: Customers only see their own email, memberId, or phone orders
    */
-  static getCustomerOrders(identifier) {
-    if (!identifier || typeof identifier !== "string") return [];
-    const clean = identifier.trim().toLowerCase();
+  static getCustomerOrders(identifier, phoneQuery) {
+    const clean = identifier ? identifier.trim().toLowerCase() : "";
+    const cleanPhone = phoneQuery ? phoneQuery.replace(/[^0-9]/g, "") : "";
+    if (!clean && !cleanPhone) return [];
     const results = [];
     for (const order of ordersCache.values()) {
-      const matchEmail = order.customerEmail.toLowerCase() === clean;
-      const matchCustomer = order.customerId && order.customerId.toLowerCase() === clean;
-      if (matchEmail || matchCustomer) {
+      const matchEmail = clean && order.customerEmail.toLowerCase() === clean;
+      const matchCustomer = clean && order.customerId && order.customerId.toLowerCase() === clean;
+      const orderPhone = order.customerPhone ? order.customerPhone.replace(/[^0-9]/g, "") : "";
+      const matchPhone = cleanPhone && orderPhone && (orderPhone.endsWith(cleanPhone.slice(-10)) || cleanPhone.endsWith(orderPhone.slice(-10)));
+      if (matchEmail || matchCustomer || matchPhone) {
         results.push(order);
       }
     }
@@ -1800,11 +1803,12 @@ apiRouter.post("/payment/webhook", (req, res) => {
 apiRouter.get("/orders/my-orders", (req, res) => {
   const email = req.query.email || "";
   const memberId = req.query.memberId || "";
-  if (!email && !memberId) {
-    res.status(400).json({ success: false, error: "Customer identifier (email or memberId) is required." });
+  const phone = req.query.phone || "";
+  if (!email && !memberId && !phone) {
+    res.status(400).json({ success: false, error: "Customer identifier (email, phone, or memberId) is required." });
     return;
   }
-  const orders = OrdersStore.getCustomerOrders(email || memberId);
+  const orders = OrdersStore.getCustomerOrders(email || memberId, phone);
   res.json({ success: true, count: orders.length, orders });
 });
 apiRouter.get("/orders/:orderId", (req, res) => {
@@ -2112,10 +2116,12 @@ apiRouter.post("/auth/sync", (req, res) => {
       return;
     }
     const memberId = `NR-2026-${Math.floor(1e3 + Math.random() * 9e3)}`;
+    const isPhoneVal = (str) => Boolean(str && (str.startsWith("+") || /^\d+$/.test(str.replace(/[\s+]/g, ""))));
+    const resolvedName = fullName && !isPhoneVal(fullName) ? fullName.trim() : "";
     const newProfile = {
       uid: uid || `usr_${Date.now()}`,
       memberId,
-      fullName: (fullName || cleanEmail.split("@")[0]).trim(),
+      fullName: resolvedName,
       email: cleanEmail,
       phone: phone || "",
       role: "CUSTOMER",

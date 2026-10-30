@@ -41,7 +41,7 @@ interface AuthContextType {
   sendPhoneOtp: (phone: string, containerId: string) => Promise<ConfirmationResult>;
   verifyPhoneOtp: (confirmationResult: ConfirmationResult, code: string) => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
-  updateProfileData: (updates: { fullName?: string; phone?: string; preferences?: Record<string, unknown> }) => Promise<void>;
+  updateProfileData: (updates: { fullName?: string; phone?: string; email?: string; preferences?: Record<string, unknown> }) => Promise<void>;
   addSavedAddress: (address: Partial<SavedAddress>) => Promise<void>;
   removeSavedAddress: (addressId: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -311,10 +311,15 @@ export const AuthProvider: React.FC<{ children: ReactNode; onEmailDispatched?: (
         user.email ||
         (user.phoneNumber ? `${user.phoneNumber.replace(/\+/g, '')}@phone.noirkaapi.in` : '');
 
+      const isPhoneString = (str?: string) => Boolean(str && (str.startsWith('+') || /^\d+$/.test(str.replace(/[\s+]/g, '')) || str.toLowerCase() === 'user' || str.toLowerCase() === 'patron'));
+      const cleanResolvedName = (user.displayName && !isPhoneString(user.displayName))
+        ? user.displayName
+        : (fbProfile.fullName && !isPhoneString(fbProfile.fullName) ? fbProfile.fullName : '');
+
       const syncRes = await syncCustomerSession({
         uid: user.uid,
         email: fallbackEmail,
-        fullName: user.displayName || fbProfile.fullName || 'User',
+        fullName: cleanResolvedName,
         phone: user.phoneNumber || fbProfile.phone,
         authProvider: 'phone',
       });
@@ -323,7 +328,7 @@ export const AuthProvider: React.FC<{ children: ReactNode; onEmailDispatched?: (
         saveSession(syncRes.session, syncRes.profile);
       } else {
         const session: UserSession = {
-          name: fbProfile.fullName || 'User',
+          name: cleanResolvedName,
           email: fbProfile.email || fallbackEmail,
           phone: fbProfile.phone || user.phoneNumber || '',
           memberId: fbProfile.memberId,
@@ -357,6 +362,7 @@ export const AuthProvider: React.FC<{ children: ReactNode; onEmailDispatched?: (
   const updateProfileData = async (updates: {
     fullName?: string;
     phone?: string;
+    email?: string;
     preferences?: Record<string, unknown>;
   }): Promise<void> => {
     const accountEmail =
@@ -416,11 +422,12 @@ export const AuthProvider: React.FC<{ children: ReactNode; onEmailDispatched?: (
         updatedAt: new Date().toISOString(),
       };
 
+      const updatedEmail = updates.email || accountEmail || baseProfile.email;
       const updatedProfile: CustomerProfile = {
         ...baseProfile,
-        fullName: updates.fullName || baseProfile.fullName,
-        email: accountEmail || baseProfile.email,
-        phone: updates.phone || baseProfile.phone,
+        fullName: updates.fullName !== undefined ? updates.fullName : baseProfile.fullName,
+        email: updatedEmail,
+        phone: updates.phone !== undefined ? updates.phone : baseProfile.phone,
         preferences: updates.preferences
           ? { ...baseProfile.preferences, ...updates.preferences }
           : baseProfile.preferences,
@@ -429,8 +436,9 @@ export const AuthProvider: React.FC<{ children: ReactNode; onEmailDispatched?: (
 
       const updatedSession: UserSession = {
         ...userSession,
-        name: updates.fullName || userSession.name,
-        phone: updates.phone || userSession.phone,
+        name: updates.fullName !== undefined ? updates.fullName : userSession.name,
+        phone: updates.phone !== undefined ? updates.phone : userSession.phone,
+        email: updatedEmail || userSession.email,
       };
 
       saveSession(updatedSession, updatedProfile);

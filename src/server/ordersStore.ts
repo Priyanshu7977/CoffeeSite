@@ -148,17 +148,24 @@ export class OrdersStore {
 
   /**
    * Retrieves all orders belonging to a customer
-   * STRICT ACCESS CONTROL: Customers only see their own email or memberId orders
+   * STRICT ACCESS CONTROL: Customers only see their own email, memberId, or phone orders
    */
-  public static getCustomerOrders(identifier: string): CustomerOrder[] {
-    if (!identifier || typeof identifier !== 'string') return [];
-    const clean = identifier.trim().toLowerCase();
+  public static getCustomerOrders(identifier: string, phoneQuery?: string): CustomerOrder[] {
+    const clean = identifier ? identifier.trim().toLowerCase() : '';
+    const cleanPhone = phoneQuery ? phoneQuery.replace(/[^0-9]/g, '') : '';
+    if (!clean && !cleanPhone) return [];
     const results: CustomerOrder[] = [];
 
     for (const order of ordersCache.values()) {
-      const matchEmail = order.customerEmail.toLowerCase() === clean;
-      const matchCustomer = order.customerId && order.customerId.toLowerCase() === clean;
-      if (matchEmail || matchCustomer) {
+      const matchEmail = clean && order.customerEmail.toLowerCase() === clean;
+      const matchCustomer = clean && order.customerId && order.customerId.toLowerCase() === clean;
+      const orderPhone = order.customerPhone ? order.customerPhone.replace(/[^0-9]/g, '') : '';
+      const matchPhone = cleanPhone && orderPhone && (
+        orderPhone.endsWith(cleanPhone.slice(-10)) ||
+        cleanPhone.endsWith(orderPhone.slice(-10))
+      );
+
+      if (matchEmail || matchCustomer || matchPhone) {
         results.push(order);
       }
     }
