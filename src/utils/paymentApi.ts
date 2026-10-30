@@ -11,7 +11,7 @@ import { NOIR_PRODUCTS } from '../data/products';
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
 
 export interface CreateOrderPayload {
-  items: Array<{ productId: string; quantity: number; grind?: string }>;
+  items: Array<{ productId: string; quantity: number; grind?: string; isSubscription?: boolean }>;
   customer: {
     fullName: string;
     email: string;
@@ -122,12 +122,13 @@ function createLocalFallbackOrder(payload: CreateOrderPayload): CustomerOrder {
   let subtotal = 0;
   const items: OrderItemSnapshot[] = payload.items.map((it) => {
     const prod = NOIR_PRODUCTS.find((p) => p.id === it.productId);
-    const price = prod ? (parseFloat(prod.price.replace(/[^0-9.]/g, '')) || 2400) : 2400;
+    const basePrice = prod ? (parseFloat(prod.price.replace(/[^0-9.]/g, '')) || 2400) : 2400;
+    const price = it.isSubscription ? Math.round(basePrice * 0.9) : basePrice;
     const lineTotal = price * it.quantity;
     subtotal += lineTotal;
     return {
       productId: it.productId,
-      name: prod?.name || 'Noir Kaapi Roast',
+      name: it.isSubscription ? `${prod?.name || 'Noir Kaapi Roast'} (Roaster's Club Subscription)` : (prod?.name || 'Noir Kaapi Roast'),
       origin: prod?.origin || 'Karnataka',
       grind: it.grind || 'Whole Bean',
       quantity: it.quantity,
@@ -390,15 +391,23 @@ export async function getCustomerOrders(
 }
 
 /**
- * Admin: Fetches all orders (requires IMS Admin role)
+ * Admin: Fetches all orders (requires IMS Admin role or valid session token)
  */
-export async function getAdminOrders(role: string = 'ADMIN'): Promise<CustomerOrder[]> {
+export async function getAdminOrders(roleOrToken?: string): Promise<CustomerOrder[]> {
   try {
-    const res = await fetch(`${API_BASE}/api/admin/orders`, {
-      headers: {
-        'x-admin-role': role,
-      },
-    });
+    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem('noir_customer_session_v1') : null;
+    const session = raw ? JSON.parse(raw) : null;
+    const token = roleOrToken || session?.token || 'ADMIN';
+
+    const headers: Record<string, string> = {
+      'x-admin-role': 'ADMIN',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+      headers['x-admin-key'] = token;
+    }
+
+    const res = await fetch(`${API_BASE}/api/admin/orders`, { headers });
     if (res.ok) {
       const data = await parseSafeJson(res);
       if (data && data.orders) return data.orders;
@@ -417,15 +426,26 @@ export async function adminVerifyUtr(
   orderId: string,
   isApproved: boolean,
   verifiedBy: string,
-  notes?: string
+  notes?: string,
+  token?: string
 ): Promise<CustomerOrder> {
   try {
+    const raw = typeof localStorage !== 'undefined' ? localStorage.getItem('noir_customer_session_v1') : null;
+    const session = raw ? JSON.parse(raw) : null;
+    const authToken = token || session?.token;
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'x-admin-role': 'ADMIN',
+    };
+    if (authToken) {
+      headers['Authorization'] = `Bearer ${authToken}`;
+      headers['x-admin-key'] = authToken;
+    }
+
     const res = await fetch(`${API_BASE}/api/admin/verify-utr`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-admin-role': 'ADMIN',
-      },
+      headers,
       body: JSON.stringify({ orderId, isApproved, verifiedBy, notes }),
     });
 

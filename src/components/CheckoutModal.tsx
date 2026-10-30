@@ -308,6 +308,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
           productId: it.product.id,
           quantity: it.quantity,
           grind: it.grind,
+          isSubscription: Boolean(it.isSubscription),
         })),
         customer: {
           fullName,
@@ -1222,6 +1223,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     <br />
                     3. After payment, enter your 12-digit UPI Reference / UTR Number below.
                   </p>
+                  <div className="pt-2">
+                    <a
+                      href={`upi://pay?pa=${activeQr.vpa}&pn=${encodeURIComponent(activeQr.accountHolder)}&am=${confirmedOrder.pricing.finalTotal}&cu=INR&tn=${encodeURIComponent('Order ' + confirmedOrder.orderNumber)}`}
+                      className="inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl bg-[#2D2926] text-white text-xs font-semibold hover:bg-black transition-all shadow-xs w-full sm:w-auto cursor-pointer"
+                    >
+                      <QrCode className="h-3.5 w-3.5 text-[#C89658]" />
+                      <span>Open in UPI App (GPay / PhonePe / Paytm)</span>
+                    </a>
+                  </div>
                 </div>
 
                 <form onSubmit={handleSubmitUtr} className="space-y-2.5 pt-2 border-t border-[#2D2926]/10">

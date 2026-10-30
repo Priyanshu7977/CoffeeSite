@@ -77,20 +77,31 @@ export const CartPage: React.FC<CartPageProps> = ({
   }, 0);
 
   const discountAmount = Math.round((subtotal * discountPercent) / 100);
-  const shipping = subtotal >= 3500 || subtotal === 0 ? 0 : 250;
-  const finalTotal = subtotal - discountAmount + shipping;
+  const shipping = 0; // Free direct single-estate express courier across India
+  const finalTotal = Math.max(0, subtotal - discountAmount + shipping);
 
   const handleApplyPromo = (e: React.FormEvent) => {
     e.preventDefault();
     const clean = promoCode.trim().toUpperCase();
-    if (clean === 'NOIRVIP10' || clean === 'FIRSTROAST') {
-      setDiscountPercent(10);
-      setPromoMessage('10% Discount applied successfully!');
-    } else if (clean === 'COFFEE20') {
-      setDiscountPercent(20);
-      setPromoMessage('20% Discount applied successfully!');
+    const promoMap: Record<string, number> = {
+      FIRST10: 10,
+      WELCOME10: 10,
+      NOIRVIP10: 10,
+      FIRSTROAST: 10,
+      NOIR10: 10,
+      VIP10: 10,
+      BANK15: 15,
+      UPI15: 15,
+      ROAST20: 20,
+      NOIR20: 20,
+      COFFEE20: 20,
+    };
+    if (clean in promoMap) {
+      const pct = promoMap[clean];
+      setDiscountPercent(pct);
+      setPromoMessage(`${pct}% Privilege Discount applied successfully (${clean})!`);
     } else {
-      setPromoMessage('Invalid coupon code. Try "NOIRVIP10"');
+      setPromoMessage('Invalid coupon code. Try "NOIRVIP10", "ROAST20" or "FIRST10"');
     }
   };
 

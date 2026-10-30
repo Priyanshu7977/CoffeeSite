@@ -42,5 +42,6 @@ export interface UserSession {
   memberId: string;
   isLoggedIn: boolean;
   role?: 'CUSTOMER' | 'ADMIN' | 'IMS_ENGINEER';
+  token?: string;
   savedAddresses?: SavedAddress[];
 }

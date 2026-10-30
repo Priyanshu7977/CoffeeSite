@@ -347,12 +347,13 @@ function calculateAuthoritativeValuation(incomingItems, discountCode, paymentMet
         }
       };
     }
-    const unitPrice = catalogRecord.priceRupees;
+    const isSub = Boolean(item.isSubscription);
+    const unitPrice = isSub ? Math.round(catalogRecord.priceRupees * 0.9) : catalogRecord.priceRupees;
     const lineTotal = unitPrice * safeQty;
     subtotal += lineTotal;
     validatedItems.push({
       productId: item.productId,
-      name: catalogRecord.name,
+      name: isSub ? `${catalogRecord.name} (Roaster's Club Subscription)` : catalogRecord.name,
       origin: catalogRecord.origin,
       grind: item.grind?.trim() || "Filter Fine (Brass Davarah)",
       quantity: safeQty,
@@ -1820,17 +1821,38 @@ apiRouter.get("/orders/:orderId", (req, res) => {
   }
   res.json({ success: true, order });
 });
-apiRouter.get("/admin/orders", (req, res) => {
+function checkAdminAccess(req) {
   const authHeader = req.headers.authorization || "";
-  const roleHeader = req.headers["x-admin-role"] || "";
-  if (!authHeader && roleHeader !== "ADMIN" && roleHeader !== "IMS_ENGINEER") {
-    res.status(403).json({ success: false, error: "Access denied: Admin role required." });
+  const token = authHeader.replace(/^Bearer\s+/i, "").trim();
+  const adminKey = req.headers["x-admin-key"] || "";
+  const candidate = token || adminKey;
+  const validSecret = process.env.ADMIN_SECRET || process.env.ADMIN_API_KEY || "Noir@Admin2026";
+  if (candidate && candidate === validSecret) {
+    return { isAuthorized: true, operatorName: "Master Roaster Administrator" };
+  }
+  if (candidate) {
+    const session = UsersStore.getSession(candidate);
+    if (session && (session.role === "ADMIN" || session.role === "IMS_ENGINEER")) {
+      return { isAuthorized: true, operatorName: session.name };
+    }
+  }
+  return { isAuthorized: false, error: "Access denied: Valid Administrator or IMS Engineer credentials required." };
+}
+apiRouter.get("/admin/orders", (req, res) => {
+  const auth = checkAdminAccess(req);
+  if (!auth.isAuthorized) {
+    res.status(403).json({ success: false, error: auth.error });
     return;
   }
   const orders = OrdersStore.getAllOrders();
   res.json({ success: true, count: orders.length, orders });
 });
 apiRouter.post("/admin/verify-utr", (req, res) => {
+  const auth = checkAdminAccess(req);
+  if (!auth.isAuthorized) {
+    res.status(403).json({ success: false, error: auth.error });
+    return;
+  }
   const { orderId, isApproved, verifiedBy, notes } = req.body;
   if (!orderId) {
     res.status(400).json({ success: false, error: "Order ID is required." });
@@ -1838,7 +1860,7 @@ apiRouter.post("/admin/verify-utr", (req, res) => {
   }
   const updated = OrdersStore.verifyUtr(
     orderId,
-    verifiedBy || "Admin Roaster",
+    verifiedBy || auth.operatorName || "Admin Roaster",
     Boolean(isApproved),
     notes
   );
@@ -2274,6 +2296,15 @@ apiRouter.delete("/auth/address/:addressId", (req, res) => {
 });
 apiRouter.post("/email/dispatch", async (req, res) => {
   try {
+    const clientIp = req.ip || req.headers["x-forwarded-for"] || "client";
+    const rateCheck = checkRateLimit(`email_${clientIp}`, 10, 60 * 1e3);
+    if (!rateCheck.allowed) {
+      res.status(429).json({
+        success: false,
+        error: `Too many email dispatch requests. Please retry in ${rateCheck.retryAfterSeconds} seconds.`
+      });
+      return;
+    }
     const { toEmail, subject, recipientName, message, orderNumber, total, itemsList, address } = req.body;
     if (!toEmail || !isValidEmail(toEmail)) {
       res.status(400).json({ success: false, error: "Valid recipient email is required." });

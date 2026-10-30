@@ -39,6 +39,7 @@ export interface IncomingOrderItem {
   productId: string;
   grind?: string;
   quantity: number;
+  isSubscription?: boolean;
 }
 
 export interface AuthoritativeValuationResult {
@@ -126,13 +127,14 @@ export function calculateAuthoritativeValuation(
       };
     }
 
-    const unitPrice = catalogRecord.priceRupees;
+    const isSub = Boolean(item.isSubscription);
+    const unitPrice = isSub ? Math.round(catalogRecord.priceRupees * 0.9) : catalogRecord.priceRupees;
     const lineTotal = unitPrice * safeQty;
     subtotal += lineTotal;
 
     validatedItems.push({
       productId: item.productId,
-      name: catalogRecord.name,
+      name: isSub ? `${catalogRecord.name} (Roaster's Club Subscription)` : catalogRecord.name,
       origin: catalogRecord.origin,
       grind: item.grind?.trim() || 'Filter Fine (Brass Davarah)',
       quantity: safeQty,

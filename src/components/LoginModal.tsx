@@ -97,6 +97,15 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     setPassword(raw.replace(/[<>]/g, ''));
   };
 
+  const getLatestSession = (): UserSession | null => {
+    try {
+      const raw = localStorage.getItem('noir_customer_session_v1');
+      return raw ? JSON.parse(raw) : userSession;
+    } catch {
+      return userSession;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
@@ -127,7 +136,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       setIsProcessing(true);
       try {
         await registerWithEmail(fullName, email, phone, password);
-        if (userSession) onLoginSuccess(userSession);
+        const latest = getLatestSession();
+        if (latest) onLoginSuccess(latest);
         onClose();
       } catch (err: unknown) {
         setErrorMessage(err instanceof Error ? err.message : 'Registration failed.');
@@ -147,7 +157,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       setIsProcessing(true);
       try {
         await loginWithEmail(email, password);
-        if (userSession) onLoginSuccess(userSession);
+        const latest = getLatestSession();
+        if (latest) onLoginSuccess(latest);
         onClose();
       } catch (err: unknown) {
         setErrorMessage(err instanceof Error ? err.message : 'Invalid credentials.');
@@ -162,7 +173,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
     setErrorMessage('');
     try {
       await loginWithGoogle();
-      if (userSession) onLoginSuccess(userSession);
+      const latest = getLatestSession();
+      if (latest) onLoginSuccess(latest);
       onClose();
     } catch (err: unknown) {
       setErrorMessage(formatFirebaseError(err));

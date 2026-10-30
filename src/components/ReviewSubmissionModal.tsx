@@ -139,12 +139,12 @@ export const ReviewSubmissionModal: React.FC<ReviewSubmissionModalProps> = ({
       roastBatch: `Verified Member Roast • Lot #${selectedProduct.num}`,
     };
 
-    // Save to localStorage
+    // Save to localStorage (cap to 30 to prevent quota issues)
     try {
       const existing = localStorage.getItem('noir_custom_reviews_v1');
       const list: CustomerReview[] = existing ? JSON.parse(existing) : [];
       list.unshift(newReview);
-      localStorage.setItem('noir_custom_reviews_v1', JSON.stringify(list));
+      localStorage.setItem('noir_custom_reviews_v1', JSON.stringify(list.slice(0, 30)));
     } catch {
       // Ignored
     }

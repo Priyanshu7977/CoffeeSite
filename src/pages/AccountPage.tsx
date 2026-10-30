@@ -111,7 +111,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
       setCustomerOrders(orders);
 
       if (isAdmin) {
-        const all = await getAdminOrders(userSession.role);
+        const all = await getAdminOrders(userSession.token || userSession.role);
         setAdminOrders(all);
       }
     } catch (err) {
@@ -185,7 +185,8 @@ export const AccountPage: React.FC<AccountPageProps> = ({
         orderId,
         isApproved,
         userSession.name,
-        isApproved ? 'Verified against roastery bank statement' : 'Invalid / missing UTR reference'
+        isApproved ? 'Verified against roastery bank statement' : 'Invalid / missing UTR reference',
+        userSession.token
       );
 
       setAdminSuccessMsg(
