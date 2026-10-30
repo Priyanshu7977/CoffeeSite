@@ -201,8 +201,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
       <main className="mx-auto max-w-7xl px-4 sm:px-8 pt-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
-          {/* ================= LEFT COLUMN: Visuals, Agronomy & Brew Guide ================= */}
-          <div className="lg:col-span-5 space-y-4">
+          {/* ================= LEFT COLUMN: Visuals ================= */}
+          <div className="lg:col-span-5 lg:sticky lg:top-28 self-start">
             {/* Product Image Frame */}
             <div className="relative aspect-[4/3] sm:aspect-[16/11] lg:aspect-square w-full rounded-3xl overflow-hidden bg-neutral-900 border border-[#2D2926]/10 shadow-xl group">
               <img
@@ -240,40 +240,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                     <Check className="h-3 w-3" /> In Stock ({currentStock} Units)
                   </span>
                 )}
-              </div>
-            </div>
-
-            {/* Terroir & Origin Micro-Cards Triad */}
-            <div className="grid grid-cols-3 gap-2.5">
-              <div className="p-3 rounded-2xl bg-white border border-[#2D2926]/10 flex flex-col justify-center">
-                <div className="flex items-center gap-1.5 text-[11px] text-[#8C827A] mb-0.5">
-                  <Mountain className="h-3 w-3 text-[#E05A7E]" /> Altitude
-                </div>
-                <div className="font-mono text-xs font-bold text-[#2D2926] truncate">{product.altitude}</div>
-              </div>
-              <div className="p-3 rounded-2xl bg-white border border-[#2D2926]/10 flex flex-col justify-center">
-                <div className="flex items-center gap-1.5 text-[11px] text-[#8C827A] mb-0.5">
-                  <Layers className="h-3 w-3 text-[#E05A7E]" /> Process
-                </div>
-                <div className="font-mono text-xs font-bold text-[#2D2926] truncate">{product.process}</div>
-              </div>
-              <div className="p-3 rounded-2xl bg-white border border-[#2D2926]/10 flex flex-col justify-center">
-                <div className="flex items-center gap-1.5 text-[11px] text-[#8C827A] mb-0.5">
-                  <Flame className="h-3 w-3 text-[#E05A7E]" /> Roast
-                </div>
-                <div className="font-mono text-xs font-bold text-[#2D2926] truncate">{product.roastLevel}</div>
-              </div>
-            </div>
-
-            {/* Roastery Craft Guarantee Pills */}
-            <div className="p-3.5 rounded-2xl bg-white/70 border border-[#2D2926]/10 text-[11px] text-[#5E5854] space-y-2">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                <span>Small 12kg convection drum roast in Indiranagar</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <PackageCheck className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />
-                <span>Signed Single-Estate Terroir Certificate included</span>
               </div>
             </div>
           </div>
@@ -315,67 +281,41 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
               ))}
             </div>
 
+            {/* Coffee Specifications */}
+            <div className="flex flex-wrap gap-2 text-xs">
+              <div className="px-3 py-1.5 rounded-xl bg-white border border-[#2D2926]/10 flex items-center gap-1.5 font-medium text-[#2D2926] shadow-2xs">
+                <Mountain className="h-3.5 w-3.5 text-[#E05A7E]" />
+                <span className="text-[#8C827A]">Altitude:</span>
+                <span className="font-semibold">{product.altitude}</span>
+              </div>
+              <div className="px-3 py-1.5 rounded-xl bg-white border border-[#2D2926]/10 flex items-center gap-1.5 font-medium text-[#2D2926] shadow-2xs">
+                <Layers className="h-3.5 w-3.5 text-[#E05A7E]" />
+                <span className="text-[#8C827A]">Process:</span>
+                <span className="font-semibold">{product.process}</span>
+              </div>
+              <div className="px-3 py-1.5 rounded-xl bg-white border border-[#2D2926]/10 flex items-center gap-1.5 font-medium text-[#2D2926] shadow-2xs">
+                <Flame className="h-3.5 w-3.5 text-[#E05A7E]" />
+                <span className="text-[#8C827A]">Roast:</span>
+                <span className="font-semibold">{product.roastLevel}</span>
+              </div>
+            </div>
+
             {/* Terroir Story & Description */}
             <p className="text-sm sm:text-base leading-relaxed text-[#5E5854]">
               {product.description}
             </p>
 
-            {/* Sensory Radar Cupping Metrics */}
-            <div className="p-5 rounded-2xl bg-white border border-[#2D2926]/10 space-y-3 shadow-xs">
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-mono uppercase tracking-wider text-[#8C827A] font-bold">
-                  Sensory Cupping Radar
-                </h4>
-                <span className="text-[10px] font-mono text-emerald-700 font-semibold flex items-center gap-1">
-                  <Sparkles className="h-3 w-3" /> Q-Grader Calibrated
-                </span>
-              </div>
-              <div className="space-y-2.5">
-                <div>
-                  <div className="flex justify-between text-xs font-medium text-[#2D2926] mb-1">
-                    <span>Acidity (Crispness & Fruit Luster)</span>
-                    <span className="font-mono">{product.acidity}/100</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-[#FAF7F5] overflow-hidden">
-                    <div
-                      className="h-full bg-[#E05A7E] rounded-full transition-all duration-700"
-                      style={{ width: `${product.acidity}%` }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-xs font-medium text-[#2D2926] mb-1">
-                    <span>Body (Syrup & Velvet Mouthfeel)</span>
-                    <span className="font-mono">{product.body}/100</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-[#FAF7F5] overflow-hidden">
-                    <div
-                      className="h-full bg-[#2D2926] rounded-full transition-all duration-700"
-                      style={{ width: `${product.body}%` }}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-xs font-medium text-[#2D2926] mb-1">
-                    <span>Sweetness (Natural Sucrose & Honey)</span>
-                    <span className="font-mono">{product.sweetness}/100</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-[#FAF7F5] overflow-hidden">
-                    <div
-                      className="h-full bg-[#c89658] rounded-full transition-all duration-700"
-                      style={{ width: `${product.sweetness}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Grind Selector */}
             <div>
-              <label className="block text-xs font-mono uppercase tracking-wider text-[#8C827A] font-bold mb-2">
-                Select Grind Specification:
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-mono uppercase tracking-wider text-[#8C827A] font-bold">
+                  Select Grind Specification:
+                </label>
+                <span className="text-[11px] font-mono text-[#E05A7E] font-semibold">
+                  {selectedGrind}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {GRIND_OPTIONS.map((g) => {
                   const isSelected = selectedGrind === g.label;
                   return (
@@ -383,20 +323,21 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                       key={g.id}
                       type="button"
                       onClick={() => setSelectedGrind(g.label)}
-                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                         isSelected
                           ? 'border-[#2D2926] bg-[#2D2926] text-[#FAF7F5] shadow-md ring-1 ring-[#2D2926]'
                           : 'border-[#2D2926]/10 bg-white hover:border-[#2D2926]/30 text-[#2D2926]'
                       }`}
                     >
                       <div className="text-xs font-bold flex items-center justify-between">
-                        <span>{g.label}</span>
-                        {isSelected && <Check className="h-3.5 w-3.5 text-[#F5DADF]" />}
+                        <span className="truncate">{g.label}</span>
+                        {isSelected && <Check className="h-3 w-3 text-[#F5DADF] shrink-0 ml-1" />}
                       </div>
                       <div
-                        className={`text-[10px] mt-0.5 ${
+                        className={`text-[9.5px] mt-0.5 truncate ${
                           isSelected ? 'text-[#FAF7F5]/75' : 'text-[#8C827A]'
                         }`}
+                        title={g.desc}
                       >
                         {g.desc}
                       </div>
@@ -559,6 +500,68 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                 <span className="font-mono text-[#E05A7E]">
                   Grind: {selectedGrind}
                 </span>
+              </div>
+            </div>
+
+            {/* Delivery & Roastery Craft Trust Cards */}
+            <div className="grid grid-cols-2 gap-3 pt-1 text-xs text-[#5E5854]">
+              <div className="flex items-center gap-2 p-3 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
+                <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                <span className="text-[11px] font-medium">Small 12kg convection drum roasted</span>
+              </div>
+              <div className="flex items-center gap-2 p-3 rounded-2xl bg-white border border-[#2D2926]/10 shadow-2xs">
+                <PackageCheck className="h-4 w-4 text-[#E05A7E] shrink-0" />
+                <span className="text-[11px] font-medium">Signed Single-Estate Certificate</span>
+              </div>
+            </div>
+
+            {/* Sensory Radar Cupping Metrics */}
+            <div className="p-5 rounded-2xl bg-white border border-[#2D2926]/10 space-y-3 shadow-xs">
+              <div className="flex items-center justify-between">
+                <h4 className="text-xs font-mono uppercase tracking-wider text-[#8C827A] font-bold">
+                  Sensory Cupping Radar
+                </h4>
+                <span className="text-[10px] font-mono text-emerald-700 font-semibold flex items-center gap-1">
+                  <Sparkles className="h-3 w-3" /> Q-Grader Calibrated
+                </span>
+              </div>
+              <div className="space-y-2.5">
+                <div>
+                  <div className="flex justify-between text-xs font-medium text-[#2D2926] mb-1">
+                    <span>Acidity (Crispness & Fruit Luster)</span>
+                    <span className="font-mono">{product.acidity}/100</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-[#FAF7F5] overflow-hidden">
+                    <div
+                      className="h-full bg-[#E05A7E] rounded-full transition-all duration-700"
+                      style={{ width: `${product.acidity}%` }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs font-medium text-[#2D2926] mb-1">
+                    <span>Body (Syrup & Velvet Mouthfeel)</span>
+                    <span className="font-mono">{product.body}/100</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-[#FAF7F5] overflow-hidden">
+                    <div
+                      className="h-full bg-[#2D2926] rounded-full transition-all duration-700"
+                      style={{ width: `${product.body}%` }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs font-medium text-[#2D2926] mb-1">
+                    <span>Sweetness (Natural Sucrose & Honey)</span>
+                    <span className="font-mono">{product.sweetness}/100</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-[#FAF7F5] overflow-hidden">
+                    <div
+                      className="h-full bg-[#c89658] rounded-full transition-all duration-700"
+                      style={{ width: `${product.sweetness}%` }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
