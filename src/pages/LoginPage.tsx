@@ -269,7 +269,7 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen lg:h-screen w-full bg-[#FAF7F5] text-[#2D2926] relative overflow-y-auto lg:overflow-hidden flex flex-col justify-center px-4 sm:px-6 lg:px-8 pt-[max(calc(env(safe-area-inset-top)+5.25rem),6rem)] lg:pt-0 pb-6 lg:pb-0">
+    <div className="min-h-screen w-full bg-[#FAF7F5] text-[#2D2926] relative flex flex-col justify-center px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-16">
       {/* Decorative Warm Ambient Accents */}
       <div className="absolute top-0 right-1/4 w-[360px] h-[360px] bg-[#C89658]/8 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-6 left-10 w-[340px] h-[340px] bg-[#F5DADF]/45 rounded-full blur-3xl pointer-events-none" />
@@ -491,7 +491,7 @@ export const LoginPage: React.FC = () => {
                         value={email}
                         onChange={handleEmailChange}
                         required
-                        placeholder="user@noirkaapi.in"
+                        placeholder=""
                         className="w-full rounded-xl border border-[#2D2926]/15 bg-[#FAF7F5] py-1.5 pl-8 pr-3 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
                       />
                     </div>
@@ -520,7 +520,7 @@ export const LoginPage: React.FC = () => {
                         value={password}
                         onChange={handlePasswordChange}
                         required
-                        placeholder="••••••••"
+                        placeholder=""
                         className="w-full rounded-xl border border-[#2D2926]/15 bg-[#FAF7F5] py-1.5 pl-8 pr-8 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
                       />
                       <button
@@ -573,7 +573,7 @@ export const LoginPage: React.FC = () => {
                             inputMode="numeric"
                             pattern="[0-9]*"
                             required
-                            placeholder="79776 41125"
+                            placeholder=""
                             className="w-full rounded-xl border border-[#2D2926]/15 bg-[#FAF7F5] py-1.5 pl-[68px] pr-3 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
                           />
                         </div>
@@ -726,7 +726,7 @@ export const LoginPage: React.FC = () => {
                   value={resetEmail}
                   onChange={handleResetEmailChange}
                   required
-                  placeholder="your.email@noirkaapi.in"
+                  placeholder=""
                   className="w-full rounded-xl border border-[#2D2926]/15 bg-[#FAF7F5] p-2.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none"
                 />
 

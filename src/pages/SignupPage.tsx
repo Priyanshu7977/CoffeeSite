@@ -135,7 +135,7 @@ export const SignupPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pt-[max(calc(env(safe-area-inset-top)+5.25rem),6.5rem)] sm:pt-28 pb-16 px-4 sm:px-6 relative overflow-hidden flex items-center justify-center">
+    <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pt-[max(calc(env(safe-area-inset-top)+5.25rem),6.5rem)] sm:pt-28 pb-16 px-4 sm:px-6 relative flex items-center justify-center">
       {/* Decorative Warm Ambient Gradients */}
       <div className="absolute top-10 left-1/4 w-96 h-96 bg-[#C89658]/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-80 h-80 bg-[#E05A7E]/10 rounded-full blur-3xl pointer-events-none" />
@@ -226,7 +226,7 @@ export const SignupPage: React.FC = () => {
                   value={fullName}
                   onChange={(e) => setFullName(sanitizeName(e.target.value))}
                   required
-                  placeholder="Kavita Iyer"
+                  placeholder=""
                   className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-10 pr-3.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
@@ -245,7 +245,7 @@ export const SignupPage: React.FC = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value.trim())}
                     required
-                    placeholder="kavita@domain.in"
+                    placeholder=""
                     className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-10 pr-3.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
                   />
                 </div>
@@ -262,7 +262,7 @@ export const SignupPage: React.FC = () => {
                     value={phone}
                     onChange={(e) => setPhone(sanitizePhone(e.target.value))}
                     required
-                    placeholder="98765 43210"
+                    placeholder=""
                     className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-10 pr-3.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
                   />
                 </div>
@@ -282,7 +282,7 @@ export const SignupPage: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    placeholder="Min 6 chars"
+                    placeholder=""
                     className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-10 pr-10 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
                   />
                   <button
@@ -306,7 +306,7 @@ export const SignupPage: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    placeholder="Re-enter password"
+                    placeholder=""
                     className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-10 pr-10 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
                   />
                   <button

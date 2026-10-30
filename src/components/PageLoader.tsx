@@ -15,10 +15,9 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ onLoadingComplete }) => 
     setIsFading(true);
     setTimeout(() => {
       onLoadingComplete();
-    }, 500);
+    }, 700);
   };
 
-  // Real readiness detection with prefers-reduced-motion check
   useEffect(() => {
     // 1. Immediately complete if user prefers reduced motion
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -27,46 +26,29 @@ export const PageLoader: React.FC<PageLoaderProps> = ({ onLoadingComplete }) => 
     }
 
     if (videoRef.current) {
+      videoRef.current.currentTime = 0;
       videoRef.current.play().catch(() => {});
     }
 
-    const checkReadiness = () => {
-      if (document.readyState === 'complete') {
-        // Document and assets ready
-        handleFinish();
-      } else {
-        window.addEventListener('load', handleFinish, { once: true });
-      }
-    };
-
-    // If fonts API available, wait until fonts loaded
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(checkReadiness).catch(checkReadiness);
-    } else {
-      checkReadiness();
-    }
-
-    // Safety fallback ceiling so customer is never blocked
-    const fallbackTimer = setTimeout(() => {
+    // Opening video stays clean for 3 full seconds (3000ms) before fading to reveal the main home page
+    const timer = setTimeout(() => {
       handleFinish();
-    }, 2500);
+    }, 3000);
 
     return () => {
-      window.removeEventListener('load', handleFinish);
-      clearTimeout(fallbackTimer);
+      clearTimeout(timer);
     };
   }, []);
 
   return (
     <div
-      onClick={handleFinish}
       className={`fixed inset-0 z-[300] flex items-center justify-center select-none overflow-hidden transition-all duration-700 ease-in-out bg-[#0D0B0A] ${
         isFading
           ? 'opacity-0 scale-105 pointer-events-none filter blur-sm'
           : 'opacity-100 scale-100'
       }`}
     >
-      {/* 1. Single Pure Specialty Coffee Pour Video (Plays clean for 3 seconds) */}
+      {/* 1. Single Pure Specialty Coffee Pour Video (Plays clean for 3 full seconds) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-[#0D0B0A]">
         <video
           ref={videoRef}

@@ -41,11 +41,13 @@ export const stripDangerousMarkup = (value: unknown): string => {
 /**
  * Sanitizes and restricts Name fields to alphabetic letters (A-Z, a-z) and spaces only.
  * Completely strips all numbers, symbols, scripts, and iframe injections.
+ * If allowTrailingSpace is true, spaces typed during active user input are preserved.
  */
-export const sanitizeName = (value: string): string => {
+export const sanitizeName = (value: string, allowTrailingSpace: boolean = false): string => {
   const clean = stripDangerousMarkup(value);
-  // Retain ONLY alphabetic letters (A-Z, a-z) and single spaces (NO numbers, NO symbols)
-  return clean.replace(/[^A-Za-z\s]/g, '').replace(/\s+/g, ' ').trim();
+  // Retain ONLY alphabetic letters (A-Z, a-z) and spaces (NO numbers, NO symbols)
+  const filtered = clean.replace(/[^A-Za-z\s]/g, '').replace(/\s{2,}/g, ' ');
+  return allowTrailingSpace ? filtered.replace(/^\s+/, '') : filtered.trim();
 };
 
 /**

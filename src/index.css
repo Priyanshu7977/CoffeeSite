@@ -63,6 +63,15 @@
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
+  /* Complete Modal Background Scroll Lock */
+  html.lenis-stopped,
+  body.lenis-stopped,
+  html.lenis-stopped body {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    touch-action: none !important;
+  }
+
   /* Prevent iOS Safari 16px Auto-Zoom on text input focus while protecting checkboxes */
   @media screen and (max-width: 640px) {
     input:not([type="checkbox"]):not([type="radio"]), select, textarea {
@@ -78,18 +87,43 @@
   /* Custom Scrollbar for Warm Coffee Modern Aesthetic */
   ::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
-    background: #FAF7F5;
+    background: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #2D2926;
+    background: rgba(45, 41, 38, 0.28);
     border-radius: 9999px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
+    background: #E05A7E;
+  }
+
+  /* Sleek Modal & Drawer Scrollbar */
+  .modal-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(45, 41, 38, 0.25) transparent;
+  }
+
+  .modal-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  .modal-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .modal-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(45, 41, 38, 0.22);
+    border-radius: 9999px;
+  }
+
+  .modal-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #E05A7E;
   }
 

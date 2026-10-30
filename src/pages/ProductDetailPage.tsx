@@ -4,7 +4,6 @@ import {
   ArrowLeft, 
   ShoppingBag, 
   ShieldCheck, 
-  Coffee, 
   Mountain, 
   Layers, 
   Flame, 
@@ -203,7 +202,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
           {/* ================= LEFT COLUMN: Visuals, Agronomy & Brew Guide ================= */}
-          <div className="lg:col-span-5 space-y-4 lg:sticky lg:top-28">
+          <div className="lg:col-span-5 space-y-4">
             {/* Product Image Frame */}
             <div className="relative aspect-[4/3] sm:aspect-[16/11] lg:aspect-square w-full rounded-3xl overflow-hidden bg-neutral-900 border border-[#2D2926]/10 shadow-xl group">
               <img
@@ -263,23 +262,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
                   <Flame className="h-3 w-3 text-[#E05A7E]" /> Roast
                 </div>
                 <div className="font-mono text-xs font-bold text-[#2D2926] truncate">{product.roastLevel}</div>
-              </div>
-            </div>
-
-            {/* Master Roaster's Brew Recommendation (Directly in Left Column to eliminate empty space) */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#2D2926]/10 shadow-xs space-y-2">
-              <div className="flex items-center gap-2 text-[#E05A7E]">
-                <Coffee className="h-4 w-4 shrink-0" />
-                <h3 className="font-display font-bold text-xs uppercase tracking-wider text-[#2D2926]">
-                  Master Roaster's Brew Calibration
-                </h3>
-              </div>
-              <p className="text-xs leading-relaxed text-[#5E5854]">
-                {product.brewRecommendation}
-              </p>
-              <div className="pt-2 border-t border-[#2D2926]/5 flex items-center justify-between text-[10px] font-mono text-[#8C827A]">
-                <span>Water Temp: 92°C — 94°C</span>
-                <span>Rest 7 Days Post-Roast</span>
               </div>
             </div>
 

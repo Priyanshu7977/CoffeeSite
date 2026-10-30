@@ -24,6 +24,17 @@ export function useLenis() {
       syncTouch: false, // Preserves hardware-accelerated 120Hz native touch on iOS/Android
       touchMultiplier: 1.0,
       autoResize: true,
+      prevent: (node) => {
+        if (!node) return false;
+        const el = node as HTMLElement;
+        if (!el || typeof el.closest !== 'function') return false;
+        return (
+          el.hasAttribute('data-lenis-prevent') ||
+          el.closest('[data-lenis-prevent]') !== null ||
+          el.closest('[role="dialog"]') !== null ||
+          el.closest('.lenis-prevent') !== null
+        );
+      },
     });
 
     lenisRef.current = lenis;
@@ -79,4 +90,24 @@ export function useLenis() {
 
 export function getGlobalLenis() {
   return globalLenis;
+}
+
+export function stopGlobalLenis() {
+  globalLenis?.stop();
+  if (typeof document !== 'undefined') {
+    document.documentElement.classList.add('lenis-stopped');
+    document.body.classList.add('lenis-stopped');
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+export function startGlobalLenis() {
+  globalLenis?.start();
+  if (typeof document !== 'undefined') {
+    document.documentElement.classList.remove('lenis-stopped');
+    document.body.classList.remove('lenis-stopped');
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+  }
 }

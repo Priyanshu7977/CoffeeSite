@@ -264,7 +264,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   value={fullName}
                   onChange={handleNameChange}
                   required
-                  placeholder="Kavita Iyer"
+                  placeholder=""
                   className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-10 pr-3.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
@@ -282,7 +282,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                 value={email}
                 onChange={handleEmailChange}
                 required
-                placeholder="user@noirkaapi.in"
+                placeholder=""
                 className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-10 pr-3.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
               />
             </div>
@@ -303,7 +303,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                   inputMode="numeric"
                   pattern="[0-9]*"
                   required
-                  placeholder="98765 43210"
+                  placeholder=""
                   className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-10 pr-3.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
                 />
               </div>
@@ -335,7 +335,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
                 value={password}
                 onChange={handlePasswordChange}
                 required
-                placeholder="••••••••"
+                placeholder=""
                 className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] py-2.5 pl-10 pr-10 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none transition-colors"
               />
               <button
