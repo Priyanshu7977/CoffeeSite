@@ -21,7 +21,6 @@ import {
 } from './components/TypographicInterludes';
 import { Footer } from './components/Footer';
 import { CollectionPage } from './components/CollectionPage';
-import { ReserveModal } from './components/ReserveModal';
 import { ProductDetailOverlay } from './components/ProductDetailOverlay';
 import { CollectionDrawer } from './components/CollectionDrawer';
 import { LoginModal, type UserSession } from './components/LoginModal';
@@ -46,7 +45,7 @@ import { useAuth } from './context/AuthContext';
 import { NOIR_PRODUCTS } from './data/products';
 import { inventorySystem } from './utils/inventorySystem';
 import { recordCartActivity } from './utils/emailAutomationSystem';
-import type { ReserveBatch, Product, CollectionItem } from './types';
+import type { Product, CollectionItem } from './types';
 import type { CustomerOrder } from './types/payment';
 import type { AutomatedEmail } from './utils/emailService';
 
@@ -69,9 +68,6 @@ export const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Modals & Overlay States
-  const [isReserveModalOpen, setIsReserveModalOpen] = useState<boolean>(false);
-  const [selectedBatch, setSelectedBatch] = useState<ReserveBatch | null>(null);
-
   const [activeDetailProduct, setActiveDetailProduct] = useState<Product | null>(null);
   const [isCollectionDrawerOpen, setIsCollectionDrawerOpen] = useState<boolean>(false);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState<boolean>(false);
@@ -158,15 +154,6 @@ export const App: React.FC = () => {
     } else {
       scrollTo(targetId, 0);
     }
-  };
-
-  const handleOpenReserve = (batch?: ReserveBatch) => {
-    setSelectedBatch(batch || null);
-    setIsReserveModalOpen(true);
-  };
-
-  const handleCloseReserve = () => {
-    setIsReserveModalOpen(false);
   };
 
   // Product Discovery & Collection
@@ -314,7 +301,6 @@ export const App: React.FC = () => {
 
       {/* 5. Minimal Fixed Navigation with Route Awareness */}
       <Navbar
-        onOpenReserve={() => handleOpenReserve()}
         onOpenCollection={() => setIsCollectionDrawerOpen(true)}
         onOpenLogin={() => setIsLoginModalOpen(true)}
         onOpenInventoryHud={() => setIsInventoryHudOpen(true)}
@@ -556,21 +542,7 @@ export const App: React.FC = () => {
             </div>
           }
         />
-        <Route
-          path="/reserve"
-          element={
-            <div>
-              <EstateAtlasPage
-                onDiscoverProduct={handleDiscoverProduct}
-                onAddToCart={handleAddToCollection}
-              />
-              <Footer
-                onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                onNavigate={handleNavigate}
-              />
-            </div>
-          }
-        />
+        <Route path="/reserve" element={<Navigate to="/collection" replace />} />
 
         {/* Dedicated About Us (College Student Startup) Page */}
         <Route
@@ -813,13 +785,6 @@ export const App: React.FC = () => {
         onClose={handleCloseDetail}
         onAddToCollection={handleAddToCollection}
         isInCollection={collectionItems.some((i) => i.product.id === activeDetailProduct?.id)}
-      />
-
-      {/* 3. Private Vintage Reserve Modal */}
-      <ReserveModal
-        isOpen={isReserveModalOpen}
-        onClose={handleCloseReserve}
-        selectedBatch={selectedBatch}
       />
 
       {/* 4. Full Checkout Flow Modal */}
