@@ -12,8 +12,9 @@ import {
   Users, 
   ArrowRight,
   Quote,
-  RotateCw,
-  FlaskConical
+  FlaskConical,
+  Lock,
+  ArrowDown
 } from 'lucide-react';
 import { gsap } from '../utils/animations';
 import { SeoHead } from '../components/SeoHead';
@@ -34,24 +35,22 @@ export const AboutUsPage: React.FC = () => {
   const timelineHeaderRef = useRef<HTMLDivElement | null>(null);
   const timelineCardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  // Refs & state for 4 Noir Commandments landing & scroll-flip
+  // Refs & state for 4 Noir Commandments landing & automated scroll-flip
   const commandmentsSectionRef = useRef<HTMLElement | null>(null);
   const commandmentsHeaderRef = useRef<HTMLDivElement | null>(null);
-  const cardsContainerRef = useRef<HTMLDivElement | null>(null);
-  const cardElementsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const cardsTrackRef = useRef<HTMLDivElement | null>(null);
+  const cardContainersRef = useRef<(HTMLDivElement | null)[]>([]);
+  const cardFlippersRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  // State to track which cards are flipped (index: boolean)
-  const [flippedCards, setFlippedCards] = useState<{ [key: number]: boolean }>({
-    0: false,
-    1: false,
-    2: false,
-    3: false,
-  });
+  // Track live scroll unseal progress step (0 to 4)
+  const [activeStep, setActiveStep] = useState<number>(0);
+  const currentStepRef = useRef<number>(0);
 
   const commandments = [
     {
       id: 0,
       num: '01',
+      roman: 'I',
       title: 'Student Curiosity & Science',
       tagline: 'Thermodynamics over Dogma',
       frontDesc: 'We question ancient roasting dogmas. We analyze convective heat transfer and optical Brix levels to unlock the truest natural terroir.',
@@ -64,6 +63,7 @@ export const AboutUsPage: React.FC = () => {
     {
       id: 1,
       num: '02',
+      roman: 'II',
       title: 'Direct Farmer Dignity',
       tagline: 'No Middlemen, No Supply Leakage',
       frontDesc: 'No brokers, no corporate commodity chains. We pay 380% above C-Market rates directly to smallholder tribal families in Chikmagalur and Araku.',
@@ -76,6 +76,7 @@ export const AboutUsPage: React.FC = () => {
     {
       id: 2,
       num: '03',
+      roman: 'III',
       title: 'Zero Chicory, Zero Bullshit',
       tagline: '100% Pure Western Ghats Arabica',
       frontDesc: '100% shade-grown Arabica. Never blended with artificial colorants, synthetic chicory powders, or stale low-grade commercial filler beans.',
@@ -88,6 +89,7 @@ export const AboutUsPage: React.FC = () => {
     {
       id: 3,
       num: '04',
+      roman: 'IV',
       title: 'Accessible Haute Quality',
       tagline: 'Grand Cru Coffee For Every Student',
       frontDesc: 'World-class grand cru coffee shouldn’t require an elitist velvet rope. We price fairly so college students, creators, and night owls can drink competition coffee daily.',
@@ -98,13 +100,6 @@ export const AboutUsPage: React.FC = () => {
       accent: '#C89658',
     },
   ];
-
-  const handleManualToggleFlip = (index: number) => {
-    setFlippedCards((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
-  };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -199,45 +194,149 @@ export const AboutUsPage: React.FC = () => {
         );
       }
 
-      // 4. THE 4 NOIR COMMANDMENTS: SMOOTH LANDING ENTRANCE ANIMATION
+      // 4. THE 4 NOIR COMMANDMENTS: PINNED SCROLL-DRIVEN CARD FLIPPING AUTOMATION
       const commandmentsSection = commandmentsSectionRef.current;
-      const validCards = cardElementsRef.current.filter(Boolean);
+      const validFlippers = cardFlippersRef.current.filter(Boolean) as HTMLDivElement[];
+      const validContainers = cardContainersRef.current.filter(Boolean) as HTMLDivElement[];
 
-      if (commandmentsSection && validCards.length === 4) {
-        if (commandmentsHeaderRef.current) {
-          gsap.fromTo(
-            commandmentsHeaderRef.current,
-            { y: 35, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.8,
-              ease: 'power3.out',
-              scrollTrigger: {
-                trigger: commandmentsSection,
-                start: 'top 80%',
-              },
-            }
-          );
-        }
+      if (commandmentsSection && validFlippers.length === 4) {
+        // Ensure initial state: all 4 cards start showing blank front (0deg)
+        gsap.set(validFlippers, { rotateY: 0 });
 
-        // When the section scrolls into view, ALL 4 CARDS LAND SMOOTHLY TOGETHER
-        gsap.fromTo(
-          validCards,
-          { y: 60, opacity: 0, scale: 0.94 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 0.85,
-            stagger: 0.12,
-            ease: 'power3.out',
+        const mm = gsap.matchMedia();
+
+        // 1. DESKTOP / LARGE SCREENS (min-width: 1024px)
+        // All 4 cards sit side-by-side in a 4-column grid and flip 1-by-1 on scroll
+        mm.add('(min-width: 1024px)', () => {
+          const tl = gsap.timeline({
             scrollTrigger: {
               trigger: commandmentsSection,
-              start: 'top 75%',
+              start: 'top top',
+              end: '+=2400',
+              pin: true,
+              pinSpacing: true,
+              scrub: 0.8,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+              onUpdate: (self) => {
+                const p = self.progress;
+                let step = 0;
+                if (p >= 0.90) step = 4;
+                else if (p >= 0.68) step = 3;
+                else if (p >= 0.44) step = 2;
+                else if (p >= 0.18) step = 1;
+
+                if (step !== currentStepRef.current) {
+                  currentStepRef.current = step;
+                  setActiveStep(step);
+                }
+              },
             },
+          });
+
+          // Card 0 flips from blank (0deg) to revealed (180deg)
+          tl.to(validFlippers[0], { rotateY: 180, ease: 'power2.inOut', duration: 0.9 }, 0.05);
+          tl.to(validContainers[0], { scale: 1.03, duration: 0.45, yoyo: true, repeat: 1, ease: 'power1.inOut' }, 0.05);
+
+          // Card 1 flips
+          tl.to(validFlippers[1], { rotateY: 180, ease: 'power2.inOut', duration: 0.9 }, 1.05);
+          tl.to(validContainers[1], { scale: 1.03, duration: 0.45, yoyo: true, repeat: 1, ease: 'power1.inOut' }, 1.05);
+
+          // Card 2 flips
+          tl.to(validFlippers[2], { rotateY: 180, ease: 'power2.inOut', duration: 0.9 }, 2.05);
+          tl.to(validContainers[2], { scale: 1.03, duration: 0.45, yoyo: true, repeat: 1, ease: 'power1.inOut' }, 2.05);
+
+          // Card 3 flips
+          tl.to(validFlippers[3], { rotateY: 180, ease: 'power2.inOut', duration: 0.9 }, 3.05);
+          tl.to(validContainers[3], { scale: 1.03, duration: 0.45, yoyo: true, repeat: 1, ease: 'power1.inOut' }, 3.05);
+
+          // Hold briefly so user sees all 4 unsealed cards before unpinning to next section
+          tl.to({}, { duration: 0.8 }, 4.0);
+
+          return () => {
+            tl.kill();
+          };
+        });
+
+        // 2. MOBILE & TABLET SCREENS (< 1024px)
+        // Horizontal sliding track centers each card and flips it sequentially on scroll
+        mm.add('(max-width: 1023px)', () => {
+          const cardsTrack = cardsTrackRef.current;
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: commandmentsSection,
+              start: 'top top',
+              end: '+=2800',
+              pin: true,
+              pinSpacing: true,
+              scrub: 0.8,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+              onUpdate: (self) => {
+                const p = self.progress;
+                let step = 0;
+                if (p >= 0.90) step = 4;
+                else if (p >= 0.68) step = 3;
+                else if (p >= 0.44) step = 2;
+                else if (p >= 0.18) step = 1;
+
+                if (step !== currentStepRef.current) {
+                  currentStepRef.current = step;
+                  setActiveStep(step);
+                }
+              },
+            },
+          });
+
+          // Card 0 flips
+          tl.to(validFlippers[0], { rotateY: 180, ease: 'power2.inOut', duration: 0.9 }, 0.05);
+
+          // Slide track to Card 1 and flip
+          if (cardsTrack) {
+            tl.to(cardsTrack, {
+              x: () => {
+                const w = validContainers[0]?.offsetWidth || 320;
+                return -(w + 20);
+              },
+              ease: 'power1.inOut',
+              duration: 0.7,
+            }, 1.0);
           }
-        );
+          tl.to(validFlippers[1], { rotateY: 180, ease: 'power2.inOut', duration: 0.9 }, 1.3);
+
+          // Slide track to Card 2 and flip
+          if (cardsTrack) {
+            tl.to(cardsTrack, {
+              x: () => {
+                const w = validContainers[0]?.offsetWidth || 320;
+                return -2 * (w + 20);
+              },
+              ease: 'power1.inOut',
+              duration: 0.7,
+            }, 2.3);
+          }
+          tl.to(validFlippers[2], { rotateY: 180, ease: 'power2.inOut', duration: 0.9 }, 2.6);
+
+          // Slide track to Card 3 and flip
+          if (cardsTrack) {
+            tl.to(cardsTrack, {
+              x: () => {
+                const w = validContainers[0]?.offsetWidth || 320;
+                return -3 * (w + 20);
+              },
+              ease: 'power1.inOut',
+              duration: 0.7,
+            }, 3.6);
+          }
+          tl.to(validFlippers[3], { rotateY: 180, ease: 'power2.inOut', duration: 0.9 }, 3.9);
+
+          // Hold
+          tl.to({}, { duration: 0.8 }, 4.9);
+
+          return () => {
+            tl.kill();
+          };
+        });
       }
     });
 
@@ -499,13 +598,13 @@ export const AboutUsPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. THE 4 NOIR COMMANDMENTS: LANDING & SCROLL-FLIP ANIMATION SECTION */}
+      {/* 5. THE 4 NOIR COMMANDMENTS: PINNED SCROLL-DRIVEN CARD FLIPPING SECTION */}
       <section 
         id="section-commandments"
         ref={commandmentsSectionRef}
-        className="mx-auto max-w-7xl px-4 sm:px-8 py-20 overflow-visible"
+        className="relative w-full min-h-screen py-14 sm:py-20 flex flex-col justify-center items-center overflow-hidden bg-[#FAF7F5] border-b border-[#2D2926]/10"
       >
-        <div ref={commandmentsHeaderRef} className="text-center max-w-2xl mx-auto mb-10">
+        <div ref={commandmentsHeaderRef} className="text-center max-w-2xl mx-auto mb-8 sm:mb-10 px-4">
           <span className="text-xs font-mono uppercase tracking-widest text-[#E05A7E] font-bold block mb-2">
             OUR PHILOSOPHY
           </span>
@@ -516,121 +615,167 @@ export const AboutUsPage: React.FC = () => {
             Every single bean we roast is governed by four non-negotiable rules.
           </p>
 
-          {/* Interactive Flip Guide */}
-          <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F5DADF]/60 border border-[#2D2926]/10 text-[11px] font-mono text-[#2D2926]">
-            <RotateCw className="h-3.5 w-3.5 text-[#E05A7E]" />
-            <span>Click or tap any card to flip and reveal the core coffee commandment</span>
+          {/* Dynamic Live Scroll Unseal Progress Indicator */}
+          <div className="mt-4 inline-flex items-center gap-2.5 sm:gap-3 px-4 py-2 rounded-full bg-white border border-[#2D2926]/10 text-xs font-mono shadow-xs">
+            <span className="text-[#8C827A] font-semibold text-[11px] sm:text-xs">Scroll to Unseal:</span>
+            <div className="flex items-center gap-1.5">
+              {[0, 1, 2, 3].map((idx) => (
+                <span
+                  key={idx}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    activeStep > idx ? 'w-5 sm:w-6 bg-[#2D2926]' : 'w-2 bg-[#2D2926]/20'
+                  }`}
+                />
+              ))}
+            </div>
+            <span className="text-[11px] sm:text-xs text-[#E05A7E] font-bold">
+              {activeStep === 0 && '0 / 4 Unsealed'}
+              {activeStep === 1 && '1 / 4 Unsealed'}
+              {activeStep === 2 && '2 / 4 Unsealed'}
+              {activeStep === 3 && '3 / 4 Unsealed'}
+              {activeStep >= 4 && 'All 4 Unsealed ✓'}
+            </span>
           </div>
         </div>
 
-        {/* 4 Cards Grid with 3D Flip capability */}
-        <div 
-          ref={cardsContainerRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        >
-          {commandments.map((cmd) => {
-            const isFlipped = flippedCards[cmd.id];
-            const IconComp = cmd.icon;
-
-            return (
-              <div
-                key={cmd.id}
-                ref={(el) => { cardElementsRef.current[cmd.id] = el; }}
-                style={{ perspective: '1200px' }}
-                className="h-[360px] cursor-pointer group"
-                onClick={() => handleManualToggleFlip(cmd.id)}
-              >
-                {/* 3D Flipper Box */}
+        {/* 4 Cards Track with 3D Scroll-Flip Automation */}
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-8 overflow-hidden">
+          <div 
+            ref={cardsTrackRef}
+            className="flex lg:grid lg:grid-cols-4 gap-5 sm:gap-6 w-full items-stretch"
+          >
+            {commandments.map((cmd) => {
+              return (
                 <div
-                  style={{
-                    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                    transformStyle: 'preserve-3d',
-                    transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
-                  }}
-                  className="relative w-full h-full rounded-3xl"
+                  key={cmd.id}
+                  ref={(el) => { cardContainersRef.current[cmd.id] = el; }}
+                  style={{ perspective: '1400px' }}
+                  className="relative h-[390px] sm:h-[405px] w-[82vw] sm:w-[360px] lg:w-auto shrink-0 select-none"
                 >
-                  {/* FRONT FACE (Dossier & Student Story - Shown First) */}
+                  {/* 3D Flipper Box - Animated directly on scroll by GSAP ScrollTrigger */}
                   <div
-                    style={{ backfaceVisibility: 'hidden' }}
-                    className="absolute inset-0 rounded-3xl bg-[#2D2926] text-[#FAF7F5] border border-white/10 p-6 shadow-2xl flex flex-col justify-between hover:border-white/20 transition-all"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/10">
-                        <span className="px-2.5 py-0.5 rounded-full bg-white/10 text-[10px] font-mono font-bold text-[#F5DADF]">
-                          {cmd.badge}
-                        </span>
-                        <span className="text-xs font-mono text-white/50">RULE {cmd.num} DOSSIER</span>
-                      </div>
-
-                      <span className="text-[10px] font-mono uppercase text-[#C89658] font-bold block mb-1">
-                        THE STUDENT LAB DOSSIER
-                      </span>
-                      <h4 className="font-display font-bold text-base text-[#FAF7F5] mb-2 leading-tight">
-                        {cmd.title}
-                      </h4>
-                      <p className="text-xs text-[#FAF7F5]/80 leading-relaxed font-sans font-normal">
-                        "{cmd.backStory}"
-                      </p>
-                    </div>
-
-                    <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs">
-                      <span className="text-[10px] font-mono text-emerald-400 font-semibold flex items-center gap-1">
-                        <ShieldCheck className="h-3 w-3" />
-                        <span>Verified Standard</span>
-                      </span>
-                      <span className="text-[11px] font-mono text-[#F5DADF] font-bold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                        <span>Flip to Rule</span>
-                        <RotateCw className="h-3 w-3" />
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* BACK FACE (Main Commandment & Rule - Revealed After Flip) */}
-                  <div
-                    style={{ 
-                      backfaceVisibility: 'hidden',
-                      transform: 'rotateY(180deg)',
+                    ref={(el) => { cardFlippersRef.current[cmd.id] = el; }}
+                    style={{
+                      transformStyle: 'preserve-3d',
+                      transform: 'rotateY(0deg)',
                     }}
-                    className="absolute inset-0 rounded-3xl bg-white text-[#2D2926] border border-[#2D2926]/10 p-6 shadow-[0_15px_40px_rgba(45,41,38,0.06)] flex flex-col justify-between"
+                    className="relative w-full h-full rounded-3xl"
                   >
-                    <div>
-                      <div className="flex items-center justify-between mb-4">
-                        <div 
-                          className="h-10 w-10 rounded-2xl flex items-center justify-center"
-                          style={{ backgroundColor: `${cmd.accent}20`, color: cmd.accent }}
-                        >
-                          <IconComp className="h-5 w-5" />
+                    {/* FRONT FACE (Blank / Sealed Dossier Card Back - Shown First) */}
+                    <div
+                      style={{ 
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
+                        transform: 'rotateY(0deg)',
+                      }}
+                      className="absolute inset-0 rounded-3xl bg-[#2D2926] text-[#FAF7F5] border border-white/10 p-6 sm:p-7 shadow-2xl flex flex-col justify-between overflow-hidden"
+                    >
+                      {/* Ambient Watermark Glow */}
+                      <div className="pointer-events-none absolute -right-12 -top-12 w-44 h-44 rounded-full bg-[#E05A7E]/5 blur-2xl" />
+                      <div className="pointer-events-none absolute -left-12 -bottom-12 w-44 h-44 rounded-full bg-[#C89658]/5 blur-2xl" />
+
+                      {/* Top Row: Sealed Capsule Badge */}
+                      <div className="relative z-10 flex items-center justify-between pb-3 border-b border-white/10">
+                        <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono tracking-widest text-[#F5DADF] font-bold uppercase">
+                          <Lock className="h-3 w-3 text-[#C89658]" />
+                          <span>SEALED</span>
                         </div>
-                        <span className="font-mono text-xs font-bold text-[#8C827A]">
+                        <span className="text-xs font-mono text-white/40 tracking-wider">
                           RULE {cmd.num}
                         </span>
                       </div>
 
-                      <span className="text-[10px] font-mono uppercase text-[#E05A7E] font-bold block mb-1">
-                        {cmd.tagline}
-                      </span>
-                      <h3 className="font-display font-bold text-lg text-[#2D2926] mb-3 leading-snug">
-                        {cmd.title}
-                      </h3>
-                      <p className="text-xs text-[#5E5854] leading-relaxed">
-                        {cmd.frontDesc}
-                      </p>
+                      {/* Center Monogram: Clean Minimalist Blank Seal */}
+                      <div className="relative z-10 my-auto text-center py-4">
+                        <div className="h-20 w-20 rounded-2xl border border-[#C89658]/30 bg-black/30 backdrop-blur-sm flex flex-col items-center justify-center mx-auto shadow-inner mb-4">
+                          <span className="font-serif text-2xl font-bold text-[#C89658] tracking-widest">
+                            {cmd.roman}
+                          </span>
+                          <span className="text-[8px] font-mono tracking-[0.25em] text-white/40 uppercase mt-0.5">
+                            DOSSIER
+                          </span>
+                        </div>
+
+                        <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#C89658] font-bold block mb-1">
+                          THE STUDENT LAB DOSSIER
+                        </span>
+                        <span className="text-xs font-mono text-white/40 tracking-widest uppercase block">
+                          CONFIDENTIAL • LOT #{cmd.num}
+                        </span>
+                      </div>
+
+                      {/* Bottom Status Row */}
+                      <div className="relative z-10 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+                        <span className="text-[10px] font-mono text-white/40 flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#C89658] animate-pulse" />
+                          <span>Awaiting Unseal</span>
+                        </span>
+                        <span className="text-[10px] font-mono text-[#F5DADF]/70 font-semibold flex items-center gap-1">
+                          <span>Scroll to Flip</span>
+                          <ArrowDown className="h-3 w-3 animate-bounce" />
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="pt-4 border-t border-[#2D2926]/10 flex items-center justify-between text-xs text-[#8C827A]">
-                      <span className="font-mono text-[11px] font-semibold text-[#2D2926]">
-                        {cmd.metric}
-                      </span>
-                      <span className="flex items-center gap-1 text-[11px] font-mono text-[#E05A7E] font-bold">
-                        <span>Flip Back</span>
-                        <RotateCw className="h-3 w-3" />
-                      </span>
+                    {/* BACK FACE (Main Commandment & Revealed Dossier - Revealed on Scroll) */}
+                    <div
+                      style={{ 
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
+                        transform: 'rotateY(180deg)',
+                      }}
+                      className="absolute inset-0 rounded-3xl bg-[#201D1B] text-[#FAF7F5] border border-[#C89658]/40 p-6 sm:p-7 shadow-[0_25px_60px_rgba(0,0,0,0.5)] flex flex-col justify-between overflow-hidden"
+                    >
+                      {/* Ambient Gold Glow */}
+                      <div className="pointer-events-none absolute -right-10 -bottom-10 w-48 h-48 rounded-full bg-[#C89658]/10 blur-3xl" />
+
+                      {/* Top Row: Provenance Badge */}
+                      <div className="relative z-10 flex items-center justify-between pb-3 border-b border-white/10">
+                        <span className="px-2.5 py-0.5 rounded-full bg-white/10 text-[10px] font-mono font-bold text-[#F5DADF] border border-white/10">
+                          {cmd.badge}
+                        </span>
+                        <span className="text-xs font-mono text-[#C89658] font-bold">
+                          RULE {cmd.num} DOSSIER
+                        </span>
+                      </div>
+
+                      {/* Content: Story Quote & Core Philosophy */}
+                      <div className="relative z-10 my-auto py-2 space-y-2">
+                        <span className="text-[10px] font-mono uppercase text-[#C89658] font-bold block tracking-wider">
+                          THE STUDENT LAB DOSSIER
+                        </span>
+                        <h4 className="font-display font-bold text-base sm:text-lg text-[#FAF7F5] leading-snug">
+                          {cmd.title}
+                        </h4>
+                        <p className="text-xs sm:text-[13px] text-[#FAF7F5]/85 leading-relaxed font-sans font-normal italic">
+                          "{cmd.backStory}"
+                        </p>
+                        <div className="pt-1">
+                          <span className="text-[10px] font-mono text-[#E05A7E] font-semibold uppercase tracking-wider block">
+                            {cmd.tagline}
+                          </span>
+                          <p className="text-[11px] text-[#FAF7F5]/65 leading-relaxed line-clamp-2">
+                            {cmd.frontDesc}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Bottom Metric & Verified Standard Row */}
+                      <div className="relative z-10 pt-3 border-t border-white/10 flex items-center justify-between text-xs">
+                        <span className="text-[10px] font-mono text-emerald-400 font-semibold flex items-center gap-1.5">
+                          <ShieldCheck className="h-3.5 w-3.5" />
+                          <span>Verified Standard</span>
+                        </span>
+                        <span className="text-[11px] font-mono text-[#F5DADF] font-bold">
+                          {cmd.metric}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </section>
 
