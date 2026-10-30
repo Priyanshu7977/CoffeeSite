@@ -1113,6 +1113,74 @@ apiRouter.delete('/auth/address/:addressId', (req: Request, res: Response): void
   }
 });
 
+/**
+ * 14. Real-Time Order & Transaction Email Dispatch Relay
+ * Proxies server-to-server email dispatch to avoid client-side CORS and adblocker issues
+ */
+apiRouter.post('/email/dispatch', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { toEmail, subject, recipientName, message, orderNumber, total, itemsList, address } = req.body;
+
+    if (!toEmail || !isValidEmail(toEmail)) {
+      res.status(400).json({ success: false, error: 'Valid recipient email is required.' });
+      return;
+    }
+
+    const emailPayload = {
+      _subject: subject || `Order Telemetry Notification #${orderNumber || 'UPDATE'} • NOIR ROAST`,
+      _template: 'box',
+      _captcha: 'false',
+      Recipient_Name: recipientName || 'Valued Patron',
+      Recipient_Email: toEmail,
+      Order_Number: orderNumber || 'N/A',
+      Order_Items: itemsList || 'N/A',
+      Total_Amount: total || 'N/A',
+      Delivery_Address: address || 'N/A',
+      Roastery_Message: message || 'Fresh single-estate beans queued for roasting.',
+      Heritage: 'NOIR ROAST COFFEE ROASTERS • CHIKMAGALUR & BENGALURU',
+    };
+
+    // 1. Dispatch to recipient email via FormSubmit
+    fetch(`https://formsubmit.co/ajax/${encodeURIComponent(toEmail)}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(emailPayload),
+    }).catch((err) => {
+      console.warn('Server direct email dispatch to recipient error:', err);
+    });
+
+    // 2. Also send roastery owner copy to priyanshubipin2006@gmail.com
+    if (toEmail.toLowerCase() !== 'priyanshubipin2006@gmail.com') {
+      fetch('https://formsubmit.co/ajax/priyanshubipin2006@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          ...emailPayload,
+          _subject: `[ROASTERY DISPATCH COPY] ${emailPayload._subject}`,
+        }),
+      }).catch((err) => {
+        console.warn('Server copy to roastery owner error:', err);
+      });
+    }
+
+    res.json({
+      success: true,
+      delivered: true,
+      recipient: toEmail,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : 'Email dispatch relay error';
+    res.status(500).json({ success: false, error: errMsg });
+  }
+});
+
 // Mount the router on both '/api' and '/' so all rewrites/prefixes work seamlessly
 app.use('/api', apiRouter);
 app.use('/', apiRouter);

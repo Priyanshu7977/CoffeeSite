@@ -14,6 +14,7 @@ import {
   Clock,
   Sparkles,
   Printer,
+  Mail,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { InvoiceModal } from './InvoiceModal';
@@ -72,7 +73,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   items,
   userSession,
   onOrderCompleted,
-  onEmailDispatched,
+  onEmailDispatched: _onEmailDispatched,
 }) => {
   const [step, setStep] = useState<CheckoutStep>('details');
 
@@ -209,7 +210,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     return sum + raw * item.quantity;
   }, 0);
 
-  const discountAmount = appliedPromo ? Math.round((subtotalNumeric * promoDiscount) / 100) : 0;
+  const isBankPromoOnCod = selectedMethod === 'cod' && (appliedPromo === 'BANK15' || appliedPromo === 'UPI15');
+  const effectivePromoDiscount = isBankPromoOnCod ? 0 : promoDiscount;
+  const discountAmount = appliedPromo && !isBankPromoOnCod ? Math.round((subtotalNumeric * effectivePromoDiscount) / 100) : 0;
   const shippingCost = 0; // Free express direct estate shipping
   const codFee = selectedMethod === 'cod' ? 100 : 0;
   const totalNumeric = Math.max(0, subtotalNumeric - discountAmount + shippingCost + codFee);
@@ -221,6 +224,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const applySpecificPromo = (code: string) => {
     const clean = code.trim().toUpperCase();
     if (!clean) return;
+
+    if (selectedMethod === 'cod' && (clean === 'BANK15' || clean === 'UPI15')) {
+      setErrorMessage('BANK15 coupon is exclusive to prepaid UPI and Card payments. For Cash on Delivery, normal pricing + ₹100 handling applies.');
+      return;
+    }
 
     const found = AVAILABLE_COUPONS.find((c) => c.code === clean);
     if (found) {
@@ -455,9 +463,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
     setStep('confirmed');
     setIsProcessing(false);
 
-    // Dispatch notification email
+    // Dispatch real notification email in background
     const fullShipping = `${order.shippingAddress.address}, ${order.shippingAddress.city}, ${order.shippingAddress.postalCode}, ${order.shippingAddress.country}`;
-    const emailDispatch = dispatchOrderConfirmationEmail(
+    dispatchOrderConfirmationEmail(
       order.orderNumber,
       order.customerName,
       order.customerEmail,
@@ -465,7 +473,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
       `₹${order.pricing.finalTotal.toLocaleString('en-IN')}`,
       fullShipping
     );
-    onEmailDispatched(emailDispatch);
+    // Note: Do not trigger onEmailDispatched here to ensure the real native Order Confirmed receipt is displayed without a faux email popup modal overlay.
 
     // Stop abandoned cart automation
     markOrderCompleted();
@@ -967,7 +975,15 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
               {/* Method 3: Cash on Delivery (COD) */}
               <div
-                onClick={() => setSelectedMethod('cod')}
+                onClick={() => {
+                  setSelectedMethod('cod');
+                  if (appliedPromo === 'BANK15' || appliedPromo === 'UPI15') {
+                    setAppliedPromo(null);
+                    setPromoDiscount(0);
+                    setPromoCode('');
+                    setErrorMessage('BANK15 coupon was removed because it is only valid for prepaid UPI and Card payments. For Cash on Delivery, normal pricing + ₹100 handling applies.');
+                  }
+                }}
                 className={`p-3 sm:p-3.5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between relative ${
                   selectedMethod === 'cod'
                     ? 'border-[#2D2926] bg-[#2D2926] text-white shadow-lg'
@@ -1055,6 +1071,44 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 </div>
               </div>
             )}
+
+            {/* Step 2 Authoritative Pricing Breakdown */}
+            <div className="p-3 sm:p-3.5 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 space-y-2 text-xs">
+              <div className="flex justify-between items-center text-[#5E5854]">
+                <span>Items Subtotal ({totalItemCount} {totalItemCount === 1 ? 'tin' : 'tins'})</span>
+                <span className="font-mono font-bold text-[#2D2926]">₹{subtotalNumeric.toLocaleString('en-IN')}</span>
+              </div>
+              {appliedPromo && discountAmount > 0 && (
+                <div className="flex justify-between items-center text-emerald-700 font-semibold">
+                  <span>Coupon Savings ({appliedPromo} • {effectivePromoDiscount}%)</span>
+                  <span className="font-mono font-bold">-₹{discountAmount.toLocaleString('en-IN')}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-center text-[#5E5854]">
+                <span>Express Courier Shipping</span>
+                <span className="font-mono font-bold text-emerald-700">FREE</span>
+              </div>
+              {selectedMethod === 'cod' ? (
+                <div className="flex justify-between items-center text-amber-900 bg-amber-50 p-2 rounded-xl border border-amber-200 font-semibold">
+                  <span className="flex items-center gap-1.5">
+                    <Truck className="h-3.5 w-3.5 text-amber-700" />
+                    <span>Cash on Delivery Handling Fee</span>
+                  </span>
+                  <span className="font-mono font-bold text-amber-800">+₹100</span>
+                </div>
+              ) : (
+                <div className="flex justify-between items-center text-emerald-700 text-[11px] font-mono">
+                  <span>Online Prepaid Handling Fee</span>
+                  <span className="font-bold">₹0 (WAIVED)</span>
+                </div>
+              )}
+              <div className="flex justify-between items-baseline pt-2 border-t border-[#2D2926]/15 font-bold text-[#2D2926]">
+                <span className="text-sm">
+                  {selectedMethod === 'cod' ? 'Total to Pay at Doorstep:' : 'Total Payable Online:'}
+                </span>
+                <span className="font-mono text-lg text-[#2D2926]">{formattedTotal}</span>
+              </div>
+            </div>
 
             {/* Total and Action Button Bar */}
             <div className="p-3 sm:p-3.5 rounded-2xl bg-white border border-[#2D2926]/10 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
@@ -1324,6 +1378,42 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     )}
                   </div>
                 </div>
+              </div>
+
+              {/* Confirmed Order Pricing Summary */}
+              <div className="pt-3 border-t border-[#2D2926]/10 text-xs space-y-1.5 bg-[#FAF7F5] p-3.5 rounded-2xl">
+                <div className="flex justify-between text-[#5E5854]">
+                  <span>Subtotal</span>
+                  <span className="font-mono font-bold text-[#2D2926]">₹{confirmedOrder.pricing.subtotal.toLocaleString('en-IN')}</span>
+                </div>
+                {confirmedOrder.pricing.discountAmount > 0 && (
+                  <div className="flex justify-between text-emerald-700 font-semibold">
+                    <span>Discount Savings ({confirmedOrder.pricing.discountCode || 'Applied'})</span>
+                    <span className="font-mono font-bold">-₹{confirmedOrder.pricing.discountAmount.toLocaleString('en-IN')}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-[#5E5854]">
+                  <span>Express Courier Shipping</span>
+                  <span className="font-mono font-bold text-emerald-700">FREE</span>
+                </div>
+                {confirmedOrder.paymentMethod === 'cod' && (
+                  <div className="flex justify-between text-amber-900 font-semibold">
+                    <span>Cash on Delivery Handling Charge</span>
+                    <span className="font-mono font-bold text-amber-800">+₹100</span>
+                  </div>
+                )}
+                <div className="flex justify-between pt-2 border-t border-[#2D2926]/15 font-bold text-sm text-[#2D2926]">
+                  <span>Total Amount Paid / Payable</span>
+                  <span className="font-mono text-base text-[#2D2926]">₹{confirmedOrder.pricing.finalTotal.toLocaleString('en-IN')}</span>
+                </div>
+              </div>
+
+              {/* Email Telemetry Dispatch Banner */}
+              <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center gap-2.5">
+                <Mail className="h-4 w-4 text-emerald-600 shrink-0" />
+                <span>
+                  <strong>Order Receipt & Dispatch Logs:</strong> Telemetry details sent in real time to <strong>{confirmedOrder.customerEmail}</strong>.
+                </span>
               </div>
             </div>
 

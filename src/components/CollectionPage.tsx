@@ -42,7 +42,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   userSession: _userSession,
 }) => {
   const [selectedRoastFilter, setSelectedRoastFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'acidity'>('featured');
+  const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'body' | 'rating'>('featured');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
 
@@ -188,7 +188,8 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
 
       if (sortBy === 'price-asc') return priceA - priceB;
       if (sortBy === 'price-desc') return priceB - priceA;
-      if (sortBy === 'acidity') return b.acidity - a.acidity;
+      if (sortBy === 'body') return b.body - a.body;
+      if (sortBy === 'rating') return (b.body + b.sweetness) - (a.body + a.sweetness);
       return 0; // featured natural order
     });
   }, [selectedRoastFilter, sortBy, searchQuery, wishlist]);
@@ -367,9 +368,10 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                   className="bg-transparent text-xs font-sans font-bold text-[#2D2926] focus:outline-none cursor-pointer w-full sm:w-auto py-0.5"
                 >
                   <option value="featured">Featured Lots</option>
+                  <option value="body">Bold & Rich Body</option>
+                  <option value="rating">Top Rated Cupping Lots</option>
                   <option value="price-asc">Price: Low to High</option>
                   <option value="price-desc">Price: High to Low</option>
-                  <option value="acidity">Highest Acidity</option>
                 </select>
               </div>
             </div>

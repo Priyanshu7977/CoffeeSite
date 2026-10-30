@@ -147,7 +147,8 @@ export function calculateAuthoritativeValuation(
 
   if (discountCode && typeof discountCode === 'string') {
     const cleanCode = discountCode.trim().toUpperCase();
-    if (Object.prototype.hasOwnProperty.call(VALID_DISCOUNT_PROMOS, cleanCode)) {
+    const isBankPromoOnCod = paymentMethod === 'cod' && (cleanCode === 'BANK15' || cleanCode === 'UPI15');
+    if (!isBankPromoOnCod && Object.prototype.hasOwnProperty.call(VALID_DISCOUNT_PROMOS, cleanCode)) {
       const percent = VALID_DISCOUNT_PROMOS[cleanCode];
       discountAmount = Math.round((subtotal * percent) / 100);
       appliedCode = cleanCode;

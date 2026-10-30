@@ -95,7 +95,11 @@ export const EmailNotificationModal: React.FC<EmailNotificationModalProps> = ({
       />
 
       {/* Email Simulation Window */}
-      <div className="relative z-10 w-full max-w-2xl rounded-3xl bg-white border border-[#2D2926]/10 p-5 sm:p-7 shadow-2xl text-[#2D2926] max-h-[90vh] overflow-y-auto">
+      <div 
+        data-lenis-prevent="true"
+        onWheel={(e) => e.stopPropagation()}
+        className="relative z-10 w-full max-w-2xl rounded-3xl bg-white border border-[#2D2926]/10 p-5 sm:p-7 shadow-2xl text-[#2D2926] max-h-[85vh] overflow-y-auto modal-scrollbar overscroll-contain"
+      >
         {/* Email Header Bar */}
         <div className="flex items-start sm:items-center justify-between border-b border-[#2D2926]/10 pb-3.5 mb-4 gap-3">
           <div className="flex items-center gap-2.5">

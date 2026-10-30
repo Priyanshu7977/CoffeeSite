@@ -364,7 +364,8 @@ function calculateAuthoritativeValuation(incomingItems, discountCode, paymentMet
   let appliedCode = void 0;
   if (discountCode && typeof discountCode === "string") {
     const cleanCode = discountCode.trim().toUpperCase();
-    if (Object.prototype.hasOwnProperty.call(VALID_DISCOUNT_PROMOS, cleanCode)) {
+    const isBankPromoOnCod = paymentMethod === "cod" && (cleanCode === "BANK15" || cleanCode === "UPI15");
+    if (!isBankPromoOnCod && Object.prototype.hasOwnProperty.call(VALID_DISCOUNT_PROMOS, cleanCode)) {
       const percent = VALID_DISCOUNT_PROMOS[cleanCode];
       discountAmount = Math.round(subtotal * percent / 100);
       appliedCode = cleanCode;
@@ -2263,6 +2264,62 @@ apiRouter.delete("/auth/address/:addressId", (req, res) => {
   } catch (err) {
     console.error("Address deletion error:", err);
     res.status(500).json({ success: false, error: "Failed to remove address." });
+  }
+});
+apiRouter.post("/email/dispatch", async (req, res) => {
+  try {
+    const { toEmail, subject, recipientName, message, orderNumber, total, itemsList, address } = req.body;
+    if (!toEmail || !isValidEmail(toEmail)) {
+      res.status(400).json({ success: false, error: "Valid recipient email is required." });
+      return;
+    }
+    const emailPayload = {
+      _subject: subject || `Order Telemetry Notification #${orderNumber || "UPDATE"} \u2022 NOIR ROAST`,
+      _template: "box",
+      _captcha: "false",
+      Recipient_Name: recipientName || "Valued Patron",
+      Recipient_Email: toEmail,
+      Order_Number: orderNumber || "N/A",
+      Order_Items: itemsList || "N/A",
+      Total_Amount: total || "N/A",
+      Delivery_Address: address || "N/A",
+      Roastery_Message: message || "Fresh single-estate beans queued for roasting.",
+      Heritage: "NOIR ROAST COFFEE ROASTERS \u2022 CHIKMAGALUR & BENGALURU"
+    };
+    fetch(`https://formsubmit.co/ajax/${encodeURIComponent(toEmail)}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json"
+      },
+      body: JSON.stringify(emailPayload)
+    }).catch((err) => {
+      console.warn("Server direct email dispatch to recipient error:", err);
+    });
+    if (toEmail.toLowerCase() !== "priyanshubipin2006@gmail.com") {
+      fetch("https://formsubmit.co/ajax/priyanshubipin2006@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify({
+          ...emailPayload,
+          _subject: `[ROASTERY DISPATCH COPY] ${emailPayload._subject}`
+        })
+      }).catch((err) => {
+        console.warn("Server copy to roastery owner error:", err);
+      });
+    }
+    res.json({
+      success: true,
+      delivered: true,
+      recipient: toEmail,
+      timestamp: (/* @__PURE__ */ new Date()).toISOString()
+    });
+  } catch (err) {
+    const errMsg = err instanceof Error ? err.message : "Email dispatch relay error";
+    res.status(500).json({ success: false, error: errMsg });
   }
 });
 app.use("/api", apiRouter);

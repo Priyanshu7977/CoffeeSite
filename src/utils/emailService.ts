@@ -59,7 +59,7 @@ export const getDispatchedEmails = (): AutomatedEmail[] => {
 };
 
 /**
- * Sends a real live email via FormSubmit AJAX endpoint directly to recipient's email address
+ * Sends a real live email via server relay or FormSubmit endpoint directly to recipient's email address
  */
 const sendLiveEmailDispatch = async (payload: {
   toEmail: string;
@@ -71,6 +71,27 @@ const sendLiveEmailDispatch = async (payload: {
   itemsList?: string;
   address?: string;
 }) => {
+  if (!payload.toEmail || !payload.toEmail.includes('@')) return;
+
+  // 1. Primary: Server-side relay endpoint (avoids browser CORS, tracking blocks & ad-blockers)
+  try {
+    const apiBase = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) || '';
+    const res = await fetch(`${apiBase}/api/email/dispatch`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      return;
+    }
+  } catch {
+    // Continue to direct client fallback
+  }
+
+  // 2. Fallback: Direct client-side FormSubmit dispatch
   try {
     const endpoint = `https://formsubmit.co/ajax/${encodeURIComponent(payload.toEmail)}`;
     await fetch(endpoint, {
@@ -81,7 +102,7 @@ const sendLiveEmailDispatch = async (payload: {
       },
       body: JSON.stringify({
         _subject: payload.subject,
-        _template: 'table',
+        _template: 'box',
         _captcha: 'false',
         Recipient_Name: payload.recipientName,
         Order_Invoice_No: payload.orderNumber || 'N/A',

@@ -149,7 +149,8 @@ function createLocalFallbackOrder(payload: CreateOrderPayload): CustomerOrder {
   };
 
   const discountCode = payload.discountCode?.trim().toUpperCase();
-  const discountPercent = discountCode && discounts[discountCode] ? discounts[discountCode] : 0;
+  const isBankPromoOnCod = payload.paymentMethod === 'cod' && (discountCode === 'BANK15' || discountCode === 'UPI15');
+  const discountPercent = !isBankPromoOnCod && discountCode && discounts[discountCode] ? discounts[discountCode] : 0;
   const discountAmount = Math.round((subtotal * discountPercent) / 100);
   const codFee = payload.paymentMethod === 'cod' ? 100 : 0;
   const finalTotal = Math.max(0, subtotal - discountAmount + codFee);

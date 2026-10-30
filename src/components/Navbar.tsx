@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingBag, User, ShieldCheck, Package } from 'lucide-react';
+import { Menu, X, ShoppingBag, User, Package } from 'lucide-react';
 import { MagneticButton } from './MagneticButton';
 import type { UserSession } from './LoginModal';
 
@@ -158,27 +158,28 @@ export const Navbar: React.FC<NavbarProps> = ({
                   navigate('/login');
                 }
               }}
-              className={`flex items-center gap-1 sm:gap-1.5 rounded-full border px-2.5 sm:px-3.5 py-1.5 text-[10.5px] sm:text-[11px] font-sans tracking-[0.12em] sm:tracking-[0.15em] uppercase transition-all duration-300 cursor-pointer ${
-                userSession?.isLoggedIn
-                  ? 'border-[#E05A7E] bg-[#F5DADF] text-[#2D2926] font-bold'
-                  : 'border-[#2D2926]/15 bg-[#FAF7F5] text-[#2D2926] hover:bg-[#F5DADF]/40'
-              }`}
+              className="flex items-center gap-1.5 sm:gap-2 rounded-full border border-[#2D2926]/15 bg-white/90 px-3 sm:px-3.5 py-1.5 text-[10.5px] sm:text-[11px] font-sans tracking-[0.12em] sm:tracking-[0.15em] uppercase text-[#2D2926] hover:bg-[#FAF7F5] hover:border-[#2D2926]/30 transition-all duration-300 cursor-pointer shadow-2xs group"
+              title={userSession?.isLoggedIn ? 'Manage Member Account' : 'Sign In'}
             >
-              {userSession?.isLoggedIn ? (
-                <>
-                  <ShieldCheck className="h-3.5 w-3.5 text-[#2D2926]" />
-                  <span className="max-w-[60px] sm:max-w-[90px] truncate font-bold">
-                    {(!userSession.name || userSession.name.trim().toLowerCase() === 'patron')
-                      ? 'USER'
-                      : userSession.name.split(' ')[0]}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <User className="h-3.5 w-3.5 text-[#5E5854]" />
-                  <span className="hidden sm:inline font-bold">Account</span>
-                </>
-              )}
+              <div className="relative flex items-center justify-center">
+                <User className="h-3.5 w-3.5 text-[#2D2926] group-hover:scale-110 transition-transform" />
+                {userSession?.isLoggedIn && (
+                  <span className="absolute -top-0.5 -right-0.5 h-1.5 w-1.5 rounded-full bg-emerald-500 ring-1 ring-white" />
+                )}
+              </div>
+              <span className="font-bold">
+                {userSession?.isLoggedIn
+                  ? (() => {
+                      const rawName = userSession.name?.trim() || '';
+                      const isPhone = rawName.startsWith('+') || /^\d+$/.test(rawName.replace(/\s+/g, ''));
+                      const isPlaceholder = ['user', 'patron', 'member'].includes(rawName.toLowerCase());
+                      if (rawName && !isPhone && !isPlaceholder) {
+                        return rawName.split(' ')[0];
+                      }
+                      return 'Account';
+                    })()
+                  : 'Account'}
+              </span>
             </button>
           </MagneticButton>
 
