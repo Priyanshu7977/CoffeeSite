@@ -18,6 +18,8 @@ import {
   Check
 } from 'lucide-react';
 import { useInventory } from '../hooks/useInventory';
+import { SeoHead } from '../components/SeoHead';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import type { CollectionItem } from '../types';
 import type { AutomatedEmail } from '../utils/emailService';
 import { 
@@ -151,6 +153,13 @@ export const CartPage: React.FC<CartPageProps> = ({
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-24">
+      <SeoHead
+        title="Your Roastery Allocation Cart"
+        description="Review your selected single-estate coffee bean tins, grind calibrations, and proceed to authoritative express checkout."
+        canonical="/cart"
+        noIndex={true}
+        breadcrumbs={[{ name: 'Cart Allocation', url: '/cart' }]}
+      />
       {/* Sub-Header (Safely positioned below global Navbar) */}
       <div className="pt-[max(calc(env(safe-area-inset-top)+5.25rem),6.5rem)] sm:pt-28 md:pt-32 pb-3.5 sm:pb-4 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md">
         <div className="mx-auto max-w-7xl flex items-center justify-between gap-2">
@@ -169,7 +178,8 @@ export const CartPage: React.FC<CartPageProps> = ({
         </div>
       </div>
 
-      <main className="mx-auto max-w-7xl px-4 sm:px-8 pt-8">
+      <main id="main-content" className="mx-auto max-w-7xl px-4 sm:px-8 pt-6">
+        <Breadcrumbs items={[{ name: 'Cart Allocation', url: '/cart' }]} className="mb-4" />
         <h1 className="text-3xl sm:text-4xl font-display font-bold text-[#2D2926] mb-8">
           Your Shopping Cart
         </h1>

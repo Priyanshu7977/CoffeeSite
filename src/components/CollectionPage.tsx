@@ -16,6 +16,9 @@ import { MagneticButton } from './MagneticButton';
 import { useInventory } from '../hooks/useInventory';
 import { useWishlist } from '../utils/wishlist';
 import { gsap } from '../utils/animations';
+import { SeoHead } from './SeoHead';
+import { Breadcrumbs } from './Breadcrumbs';
+import { CoffeeKnowledgeFaq } from './CoffeeKnowledgeFaq';
 import type { Product } from '../types';
 import type { UserSession } from './LoginModal';
 
@@ -190,8 +193,35 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
     });
   }, [selectedRoastFilter, sortBy, searchQuery, wishlist]);
 
+  const breadcrumbs = useMemo(() => [
+    { name: 'Reserve Collection', url: '/collection' }
+  ], []);
+
+  const collectionJsonLd = useMemo(() => ({
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'NOIR ROAST Single-Estate Coffee Micro-Lots',
+    description: 'Artisanal shade-grown South Indian specialty coffee collection',
+    numberOfItems: NOIR_PRODUCTS.length,
+    itemListElement: NOIR_PRODUCTS.map((prod, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      name: prod.name,
+      url: `https://coffee-site-ivory.vercel.app/product/${prod.id}`,
+    })),
+  }), []);
+
   return (
     <div ref={pageContainerRef} className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-24 relative overflow-hidden">
+      <SeoHead
+        title="Reserve Coffee Collection"
+        description="Explore 8 single-estate South Indian specialty coffee micro-lots from Chikmagalur, Coorg, Nilgiris, Malabar Coast, and Araku Valley. Roasted fresh in Bengaluru."
+        canonical="/collection"
+        keywords="specialty coffee collection, buy single estate coffee beans, filter kaapi roasts, chikmagalur arabica, malabar monsooned espresso, peaberry coffee beans"
+        ogType="website"
+        breadcrumbs={breadcrumbs}
+        jsonLd={collectionJsonLd}
+      />
       {/* Warm Ambient Glow Landing Accents */}
       <div className="absolute top-8 right-1/4 w-[420px] h-[420px] bg-[#C89658]/8 rounded-full blur-3xl pointer-events-none animate-pulseGlow" />
       <div className="absolute top-28 left-6 w-[360px] h-[360px] bg-[#F5DADF]/40 rounded-full blur-3xl pointer-events-none animate-floatSoft" />
@@ -236,8 +266,9 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       </div>
 
       {/* Hero Collection Header */}
-      <section className="relative px-4 sm:px-8 md:px-12 pt-10 sm:pt-12 md:pt-14 pb-8 sm:pb-10 md:pb-12 border-b border-[#2D2926]/10 bg-gradient-to-b from-white to-[#FAF7F5]">
+      <section className="relative px-4 sm:px-8 md:px-12 pt-6 sm:pt-8 md:pt-10 pb-8 sm:pb-10 md:pb-12 border-b border-[#2D2926]/10 bg-gradient-to-b from-white to-[#FAF7F5]">
         <div className="mx-auto max-w-7xl">
+          <Breadcrumbs items={breadcrumbs} className="mb-4" />
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
             <div>
               <div 
@@ -380,7 +411,9 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                     <div className="relative aspect-[16/11] sm:aspect-[4/3] w-full overflow-hidden rounded-xl sm:rounded-2xl border border-[#2D2926]/10 bg-[#FAF7F5] mb-3 sm:mb-3.5">
                       <img
                         src={product.image}
-                        alt={product.name}
+                        alt={`${product.name} - ${product.origin} ${product.roastLevel} single-estate coffee beans`}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-cover object-center filter brightness-100 transition-transform duration-700 group-hover:scale-105"
                       />
                       
@@ -528,6 +561,11 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
           </div>
         )}
       </main>
+
+      {/* Authoritative AEO/AIO Terroir & Brewing Knowledge FAQ */}
+      <div className="border-t border-[#2D2926]/10 mt-16 bg-white/50 backdrop-blur-sm">
+        <CoffeeKnowledgeFaq />
+      </div>
     </div>
   );
 };

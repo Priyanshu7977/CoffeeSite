@@ -247,7 +247,9 @@ export const SectionCollection: React.FC<SectionCollectionProps> = ({ onDiscover
                 <div className="relative aspect-[4/3] sm:aspect-[4/5] max-h-[22vh] sm:max-h-[38vh] lg:max-h-[48vh] w-full max-w-[240px] sm:max-w-sm overflow-hidden rounded-2xl sm:rounded-3xl border border-[#2D2926]/10 shadow-[0_15px_40px_rgba(45,41,38,0.06)] bg-white group">
                   <img
                     src={product.image}
-                    alt={product.name}
+                    alt={`${product.name} - ${product.origin} ${product.roastLevel} single-estate shade-grown coffee`}
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-full object-cover object-center filter brightness-100 transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute top-2.5 left-2.5 sm:top-4 sm:left-4 rounded-full bg-[#F5DADF] px-2.5 sm:px-3 py-0.5 sm:py-1 border border-[#2D2926]/10 text-[10px] sm:text-[11px] font-mono text-[#2D2926] font-bold shadow-sm">

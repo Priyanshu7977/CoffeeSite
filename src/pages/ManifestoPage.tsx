@@ -2,12 +2,21 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Feather, HeartHandshake, TreePine, SunDim } from 'lucide-react';
 import { SectionManifesto } from '../components/SectionManifesto';
+import { SeoHead } from '../components/SeoHead';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 export const ManifestoPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-24">
+      <SeoHead
+        title="The Roastery Manifesto & Kaapi Codex"
+        description="Our non-negotiable philosophy: 100% shade canopy coffee, zero chicory adulteration, cast-iron convection drum roasting, and fair-value micro-lot harvest sourcing."
+        canonical="/manifesto"
+        keywords="coffee manifesto, ethical specialty coffee roaster, shade grown coffee principles, pure arabica zero chicory"
+        breadcrumbs={[{ name: 'Roastery Manifesto', url: '/manifesto' }]}
+      />
       {/* Sub-Header (Safely positioned below global Navbar) */}
       <div className="pt-[max(calc(env(safe-area-inset-top)+5.25rem),6.5rem)] sm:pt-28 md:pt-32 pb-4 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
@@ -24,7 +33,8 @@ export const ManifestoPage: React.FC = () => {
         </div>
       </div>
 
-      <main className="mx-auto max-w-7xl px-4 sm:px-8 pt-10">
+      <main id="main-content" className="mx-auto max-w-7xl px-4 sm:px-8 pt-6">
+        <Breadcrumbs items={[{ name: 'Roastery Manifesto', url: '/manifesto' }]} className="mb-4" />
         <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F5DADF] text-[#2D2926] text-xs font-bold uppercase tracking-wider mb-3">
             <Feather className="h-3.5 w-3.5 text-[#E05A7E]" /> Roastery Philosophy

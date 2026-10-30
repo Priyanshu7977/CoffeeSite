@@ -16,6 +16,8 @@ import {
   FlaskConical
 } from 'lucide-react';
 import { gsap } from '../utils/animations';
+import { SeoHead } from '../components/SeoHead';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 export const AboutUsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -246,6 +248,14 @@ export const AboutUsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] selection:bg-[#E05A7E] selection:text-white pb-28">
+      <SeoHead
+        title="About Our Roastery & Heritage"
+        description="Founded on the sacred heritage of Baba Budan Giri. Discover the story of NOIR ROAST, our cast-iron convection drum roasting, and ethical single-estate partnerships in Karnataka."
+        canonical="/about"
+        keywords="about noir roast, baba budan roastery history, specialty coffee roasters bangalore, shade grown coffee heritage, artisanal coffee roaster chikmagalur"
+        ogType="article"
+        breadcrumbs={[{ name: 'About Us & Heritage', url: '/about' }]}
+      />
       {/* 1. Sub-Header (Safely positioned below global Navbar) */}
       <div className="pt-[max(calc(env(safe-area-inset-top)+5.25rem),6.5rem)] sm:pt-28 md:pt-32 pb-3.5 sm:pb-4 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
@@ -274,7 +284,10 @@ export const AboutUsPage: React.FC = () => {
       </div>
 
       {/* 2. Hero Section: The College Dorm Room Origin */}
-      <section className="relative px-4 sm:px-8 pt-12 pb-16 overflow-hidden border-b border-[#2D2926]/10">
+      <section className="relative px-4 sm:px-8 pt-8 pb-16 overflow-hidden border-b border-[#2D2926]/10">
+        <div className="mx-auto max-w-4xl">
+          <Breadcrumbs items={[{ name: 'About Us & Heritage', url: '/about' }]} className="mb-4" />
+        </div>
         <div className="mx-auto max-w-4xl text-center">
           <div 
             ref={heroBadgeRef}

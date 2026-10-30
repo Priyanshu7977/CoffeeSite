@@ -1,0 +1,39 @@
+# NOIR ROAST — Single-Estate Specialty Coffee & Artisanal South Indian Kaapi
+
+> NOIR ROAST (Est. 1998) is an artisanal coffee roastery headquartered in Indiranagar, Bengaluru, with heritage roots on the sacred slopes of Chikmagalur, Karnataka. We specialize in shade-grown, high-altitude Arabica micro-lots slow-roasted in cast-iron convection drums and sealed in nitrogen-purged valve tins.
+
+## Core Philosophy & Heritage
+- **Origin**: Baba Budan Giri hills, Chikmagalur (where coffee first entered India in 1670) and premier micro-lots across Coorg, the Nilgiris, Malabar Coast, Shevaroy Hills, and Araku Valley.
+- **Roasting**: Small 12kg convection drum roasting on 100ft Road, Indiranagar, Bengaluru.
+- **Freshness**: Nitrogen-purged tins with one-way degassing valves preserving peak aromatics for 90+ days.
+- **Shipping**: Free express courier dispatch across all states and union territories in India.
+
+## Signature Micro-Lots & Product Catalog (2026 Harvest)
+
+- [Baba Budan Obsidian](https://coffee-site-ivory.vercel.app/product/prod-01): ₹2,800 / tin. 1,900m–2,100m ASL. 96h Anaerobic Slow Natural. Tasting notes: Floral Jasmine, Smoked Cardamom, Bittersweet Mysore Cacao.
+- [Malabar Monsooned Shore](https://coffee-site-ivory.vercel.app/product/prod-02): ₹2,400 / tin. Coastal monsoon wind cured for 16 weeks. Tasting notes: Dark Chocolate, Earthy Molasses, Charred Malabar Oak.
+- [Araku Valley Tribal Honey](https://coffee-site-ivory.vercel.app/product/prod-03): ₹2,600 / tin. Bio-dynamic pulped honey process. Tasting notes: Wild Forest Honey, Roasted Cashew, Mandarin Orange.
+- [Coorg Rainforest Peaberry](https://coffee-site-ivory.vercel.app/product/prod-04): ₹2,200 / tin. Rare single-bean peaberry washed Arabica. Tasting notes: Black Fig, Wild Green Cardamom, Raw Jaggery Caramel.
+- [Dakshin Reserve 1998](https://coffee-site-ivory.vercel.app/product/prod-05): ₹3,400 / tin. Signature Noir Master Blend aged with oak cask & anaerobic fusion. Tasting notes: Toasted Jaggery, 88% Dark Cacao, Smoked Mysore Vanilla.
+- [Shevaroy Cloud Forest Light](https://coffee-site-ivory.vercel.app/product/prod-06): ₹2,500 / tin. Nordic Light Roast, thermal shock extended washed. Tasting notes: Bergamot Blossom, White Peach, Coriander Seed.
+- [Nilgiri Blue Mountain Geisha](https://coffee-site-ivory.vercel.app/product/prod-07): ₹3,800 / tin. Rare Geisha varietal at 2,200m ASL, 120h carbonic maceration. Tasting notes: Jasmine Perfume, Meyer Lemon, Wild Raspberry.
+- [Biligiri Rangan Wild Arabica](https://coffee-site-ivory.vercel.app/product/prod-08): ₹2,900 / tin. Harvested inside BR Hills tiger sanctuary canopy. Tasting notes: Passion Fruit, Toasted Hazelnut, Wild Clover Honey.
+
+## Grind Calibration Standards
+1. **Whole Bean**: Maximum longevity; grind immediately before extraction.
+2. **South Indian Brass Filter**: Medium-fine calibration tailored for traditional brass gravity filter percolation (15–20 min brew time).
+3. **Pour Over / V60**: Medium-fine grind for maximum clarity and floral high-notes at 92°C–94°C.
+4. **French Press / Cold Brew**: Coarse grind for clean full-body immersion extraction.
+5. **9-Bar Espresso**: Micro-fine calibration yielding dense golden crema and viscous mouthfeel.
+
+## Payment & Delivery Options
+- **Digital Gateways**: Razorpay, UPI QR, Credit Cards, Netbanking.
+- **Direct Roastery Bank UPI QR**: Zero transaction fee instant confirmation.
+- **Cash on Delivery (COD)**: Available nationwide with a ₹100 handling fee.
+
+## Location & Contact
+- **Roastery Address**: 100ft Road, Indiranagar, Bengaluru, Karnataka 560038, India
+- **Phone**: +91-7977641125
+- **Email**: concierge@noirkaapi.in
+- **Website**: https://coffee-site-ivory.vercel.app/
+- **Full LLM Context**: https://coffee-site-ivory.vercel.app/llms-full.txt

@@ -14,6 +14,8 @@ import {
   Activity
 } from 'lucide-react';
 import { gsap } from '../utils/animations';
+import { SeoHead } from '../components/SeoHead';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import { NOIR_PRODUCTS } from '../data/products';
 import type { Product } from '../types';
 
@@ -261,6 +263,14 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] selection:bg-[#F5DADF] selection:text-[#2D2926]">
+      <SeoHead
+        title="South Indian Coffee & Origin Guide | Terroir Atlas"
+        description="Comprehensive guide to South Indian coffee terroir: Chikmagalur, Coorg, Nilgiris, Malabar Coast, and Araku Valley. Elevation topographies, soil pH, and cupping profiles."
+        canonical="/atlas"
+        keywords="south indian coffee guide, coffee terroir india, chikmagalur coffee estates, coorg coffee plantation, malabar monsooned coffee, nilgiris coffee elevation"
+        ogType="article"
+        breadcrumbs={[{ name: 'Coffee Guide & Terroir Atlas', url: '/atlas' }]}
+      />
       {/* 1. Navigation Sub-Bar */}
       <div className="border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md px-3 sm:px-6 pt-[max(calc(env(safe-area-inset-top)+5.25rem),6.5rem)] sm:pt-28 md:pt-32 pb-3.5 sm:pb-4">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-2">
@@ -303,7 +313,10 @@ export const EstateAtlasPage: React.FC<EstateAtlasPageProps> = ({
       )}
 
       {/* 2. Hero Section: Clean & Friendly */}
-      <section ref={heroRef} className="relative overflow-hidden border-b border-[#2D2926]/10 bg-gradient-to-b from-white to-[#FAF7F5] pt-10 sm:pt-14 pb-14 sm:pb-16 px-4 sm:px-8 md:px-12">
+      <section ref={heroRef} className="relative overflow-hidden border-b border-[#2D2926]/10 bg-gradient-to-b from-white to-[#FAF7F5] pt-6 sm:pt-8 pb-14 sm:pb-16 px-4 sm:px-8 md:px-12">
+        <div className="mx-auto max-w-5xl">
+          <Breadcrumbs items={[{ name: 'Coffee Guide & Terroir Atlas', url: '/atlas' }]} className="mb-4" />
+        </div>
         <div className="mx-auto max-w-5xl text-center">
           <div ref={heroBadgeRef} className="inline-flex items-center gap-2 rounded-full border border-[#2D2926]/10 bg-[#F5DADF]/60 px-3 sm:px-4 py-1.5 text-[10px] sm:text-xs font-mono font-bold tracking-wider sm:tracking-widest text-[#2D2926] uppercase mb-6 shadow-2xs max-w-full">
             <Compass className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />

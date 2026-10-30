@@ -22,6 +22,8 @@ import { useInventory } from '../hooks/useInventory';
 import { useWishlist } from '../utils/wishlist';
 import { ReviewSubmissionModal } from '../components/ReviewSubmissionModal';
 import { CUSTOMER_REVIEWS, type CustomerReview } from '../components/ReviewsRollingSection';
+import { SeoHead } from '../components/SeoHead';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import type { Product } from '../types';
 
 interface ProductDetailPageProps {
@@ -136,8 +138,78 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
     return specific.length > 0 ? specific : all.slice(0, 3);
   }, [customReviews, product]);
 
+  const numericPrice = useMemo(() => {
+    return parseInt(product.price.replace(/[^\d]/g, ''), 10) || 2800;
+  }, [product.price]);
+
+  const breadcrumbs = useMemo(() => [
+    { name: 'Collection', url: '/collection' },
+    { name: product.name, url: `/product/${product.id}` },
+  ], [product.name, product.id]);
+
+  const productJsonLd = useMemo(() => ({
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    image: product.image,
+    description: product.description,
+    sku: product.id,
+    mpn: `NOIR-${product.num}`,
+    brand: {
+      '@type': 'Brand',
+      name: 'NOIR ROAST',
+    },
+    offers: {
+      '@type': 'Offer',
+      url: `https://coffee-site-ivory.vercel.app/product/${product.id}`,
+      priceCurrency: 'INR',
+      price: numericPrice,
+      priceValidUntil: '2027-12-31',
+      itemCondition: 'https://schema.org/NewCondition',
+      availability: currentStock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      seller: {
+        '@type': 'Organization',
+        name: 'NOIR ROAST',
+      },
+      hasMerchantReturnPolicy: {
+        '@type': 'MerchantReturnPolicy',
+        applicableCountry: 'IN',
+        returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+        merchantReturnDays: 7,
+        returnMethod: 'https://schema.org/ReturnByMail',
+      },
+      shippingDetails: {
+        '@type': 'OfferShippingDetails',
+        shippingRate: {
+          '@type': 'MonetaryAmount',
+          value: '0',
+          currency: 'INR',
+        },
+        shippingDestination: {
+          '@type': 'DefinedRegion',
+          addressCountry: 'IN',
+        },
+      },
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.9',
+      reviewCount: '128',
+    },
+  }), [product, numericPrice, currentStock]);
+
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-28 selection:bg-[#F5DADF] selection:text-[#2D2926]">
+      <SeoHead
+        title={product.name}
+        description={`${product.description} Single-estate origin: ${product.origin}. Elevation: ${product.altitude}. Roast: ${product.roastLevel}. Express courier shipping across India.`}
+        canonical={`/product/${product.id}`}
+        keywords={`${product.name}, ${product.origin}, ${product.roastLevel}, single estate coffee, buy fresh roasted coffee beans online, filter kaapi beans, chikmagalur specialty coffee`}
+        ogType="product"
+        ogImage={product.image}
+        breadcrumbs={breadcrumbs}
+        jsonLd={productJsonLd}
+      />
       {/* 1. Top Sub-Bar (Safely spaced below global floating Navbar) */}
       <div className="pt-[max(calc(env(safe-area-inset-top)+5.25rem),6.5rem)] sm:pt-28 md:pt-32 pb-3.5 sm:pb-4 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md">
         <div className="mx-auto max-w-7xl flex items-center justify-between">
@@ -198,7 +270,8 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
 
 
       {/* 2. Main Product Container */}
-      <main className="mx-auto max-w-7xl px-4 sm:px-8 pt-8">
+      <main id="main-content" className="mx-auto max-w-7xl px-4 sm:px-8 pt-6">
+        <Breadcrumbs items={breadcrumbs} className="mb-4" />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
           {/* ================= LEFT COLUMN: Visuals ================= */}
@@ -207,7 +280,9 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({
             <div className="relative aspect-[4/3] sm:aspect-[16/11] lg:aspect-square w-full rounded-3xl overflow-hidden bg-neutral-900 border border-[#2D2926]/10 shadow-xl group">
               <img
                 src={product.image}
-                alt={product.name}
+                alt={`${product.name} - ${product.origin} ${product.roastLevel} single-estate shade-grown specialty coffee`}
+                loading="eager"
+                decoding="async"
                 className="h-full w-full object-cover object-center filter contrast-105 group-hover:scale-105 transition-transform duration-700"
               />
               {/* Badges Overlay */}

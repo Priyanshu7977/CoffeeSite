@@ -1,6 +1,55 @@
+# NOIR ROAST — Technical Crawler & AI Search Directive
+# Standard: robots.txt + LLM Discovery
+
 User-agent: *
 Allow: /
-Disallow: /api/
+Disallow: /api/admin/
+Disallow: /account
+Disallow: /checkout
+Disallow: /order-tracking?*
+
+# Allow search engines & AI bots to index assets & image CDN
+Allow: /assets/
+Allow: /favicon.svg
+Allow: /sitemap.xml
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /feed.xml
+
+# OpenAI ChatGPT & SearchGPT
+User-agent: GPTBot
+Allow: /
+Disallow: /account
+Disallow: /api/admin/
+
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic Claude & Search
+User-agent: ClaudeBot
+Allow: /
 Disallow: /account
 
+User-agent: anthropic-ai
+Allow: /
+
+# Perplexity AI Search Engine
+User-agent: PerplexityBot
+Allow: /
+
+# Google AI & Generative Search
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# Canonical XML Sitemap & LLM Knowledge Endpoints
 Sitemap: https://coffee-site-ivory.vercel.app/sitemap.xml
+LLMs-Txt: https://coffee-site-ivory.vercel.app/llms.txt

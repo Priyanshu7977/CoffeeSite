@@ -1,69 +1,193 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- Homepage -->
   <url>
     <loc>https://coffee-site-ivory.vercel.app/</loc>
-    <lastmod>2026-10-29</lastmod>
+    <lastmod>2026-10-30</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://coffee-site-ivory.vercel.app/assets/hero-beans.jpg</image:loc>
+      <image:title>NOIR ROAST Single-Estate Shade-Grown South Indian Specialty Coffee Beans</image:title>
+    </image:image>
   </url>
+
+  <!-- Collection Catalog -->
   <url>
     <loc>https://coffee-site-ivory.vercel.app/collection</loc>
-    <lastmod>2026-10-29</lastmod>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- Product 01: Baba Budan Obsidian -->
+  <url>
+    <loc>https://coffee-site-ivory.vercel.app/product/prod-01</loc>
+    <lastmod>2026-10-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1587734195503-904fca47e0e9?w=1200&amp;auto=format&amp;fit=crop&amp;q=85</image:loc>
+      <image:title>Baba Budan Obsidian Omniroast Chikmagalur High-Altitude Specialty Coffee</image:title>
+    </image:image>
   </url>
+
+  <!-- Product 02: Malabar Monsooned Shore -->
+  <url>
+    <loc>https://coffee-site-ivory.vercel.app/product/prod-02</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=1200&amp;auto=format&amp;fit=crop&amp;q=85</image:loc>
+      <image:title>Malabar Monsooned Shore Ocean Cured Espresso Roast Coffee</image:title>
+    </image:image>
+  </url>
+
+  <!-- Product 03: Araku Valley Tribal Honey -->
+  <url>
+    <loc>https://coffee-site-ivory.vercel.app/product/prod-03</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=1200&amp;auto=format&amp;fit=crop&amp;q=85</image:loc>
+      <image:title>Araku Valley Tribal Honey Bio-Dynamic Micro-Lot Specialty Coffee</image:title>
+    </image:image>
+  </url>
+
+  <!-- Product 04: Coorg Rainforest Peaberry -->
+  <url>
+    <loc>https://coffee-site-ivory.vercel.app/product/prod-04</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1511920170033-f8396924c348?w=1200&amp;auto=format&amp;fit=crop&amp;q=85</image:loc>
+      <image:title>Coorg Rainforest Peaberry Rare Single-Bean Washed Arabica</image:title>
+    </image:image>
+  </url>
+
+  <!-- Product 05: Dakshin Reserve 1998 -->
+  <url>
+    <loc>https://coffee-site-ivory.vercel.app/product/prod-05</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1611854779393-1b2da9d400fe?w=1200&amp;auto=format&amp;fit=crop&amp;q=85</image:loc>
+      <image:title>Dakshin Reserve 1998 Master Tri-Terroir Oak Cask Anaerobic Roast</image:title>
+    </image:image>
+  </url>
+
+  <!-- Product 06: Shevaroy Cloud Forest Light -->
+  <url>
+    <loc>https://coffee-site-ivory.vercel.app/product/prod-06</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1589396575653-c09c794ff6a6?w=1200&amp;auto=format&amp;fit=crop&amp;q=85</image:loc>
+      <image:title>Shevaroy Cloud Forest Nordic Light Thermal Shock Washed Coffee</image:title>
+    </image:image>
+  </url>
+
+  <!-- Product 07: Nilgiri Blue Mountain Geisha -->
+  <url>
+    <loc>https://coffee-site-ivory.vercel.app/product/prod-07</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1561047029-3000c68339ca?w=1200&amp;auto=format&amp;fit=crop&amp;q=85</image:loc>
+      <image:title>Nilgiri Blue Mountain Geisha Carbonic Maceration 2200m ASL</image:title>
+    </image:image>
+  </url>
+
+  <!-- Product 08: Biligiri Rangan Wild Arabica -->
+  <url>
+    <loc>https://coffee-site-ivory.vercel.app/product/prod-08</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1610632380989-680fe40816c6?w=1200&amp;auto=format&amp;fit=crop&amp;q=85</image:loc>
+      <image:title>Biligiri Rangan Wild Arabica BR Hills Tiger Canopy Double Fermentation</image:title>
+    </image:image>
+  </url>
+
+  <!-- South Indian Terroir & Estate Atlas -->
   <url>
     <loc>https://coffee-site-ivory.vercel.app/atlas</loc>
-    <lastmod>2026-10-29</lastmod>
+    <lastmod>2026-10-30</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
   </url>
-  <url>
-    <loc>https://coffee-site-ivory.vercel.app/brew-guide</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
+
+  <!-- About Us & Heritage -->
   <url>
     <loc>https://coffee-site-ivory.vercel.app/about</loc>
-    <lastmod>2026-10-29</lastmod>
+    <lastmod>2026-10-30</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
+
+  <!-- Roastery Manifesto -->
   <url>
     <loc>https://coffee-site-ivory.vercel.app/manifesto</loc>
-    <lastmod>2026-10-29</lastmod>
+    <lastmod>2026-10-30</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.75</priority>
   </url>
+
+  <!-- Contact & Tasting Room Indiranagar -->
   <url>
     <loc>https://coffee-site-ivory.vercel.app/contact</loc>
-    <lastmod>2026-10-29</lastmod>
+    <lastmod>2026-10-30</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
+
+  <!-- Cart -->
+  <url>
+    <loc>https://coffee-site-ivory.vercel.app/cart</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Live Roastery Order Tracking -->
+  <url>
+    <loc>https://coffee-site-ivory.vercel.app/order-tracking</loc>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Legal & Compliance Hub -->
   <url>
     <loc>https://coffee-site-ivory.vercel.app/shipping</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>yearly</changefreq>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://coffee-site-ivory.vercel.app/refund</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>yearly</changefreq>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://coffee-site-ivory.vercel.app/terms</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>yearly</changefreq>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>https://coffee-site-ivory.vercel.app/privacy</loc>
-    <lastmod>2026-10-29</lastmod>
-    <changefreq>yearly</changefreq>
+    <lastmod>2026-10-30</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
 </urlset>

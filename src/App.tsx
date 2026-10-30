@@ -36,6 +36,8 @@ import { OrderTrackingPage } from './pages/OrderTrackingPage';
 import { LegalPage } from './pages/LegalPage';
 import { InvoiceModal } from './components/InvoiceModal';
 import { BrewCalculatorModal } from './components/BrewCalculatorModal';
+import { SeoHead } from './components/SeoHead';
+import { CoffeeKnowledgeFaq } from './components/CoffeeKnowledgeFaq';
 import { CartPage } from './pages/CartPage';
 import { AccountPage } from './pages/AccountPage';
 import { LoginPage } from './pages/LoginPage';
@@ -315,7 +317,13 @@ export const App: React.FC = () => {
         <Route
           path="/"
           element={
-            <main className="relative w-full overflow-hidden">
+            <main id="main-content" className="relative w-full overflow-hidden">
+              <SeoHead
+                title="Single-Estate Specialty Coffee & South Indian Kaapi"
+                description="Artisanal single-estate shade-grown South Indian specialty coffee. Slow cast-iron convection drum roasting in Chikmagalur and Bengaluru. Express courier dispatch across India."
+                canonical="/"
+                ogType="website"
+              />
               {/* 00. Hero Viewport */}
               <div data-cursor="explore">
                 <Hero onExplore={() => handleNavigate('#section-bean')} />
@@ -370,6 +378,11 @@ export const App: React.FC = () => {
 
               {/* 07. The Noir Manifesto */}
               <SectionManifesto />
+
+              {/* 08. Authoritative Coffee & Terroir FAQ (AEO, AIO, SXO Engine) */}
+              <div className="border-t border-[#2D2926]/10 bg-white/50 backdrop-blur-sm">
+                <CoffeeKnowledgeFaq />
+              </div>
 
               {/* Footer */}
               <Footer

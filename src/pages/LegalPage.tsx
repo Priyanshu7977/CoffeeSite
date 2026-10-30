@@ -8,9 +8,11 @@ import {
   RotateCcw, 
   Lock, 
   Scale, 
-  Mail,
-  Phone
+  Mail, 
+  Phone 
 } from 'lucide-react';
+import { SeoHead } from '../components/SeoHead';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 
 export type LegalTabType = 'terms' | 'privacy' | 'shipping' | 'refund';
 
@@ -40,8 +42,31 @@ export const LegalPage: React.FC<LegalPageProps> = ({ initialTab = 'terms' }) =>
     navigate(`/${tab}`);
   };
 
+  const titles: Record<LegalTabType, string> = {
+    shipping: 'Shipping & Pan-India Dispatch Policy',
+    refund: 'Returns, Refunds & Replacement Policy',
+    privacy: 'Privacy & Data Protection Policy',
+    terms: 'Terms of Service & Roastery Agreements',
+  };
+
+  const descriptions: Record<LegalTabType, string> = {
+    shipping: 'Information on air express couriers, dispatch within 24 hours of roasting, free courier delivery across India, and delivery times.',
+    refund: 'Our 100% freshness guarantee, 7-day roast satisfaction warranty, and replacement protocol for damaged tins.',
+    privacy: 'How NOIR ROAST securely handles customer data, 256-bit SSL encryption, and transparent communication protocols.',
+    terms: 'Terms and conditions governing online purchases, micro-lot allocations, pricing, and roastery dispatches.',
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-28 selection:bg-[#F5DADF] selection:text-[#2D2926]">
+      <SeoHead
+        title={titles[activeTab]}
+        description={descriptions[activeTab]}
+        canonical={`/${activeTab}`}
+        breadcrumbs={[
+          { name: 'Legal Hub', url: '/terms' },
+          { name: titles[activeTab], url: `/${activeTab}` },
+        ]}
+      />
       {/* Sub-Header */}
       <div className="pt-[max(calc(env(safe-area-inset-top)+5.25rem),6.5rem)] sm:pt-28 md:pt-32 pb-3.5 sm:pb-4 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md">
         <div className="mx-auto max-w-6xl flex items-center justify-between gap-3">
@@ -70,7 +95,14 @@ export const LegalPage: React.FC<LegalPageProps> = ({ initialTab = 'terms' }) =>
         </div>
       </div>
 
-      <main className="mx-auto max-w-5xl px-4 sm:px-8 pt-10">
+      <main id="main-content" className="mx-auto max-w-5xl px-4 sm:px-8 pt-6">
+        <Breadcrumbs
+          items={[
+            { name: 'Legal Hub', url: '/terms' },
+            { name: titles[activeTab], url: `/${activeTab}` },
+          ]}
+          className="mb-4"
+        />
         {/* Page Hero Header */}
         <div className="text-center max-w-3xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F5DADF] text-[#2D2926] text-xs font-mono font-bold uppercase tracking-widest mb-3 shadow-2xs">

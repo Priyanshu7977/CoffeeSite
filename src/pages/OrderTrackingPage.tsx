@@ -14,6 +14,8 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import { fetchOrderDetails } from '../utils/paymentApi';
+import { SeoHead } from '../components/SeoHead';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import type { CustomerOrder } from '../types/payment';
 
 interface OrderTrackingPageProps {
@@ -186,6 +188,12 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onOpenInvo
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pb-28 selection:bg-[#F5DADF] selection:text-[#2D2926]">
+      <SeoHead
+        title="Live Roastery Order & Air Courier Tracking"
+        description="Track your single-estate fresh roasted coffee bean delivery in real-time across India with live air courier status and batch dispatch logs."
+        canonical="/order-tracking"
+        breadcrumbs={[{ name: 'Order Tracking', url: '/order-tracking' }]}
+      />
       {/* Sub-Header */}
       <div className="pt-[max(calc(env(safe-area-inset-top)+5.25rem),6.5rem)] sm:pt-28 md:pt-32 pb-3.5 sm:pb-4 px-4 sm:px-8 border-b border-[#2D2926]/10 bg-white/80 backdrop-blur-md">
         <div className="mx-auto max-w-6xl flex items-center justify-between gap-3">
@@ -216,7 +224,10 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onOpenInvo
       </div>
 
       {/* 1. Immersive Hero Section */}
-      <section className="relative overflow-hidden border-b border-[#2D2926]/10 bg-gradient-to-b from-white via-[#FAF7F5] to-white pt-10 sm:pt-14 pb-12 sm:pb-16 px-4 sm:px-6 md:px-8">
+      <section className="relative overflow-hidden border-b border-[#2D2926]/10 bg-gradient-to-b from-white via-[#FAF7F5] to-white pt-6 sm:pt-8 pb-12 sm:pb-16 px-4 sm:px-6 md:px-8">
+        <div className="mx-auto max-w-4xl">
+          <Breadcrumbs items={[{ name: 'Order Tracking', url: '/order-tracking' }]} className="mb-4" />
+        </div>
         <div className="mx-auto max-w-4xl text-center">
           <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-[#F5DADF]/80 border border-[#2D2926]/10 text-[#2D2926] text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider mb-5 shadow-2xs max-w-full">
             <Truck className="h-3.5 w-3.5 text-[#E05A7E] shrink-0" />

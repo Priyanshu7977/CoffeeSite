@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>NOIR ROAST | South Indian Specialty Coffee Roastery Dispatches</title>
+    <link>https://coffee-site-ivory.vercel.app/</link>
+    <description>Fresh seasonal small-batch roast releases, harvest cupping scores, and terroir updates from Chikmagalur, Coorg, and Indiranagar Bengaluru.</description>
+    <language>en-in</language>
+    <lastBuildDate>Fri, 30 Oct 2026 00:00:00 +0530</lastBuildDate>
+    <atom:link href="https://coffee-site-ivory.vercel.app/feed.xml" rel="self" type="application/rss+xml"/>
+
+    <item>
+      <title>Monsoon Harvest Drop: Baba Budan Obsidian 96h Anaerobic</title>
+      <link>https://coffee-site-ivory.vercel.app/product/prod-01</link>
+      <guid>https://coffee-site-ivory.vercel.app/product/prod-01</guid>
+      <pubDate>Fri, 30 Oct 2026 00:00:00 +0530</pubDate>
+      <description>Direct from Mullayanagiri slopes at 2,100m ASL. Tasting notes of floral jasmine, cardamom bloom, and bittersweet Mysore cacao slow-roasted in 12kg convection drums.</description>
+    </item>
+
+    <item>
+      <title>Cask Fermentation Archive: Dakshin Reserve 1998</title>
+      <link>https://coffee-site-ivory.vercel.app/product/prod-05</link>
+      <guid>https://coffee-site-ivory.vercel.app/product/prod-05</guid>
+      <pubDate>Thu, 29 Oct 2026 00:00:00 +0530</pubDate>
+      <description>Master assemblage of Chikmagalur and Coorg estate beans aged in charred oak casks for heavy jaggery caramel and smoked vanilla body.</description>
+    </item>
+
+    <item>
+      <title>Rare Geisha Release: Nilgiri Blue Mountain 2,250m ASL</title>
+      <link>https://coffee-site-ivory.vercel.app/product/prod-07</link>
+      <guid>https://coffee-site-ivory.vercel.app/product/prod-07</guid>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 +0530</pubDate>
+      <description>Sub-alpine high elevation Geisha micro-lot processed with 120h carbonic maceration for extraordinary jasmine perfume and Meyer lemon clarity.</description>
+    </item>
+  </channel>
+</rss>

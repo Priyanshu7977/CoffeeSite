@@ -9,24 +9,39 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="format-detection" content="telephone=no" />
     <link rel="canonical" href="https://coffee-site-ivory.vercel.app/" />
-    <meta name="description" content="NOIR ROAST — Single-estate shade-grown South Indian specialty coffee. Slow cast-iron convection drum roasting in Chikmagalur and Bengaluru. Est. 1998." />
-    
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="alternate" type="application/rss+xml" title="NOIR ROAST Kaapi Dispatches" href="/feed.xml" />
+    <meta name="description" content="NOIR ROAST — Single-estate shade-grown South Indian specialty coffee. Slow cast-iron convection drum roasting in Chikmagalur and Indiranagar, Bengaluru. Express courier dispatch across India." />
+    <meta name="keywords" content="specialty coffee india, single estate arabica, filter kaapi, chikmagalur coffee beans, malabar monsooned coffee, peaberry coffee, indiranagar bangalore roastery, buy fresh roasted coffee beans online, south indian brass filter coffee, nitro flushed coffee tins" />
+    <meta name="author" content="NOIR ROAST Kaapi Artisans" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Geo-Targeting & Local SEO Meta Tags -->
+    <meta name="geo.region" content="IN-KA" />
+    <meta name="geo.placename" content="Bengaluru, Karnataka, India" />
+    <meta name="geo.position" content="12.9716;77.6412" />
+    <meta name="ICBM" content="12.9716, 77.6412" />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_IN" />
     <meta property="og:site_name" content="NOIR ROAST" />
     <meta property="og:title" content="NOIR ROAST | Single-Estate Specialty Coffee & Artisanal Kaapi" />
     <meta property="og:description" content="Single-estate shade-grown South Indian specialty coffee. Slow cast-iron convection drum roasting in Chikmagalur and Bengaluru. Est. 1998." />
-    <meta property="og:image" content="/assets/hero-beans.jpg" />
+    <meta property="og:url" content="https://coffee-site-ivory.vercel.app/" />
+    <meta property="og:image" content="https://coffee-site-ivory.vercel.app/assets/hero-beans.jpg" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@noirroast" />
+    <meta name="twitter:creator" content="@noirroast" />
     <meta name="twitter:title" content="NOIR ROAST | Single-Estate Specialty Coffee & Artisanal Kaapi" />
     <meta name="twitter:description" content="Single-estate shade-grown South Indian specialty coffee. Slow cast-iron convection drum roasting in Chikmagalur and Bengaluru. Est. 1998." />
-    <meta name="twitter:image" content="/assets/hero-beans.jpg" />
+    <meta name="twitter:image" content="https://coffee-site-ivory.vercel.app/assets/hero-beans.jpg" />
 
     <title>NOIR ROAST | Single-Estate Specialty Coffee & Artisanal Kaapi</title>
 
-    <!-- Schema.org Structured Data -->
+    <!-- Schema.org Comprehensive Structured Data (On-Page, Local, AEO, AIO, LLMO) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -35,10 +50,30 @@
           "@type": "Organization",
           "@id": "https://coffee-site-ivory.vercel.app/#organization",
           "name": "NOIR ROAST",
+          "alternateName": ["Noir Kaapi", "Noir Roast Roastery", "Dakshin Reserve Coffee"],
           "url": "https://coffee-site-ivory.vercel.app/",
           "logo": "https://coffee-site-ivory.vercel.app/assets/hero-beans.jpg",
-          "description": "Artisanal single-estate shade-grown South Indian specialty coffee and kaapi roasters.",
+          "description": "Artisanal single-estate shade-grown South Indian specialty coffee and kaapi roasters established in 1998.",
           "foundingDate": "1998",
+          "founders": [
+            {
+              "@type": "Person",
+              "name": "Baba Budan Kaapi Guild"
+            }
+          ],
+          "knowsAbout": [
+            "Specialty Coffee Roasting",
+            "South Indian Filter Kaapi",
+            "Chikmagalur Single Estate Arabica",
+            "Monsooned Malabar Processing",
+            "Anaerobic Coffee Fermentation"
+          ],
+          "sameAs": [
+            "https://www.instagram.com/noirroast",
+            "https://twitter.com/noirroast",
+            "https://www.youtube.com/@noirroast",
+            "https://www.linkedin.com/company/noirroast"
+          ],
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "100ft Road, Indiranagar",
@@ -51,26 +86,82 @@
             "@type": "ContactPoint",
             "telephone": "+91-7977641125",
             "contactType": "customer service",
+            "email": "concierge@noirkaapi.in",
+            "areaServed": "IN",
             "availableLanguage": ["English", "Hindi", "Kannada"]
           }
+        },
+        {
+          "@type": "LocalBusiness",
+          "@id": "https://coffee-site-ivory.vercel.app/#localbusiness",
+          "name": "NOIR ROAST Roastery & Tasting Room",
+          "image": "https://coffee-site-ivory.vercel.app/assets/hero-beans.jpg",
+          "url": "https://coffee-site-ivory.vercel.app/",
+          "telephone": "+91-7977641125",
+          "priceRange": "₹₹",
+          "servesCuisine": "South Indian Filter Kaapi, Artisanal Pour-Over, Specialty Espresso",
+          "currenciesAccepted": "INR",
+          "paymentAccepted": "Cash, UPI, Credit Card, Razorpay, Net Banking",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "100ft Road, Indiranagar",
+            "addressLocality": "Bengaluru",
+            "addressRegion": "Karnataka",
+            "postalCode": "560038",
+            "addressCountry": "IN"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 12.9716,
+            "longitude": 77.6412
+          },
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday"
+              ],
+              "opens": "07:00",
+              "closes": "22:00"
+            }
+          ]
         },
         {
           "@type": "WebSite",
           "@id": "https://coffee-site-ivory.vercel.app/#website",
           "url": "https://coffee-site-ivory.vercel.app/",
           "name": "NOIR ROAST Specialty Coffee",
-          "publisher": { "@id": "https://coffee-site-ivory.vercel.app/#organization" }
+          "publisher": { "@id": "https://coffee-site-ivory.vercel.app/#organization" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://coffee-site-ivory.vercel.app/collection?search={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+          }
         }
       ]
     }
     </script>
 
-    <!-- Google Fonts: Space Grotesk & Hanken Grotesk for Modern Grotesque Typography -->
+    <!-- Performance & Speed: Preconnect & Preload for Core Web Vitals (SXO / AXO) -->
+    <link rel="dns-prefetch" href="//images.unsplash.com">
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
   <body class="bg-[#FAF7F5] text-[#2D2926] antialiased selection:bg-[#F5DADF] selection:text-[#2D2926] overflow-x-hidden">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[99999] focus:px-4 focus:py-2 focus:bg-stone-900 focus:text-stone-100 focus:rounded-md focus:shadow-xl focus:outline-none">
+      Skip to main content
+    </a>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

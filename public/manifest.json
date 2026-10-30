@@ -1,0 +1,19 @@
+{
+  "name": "NOIR ROAST | Single-Estate Specialty Coffee",
+  "short_name": "NOIR ROAST",
+  "description": "Artisanal single-estate shade-grown South Indian specialty coffee. Fresh convection drum roasted in Chikmagalur and Bengaluru.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF7F5",
+  "theme_color": "#FAF7F5",
+  "orientation": "portrait-primary",
+  "categories": ["food", "shopping", "lifestyle"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

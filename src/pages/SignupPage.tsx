@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { isValidEmail, isValidName, isValidPhone, sanitizeName, sanitizePhone } from '../utils/validation';
+import { SeoHead } from '../components/SeoHead';
 
 export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -136,6 +137,12 @@ export const SignupPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] pt-[max(calc(env(safe-area-inset-top)+5.25rem),6.5rem)] sm:pt-28 pb-16 px-4 sm:px-6 relative flex items-center justify-center">
+      <SeoHead
+        title="Join the Roastery Cellar"
+        description="Register for a private member account to unlock limited harvest drops, allocation holds, and seasonal roast dispatches."
+        canonical="/signup"
+        noIndex={true}
+      />
       {/* Decorative Warm Ambient Gradients */}
       <div className="absolute top-10 left-1/4 w-96 h-96 bg-[#C89658]/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-80 h-80 bg-[#E05A7E]/10 rounded-full blur-3xl pointer-events-none" />

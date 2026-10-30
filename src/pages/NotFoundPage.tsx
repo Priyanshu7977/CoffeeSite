@@ -1,10 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Coffee, Home, Compass } from 'lucide-react';
+import { SeoHead } from '../components/SeoHead';
 
 export const NotFoundPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FAF7F5] text-[#2D2926] flex flex-col items-center justify-center p-6 text-center">
+      <SeoHead
+        title="404 Page Not Found"
+        description="The requested roastery page or coffee allocation cannot be found."
+        noIndex={true}
+      />
       <div className="h-20 w-20 rounded-3xl bg-white border border-[#2D2926]/10 shadow-lg flex items-center justify-center text-[#E05A7E] mb-6">
         <Coffee className="h-10 w-10 animate-bounce" />
       </div>
