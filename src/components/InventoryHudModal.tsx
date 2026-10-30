@@ -157,7 +157,7 @@ export const InventoryHudModal: React.FC<InventoryHudModalProps> = ({ isOpen, on
                   <input
                     type="email"
                     required
-                    placeholder="e.g. admin@noirdakshin.com"
+                    placeholder=""
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#2D2926]/20 text-xs font-sans text-[#2D2926] focus:outline-none focus:border-[#2D2926]"
@@ -174,7 +174,7 @@ export const InventoryHudModal: React.FC<InventoryHudModalProps> = ({ isOpen, on
                   <input
                     type="password"
                     required
-                    placeholder="••••••••••••"
+                    placeholder=""
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#2D2926]/20 text-xs font-sans text-[#2D2926] focus:outline-none focus:border-[#2D2926]"

@@ -5,7 +5,6 @@ import {
   Search, 
   Truck, 
   CheckCircle2, 
-  Clock, 
   MapPin, 
   ShieldCheck, 
   Printer, 
@@ -34,64 +33,11 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onOpenInvo
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  // Sample fallback demo order for visitors who want to see how tracking looks
-  const sampleOrder: CustomerOrder = {
-    id: 'ord_sample_demo_1998',
-    orderNumber: 'ND-92418',
-    customerName: 'Kavita Iyer',
-    customerEmail: 'kavita@domain.in',
-    customerPhone: '+91 98765 43210',
-    shippingAddress: {
-      fullName: 'Kavita Iyer',
-      email: 'kavita@domain.in',
-      phone: '+91 98765 43210',
-      address: 'Flat 402, Rain Tree Boulevard, Indiranagar',
-      city: 'Bengaluru',
-      postalCode: '560038',
-      country: 'India',
-    },
-    items: [
-      {
-        productId: 'prod-01',
-        name: 'BABA BUDAN OBSIDIAN',
-        origin: 'Chikmagalur, Karnataka',
-        quantity: 2,
-        grind: 'Fine (South Indian Filter Kaapi)',
-        unitPrice: 2800,
-        lineTotal: 5600,
-      },
-      {
-        productId: 'prod-02',
-        name: 'MALABAR MONSOONED SHORE',
-        origin: 'Malabar Coast, Kerala',
-        quantity: 1,
-        grind: 'Whole Bean',
-        unitPrice: 2400,
-        lineTotal: 2400,
-      },
-    ],
-    pricing: {
-      subtotal: 8000,
-      discountAmount: 800,
-      discountCode: 'ROAST10',
-      shippingCost: 0,
-      finalTotal: 7200,
-      amountInPaise: 720000,
-      currency: 'INR',
-    },
-    paymentMethod: 'razorpay',
-    paymentStatus: 'captured',
-    fulfillmentStatus: 'shipped',
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 18).toISOString(),
-    updatedAt: new Date().toISOString(),
-    razorpayPaymentId: 'pay_PqR81028sA91',
-  };
-
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const query = searchQuery.trim().replace(/^#/, '');
     if (!query) {
-      setErrorMessage('Please enter an Order ID (e.g. ND-92418) or registered phone number.');
+      setErrorMessage('Please enter an Order ID or registered phone number.');
       return;
     }
 
@@ -125,21 +71,14 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onOpenInvo
         return;
       }
 
-      // 3. If testing sample ID or demo
-      if (query.toLowerCase().includes('demo') || query === 'ND-92418' || query === '92418') {
-        setSearchedOrder(sampleOrder);
-        setIsLoading(false);
-        return;
-      }
-
       // If not found in remote or local
       setErrorMessage(
         `No roast batch found for "${query}". Please check your order reference number or contact our Indiranagar roastery desk.`
       );
       setSearchedOrder(null);
     } catch {
-      setErrorMessage('Unable to look up order. Showing demonstrative tracking pipeline below.');
-      setSearchedOrder(sampleOrder);
+      setErrorMessage('Unable to look up order. Please check your reference number.');
+      setSearchedOrder(null);
     } finally {
       setIsLoading(false);
     }
@@ -163,16 +102,14 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onOpenInvo
           // Ignored
         }
       }
-      // Fallback demo order
-      setSearchedOrder(sampleOrder);
+      setSearchedOrder(null);
     }
   }, [initialQuery]);
 
-  const activeOrder = searchedOrder || sampleOrder;
-  const isDemo = activeOrder.id === 'ord_sample_demo_1998';
+  const activeOrder = searchedOrder;
 
   // Tracking Milestones Breakdown
-  const orderTime = new Date(activeOrder.createdAt);
+  const orderTime = activeOrder ? new Date(activeOrder.createdAt) : new Date();
   const roastTime = new Date(orderTime.getTime() + 1000 * 60 * 60 * 3);
   const sealTime = new Date(orderTime.getTime() + 1000 * 60 * 60 * 7);
   const dispatchTime = new Date(orderTime.getTime() + 1000 * 60 * 60 * 12);
@@ -251,7 +188,7 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onOpenInvo
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Enter Order # (e.g. ND-92418) or Phone"
+                  placeholder="Enter Order Number or Phone"
                   className="w-full pl-10 pr-4 py-3 rounded-2xl bg-[#FAF7F5] border border-[#2D2926]/10 text-xs text-[#2D2926] placeholder-[#8C827A] focus:bg-white focus:border-[#2D2926] focus:outline-none transition-all font-mono font-bold uppercase"
                 />
               </div>
@@ -263,22 +200,6 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onOpenInvo
                 {isLoading ? 'Locating...' : 'Track Roast'}
               </button>
             </form>
-
-            {/* Quick Demo Helper */}
-            <div className="mt-2.5 pt-2 border-t border-[#2D2926]/5 flex flex-wrap items-center justify-center gap-2 text-[11px] text-[#8C827A]">
-              <span>Looking for a test order?</span>
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery('ND-92418');
-                  setSearchedOrder(sampleOrder);
-                  setErrorMessage('');
-                }}
-                className="inline-flex items-center gap-1 font-mono font-bold text-[#E05A7E] hover:underline cursor-pointer bg-[#F5DADF]/40 px-2.5 py-0.5 rounded-full"
-              >
-                Load Demo #ND-92418
-              </button>
-            </div>
           </div>
 
           {errorMessage && (
@@ -323,26 +244,30 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onOpenInvo
 
       {/* 2. Main Live Tracking Workspace */}
       <main className="mx-auto max-w-5xl px-4 sm:px-6 md:px-8 py-8 sm:py-10">
-        {/* Demo Notice Banner */}
-        {isDemo && (
-          <div className="mb-6 p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 shrink-0 text-amber-700" />
-              <span>
-                <strong>Demonstration Telemetry:</strong> Showing live tracking preview for Order <strong>#ND-92418</strong>. Enter your personal order number above to inspect your custom batch.
-              </span>
+        {!activeOrder ? (
+          <div className="bg-white rounded-3xl border border-[#2D2926]/10 p-8 sm:p-12 text-center max-w-xl mx-auto shadow-sm my-6">
+            <div className="h-16 w-16 rounded-full bg-[#FAF7F5] border border-[#2D2926]/10 flex items-center justify-center mx-auto mb-4 text-[#8C827A]">
+              <Truck className="h-8 w-8 text-[#E05A7E]" />
             </div>
-            <span className="font-mono text-[10px] uppercase font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full shrink-0">
-              Sample Order
-            </span>
+            <h3 className="text-xl font-display font-bold text-[#2D2926] mb-2">
+              Roastery Dispatch Telemetry
+            </h3>
+            <p className="text-xs text-[#5E5854] leading-relaxed max-w-md mx-auto mb-6">
+              Enter your Order Reference Number or registered mobile phone in the search box above to inspect real-time roasting batch telemetry, tin degassing status, and express air courier logs.
+            </p>
+            <Link
+              to="/collection"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#2D2926] text-white text-xs font-bold hover:bg-black transition-colors shadow-sm"
+            >
+              <Coffee className="h-4 w-4 text-[#F5DADF]" />
+              <span>Explore Single-Estate Roasts</span>
+            </Link>
           </div>
-        )}
-
-        {/* Live Tracking Card */}
-        <div className="bg-white rounded-3xl border border-[#2D2926]/10 p-6 sm:p-9 shadow-sm space-y-8">
-          
-          {/* Top Bar: Order ID, Status, Actions */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#2D2926]/10 pb-6">
+        ) : (
+          /* Live Tracking Card */
+          <div className="bg-white rounded-3xl border border-[#2D2926]/10 p-6 sm:p-9 shadow-sm space-y-8">
+            {/* Top Bar: Order ID, Status, Actions */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#2D2926]/10 pb-6">
             <div>
               <div className="flex items-center gap-2.5">
                 <span className="font-display font-bold text-2xl text-[#2D2926]">
@@ -543,8 +468,9 @@ export const OrderTrackingPage: React.FC<OrderTrackingPageProps> = ({ onOpenInvo
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      )}
+    </main>
+  </div>
   );
 };
 

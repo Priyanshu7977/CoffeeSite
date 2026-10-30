@@ -305,7 +305,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
                     name="noir_reserve_name"
                     value={fullName}
                     onChange={handleNameChange}
-                    placeholder="Devendra Roy"
+                    placeholder=""
                     className="w-full rounded-xl bg-[#FAF7F5] border border-[#2D2926]/15 px-3.5 py-2 text-xs text-[#2D2926] placeholder-[#8C827A] focus:border-[#2D2926] focus:outline-none font-sans"
                   />
                 </div>
@@ -321,7 +321,7 @@ export const ReserveModal: React.FC<ReserveModalProps> = ({
                     name="noir_reserve_email"
                     value={email}
                     onChange={handleEmailChange}
-                    placeholder="collector@noirroast.com"
+                    placeholder=""
                     className="w-full rounded-xl bg-[#FAF7F5] border border-[#2D2926]/15 px-3.5 py-2 text-xs text-[#2D2926] placeholder-[#8C827A] focus:border-[#2D2926] focus:outline-none font-sans"
                   />
                 </div>

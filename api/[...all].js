@@ -1952,19 +1952,7 @@ apiRouter.post("/auth/login", (req, res) => {
         phone: "+91 79776 41125",
         role: imsAccount.role,
         authProvider: "password",
-        savedAddresses: [
-          {
-            id: "addr_hq",
-            label: "Roastery HQ",
-            fullName: imsAccount.name,
-            phone: "+91 79776 41125",
-            street: "100ft Road, Indiranagar",
-            city: "Bengaluru",
-            postalCode: "560038",
-            country: "India",
-            isDefault: true
-          }
-        ],
+        savedAddresses: [],
         preferences: {
           favoriteGrind: "South Indian Brass Filter Kaapi",
           newsletter: true,

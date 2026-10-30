@@ -729,7 +729,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       type="text"
                       value={promoCode}
                       onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                      placeholder="Or enter coupon code (e.g. FIRST10)"
+                      placeholder=""
                       disabled={Boolean(appliedPromo)}
                       className="flex-1 px-3.5 py-2 rounded-xl border border-[#2D2926]/15 bg-white text-xs font-mono font-bold text-[#2D2926] uppercase placeholder:font-sans placeholder:normal-case placeholder:font-normal placeholder:text-[#8C827A] focus:outline-none focus:border-[#2D2926]"
                     />

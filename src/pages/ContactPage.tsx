@@ -246,7 +246,7 @@ export const ContactPage: React.FC = () => {
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="e.g. Arjun Gowda"
+                    placeholder=""
                     className="w-full px-4 py-2.5 rounded-xl bg-[#FAF7F5] border border-[#2D2926]/15 text-xs text-[#2D2926] placeholder-[#8C827A] focus:outline-none focus:border-[#E05A7E] transition-all"
                   />
                 </div>
@@ -260,7 +260,7 @@ export const ContactPage: React.FC = () => {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="e.g. arjun@western-ghats.com"
+                    placeholder=""
                     className="w-full px-4 py-2.5 rounded-xl bg-[#FAF7F5] border border-[#2D2926]/15 text-xs text-[#2D2926] placeholder-[#8C827A] focus:outline-none focus:border-[#E05A7E] transition-all"
                   />
                 </div>
@@ -275,7 +275,7 @@ export const ContactPage: React.FC = () => {
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="e.g. +91 98765 43210"
+                    placeholder=""
                     className="w-full px-4 py-2.5 rounded-xl bg-[#FAF7F5] border border-[#2D2926]/15 text-xs text-[#2D2926] placeholder-[#8C827A] focus:outline-none focus:border-[#E05A7E] transition-all"
                   />
                 </div>

@@ -1006,7 +1006,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                         value={editName}
                         onChange={(e) => setEditName(e.target.value.replace(/[^A-Za-z\s]/g, ''))}
                         required
-                        placeholder="Enter your full name (e.g. Priyanshu Singh)"
+                        placeholder=""
                         className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] p-2.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none"
                       />
                     </div>
@@ -1019,7 +1019,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                         type="tel"
                         value={editPhone}
                         onChange={(e) => setEditPhone(sanitizePhone(e.target.value))}
-                        placeholder="10-digit mobile number"
+                        placeholder=""
                         className="w-full rounded-2xl border border-[#2D2926]/15 bg-[#FAF7F5] p-2.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none"
                       />
                     </div>
@@ -1304,7 +1304,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                   type="text"
                   value={addrName}
                   onChange={(e) => setAddrName(sanitizeName(e.target.value))}
-                  placeholder="Kavita Iyer"
+                  placeholder=""
                   className="w-full rounded-xl border border-[#2D2926]/15 bg-[#FAF7F5] p-2.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none"
                 />
               </div>
@@ -1318,7 +1318,7 @@ export const AccountPage: React.FC<AccountPageProps> = ({
                   value={addrStreet}
                   onChange={(e) => setAddrStreet(e.target.value)}
                   required
-                  placeholder="Flat 402, Kaapi Residency, 12th Main"
+                  placeholder=""
                   className="w-full rounded-xl border border-[#2D2926]/15 bg-[#FAF7F5] p-2.5 text-xs text-[#2D2926] focus:border-[#C89658] focus:bg-white focus:outline-none"
                 />
               </div>
