@@ -143,8 +143,12 @@ apiRouter.post('/payment/create-order', async (req: Request, res: Response): Pro
       return;
     }
 
+    const validPaymentMethod: PaymentMethodType = ['razorpay', 'cod', 'custom_upi_qr'].includes(paymentMethod)
+      ? paymentMethod
+      : 'razorpay';
+
     // Authoritative Price Calculation (Ignores any client-supplied totals)
-    const valuation = calculateAuthoritativeValuation(items, discountCode);
+    const valuation = calculateAuthoritativeValuation(items, discountCode, validPaymentMethod);
     if (!valuation.isValid) {
       res.status(400).json({ success: false, error: valuation.error || 'Invalid cart valuation.' });
       return;
@@ -152,10 +156,6 @@ apiRouter.post('/payment/create-order', async (req: Request, res: Response): Pro
 
     const orderId = `ord_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     const orderNumber = `NR-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-
-    const validPaymentMethod: PaymentMethodType = ['razorpay', 'cod', 'custom_upi_qr'].includes(paymentMethod)
-      ? paymentMethod
-      : 'razorpay';
 
     const newOrder: CustomerOrder = {
       id: orderId,

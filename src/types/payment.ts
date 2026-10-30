@@ -36,6 +36,7 @@ export interface OrderPricing {
   discountAmount: number;
   discountCode?: string;
   shippingCost: number;
+  codFee?: number;
   finalTotal: number; // in INR Rupees
   amountInPaise: number; // For Razorpay gateway
   currency: 'INR';

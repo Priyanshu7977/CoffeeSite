@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   X,
   Lock,
@@ -14,7 +13,6 @@ import {
   Copy,
   Clock,
   Sparkles,
-  User,
   Printer,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
@@ -62,6 +60,12 @@ interface CheckoutModalProps {
 
 type CheckoutStep = 'details' | 'payment' | 'custom_qr_utr' | 'processing' | 'confirmed';
 
+export const AVAILABLE_COUPONS = [
+  { code: 'FIRST10', label: 'FIRST10 — 10% Off 1st-Time Customer', discount: 10, desc: '10% off your initial roast order' },
+  { code: 'BANK15', label: 'BANK15 — 15% Off UPI & Bank Payment', discount: 15, desc: '15% instant savings on UPI & Netbanking' },
+  { code: 'ROAST20', label: 'ROAST20 — 20% Off Connoisseur Roasts', discount: 20, desc: '20% off on specialty single-estate lots' },
+];
+
 export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   isOpen,
   onClose,
@@ -70,7 +74,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   onOrderCompleted,
   onEmailDispatched,
 }) => {
-  const navigate = useNavigate();
   const [step, setStep] = useState<CheckoutStep>('details');
 
   // Customer shipping details - all initialized blank for fresh real user input
@@ -208,24 +211,39 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
 
   const discountAmount = appliedPromo ? Math.round((subtotalNumeric * promoDiscount) / 100) : 0;
   const shippingCost = 0; // Free express direct estate shipping
-  const totalNumeric = Math.max(0, subtotalNumeric - discountAmount + shippingCost);
+  const codFee = selectedMethod === 'cod' ? 100 : 0;
+  const totalNumeric = Math.max(0, subtotalNumeric - discountAmount + shippingCost + codFee);
   const formattedTotal = `₹${totalNumeric.toLocaleString('en-IN')}`;
   const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const activeQr = customQrConfigs.find((q) => q.id === selectedQrId) || customQrConfigs[0];
 
-  const handleApplyPromo = (e: React.FormEvent) => {
-    e.preventDefault();
-    const clean = promoCode.trim().toUpperCase();
+  const applySpecificPromo = (code: string) => {
+    const clean = code.trim().toUpperCase();
     if (!clean) return;
+
+    const found = AVAILABLE_COUPONS.find((c) => c.code === clean);
+    if (found) {
+      setAppliedPromo(found.code);
+      setPromoDiscount(found.discount);
+      setPromoCode(found.code);
+      setErrorMessage('');
+      return;
+    }
 
     if (clean === 'NOIRVIP10' || clean === 'NOIR10' || clean === 'VIP10') {
       setAppliedPromo(clean);
       setPromoDiscount(10);
+      setPromoCode(clean);
       setErrorMessage('');
     } else {
-      setErrorMessage('Invalid promo code. Use NOIRVIP10 for 10% off.');
+      setErrorMessage('Invalid promo code. Select from dropdown or use FIRST10, BANK15, ROAST20.');
     }
+  };
+
+  const handleApplyPromo = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    applySpecificPromo(promoCode);
   };
 
   const handleRemovePromo = () => {
@@ -553,7 +571,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6">
               <form id="checkout-details-form" onSubmit={handleProceedToPayment} className="lg:col-span-7 space-y-3">
                 <div className="space-y-2.5">
-                  {userSession?.isLoggedIn ? (
+                  {userSession?.isLoggedIn && (
                     <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 mb-1">
                       <div className="flex items-center gap-2">
                         <div className="h-5 w-5 rounded-full bg-emerald-600 text-white flex items-center justify-center shrink-0">
@@ -575,23 +593,6 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full shrink-0">
                         VIP Roaster
                       </span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#FAF7F5] border border-[#2D2926]/10 text-xs text-[#5E5854] mb-1">
-                      <div className="flex items-center gap-2">
-                        <User className="w-3.5 h-3.5 text-[#C89658] shrink-0" />
-                        <span>Already a coffee member?</span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onClose();
-                          navigate('/login?redirect=/cart');
-                        }}
-                        className="font-bold text-[#C89658] hover:text-[#2D2926] underline cursor-pointer"
-                      >
-                        Sign In ↗
-                      </button>
                     </div>
                   )}
 
@@ -715,22 +716,53 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   </div>
                 </div>
 
-                {/* Promo Code Input */}
-                <div className="pt-1">
+                {/* Discount Coupon Code Section */}
+                <div className="pt-2 border-t border-[#2D2926]/10 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-[#E05A7E] font-bold block">
+                      Discount Coupon Code
+                    </span>
+                    <span className="text-[10px] font-mono text-[#8C827A]">
+                      Select code or type below
+                    </span>
+                  </div>
+
+                  {/* Coupon Dropdown Selector */}
+                  <select
+                    value={appliedPromo || ''}
+                    onChange={(e) => {
+                      const code = e.target.value;
+                      if (!code) {
+                        handleRemovePromo();
+                      } else {
+                        applySpecificPromo(code);
+                      }
+                    }}
+                    className="w-full px-3 py-2 rounded-xl border border-[#2D2926]/15 bg-white text-xs font-sans font-medium text-[#2D2926] focus:outline-none focus:border-[#2D2926] cursor-pointer"
+                  >
+                    <option value="">-- Choose a Coupon Code --</option>
+                    {AVAILABLE_COUPONS.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Manual Code Input Bar */}
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={promoCode}
                       onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                      placeholder=""
+                      placeholder="Or enter coupon code (e.g. FIRST10)"
                       disabled={Boolean(appliedPromo)}
-                      className="flex-1 px-3.5 py-2 rounded-xl border border-[#2D2926]/15 bg-white text-xs font-mono font-bold text-[#2D2926] uppercase focus:outline-none"
+                      className="flex-1 px-3.5 py-2 rounded-xl border border-[#2D2926]/15 bg-white text-xs font-mono font-bold text-[#2D2926] uppercase placeholder:font-sans placeholder:normal-case placeholder:font-normal placeholder:text-[#8C827A] focus:outline-none focus:border-[#2D2926]"
                     />
                     {appliedPromo ? (
                       <button
                         type="button"
                         onClick={handleRemovePromo}
-                        className="px-3.5 py-2 rounded-xl bg-rose-100 text-rose-700 text-xs font-bold hover:bg-rose-200 transition-colors cursor-pointer"
+                        className="px-3.5 py-2 rounded-xl bg-rose-100 text-rose-700 text-xs font-bold hover:bg-rose-200 transition-colors cursor-pointer shrink-0"
                       >
                         Remove
                       </button>
@@ -738,16 +770,20 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                       <button
                         type="button"
                         onClick={handleApplyPromo}
-                        className="px-4 py-2 rounded-xl bg-[#2D2926] text-white text-xs font-bold hover:bg-black transition-colors cursor-pointer"
+                        className="px-4 py-2 rounded-xl bg-[#2D2926] text-white text-xs font-bold hover:bg-black transition-colors cursor-pointer shrink-0"
                       >
                         Apply
                       </button>
                     )}
                   </div>
+
                   {appliedPromo && (
-                    <div className="mt-1 text-[11px] font-mono text-emerald-700 font-bold flex items-center gap-1">
-                      <Sparkles className="h-3 w-3" />
-                      <span>Promo code {appliedPromo} applied: 10% discount on entire coffee order!</span>
+                    <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] font-mono text-emerald-800 font-bold flex items-center justify-between gap-1">
+                      <span className="flex items-center gap-1.5">
+                        <Sparkles className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                        <span>Coupon {appliedPromo} applied: {promoDiscount}% savings on your order!</span>
+                      </span>
+                      <span className="text-emerald-700 font-bold shrink-0">-₹{discountAmount.toLocaleString('en-IN')}</span>
                     </div>
                   )}
                 </div>
@@ -816,6 +852,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     <span>Express Shipping</span>
                     <span className="font-mono font-bold text-emerald-700">FREE</span>
                   </div>
+                  {selectedMethod === 'cod' && (
+                    <div className="flex justify-between items-center text-[#C89658] font-semibold">
+                      <span>Cash on Delivery Handling</span>
+                      <span className="font-mono font-bold">+₹100</span>
+                    </div>
+                  )}
                   <div className="flex justify-between items-baseline pt-2 border-t border-[#2D2926]/15 text-sm font-bold text-[#2D2926]">
                     <span>Total Payable</span>
                     <span className="font-mono text-lg sm:text-xl text-[#2D2926] font-bold">{formattedTotal}</span>
@@ -990,7 +1032,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                     selectedMethod === 'cod' ? 'border-white/15 text-white/70' : 'border-[#2D2926]/10 text-[#8C827A]'
                   }`}
                 >
-                  <span>Zero Advance Fee</span>
+                  <span className="font-bold">+₹100 Handling Charge</span>
                   <span className="text-emerald-400 font-bold">Doorstep OTP</span>
                 </div>
               </div>
@@ -1072,7 +1114,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 ) : (
                   <>
                     <Truck className="h-4 w-4 text-emerald-400" />
-                    <span>Confirm Cash on Delivery Order</span>
+                    <span>Confirm Cash on Delivery Order • {formattedTotal}</span>
                   </>
                 )}
               </button>

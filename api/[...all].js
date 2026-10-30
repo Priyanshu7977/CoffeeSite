@@ -258,6 +258,18 @@ NOIR_PRODUCTS.forEach((prod) => {
   };
 });
 var VALID_DISCOUNT_PROMOS = {
+  FIRST10: 10,
+  // 10% Off 1st-Time Customer Promo
+  WELCOME10: 10,
+  // 10% Off Welcome Promo
+  BANK15: 15,
+  // 15% Off UPI & Bank Payment Promo
+  UPI15: 15,
+  // 15% Off UPI Payment Promo
+  ROAST20: 20,
+  // 20% Off Connoisseur Roasts Promo
+  NOIR20: 20,
+  // 20% Off Specialty Estate Micro-Lots
   NOIRVIP10: 10,
   // 10% Off 48h Cart Urgency Promo
   NOIR10: 10,
@@ -269,7 +281,7 @@ var VALID_DISCOUNT_PROMOS = {
   FIRSTROAST: 10
   // 10% Off First Roast Promo
 };
-function calculateAuthoritativeValuation(incomingItems, discountCode) {
+function calculateAuthoritativeValuation(incomingItems, discountCode, paymentMethod) {
   if (!incomingItems || !Array.isArray(incomingItems) || incomingItems.length === 0) {
     return {
       isValid: false,
@@ -359,7 +371,8 @@ function calculateAuthoritativeValuation(incomingItems, discountCode) {
     }
   }
   const shippingCost = 0;
-  const finalTotal = Math.max(0, subtotal - discountAmount + shippingCost);
+  const codFee = paymentMethod === "cod" ? 100 : 0;
+  const finalTotal = Math.max(0, subtotal - discountAmount + shippingCost + codFee);
   const amountInPaise = finalTotal * 100;
   return {
     isValid: true,
@@ -369,6 +382,7 @@ function calculateAuthoritativeValuation(incomingItems, discountCode) {
       discountAmount,
       discountCode: appliedCode,
       shippingCost,
+      codFee,
       finalTotal,
       amountInPaise,
       currency: "INR"
@@ -1481,14 +1495,14 @@ apiRouter.post("/payment/create-order", async (req, res) => {
       res.status(400).json({ success: false, error: "Complete delivery address is required." });
       return;
     }
-    const valuation = calculateAuthoritativeValuation(items, discountCode);
+    const validPaymentMethod = ["razorpay", "cod", "custom_upi_qr"].includes(paymentMethod) ? paymentMethod : "razorpay";
+    const valuation = calculateAuthoritativeValuation(items, discountCode, validPaymentMethod);
     if (!valuation.isValid) {
       res.status(400).json({ success: false, error: valuation.error || "Invalid cart valuation." });
       return;
     }
     const orderId = `ord_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
     const orderNumber = `NR-${(/* @__PURE__ */ new Date()).getFullYear()}-${Math.floor(1e3 + Math.random() * 9e3)}`;
-    const validPaymentMethod = ["razorpay", "cod", "custom_upi_qr"].includes(paymentMethod) ? paymentMethod : "razorpay";
     const newOrder = {
       id: orderId,
       orderNumber,

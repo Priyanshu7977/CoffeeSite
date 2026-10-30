@@ -22,6 +22,12 @@ NOIR_PRODUCTS.forEach((prod) => {
 
 // Authoritative Discount Promo Codes
 export const VALID_DISCOUNT_PROMOS: Record<string, number> = {
+  FIRST10: 10,    // 10% Off 1st-Time Customer Promo
+  WELCOME10: 10,  // 10% Off Welcome Promo
+  BANK15: 15,     // 15% Off UPI & Bank Payment Promo
+  UPI15: 15,      // 15% Off UPI Payment Promo
+  ROAST20: 20,    // 20% Off Connoisseur Roasts Promo
+  NOIR20: 20,     // 20% Off Specialty Estate Micro-Lots
   NOIRVIP10: 10,  // 10% Off 48h Cart Urgency Promo
   NOIR10: 10,     // 10% Off Welcome Promo
   VIP10: 10,      // 10% Off Member Privilege Promo
@@ -47,7 +53,8 @@ export interface AuthoritativeValuationResult {
  */
 export function calculateAuthoritativeValuation(
   incomingItems: IncomingOrderItem[],
-  discountCode?: string
+  discountCode?: string,
+  paymentMethod?: string
 ): AuthoritativeValuationResult {
   if (!incomingItems || !Array.isArray(incomingItems) || incomingItems.length === 0) {
     return {
@@ -148,7 +155,8 @@ export function calculateAuthoritativeValuation(
   }
 
   const shippingCost = 0; // Free direct single-estate express shipping across India
-  const finalTotal = Math.max(0, subtotal - discountAmount + shippingCost);
+  const codFee = paymentMethod === 'cod' ? 100 : 0;
+  const finalTotal = Math.max(0, subtotal - discountAmount + shippingCost + codFee);
   const amountInPaise = finalTotal * 100; // Razorpay requires integers in smallest currency unit
 
   return {
@@ -159,6 +167,7 @@ export function calculateAuthoritativeValuation(
       discountAmount,
       discountCode: appliedCode,
       shippingCost,
+      codFee,
       finalTotal,
       amountInPaise,
       currency: 'INR',
