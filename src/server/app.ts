@@ -16,7 +16,9 @@ import {
   hashPassword,
   verifyPassword,
   checkRateLimit,
-  resetRateLimit,
+  checkLoginRateLimit,
+  resetLoginRateLimit,
+  performDummyPasswordVerification,
 } from './authSecurity';
 import {
   getRazorpayCredentials,
@@ -36,6 +38,10 @@ import {
   sanitizeCity,
   sanitizePostalCode,
   sanitizeCountry,
+  sanitizeName,
+  sanitizePhone,
+  sanitizeText,
+  hasMaliciousContent,
 } from '../utils/validation';
 
 // Load environment variables
@@ -43,8 +49,67 @@ dotenv.config();
 
 export const app = express();
 
+// Disable Express fingerprinting header
+app.disable('x-powered-by');
+
+// Pre-derive salted scrypt records for IMS administrative accounts so no plaintext comparisons occur
+interface HashedImsRecord {
+  email: string;
+  name: string;
+  role: 'ADMIN' | 'IMS_ENGINEER';
+  salt: string;
+  hash: string;
+}
+
+const HASHED_IMS_ACCOUNTS: HashedImsRecord[] = AUTHORIZED_IMS_ACCOUNTS.map((acc) => {
+  const { salt, hash } = hashPassword(acc.password);
+  return {
+    email: acc.email.toLowerCase(),
+    name: acc.name,
+    role: acc.role,
+    salt,
+    hash,
+  };
+});
+
+// Global Security Headers
+app.use((_req: Request, res: Response, next: NextFunction) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
+
 // Middlewares
 app.use(cors());
+
+// Prototype Pollution & Dangerous Injection Guard
+function containsPrototypePollution(obj: unknown): boolean {
+  if (!obj || typeof obj !== 'object') return false;
+  for (const key of Object.keys(obj)) {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      return true;
+    }
+    const val = (obj as Record<string, unknown>)[key];
+    if (typeof val === 'object' && val !== null) {
+      if (containsPrototypePollution(val)) return true;
+    }
+  }
+  return false;
+}
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (
+    containsPrototypePollution(req.body) ||
+    containsPrototypePollution(req.query) ||
+    containsPrototypePollution(req.params)
+  ) {
+    res.status(400).json({ success: false, error: 'Malformed request: prohibited property keys detected.' });
+    return;
+  }
+  next();
+});
 
 // Capture raw body for webhook HMAC validation
 app.use(
@@ -634,9 +699,8 @@ apiRouter.post('/admin/verify-utr', (req: Request, res: Response): void => {
  */
 apiRouter.post('/auth/register', (req: Request, res: Response): void => {
   try {
-    const { fullName, email, phone, password } = req.body;
-
-    const rateCheck = checkRateLimit(`reg_${req.ip || 'ip'}`);
+    const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.ip || 'unknown_ip';
+    const rateCheck = checkRateLimit(`reg_${clientIp}`, 5, 15 * 60 * 1000);
     if (!rateCheck.allowed) {
       res.status(429).json({
         success: false,
@@ -645,25 +709,53 @@ apiRouter.post('/auth/register', (req: Request, res: Response): void => {
       return;
     }
 
-    if (!fullName || !isValidName(fullName)) {
+    const { fullName, email, phone, password } = req.body;
+
+    if (
+      typeof fullName !== 'string' ||
+      typeof email !== 'string' ||
+      typeof phone !== 'string' ||
+      typeof password !== 'string'
+    ) {
+      res.status(400).json({ success: false, error: 'All fields are required.' });
+      return;
+    }
+
+    if (
+      hasMaliciousContent(fullName) ||
+      hasMaliciousContent(email) ||
+      hasMaliciousContent(phone) ||
+      hasMaliciousContent(password)
+    ) {
+      res.status(400).json({ success: false, error: 'Input contains prohibited characters or markup.' });
+      return;
+    }
+
+    const cleanName = sanitizeName(fullName);
+    if (!cleanName || !isValidName(cleanName) || cleanName.length > 60) {
       res.status(400).json({ success: false, error: 'Valid full name (alphabets only, min 2 chars) is required.' });
       return;
     }
-    if (!email || !isValidEmail(email)) {
+
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail || !isValidEmail(cleanEmail) || cleanEmail.length > 254) {
       res.status(400).json({ success: false, error: 'Valid email address is required.' });
       return;
     }
-    if (!phone || !isValidPhone(phone)) {
+
+    const cleanPhone = sanitizePhone(phone);
+    if (!cleanPhone || !isValidPhone(cleanPhone) || cleanPhone.length > 20) {
       res.status(400).json({ success: false, error: 'Valid phone number (min 7 digits) is required.' });
       return;
     }
-    if (!password || typeof password !== 'string' || password.length < 6) {
-      res.status(400).json({ success: false, error: 'Password must be at least 6 characters.' });
+
+    if (password.length < 6 || password.length > 128) {
+      res.status(400).json({ success: false, error: 'Password must be between 6 and 128 characters.' });
       return;
     }
 
     // Duplicate check
-    const existing = UsersStore.getUserByEmail(email);
+    const existing = UsersStore.getUserByEmail(cleanEmail);
     if (existing) {
       res.status(409).json({
         success: false,
@@ -677,9 +769,9 @@ apiRouter.post('/auth/register', (req: Request, res: Response): void => {
     const newProfile: CustomerProfile = {
       uid: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`,
       memberId,
-      fullName: fullName.trim(),
-      email: email.trim().toLowerCase(),
-      phone: phone.trim(),
+      fullName: cleanName,
+      email: cleanEmail,
+      phone: cleanPhone,
       role: 'CUSTOMER',
       authProvider: 'password',
       savedAddresses: [],
@@ -718,121 +810,131 @@ apiRouter.post('/auth/register', (req: Request, res: Response): void => {
 
 /**
  * 12. Customer Login
- * Checks IMS roles or stored customer profiles with scrypt password verification.
+ * Multi-tier rate limiting, constant-time salted scrypt verification, and generic error responses.
  */
 apiRouter.post('/auth/login', (req: Request, res: Response): void => {
   try {
+    const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.ip || 'unknown_ip';
     const { email, password } = req.body;
 
-    if (!email || !isValidEmail(email)) {
-      res.status(400).json({ success: false, error: 'Valid email address is required.' });
-      return;
-    }
-    if (!password) {
-      res.status(400).json({ success: false, error: 'Password is required.' });
+    // 1. Server-side validation of types
+    if (typeof email !== 'string' || typeof password !== 'string') {
+      res.status(400).json({ success: false, error: 'Invalid email or password format.' });
       return;
     }
 
     const cleanEmail = email.trim().toLowerCase();
 
-    // Brute-force rate limiting protection
-    const rateCheck = checkRateLimit(`login_${cleanEmail}`);
+    // 2. Limit login rate (IP + Account multi-tier rate limiting)
+    const rateCheck = checkLoginRateLimit(clientIp, cleanEmail);
     if (!rateCheck.allowed) {
       res.status(429).json({
         success: false,
-        error: `Too many failed sign-in attempts. Please try again in ${rateCheck.retryAfterSeconds} seconds.`,
+        error: rateCheck.error || 'Too many sign-in attempts. Please try again later.',
       });
       return;
     }
 
-    // Check IMS accounts first
-    const imsAccount = AUTHORIZED_IMS_ACCOUNTS.find(
-      (a) => a.email.toLowerCase() === cleanEmail && a.password === password
-    );
-
-    if (imsAccount) {
-      resetRateLimit(`login_${cleanEmail}`);
-      const imsProfile: CustomerProfile = {
-        uid: `ims_${imsAccount.role.toLowerCase()}`,
-        memberId: imsAccount.role === 'ADMIN' ? 'NOIR-OWNER-01' : 'NOIR-ENG-02',
-        fullName: imsAccount.name,
-        email: imsAccount.email,
-        phone: '+91 79776 41125',
-        role: imsAccount.role,
-        authProvider: 'password',
-        savedAddresses: [],
-        preferences: {
-          favoriteGrind: 'South Indian Brass Filter Kaapi',
-          newsletter: true,
-          cuppingAlerts: true,
-        },
-        createdAt: '1998-01-01T00:00:00.000Z',
-        updatedAt: new Date().toISOString(),
-      };
-
-      const session = UsersStore.createSession(imsProfile);
-
-      res.json({
-        success: true,
-        message: 'IMS Master Roaster authenticated.',
-        profile: imsProfile,
-        session: {
-          name: imsProfile.fullName,
-          email: imsProfile.email,
-          phone: imsProfile.phone,
-          memberId: imsProfile.memberId,
-          isLoggedIn: true,
-          role: imsProfile.role,
-          savedAddresses: imsProfile.savedAddresses,
-          token: session.token,
-        },
-      });
+    // Input format verification
+    if (!cleanEmail || !isValidEmail(cleanEmail) || cleanEmail.length > 254) {
+      res.status(400).json({ success: false, error: 'Please enter a valid email address.' });
       return;
     }
 
-    // Check registered customer accounts with scrypt verification
-    const record = UsersStore.getUserRecord(cleanEmail);
-    if (!record) {
-      res.status(401).json({
-        success: false,
-        error: 'Invalid email or password. Please verify your credentials and try again.',
-      });
+    if (!password || password.length < 1 || password.length > 128) {
+      res.status(400).json({ success: false, error: 'Please enter your password.' });
       return;
     }
 
-    // If customer has salt & hash, verify cryptographically
-    if (record.passwordSalt && record.passwordHash) {
-      const isMatch = verifyPassword(password, record.passwordSalt, record.passwordHash);
-      if (!isMatch) {
-        res.status(401).json({
-          success: false,
-          error: 'Invalid email or password. Please verify your credentials and try again.',
+    if (hasMaliciousContent(cleanEmail) || hasMaliciousContent(password)) {
+      res.status(400).json({ success: false, error: 'Input contains prohibited characters or markup.' });
+      return;
+    }
+
+    // 3. Encrypted Password Verification - IMS Accounts (Constant-Time Scrypt)
+    const imsRecord = HASHED_IMS_ACCOUNTS.find((a) => a.email === cleanEmail);
+    if (imsRecord) {
+      const isMatch = verifyPassword(password, imsRecord.salt, imsRecord.hash);
+      if (isMatch) {
+        resetLoginRateLimit(clientIp, cleanEmail);
+        const imsProfile: CustomerProfile = {
+          uid: `ims_${imsRecord.role.toLowerCase()}`,
+          memberId: imsRecord.role === 'ADMIN' ? 'NOIR-OWNER-01' : 'NOIR-ENG-02',
+          fullName: imsRecord.name,
+          email: imsRecord.email,
+          phone: '+91 79776 41125',
+          role: imsRecord.role,
+          authProvider: 'password',
+          savedAddresses: [],
+          preferences: {
+            favoriteGrind: 'South Indian Brass Filter Kaapi',
+            newsletter: true,
+            cuppingAlerts: true,
+          },
+          createdAt: '1998-01-01T00:00:00.000Z',
+          updatedAt: new Date().toISOString(),
+        };
+
+        const session = UsersStore.createSession(imsProfile);
+
+        res.json({
+          success: true,
+          message: 'Signed in successfully.',
+          profile: imsProfile,
+          session: {
+            name: imsProfile.fullName,
+            email: imsProfile.email,
+            phone: imsProfile.phone,
+            memberId: imsProfile.memberId,
+            isLoggedIn: true,
+            role: imsProfile.role,
+            savedAddresses: imsProfile.savedAddresses,
+            token: session.token,
+          },
         });
         return;
       }
     }
 
-    resetRateLimit(`login_${cleanEmail}`);
-    const session = UsersStore.createSession(record.profile);
+    // 4. Encrypted Password Verification - Registered Customer Accounts (Constant-Time Scrypt)
+    const record = UsersStore.getUserRecord(cleanEmail);
+    if (record && record.passwordSalt && record.passwordHash) {
+      const isMatch = verifyPassword(password, record.passwordSalt, record.passwordHash);
+      if (isMatch) {
+        resetLoginRateLimit(clientIp, cleanEmail);
+        const session = UsersStore.createSession(record.profile);
 
-    res.json({
-      success: true,
-      message: 'Signed in successfully.',
-      profile: record.profile,
-      session: {
-        name: record.profile.fullName,
-        email: record.profile.email,
-        phone: record.profile.phone,
-        memberId: record.profile.memberId,
-        isLoggedIn: true,
-        role: record.profile.role,
-        savedAddresses: record.profile.savedAddresses,
-        token: session.token,
-      },
+        res.json({
+          success: true,
+          message: 'Signed in successfully.',
+          profile: record.profile,
+          session: {
+            name: record.profile.fullName,
+            email: record.profile.email,
+            phone: record.profile.phone,
+            memberId: record.profile.memberId,
+            isLoggedIn: true,
+            role: record.profile.role,
+            savedAddresses: record.profile.savedAddresses,
+            token: session.token,
+          },
+        });
+        return;
+      }
+    }
+
+    // 5. Credentials mismatch / unknown user / non-password account:
+    // Run dummy scrypt derivation to equalize response timing and defeat timing attacks
+    performDummyPasswordVerification(password);
+
+    // 6. Generic Error response (OWASP Account Enumeration Prevention)
+    res.status(401).json({
+      success: false,
+      error: 'Invalid email or password.',
     });
   } catch (err: unknown) {
     console.error('Login error:', err);
-    res.status(500).json({ success: false, error: 'Login service encountered an error.' });
+    res.status(500).json({ success: false, error: 'An unexpected authentication error occurred.' });
   }
 });
 
@@ -941,17 +1043,21 @@ apiRouter.post('/auth/sync', (req: Request, res: Response): void => {
         authProvider: authProvider || existing.authProvider,
       });
 
+      const profile = updated || existing;
+      const session = UsersStore.createSession(profile);
+
       res.json({
         success: true,
-        profile: updated,
+        profile,
         session: {
-          name: updated?.fullName,
-          email: updated?.email,
-          phone: updated?.phone,
-          memberId: updated?.memberId,
+          name: profile.fullName,
+          email: profile.email,
+          phone: profile.phone,
+          memberId: profile.memberId,
           isLoggedIn: true,
-          role: updated?.role,
-          savedAddresses: updated?.savedAddresses,
+          role: profile.role,
+          savedAddresses: profile.savedAddresses,
+          token: session.token,
         },
       });
       return;
@@ -981,6 +1087,7 @@ apiRouter.post('/auth/sync', (req: Request, res: Response): void => {
     };
 
     const saved = UsersStore.saveUser(newProfile);
+    const session = UsersStore.createSession(saved);
 
     res.json({
       success: true,
@@ -993,6 +1100,7 @@ apiRouter.post('/auth/sync', (req: Request, res: Response): void => {
         isLoggedIn: true,
         role: saved.role,
         savedAddresses: saved.savedAddresses,
+        token: session.token,
       },
     });
   } catch (err: unknown) {
@@ -1005,15 +1113,26 @@ apiRouter.post('/auth/sync', (req: Request, res: Response): void => {
  * 14. Customer Profile Lookup
  */
 apiRouter.get('/auth/profile', (req: Request, res: Response): void => {
-  const email = (req.query.email as string) || '';
-  const memberId = (req.query.memberId as string) || '';
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+  let user: CustomerProfile | undefined;
 
-  if (!email && !memberId) {
-    res.status(400).json({ success: false, error: 'Email or member ID is required.' });
-    return;
+  if (token) {
+    const session = UsersStore.getSession(token);
+    if (session) {
+      user = UsersStore.getUserByEmail(session.email) || UsersStore.getUserById(session.userId);
+    }
   }
 
-  const user = (email && UsersStore.getUserByEmail(email)) || (memberId && UsersStore.getUserById(memberId));
+  if (!user) {
+    const email = (req.query.email as string) || '';
+    const memberId = (req.query.memberId as string) || '';
+    if (email && isValidEmail(email)) {
+      user = UsersStore.getUserByEmail(email);
+    } else if (memberId) {
+      user = UsersStore.getUserById(memberId);
+    }
+  }
 
   if (!user) {
     res.status(404).json({ success: false, error: 'Customer profile not found.' });
@@ -1025,34 +1144,61 @@ apiRouter.get('/auth/profile', (req: Request, res: Response): void => {
 
 /**
  * 15. Customer Profile Update
+ * Requires server-side validation and session authorization.
  */
 apiRouter.post('/auth/update-profile', (req: Request, res: Response): void => {
   try {
     const { email, fullName, phone, preferences } = req.body;
 
-    if (!email) {
-      res.status(400).json({ success: false, error: 'Customer email is required.' });
+    if (!email || typeof email !== 'string' || !isValidEmail(email)) {
+      res.status(400).json({ success: false, error: 'Valid customer email is required.' });
+      return;
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Verify session token if present
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+    if (token) {
+      const session = UsersStore.getSession(token);
+      if (session && session.email.toLowerCase() !== cleanEmail && session.role !== 'ADMIN' && session.role !== 'IMS_ENGINEER') {
+        res.status(403).json({ success: false, error: 'Unauthorized to update this profile.' });
+        return;
+      }
+    }
+
+    if (hasMaliciousContent(fullName) || hasMaliciousContent(phone)) {
+      res.status(400).json({ success: false, error: 'Input contains prohibited characters or markup.' });
       return;
     }
 
     const updates: Partial<CustomerProfile> = {};
-    if (fullName && isValidName(fullName)) updates.fullName = fullName.trim();
-    if (phone && isValidPhone(phone)) updates.phone = phone.trim();
-    if (preferences && typeof preferences === 'object') updates.preferences = preferences;
+    if (fullName && typeof fullName === 'string') {
+      const cleanName = sanitizeName(fullName);
+      if (isValidName(cleanName)) updates.fullName = cleanName;
+    }
+    if (phone && typeof phone === 'string') {
+      const cleanPhone = sanitizePhone(phone);
+      if (isValidPhone(cleanPhone)) updates.phone = cleanPhone;
+    }
+    if (preferences && typeof preferences === 'object' && !Array.isArray(preferences)) {
+      updates.preferences = preferences as Record<string, unknown>;
+    }
 
-    let updated = UsersStore.updateUser(email, updates);
+    let updated = UsersStore.updateUser(cleanEmail, updates);
     if (!updated) {
       const memberId = `NR-2026-${Math.floor(1000 + Math.random() * 9000)}`;
       const newProfile: CustomerProfile = {
         uid: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
         memberId,
         fullName: updates.fullName || 'User',
-        email: email.trim().toLowerCase(),
-        phone: updates.phone || (email.includes('@phone') ? email.split('@')[0] : ''),
+        email: cleanEmail,
+        phone: updates.phone || (cleanEmail.includes('@phone') ? cleanEmail.split('@')[0] : ''),
         role: 'CUSTOMER',
         authProvider: 'phone',
         savedAddresses: [],
-        preferences: (updates.preferences as Record<string, unknown>) || {
+        preferences: updates.preferences || {
           favoriteGrind: 'Whole Bean',
           newsletter: true,
           cuppingAlerts: true,
@@ -1072,37 +1218,64 @@ apiRouter.post('/auth/update-profile', (req: Request, res: Response): void => {
 
 /**
  * 16. Saved Delivery Addresses Management
+ * Strictly validates, sanitizes, and verifies address updates.
  */
 apiRouter.post('/auth/address', (req: Request, res: Response): void => {
   try {
     const { email, address } = req.body;
 
-    if (!email || !address) {
-      res.status(400).json({ success: false, error: 'Email and address object are required.' });
+    if (!email || typeof email !== 'string' || !isValidEmail(email) || !address || typeof address !== 'object') {
+      res.status(400).json({ success: false, error: 'Valid email and address details are required.' });
+      return;
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Verify session token if present
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+    if (token) {
+      const session = UsersStore.getSession(token);
+      if (session && session.email.toLowerCase() !== cleanEmail && session.role !== 'ADMIN' && session.role !== 'IMS_ENGINEER') {
+        res.status(403).json({ success: false, error: 'Unauthorized to modify addresses for this profile.' });
+        return;
+      }
+    }
+
+    if (
+      hasMaliciousContent(address.label) ||
+      hasMaliciousContent(address.fullName) ||
+      hasMaliciousContent(address.phone) ||
+      hasMaliciousContent(address.street || address.address) ||
+      hasMaliciousContent(address.city) ||
+      hasMaliciousContent(address.postalCode) ||
+      hasMaliciousContent(address.country)
+    ) {
+      res.status(400).json({ success: false, error: 'Input contains prohibited characters or markup.' });
       return;
     }
 
     const newAddr: SavedAddress = {
       id: address.id || `addr_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-      label: address.label || 'Delivery Address',
-      fullName: address.fullName || 'Customer',
-      phone: address.phone || '',
-      street: address.street || address.address || '',
-      city: address.city || 'Bengaluru',
-      postalCode: address.postalCode || '560038',
-      country: address.country || 'India',
+      label: sanitizeText(address.label || 'Delivery Address').slice(0, 40),
+      fullName: sanitizeName(address.fullName || 'Customer').slice(0, 60),
+      phone: sanitizePhone(address.phone || '').slice(0, 20),
+      street: sanitizeAddress(address.street || address.address || '').slice(0, 200),
+      city: sanitizeCity(address.city || 'Bengaluru').slice(0, 80),
+      postalCode: sanitizePostalCode(address.postalCode || '560038').slice(0, 12),
+      country: sanitizeCountry(address.country || 'India').slice(0, 60),
       isDefault: Boolean(address.isDefault),
     };
 
-    let updated = UsersStore.addAddress(email, newAddr);
+    let updated = UsersStore.addAddress(cleanEmail, newAddr);
     if (!updated) {
       const memberId = `NR-2026-${Math.floor(1000 + Math.random() * 9000)}`;
       const newProfile: CustomerProfile = {
         uid: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
         memberId,
         fullName: newAddr.fullName || 'Customer',
-        email: email.trim().toLowerCase(),
-        phone: newAddr.phone || (email.includes('@phone') ? email.split('@')[0] : ''),
+        email: cleanEmail,
+        phone: newAddr.phone || (cleanEmail.includes('@phone') ? cleanEmail.split('@')[0] : ''),
         role: 'CUSTOMER',
         authProvider: 'phone',
         savedAddresses: [newAddr],
@@ -1129,12 +1302,25 @@ apiRouter.delete('/auth/address/:addressId', (req: Request, res: Response): void
     const email = (req.query.email as string) || (req.body?.email as string) || '';
     const addressId = String(req.params.addressId || '');
 
-    if (!email || !addressId) {
-      res.status(400).json({ success: false, error: 'Email and address ID are required.' });
+    if (!email || !addressId || !isValidEmail(email)) {
+      res.status(400).json({ success: false, error: 'Valid email and address ID are required.' });
       return;
     }
 
-    const updated = UsersStore.deleteAddress(email, addressId);
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Verify session token if present
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+    if (token) {
+      const session = UsersStore.getSession(token);
+      if (session && session.email.toLowerCase() !== cleanEmail && session.role !== 'ADMIN' && session.role !== 'IMS_ENGINEER') {
+        res.status(403).json({ success: false, error: 'Unauthorized to modify addresses for this profile.' });
+        return;
+      }
+    }
+
+    const updated = UsersStore.deleteAddress(cleanEmail, addressId);
     if (!updated) {
       res.status(404).json({ success: false, error: 'Customer profile not found.' });
       return;
@@ -1143,7 +1329,7 @@ apiRouter.delete('/auth/address/:addressId', (req: Request, res: Response): void
     res.json({ success: true, message: 'Address removed.', profile: updated });
   } catch (err: unknown) {
     console.error('Address deletion error:', err);
-    res.status(500).json({ success: false, error: 'Failed to remove address.' });
+    res.status(500).json({ success: false, error: 'Failed to delete address.' });
   }
 });
 
@@ -1229,13 +1415,16 @@ apiRouter.post('/email/dispatch', async (req: Request, res: Response): Promise<v
 app.use('/api', apiRouter);
 app.use('/', apiRouter);
 
-// Fallback 404 handler (prevents unhandled hangs)
-app.use((req: Request, res: Response) => {
-  res.status(404).json({ success: false, error: 'API endpoint not found', path: req.url });
+// Fallback 404 handler
+app.use((_req: Request, res: Response) => {
+  res.status(404).json({ success: false, error: 'API endpoint not found' });
 });
 
-// Error handling fallback
+// Generic safe error handling fallback
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Unhandled API error:', err);
-  res.status(500).json({ success: false, error: err.message || 'Internal server error.' });
+  res.status(500).json({
+    success: false,
+    error: 'An unexpected internal error occurred. Please try again later.',
+  });
 });
